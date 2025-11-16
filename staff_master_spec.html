@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification - 社内スタッフ管理（Staff Master）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p, ul {
+      line-height: 1.6;
+      margin: 0.4em 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="spec-container">
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Staff Master</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 社内スタッフ管理（Staff Master App）</h1>
+    <p><strong>対象画面:</strong> 社内スタッフ一覧</p>
+    <p><strong>利用者:</strong> 管理部・人事・経理・システム管理者</p>
+
+    <!-- 1 Purpose -->
+    <h2>1. 画面の目的（ビジネス上の役割）</h2>
+    <p>
+      本画面「社内スタッフ管理」は、Credie 社内スタッフの基本情報・権限・部署情報を管理するためのマスタです。  
+      社内の各種アプリ（受注、購買、在庫、支払、配当等）でスタッフ情報を参照し、  
+      <strong>アクセス権限・業務担当者・承認者設定の中心マスタ</strong>となります。
+    </p>
+
+    <h3>1.1 本画面が影響する業務</h3>
+    <ul>
+      <li>支払承認フロー（AP）</li>
+      <li>発注担当者の紐づけ（PO）</li>
+      <li>部門別の作業担当振り分け（在庫・出荷処理）</li>
+      <li>経理処理・締め処理での担当者表示</li>
+      <li>アプリ権限の自動付与（閲覧制御）</li>
+    </ul>
+
+    <div class="spec-callout">
+      👉 スタッフ情報は各アプリの「担当者選択項目」「権限ロジック」の基盤となるため  
+      **誤登録は、承認フローや在庫作業に影響します。**
+    </div>
+
+    <!-- 2 User Scenario -->
+    <h2>2. ユーザーストーリー（利用者視点）</h2>
+    <ul>
+      <li>管理者が、新しいスタッフの情報を登録し、権限を付与する</li>
+      <li>人事担当が、部署情報・役職の更新を行う</li>
+      <li>経理担当が、スタッフの所属部門と役割を確認する</li>
+      <li>退職者を「退職」ステータスへ変更して業務アプリから除外する</li>
+    </ul>
+
+    <!-- 3 Main Features -->
+    <h2>3. 主要機能</h2>
+
+    <h3>3.1 スタッフ一覧表示</h3>
+    <ul>
+      <li>スタッフID、氏名、ふりがな、メール、部署、役職、権限、ステータスを一覧表示</li>
+      <li>名前・メールアドレスは各業務アプリと連携</li>
+    </ul>
+
+    <h3>3.2 検索・フィルタ</h3>
+    <ul>
+      <li>スタッフID / 氏名 / メールで検索可能</li>
+      <li>部署・権限・ステータスでの絞り込みも可能</li>
+    </ul>
+
+    <h3>3.3 新規登録</h3>
+    <ul>
+      <li>氏名・メールアドレス・部署・役職・権限・入社日を登録</li>
+      <li>初期権限はロールに応じて自動設定可能（将来拡張）</li>
+    </ul>
+
+    <h3>3.4 編集</h3>
+    <ul>
+      <li>異動・昇格・権限変更・ステータス更新を行う</li>
+      <li>退職処理によって、関連アプリの担当候補から除外される</li>
+    </ul>
+
+    <!-- 4 Layout -->
+    <h2>4. 画面レイアウト</h2>
+
+    <h3>4.1 一覧項目</h3>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>スタッフID</td><td>社内スタッフ識別子（STF001等）</td></tr>
+      <tr><td>氏名</td><td>正式な氏名（社内表示名）</td></tr>
+      <tr><td>ふりがな</td><td>検索用の読み仮名</td></tr>
+      <tr><td>メールアドレス</td><td>通知/承認依頼の送付先</td></tr>
+      <tr><td>部署</td><td>営業部/経理部/製造部など</td></tr>
+      <tr><td>役職</td><td>部長/主任/一般など</td></tr>
+      <tr><td>権限</td><td>支払承認権限/一般スタッフ など</td></tr>
+      <tr><td>ステータス</td><td>在職中/退職など</td></tr>
+      <tr><td>入社日</td><td>社内履歴管理に使用</td></tr>
+      <tr><td>最終更新</td><td>更新日時</td></tr>
+      <tr><td>操作</td><td>編集ボタン</td></tr>
+    </table>
+
+    <!-- Screenshot -->
+    <h3>4.2 画面イメージ（スクリーンショット）</h3>
+    <div class="spec-screenshot">
+      <img src="staff_master_screen.png" alt="社内スタッフ管理画面" />
+      <div class="spec-screenshot-caption">図1. 社内スタッフ管理一覧画面</div>
+    </div>
+
+    <!-- 5 Confirmation -->
+    <h2>5. お客様に確認いただきたい点</h2>
+    <ul>
+      <li>スタッフに必要な項目は過不足ありませんか？</li>
+      <li>部署・権限の区分は実際の社内ルールと一致していますか？</li>
+      <li>退職者の扱い（ステータス変更）は運用上問題ありませんか？</li>
+      <li>承認フローと紐づく権限ロジックに誤りはありませんか？</li>
+    </ul>
+
+    <!-- 6 Business Impact -->
+    <h2>6. Business Impacts（業務インパクト）</h2>
+    <ul>
+      <li>誤った権限設定は、支払承認/PO/在庫操作に直接影響</li>
+      <li>退職者が残っていると承認依頼が届かない等のトラブルが発生</li>
+      <li>部署情報が間違うと集計・レポートに誤差が生じる</li>
+    </ul>
+
+    <!-- 7 Scope -->
+    <h2>7. Scope / Out of Scope</h2>
+
+    <h3>7.1 Scope</h3>
+    <ul>
+      <li>スタッフ基本情報の登録・更新・退職処理</li>
+      <li>権限区分の管理</li>
+      <li>部署・役職紐づけ</li>
+    </ul>
+
+    <h3>7.2 Out of Scope</h3>
+    <ul>
+      <li>勤怠管理（別システム想定）</li>
+      <li>給与計算</li>
+      <li>評価システムとの連携</li>
+    </ul>
+
+  </div>
+</body>
+</html>

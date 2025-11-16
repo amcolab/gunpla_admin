@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification - パートナーマスタ（Partner Master）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+    .spec-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+    h1, h2, h3 { margin-top: 1.5em; }
+    h1 { font-size: 22px; border-bottom: 2px solid #e5e5ea; padding-bottom: 8px; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 13px; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; }
+    th { background: #f0f0f5; }
+    .spec-screenshot { border: 1px solid #ddd; padding: 8px; border-radius: 6px; background: #fafafa; margin-top: 12px; }
+    .spec-screenshot img { width:100%; border-radius: 4px; }
+    .tag { background:#eef2ff; color:#3f51b5; padding:3px 8px; border-radius:8px; font-size:11px; }
+  </style>
+</head>
+
+<body>
+<div class="spec-container">
+
+  <div class="spec-meta">
+    <span class="tag">UI Spec</span>
+    <span class="tag">Partner Master</span>
+    Version 1.0
+  </div>
+
+  <h1>パートナーマスタ / Partner Master – UI 画面仕様書</h1>
+  <p><strong>対象画面:</strong> Partner Master（一覧・新規作成・編集）</p>
+  <p><strong>想定利用者:</strong> 管理者・営業担当・運用担当・経理</p>
+
+  <!-- 1. Purpose -->
+  <h2>1. 画面の目的（ビジネス上の役割）</h2>
+  <p>
+    Partner Master は、Credie内の <strong>代理店、アフィリエイト、販売パートナー、投資家</strong> を一元管理するための基本マスタです。  
+    本画面の情報は、以下の業務ロジックに直接影響します。
+  </p>
+  <ul>
+    <li>Reward / 配当計算（Affiliate・Agency・Investor）</li>
+    <li>支払管理（AP） / 銀行振込先の管理</li>
+    <li>アカウント管理（Portal Login / Agency Dashboard）</li>
+    <li>販売管理、紹介経路のトラッキング</li>
+  </ul>
+
+  <div class="spec-callout">
+    本マスタは Credie における <strong>Partner に関する唯一の情報源（Single Source of Truth）</strong> です。
+  </div>
+
+  <!-- 2. User Scenario -->
+  <h2>2. ユーザーストーリー（User Scenarios）</h2>
+  <ul>
+    <li>営業担当が新しい代理店（Agency）を登録し、報酬レートと担当者を設定する。</li>
+    <li>運用担当がアフィリエイトの銀行口座情報を確認し、月次支払を行う。</li>
+    <li>経理チームが Investor の配当支払先を確認し、AP フローに連携する。</li>
+    <li>管理者が Partner の稼働状況（Active / Pause / Retired）を管理する。</li>
+  </ul>
+
+  <!-- 3. Scope -->
+  <h2>3. Scope / Out of Scope</h2>
+  <h3>3.1 Scope（今回含まれる範囲）</h3>
+  <ul>
+    <li>Partner 基本情報管理（名称、住所、連絡先など）</li>
+    <li>Partner Type に応じた追加情報管理</li>
+    <li>Portal Login 情報登録</li>
+    <li>銀行口座情報の管理</li>
+    <li>税務情報（法人のみ）</li>
+  </ul>
+
+  <h3>3.2 Out of Scope（今回含まれない）</h3>
+  <ul>
+    <li>報酬計算ロジックそのもの</li>
+    <li>Portal UI の仕様</li>
+    <li>支払実行（AP 実行）は Payment Request App にて管理</li>
+  </ul>
+
+  <!-- 4. List Screen -->
+  <h2>4. 一覧画面（List View）</h2>
+
+  <div class="spec-screenshot">
+    <img src="partner_master_screen.png" alt="Partner Master List Screen" />
+    <div class="spec-screenshot-caption">図1. Partner Master 一覧画面</div>
+  </div>
+
+  <h3>4.1 表示項目</h3>
+  <table>
+    <tr><th>項目名</th><th>説明</th></tr>
+    <tr><td>Partner ID</td><td>一意のID（自動採番）</td></tr>
+    <tr><td>パートナー名</td><td>法人名・個人名</td></tr>
+    <tr><td>Partner Type</td><td>代理店 / アフィリエイト / 投資家 / パートナー</td></tr>
+    <tr><td>ステータス</td><td>Active、Pending、停止 など</td></tr>
+    <tr><td>担当者</td><td>社内担当者</td></tr>
+    <tr><td>最終更新日</td><td>更新タイムスタンプ</td></tr>
+    <tr><td>操作</td><td>編集</td></tr>
+  </table>
+
+  <!-- 5. Create Screen -->
+  <h2>5. 新規作成 / 編集画面（Create / Edit Form）</h2>
+
+  <div class="spec-screenshot">
+    <img src="partner_create_screen.png" alt="Partner Create Screen" />
+    <div class="spec-screenshot-caption">図2. Partner 作成画面</div>
+  </div>
+
+  <h3>5.1 共通で表示される入力項目（全 Partner Type 共通）</h3>
+  <table>
+    <tr><th>項目名</th><th>説明</th></tr>
+    <tr><td>Partner Type（最重要）</td><td>選択により以下のフォームが動的に変化する</td></tr>
+    <tr><td>ステータス</td><td>Active / Pending / Pause / Retired</td></tr>
+    <tr><td>パートナー名</td><td>法人名 / 個人名</td></tr>
+    <tr><td>住所</td><td>所在地</td></tr>
+    <tr><td>担当者</td><td>社内担当者（Credie）</td></tr>
+    <tr><td>電話番号 / メール</td><td>基本連絡先</td></tr>
+  </table>
+
+  <h3>5.2 Partner Type による表示制御（最重要）</h3>
+
+  <h4>5.2.1 Partner Type = 代理店（AGENCY）</h4>
+  <ul>
+    <li>✔ 基本情報</li>
+    <li>✔ 代理店ランク（BRONZE / SILVER / GOLD / VIP）</li>
+    <li>✔ 代理店手数料（%）</li>
+    <li>✔ Portal Login 情報</li>
+    <li>✔ 法人情報（法人番号・税務情報など）</li>
+    <li>✔ 銀行口座情報</li>
+    <li>✖ Investor 配当情報は非表示</li>
+  </ul>
+
+  <h4>5.2.2 Partner Type = アフィリエイト（AFFILIATE）</h4>
+  <ul>
+    <li>✔ 基本情報</li>
+    <li>✔ Affiliate 手数料（%）</li>
+    <li>✔ Portal Login 情報</li>
+    <li>✔ 銀行口座情報</li>
+    <li>✖ 法人情報は不要 → 非表示</li>
+    <li>✖ Investor 配当情報は非表示</li>
+  </ul>
+
+  <h4>5.2.3 Partner Type = パートナー（PARTNER）</h4>
+  <ul>
+    <li>✔ 基本情報</li>
+    <li>✔ 販売契約に関するメモ（任意）</li>
+    <li>✔ 銀行口座情報（必要に応じて）</li>
+    <li>✔ Portal Login（任意）</li>
+    <li>✖ ランク / 手数料不要</li>
+  </ul>
+
+  <h4>5.2.4 Partner Type = 投資家（INVESTOR）</h4>
+  <ul>
+    <li>✔ 基本情報</li>
+    <li>✔ 投資額（任意）</li>
+    <li>✔ 配当支払先（銀行口座）</li>
+    <li>✔ 配当サイクル（四半期 / 年次）</li>
+    <li>✖ Portal Login は不要 → 非表示</li>
+    <li>✖ ランク / 手数料ブロック非表示</li>
+    <li>✖ 法人情報は任意</li>
+  </ul>
+
+  <!-- 6. Business Impact -->
+  <h2>6. Business Impact（本マスタが影響する業務）</h2>
+  <ul>
+    <li>支払い依頼（AP）の振込先を本マスタから取得</li>
+    <li>Affiliate / Agency の報酬計算に影響（レート・ランク）</li>
+    <li>Investor の配当計算に影響</li>
+    <li>Portal Login アカウント管理に影響</li>
+  </ul>
+
+  <!-- 7. Confirm -->
+  <h2>7. お客様に確認いただきたい点</h2>
+  <ul>
+    <li>Partner Type に応じた表示項目は運用ルールに合っていますか？</li>
+    <li>代理店 / アフィリエイト / 投資家の項目の粒度は十分ですか？</li>
+    <li>銀行口座形式は日本国内で問題ありませんか？</li>
+    <li>Portal Login（必要 / 不要）の判断は適切ですか？</li>
+  </ul>
+
+</div>
+</body>
+</html>

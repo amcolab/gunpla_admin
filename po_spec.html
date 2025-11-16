@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 発注管理（PO App）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      line-height: 1.6;
+      margin: 0.4em 0;
+    }
+
+    ul {
+      margin: 0.4em 0 0.8em 1.4em;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">PO App</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 発注管理アプリ（PO App）</h1>
+    <p><strong>対象画面:</strong> 発注一覧画面 / 発注詳細画面</p>
+    <p><strong>想定利用者:</strong> 購買担当・倉庫担当・検品担当（Credie 内部ユーザー）</p>
+
+    <!-- 1. 画面概要・目的 -->
+    <h2>1. 画面概要・目的（ビジネス上の役割）</h2>
+    <p>
+      発注管理アプリ（以下、PO App）は、仕入品の発注から入荷・検品までの進捗を管理し、
+      在庫反映の起点となるコア画面です。<br />
+      発注一覧画面では、全ての発注レコードを一覧で把握し、入荷状況・検品状況・ステータスを確認します。<br />
+      発注詳細画面では、個々の発注書の内容（発注先、発注数、入荷数、商品明細）を確認し、
+      商品ごとの入荷登録を行います。
+    </p>
+
+    <h3>1.1 本画面がカバーする業務</h3>
+    <ul>
+      <li>仕入先への発注内容の管理（発注日・入荷予定日・発注数量など）</li>
+      <li>入荷当日の入荷実績登録（商品ごとの今回入荷数の登録）</li>
+      <li>「未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル」などステータス管理</li>
+      <li>在庫システムへの入荷反映のトリガーとなる情報の保持</li>
+    </ul>
+
+    <!-- 2. User Scenario -->
+    <h2>2. User Scenario（利用者ストーリー）</h2>
+
+    <h3>2.1 購買担当</h3>
+    <ul>
+      <li>毎朝、発注一覧画面で「入荷予定日」が近い発注を確認する。</li>
+      <li>仕入先から連絡があった場合、発注詳細画面で内容・数量・入荷予定日を確認・修正する。</li>
+      <li>全量入荷・一部入荷の状況を確認し、必要に応じてステータスを更新する。</li>
+    </ul>
+
+    <h3>2.2 倉庫担当</h3>
+    <ul>
+      <li>実際に荷物が到着したら、該当の発注IDを開き、商品ごとに「今回入荷数」を入力して入荷登録を行う。</li>
+      <li>入荷登録が完了すると、在庫アプリ側の数量が更新される（システム連携）。</li>
+    </ul>
+
+    <h3>2.3 検品担当</h3>
+    <ul>
+      <li>入荷後、発注詳細画面で数量・品質を確認し、検品日・検品担当者・ステータス（検収済など）を更新する。</li>
+    </ul>
+
+    <!-- 3. Business Impacts -->
+    <h2>3. Business Impacts（期待される効果）</h2>
+    <ul>
+      <li>発注〜入荷〜検品の進捗を1つの画面群で把握できるため、状況確認の手間が削減される。</li>
+      <li>入荷登録と同時に在庫が更新されることで、過不足の早期検知と適正な在庫水準の維持に貢献する。</li>
+      <li>一部入荷・未入荷の状態を可視化することで、仕入先へのフォローや納期調整が行いやすくなる。</li>
+    </ul>
+
+    <!-- 4. Scope / Out of Scope -->
+    <h2>4. Scope / Out of Scope（本画面の範囲）</h2>
+
+    <h3>4.1 Scope</h3>
+    <ul>
+      <li>仕入先別・発注ID別の発注情報管理（一覧 / 詳細）</li>
+      <li>入荷予定日・入荷日・検品日の管理</li>
+      <li>商品ごとの「発注数 / 入荷数 / 今回入荷数」の管理</li>
+      <li>ステータスの管理（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル 等）</li>
+      <li>入荷登録に伴う在庫更新のためのトリガー情報の保持</li>
+    </ul>
+
+    <h3>4.2 Out of Scope</h3>
+    <ul>
+      <li>仕入先との見積・価格交渉プロセス</li>
+      <li>支払処理（請求・支払承認・振込処理など）は別アプリ（AR/AP管理）側で管理</li>
+      <li>不良品の詳細な品質管理・クレーム処理フロー</li>
+    </ul>
+
+    <!-- 5. Screen Layout -->
+    <h2>5. 画面仕様（Screen Layout）</h2>
+
+    <!-- 5.1 発注一覧画面 -->
+    <h3>5.1 発注一覧画面（List）</h3>
+
+    <div class="spec-callout">
+      PO App のトップ画面。全ての発注レコードが一覧表示され、発注状況と入荷状況を確認できます。
+    </div>
+
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>発注ID</td>
+        <td>発注レコードの一意ID。クリックで発注詳細画面へ遷移する（例: P0001）。</td>
+      </tr>
+      <tr>
+        <td>発注日</td>
+        <td>発注書を作成した日付。</td>
+      </tr>
+      <tr>
+        <td>入荷予定日</td>
+        <td>仕入先からの入荷予定日。</td>
+      </tr>
+      <tr>
+        <td>入荷日</td>
+        <td>実際に入荷が行われた日付。</td>
+      </tr>
+      <tr>
+        <td>検品日</td>
+        <td>検品作業が完了した日付。</td>
+      </tr>
+      <tr>
+        <td>商品</td>
+        <td>発注の代表商品名（SKUと名称）。一覧上では代表行として表示。</td>
+      </tr>
+      <tr>
+        <td>発注数</td>
+        <td>発注した合計数量。</td>
+      </tr>
+      <tr>
+        <td>入荷数</td>
+        <td>これまで入荷した数量の合計。</td>
+      </tr>
+      <tr>
+        <td>仕入先</td>
+        <td>発注先の企業名。</td>
+      </tr>
+      <tr>
+        <td>発注担当者</td>
+        <td>発注書を作成した担当者名。</td>
+      </tr>
+      <tr>
+        <td>検品担当者</td>
+        <td>検品を担当するユーザー名。</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>発注の状態（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル など）。</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>詳細ボタン。クリックすると発注詳細画面へ遷移。</td>
+      </tr>
+    </table>
+
+    <h4>5.1.1 一覧画面の主なUI要素</h4>
+    <ul>
+      <li><strong>「発注一覧」ボタン：</strong>標準の一覧ビュー切り替え。</li>
+      <li><strong>「新規発注」ボタン：</strong>新しい発注レコードを作成。</li>
+      <li><strong>検索ボックス：</strong>発注番号などで検索。</li>
+      <li><strong>アクションメニュー：</strong>CSV出力などの標準機能。</li>
+      <li><strong>ページネーション：</strong>1–○件 / 全○件 とページ送り。</li>
+    </ul>
+
+    <h4>5.1.2 スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="po_list_screen.png" alt="発注一覧画面" />
+      <div class="spec-screenshot-caption">図1. 発注一覧画面（PO List）</div>
+    </div>
+
+    <!-- 5.2 発注詳細画面 -->
+    <h3>5.2 発注詳細画面（Detail）</h3>
+
+    <div class="spec-callout">
+      個別の発注書の内容を表示・編集し、商品ごとの入荷登録を行う画面です。
+    </div>
+
+    <h4>5.2.1 セクション構成</h4>
+    <ul>
+      <li>A. 基本情報</li>
+      <li>B. 仕入先情報</li>
+      <li>C. 発注サマリー</li>
+      <li>D. 商品リスト（入荷登録用）</li>
+      <li>E. 発注明細（確認用）</li>
+    </ul>
+
+    <!-- A. 基本情報 -->
+    <h4>A. 基本情報</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>発注番号</td><td>POの管理番号（例: P0002）。</td></tr>
+      <tr><td>発注日</td><td>発注書を作成した日付。</td></tr>
+      <tr><td>入荷予定日</td><td>仕入先からの入荷予定日。</td></tr>
+      <tr><td>入荷日</td><td>実際に入荷した日付。</td></tr>
+      <tr><td>検品日</td><td>検品を行った日付。</td></tr>
+      <tr><td>仕入先</td><td>発注先の企業名。</td></tr>
+      <tr><td>検品担当者</td><td>検品を担当したユーザー名。</td></tr>
+      <tr><td>ステータス</td><td>発注の現在ステータス（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル など）。</td></tr>
+    </table>
+
+    <!-- B. 仕入先情報 -->
+    <h4>B. 仕入先情報</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>仕入先名</td><td>取引先企業名。</td></tr>
+      <tr><td>電話番号</td><td>仕入先の電話番号。</td></tr>
+      <tr><td>メールアドレス</td><td>注文連絡用のメールアドレス。</td></tr>
+      <tr><td>郵便番号</td><td>仕入先の郵便番号。</td></tr>
+      <tr><td>住所</td><td>仕入先の住所。</td></tr>
+    </table>
+
+    <!-- C. 発注サマリー -->
+    <h4>C. 発注サマリー</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>発注数量</td><td>発注した数量の合計。</td></tr>
+      <tr><td>入荷数量</td><td>これまでに入荷された数量の合計。</td></tr>
+      <tr><td>入荷未了数量</td><td>発注数量 − 入荷数量 など、未入荷分の参考値（UI 表示に合わせて定義）。</td></tr>
+      <tr><td>合計金額</td><td>全ての明細行の小計の合計額。</td></tr>
+    </table>
+
+    <!-- D. 商品リスト（入荷登録用） -->
+    <h4>D. 商品リスト（入荷登録用）</h4>
+    <p>倉庫担当が入荷登録を行うためのエリア。各商品ごとに「今回入荷数」を入力します。</p>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>商品（SKU）</td><td>SKUコードと商品名。</td></tr>
+      <tr><td>発注数</td><td>その商品に対する発注数量。</td></tr>
+      <tr><td>入荷数（累計）</td><td>これまでに入荷した数量。</td></tr>
+      <tr><td>今回入荷数</td><td>今回入荷した数量を入力するテキストボックス。</td></tr>
+      <tr><td>入荷状況</td><td>未入荷 / 一部入荷 / 入荷済 などの状態表示。</td></tr>
+      <tr><td>アクション</td><td>「入荷登録」「キャンセル」ボタン。入荷登録により在庫へ反映される。</td></tr>
+    </table>
+
+    <!-- E. 発注明細（確認用） -->
+    <h4>E. 発注明細（確認用）</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>商品コード</td><td>商品に紐づくコード。</td></tr>
+      <tr><td>商品名</td><td>表示名。</td></tr>
+      <tr><td>数量</td><td>発注数量。</td></tr>
+      <tr><td>単価</td><td>仕入単価。</td></tr>
+      <tr><td>小計</td><td>数量 × 単価。</td></tr>
+    </table>
+
+
+    <h4>5.2.2 主なボタン・操作</h4>
+    <ul>
+      <li><strong>編集：</strong>詳細画面の各フィールドを編集可能にする標準ボタン。</li>
+      <li><strong>入荷登録：</strong>D. 商品リストで入力した「今回入荷数」を確定し、入荷履歴・在庫に反映する。</li>
+      <li><strong>キャンセル：</strong>発注自体をキャンセル扱いとする（業務ルールに従って使用）。</li>
+      <li><strong>保存：</strong>編集内容を保存。</li>
+    </ul>
+
+    <h4>5.2.3 スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="po_detail_screen.png" alt="発注詳細画面" />
+      <div class="spec-screenshot-caption">図2. 発注詳細画面（PO Detail）</div>
+    </div>
+
+    <!-- 6. 確認事項 -->
+    <h2>6. お客様に確認いただきたい点</h2>
+    <ul>
+      <li>一覧画面の表示項目（発注ID・入荷予定日・入荷数・ステータス など）は、日々の運用で必要十分でしょうか？</li>
+      <li>ステータスの種類（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル）は、想定されている運用と一致していますか？</li>
+      <li>発注詳細画面の各セクション構成（基本情報 / 仕入先情報 / 発注サマリー / 商品リスト / 発注明細 / 入荷履歴）は、現状の業務フローをカバーできていますか？</li>
+      <li>入荷登録の単位は「商品ごと」で問題ないでしょうか？ 特殊な入荷パターン（別送・分納など）がある場合は追加要件として整理が必要です。</li>
+    </ul>
+
+    <!-- 7. 開発向けメモ -->
+    <h2>7. 開発向けメモ（内部用）</h2>
+    <ul>
+      <li>UI は Kintone 標準フォームをベースに、kintone-common-v2.css に準拠して調整。</li>
+      <li>入荷登録時に、在庫アプリ（Material / Product のいずれか）へ在庫加算処理を行う前提。</li>
+      <li>ステータス更新ロジック（自動 / 手動の切り分け）は別途ロジック設計シートにて定義。</li>
+      <li>将来的に PO のインポート / エクスポートを行う場合、発注ID・仕入先・商品コードの一意性に注意。</li>
+    </ul>
+
+  </div>
+</body>
+</html>

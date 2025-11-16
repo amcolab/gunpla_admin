@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification - システム設定（System Setting）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+
+    p {
+      line-height: 1.6;
+      margin: 0.4em 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 12px 0 16px;
+      font-size: 13px;
+    }
+
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .spec-container { box-shadow: none; border-radius: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="spec-container">
+
+  <div class="spec-meta">
+    <span class="spec-tag">UI Spec</span>
+    <span class="spec-tag">System Setting</span>
+    Version 1.1 / 作成日：________
+  </div>
+
+  <h1>UI Screen Specification – システム設定（System Setting App）</h1>
+
+  <p><strong>対象画面:</strong> システム設定一覧 & 各種設定詳細画面</p>
+  <p><strong>想定利用者:</strong> Credie 運用チーム・管理者</p>
+
+  <!-- 1. Mục đích -->
+  <h2>1. 画面の目的（ビジネス上の役割）</h2>
+  <p>
+    System Setting App は、Credie 業務システム全体の
+    <strong>基幹設定（必須情報）を一元管理するハブ</strong>です。
+    これらの設定はシステムの挙動に直接影響するため、正確性と一貫性が重要です。
+  </p>
+
+  <h3>1.1 管理対象</h3>
+  <ul>
+    <li>会社情報（住所・連絡先・ロゴ・請求書情報）</li>
+    <li>銀行口座情報（Credie 入金用・支払い用）</li>
+    <li>通知テンプレート（メール本文）</li>
+    <li>業務ルール（例：税率）</li>
+    <li>SMTP 設定（Credie 送信アカウント）</li>
+  </ul>
+
+  <div class="spec-callout">
+    👉 このアプリは「Credie システムの設定を変更できる唯一の場所」です。
+  </div>
+
+  <!-- 2. User Scenario -->
+  <h2>2. 利用者ストーリー（User Scenario）</h2>
+  <ul>
+    <li>管理者が「通知テンプレート」を編集し、Partner Portal に送られるメール内容を更新する。</li>
+    <li>会計担当が「会社情報」や「銀行口座情報」を修正し、請求書や帳票に反映させる。</li>
+    <li>運用担当が「税率」を更新し、販売・購買ロジックを最新化する。</li>
+    <li>システム管理者が SMTP を更新し、メール送信を安定化させる。</li>
+  </ul>
+
+  <!-- 3. Main functions -->
+  <h2>3. 主要機能</h2>
+  <ul>
+    <li>設定一覧の表示（List View）</li>
+    <li>設定項目の編集（Detail / Edit View）</li>
+    <li>通知テンプレートの編集（テンプレート一覧 & 本文編集）</li>
+    <li>業務ルール設定（税率等）</li>
+    <li>SMTP メール設定（送信アカウント）</li>
+    <li>会社情報の管理</li>
+    <li>銀行口座情報の管理</li>
+  </ul>
+
+  <!-- 4. Layout -->
+  <h2>4. 画面レイアウト</h2>
+
+  <!-- INDEX Screenshot -->
+  <h3>4.1 システム設定一覧画面（List View）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_screen.png" alt="System Setting List Screen" />
+    <div class="spec-screenshot-caption">図1. システム設定一覧画面</div>
+  </div>
+
+  <table>
+    <tr><th>設定名</th><th>説明</th></tr>
+    <tr><td>会社情報</td><td>住所・連絡先・請求書情報・会社ロゴを管理</td></tr>
+    <tr><td>銀行口座情報</td><td>Credie の入金・出金に利用する口座情報</td></tr>
+    <tr><td>通知テンプレート</td><td>Email 送信に使うテンプレートを管理</td></tr>
+    <tr><td>業務ルール</td><td>税率など Credie のビジネスルールを管理</td></tr>
+    <tr><td>SMTP 設定</td><td>メール送信用の設定（送信元アカウント）</td></tr>
+  </table>
+
+  <!-- NEW SECTION: Company Info -->
+  <h3>4.2 会社情報設定（Detail UI）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_detail_company_info_screen.png" alt="Company Info Screen" />
+    <div class="spec-screenshot-caption">図2. 会社情報設定画面</div>
+  </div>
+
+  <p>会社情報では、Credie のすべての帳票・請求書・メールフッターに使用される基本情報を管理します。</p>
+
+  <table>
+    <tr><th>項目</th><th>説明</th></tr>
+    <tr><td>会社名</td><td>Credie の正式名称</td></tr>
+    <tr><td>住所</td><td>請求書に記載される所在地</td></tr>
+    <tr><td>電話番号</td><td>会社の代表連絡先</td></tr>
+    <tr><td>メールアドレス</td><td>公式問い合わせメール</td></tr>
+    <tr><td>会社ロゴ</td><td>請求書・Partner Portal に表示</td></tr>
+    <tr><td>請求書フッター</td><td>会社説明や免責事項</td></tr>
+  </table>
+
+  <!-- Notification Templates -->
+  <h3>4.3 通知テンプレート（Detail UI）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_detail_mail_screen.png" alt="Notification Template Screen" />
+    <div class="spec-screenshot-caption">図3. 通知テンプレート設定画面</div>
+  </div>
+
+  <ul>
+    <li>Partner portal login email</li>
+    <li>Password reset email</li>
+    <li>Payment failed email</li>
+    <li>Low stock warning email</li>
+    <li>Payment approval request（CEO）</li>
+    <li>Order shipped（Partner向け）</li>
+    <li>PO created</li>
+    <li>Commission payout通知</li>
+  </ul>
+
+  <!-- Rule -->
+  <h3>4.4 業務ルール設定（Detail UI）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_detail_rule_screen.png" alt="Business Rules Screen" />
+    <div class="spec-screenshot-caption">図4. 業務ルール設定画面</div>
+  </div>
+
+  <p>現在必要な設定：消費税率</p>
+
+  <!-- SMTP -->
+  <h3>4.5 SMTP メール設定（Detail UI）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_detail_smtp_screen.png" alt="SMTP Setting Screen" />
+    <div class="spec-screenshot-caption">図5. SMTP 設定画面</div>
+  </div>
+
+  <!-- Bank -->
+  <h3>4.6 銀行口座情報（Detail UI）</h3>
+
+  <div class="spec-screenshot">
+    <img src="system_setting_detail_bankinfo_screen.png" alt="Bank Info Screen" />
+    <div class="spec-screenshot-caption">図6. 銀行口座情報設定画面</div>
+  </div>
+
+  <!-- Confirm -->
+  <h2>5. お客様に確認いただきたい点</h2>
+  <ul>
+    <li>会社情報に必要な項目はすべて揃っていますか？</li>
+    <li>通知テンプレートの種類は十分ですか？</li>
+    <li>税率以外に運用上必要な業務ルールはありませんか？</li>
+    <li>銀行口座情報画面の項目は正確に運用できますか？</li>
+  </ul>
+
+  <!-- Dev Note -->
+  <h2>6. 開発向けメモ（参考）</h2>
+  <ul>
+    <li>全て 1 App 内の複数 Type（Company / Bank / Notification / Rule / SMTP）のレコードで管理</li>
+    <li>通知テンプレートは固定・ユーザー追加不可</li>
+    <li>設定値はミドルウェアがキャッシュして利用</li>
+  </ul>
+
+</div>
+</body>
+</html>

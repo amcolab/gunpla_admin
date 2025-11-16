@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>製造実績画面（Manufacturing Results App）UI画面仕様書</title>
+    <style>
+        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
+        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .list-table th:first-child, .list-table td:first-child { width: 10%; }
+        .detail-table th:first-child { width: 30%; }
+    </style>
+</head>
+<body>
+
+<h1>製造実績画面（Manufacturing Results App）UI画面仕様書</h1>
+
+<hr>
+
+<h2>画面の目的（ビジネス上の役割）</h2>
+<p>
+    本画面は、**製造/ đóng gói**が完了したロット（Lô hàng）の**実績データ（完成品数量、ロット情報）**を記録し、これに基づいて**在庫システム（Logic_Stock/Physical_DB）の調整**を自動的に行うための最重要画面です。
+</p>
+<ul>
+    <li><strong>入庫処理のトリガー:</strong> 完成品の実績数量に基づき、<strong>入庫タスク（入荷タスク）</strong>を生成し、実在庫（Physical_DB）を増加させます。</li>
+    <li><strong>原材料の消費管理:</strong> 完成品数量と**BOM（部品表/Công thức sản xuất）**に基づき、使用された資材・原料（Vật tư tiêu hao）の論理在庫（Logic_Stock）を自動で引き落とします（Trừ lùi tồn kho）。</li>
+    <li><strong>トレーサビリティの確保:</strong> 製造ロット（<code>製造LOT</code>）と、使用された資材のロット（<code>LOT 資材</code>）を紐づけ、製品の追跡可能性を保証します。</li>
+</ul>
+
+<hr>
+
+<h2>利用者ストーリー（User Scenario）</h2>
+<ol>
+    <li><strong>製造/検品担当者:</strong> 製品のロットが完成した後、**レコード追加**ボタンまたは「計画」（Kế hoạch Sản xuất App）から連携されたレコードを開きます。</li>
+    <li><strong>製造/検品担当者:</strong> 詳細画面で、<strong>完成品名</strong>、<strong>製造LOT</strong>、および**数量**（完成数）の実績値を入力します。</li>
+    <li><strong>システム/担当者:</strong> 入力後、<strong>【原材料引落（Trừ lùi tồn kho）】</strong>ボタンを押すか、レコードを<code>Đã ghi nhận</code>ステータスで保存します。これにより、BOMに基づいて使用された資材の論理在庫が自動的に減少します。</li>
+    <li><strong>製造/検品担当者:</strong> 原材料の引落しが完了した後、**【入庫タスク作成】**ボタンを押し、完成品を倉庫の棚へ移動させるための**入庫指示（Task App）**を生成します。</li>
+</ol>
+
+<hr>
+
+<h2>主要機能</h2>
+<ul>
+    <li><strong>製造実績の記録:</strong> 完成品名、製造LOT、完成数量、製造日の正確な記録。</li>
+    <li>**BOMに基づく在庫引落しロジック:** 完成品数量に基づき、資材マスター（BOM）から消費量を計算し、論理在庫（Logic_Stock App）を減算。</li>
+    <li>**入庫タスク生成:** 実績に基づき、実在庫増加のためのタスク（Task App）を生成。</li>
+    <li><strong>フィルタリングと検索:</strong> 製造LOT、完成品名、完了日で実績レコードを迅速に検索・絞り込み。</li>
+</ul>
+
+<hr>
+
+<h2>画面レイアウト</h2>
+
+<h3>4.1 表示項目（List および Detail）</h3>
+
+<h4>一覧画面（List View）主要表示項目 (Screenshot: image_ff1728.png)</h4>
+<table class="list-table">
+    <thead>
+        <tr>
+            <th>項目名</th>
+            <th>説明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>レコード番号</strong></td><td>Kintoneで採番される一意の実績レコードID。</td></tr>
+        <tr><td><strong>完了日 (Ngày hoàn thành)</strong></td><td>生産/ đóng góiが完了した日付。</td></tr>
+        <tr><td><strong>完了品名 (Tên thành phẩm)</strong></td><td>生産された**最終製品の名称**。（例: Rice Silica PREMIUM 500mL）</td></tr>
+        <tr><td><strong>数量 (Số lượng)</strong></td><td>生産された**完成品の数量**。</td></tr>
+        <tr><td><strong>製造LOT</strong></td><td>今回生産されたロットに割り当てられた**固有のLOT番号**。</td></tr>
+        <tr><td><strong>ステータス</strong></td><td>実績記録の現在の状態（例: <code>Chưa hoàn tất</code>, <code>Đã ghi nhận</code>, <code>入庫済</code>）。</td></tr>
+    </tbody>
+</table>
+
+**UI要素・操作 (List View):**
+| 要素名 | 種別 | 説明 |
+| :--- | :--- | :--- |
+| 製造実績 App | 画面タイトル | 製造実績管理アプリケーションの名称。 |
+| 絞り込み | フィルター | 完了品名、完了日、製造LOTで一覧を絞り込む。 |
+| レコード追加 | ボタン | 新しい製造実績レコードを<strong>手動で作成</strong>する。 |
+| アクション... (入荷タスク作成) | ドロップダウンメニュー/ボタン | 選択したレコードに対し、**入庫タスク生成**をトリガーする。 |
+| ページネーション | 表示情報 | <code>1-20 件 / 全 57 件</code> の表示と、ページ送りボタン。 |
+
+<br>
+
+<h4>詳細画面（Detail View）主要表示項目 (Screenshot: image_ff1745.png + Flow Logic)</h4>
+<table class="detail-table">
+    <thead>
+        <tr>
+            <th>項目名/セクション</th>
+            <th>説明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>A. 完成品実績情報（Đầu ra）</strong></td></tr>
+        <tr><td>完了日</td><td>生産完了日。</td></tr>
+        <tr><td>完了品名</td><td>生産された製品名。</td></tr>
+        <tr><td>数量 (完成品)</td><td>**完成品の数量**（実測値）。</td></tr>
+        <tr><td>製造LOT</td><td><strong>製品のロット番号</strong>。（入庫時に使用される）</td></tr>
+        <tr><td>製造年月日</td><td>製造された年月日。</td></tr>
+        <tr><td>賞味期限</td><td>製品の賞味期限。（<code>製造年月日</code>とマスタ情報から自動計算または手動入力）</td></tr>
+        <tr><td>製造担当者</td><td>製造記録を入力した担当者名。</td></tr>
+
+        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>B. 資材/原料 tiêu hao (Đầu vào) - サブテーブル</strong></td></tr>
+        <tr><td>資材名 (Tên vật tư)</td><td>使用された資材・原料の名称。</td></tr>
+        <tr><td>使用数量 (Số lượng sử dụng)</td><td>完成品数量とBOMに基づき計算された**資材の消費量**。（手動修正可能）</td></tr>
+        <tr><td>LOT 資材 (LOT Vật tư)</td><td>消費した**資材のロット番号**。（トレーサビリティに必須）</td></tr>
+        
+        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>C. 在庫・タスク連携ステータス</strong></td></tr>
+        <tr><td>在庫反映状況 (Trừ lùi)</td><td>資材・原料の論理在庫が**減算**されたかどうかの状態。（例: <code>Chưa trừ lùi</code>, <code>Đã trừ lùi</code>, <code>Lỗi BOM</code>）。</td></tr>
+        <tr><td>入庫タスクID</td><td>この実績から生成された**入庫タスクのレコードID**（Task Appへのリンク）。</td></tr>
+        <tr><td>入庫タスク作成ステータス</td><td>入庫タスクが**生成されたか**どうかの状態。（例: <code>未作成</code>, <code>作成完了</code>）。</td></tr>
+    </tbody>
+</table>
+
+**アクションボタン (Detail View):**
+| 要素名 | 担当者 | 役割/業務フロー |
+| :--- | :--- | :--- |
+| **【原材料引落（Trừ lùi tồn kho）】** | 製造/在庫担当者 | 完成品数量に基づき、システムに**資材の論理在庫を減算**させる処理を指示する。 |
+| **【入荷タスク作成】** | 製造/在庫担当者 | <code>製造LOT</code>と<code>数量</code>に基づき、**完成品の入庫指示**（Task App）を生成する。 |
+| **編集** | 製造担当者 | レコードの実績値を入力・修正する。 |
+
+<hr>
+
+<h2>お客様に確認いただきたい点</h2>
+<p>製造実績業務のロジックを確定するため、以下の点についてご意見をお聞かせください。</p>
+<ol>
+    <li>**原材料引落（Trừ lùi tồn kho）のタイミング:**
+        <ul>
+            <li>資材/原料の論理在庫を減算するタイミングは、**【原材料引落】ボタンを押した時**でよろしいでしょうか？（はい/いいえ）</li>
+        </ul>
+    </li>
+    <li>**資材 LOT の入力義務:**
+        <ul>
+            <li>トレーサビリティのため、消費した**全ての資材**（ボトル、キャップ、ラベル、原料など）について、<code>LOT 資材</code>の入力を**義務付ける**（空欄不可）でよろしいでしょうか？（はい/いいえ）</li>
+        </ul>
+    </li>
+    <li>**タスク作成の前提条件:**
+        <ul>
+            <li><strong>【入荷タスク作成】</strong>ボタンは、<code>在庫反映状況</code>が**「Đã trừ lùi」（減算完了）**のレコードに対してのみ実行可能とするロジックでよろしいでしょうか？（はい/いいえ）</li>
+        </ul>
+    </li>
+</ol>
+
+<hr>
+
+<h2>開発向けメモ（内部用）</h2>
+<ul>
+    <li>**BOM連携:** <code>完了品名</code>をキーとして<code>BOM App</code>（別途定義が必要）を参照し、使用資材と単位消費量を読み込む。</li>
+    <li>**【原材料引落】ロジック:** ボタン押下時、Ruby Serverがトリガーされ、BOM情報と<code>数量 (完成品)</code>から計算した消費量を<code>Logic_Stock App</code>の在庫から減算する。減算成功後、<code>在庫反映状況</code>を<code>Đã trừ lùi</code>に更新。</li>
+    <li>**【入荷タスク作成】ロジック:**
+        <ul>
+            <li>実行条件: <code>在庫反映状況</code>が<code>Đã trừ lùi</code>であること。</li>
+            <li>実行内容: <code>Task App</code>に Type=入庫完成品 のレコードを生成。 Task Appへ<code>完了品名</code>、<code>数量 (完成品)</code>、<code>製造LOT</code>を渡す。</li>
+            <li>結果: 成功後、<code>入庫タスク作成ステータス</code>を<code>作成完了</code>に更新。</li>
+        </ul>
+    </li>
+    <li>**権限:** <code>製造LOT</code>, <code>数量 (完成品)</code>, <code>使用数量</code>は製造/検品担当者ロールのみ編集可。</li>
+</ul>
+
+</body>
+</html>

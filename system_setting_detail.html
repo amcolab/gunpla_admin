@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Setting – Edit</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .page-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 28px 36px;
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 6px 24px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      border-left: 4px solid #4c6ef5;
+      padding-left: 8px;
+    }
+
+    .form-row {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    textarea {
+      height: 110px;
+      resize: vertical;
+    }
+
+    .button-row {
+      margin-top: 28px;
+      text-align: right;
+    }
+
+    .btn-save {
+      padding: 9px 18px;
+      background: #4c6ef5;
+      border-radius: 6px;
+      color: white;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      padding: 9px 18px;
+      background: #ccc;
+      border-radius: 6px;
+      color: black;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-container">
+
+    <h1>システム設定 編集 / System Setting Edit</h1>
+
+    <!-- SECTION: Setting Overview -->
+    <div class="section-title">基本情報</div>
+    <div class="form-row">
+      <label>設定カテゴリ</label>
+      <input type="text" value="会社情報" readonly />
+    </div>
+
+    <div class="form-row">
+      <label>説明</label>
+      <input type="text" value="会社名・住所・連絡先などの基本情報" />
+    </div>
+
+    <div class="form-row">
+      <label>ステータス</label>
+      <select>
+        <option value="active">有効</option>
+        <option value="inactive">無効</option>
+      </select>
+    </div>
+
+    <!-- SECTION: Setting Details -->
+    <div class="section-title">設定内容（Details）</div>
+
+    <!-- These fields will change depending on Setting Type -->
+    <!-- 会社情報 example -->
+    <div class="form-row">
+      <label>会社名</label>
+      <input type="text" placeholder="Credie株式会社" />
+    </div>
+
+    <div class="form-row">
+      <label>住所</label>
+      <textarea placeholder="東京都〇〇区〇〇1-1-1"></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>電話番号</label>
+      <input type="text" placeholder="03-0000-0000" />
+    </div>
+
+    <div class="form-row">
+      <label>代表メールアドレス</label>
+      <input type="text" placeholder="contact@credie.com" />
+    </div>
+
+    <!-- END Setting Details -->
+
+
+    <!-- Buttons -->
+    <div class="button-row">
+      <button class="btn-cancel">キャンセル</button>
+      <button class="btn-save">保存する</button>
+    </div>
+
+  </div>
+</body>
+</html>
