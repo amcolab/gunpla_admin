@@ -3,103 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <title>実在庫管理アプリ（Physical Stock App）UI画面仕様書</title>
+    <link rel="stylesheet" href="kintone-common-v2.css" />
     <style>
-        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
-        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f7; }
-        .list-table th:first-child, .list-table td:first-child { width: 10%; }
-        .image-container { text-align: center; margin-top: 15px; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f7;
+        }
+
+        .spec-container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px 32px 32px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+        }
+
+        .spec-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .spec-tag {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3949ab;
+            margin-right: 6px;
+        }
+
+        h1, h2, h3 {
+            margin-top: 1.4em;
+            margin-bottom: 0.6em;
+        }
+
+        h1 {
+            font-size: 22px;
+            border-bottom: 2px solid #e5e5ea;
+            padding-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        h3 {
+            font-size: 16px;
+        }
+
+        p {
+            font-size: 13px;
+            margin: 0.4em 0;
+        }
+
+        ul, ol {
+            font-size: 13px;
+            margin: 0.4em 0 0.8em 1.5em;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f7;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .list-table th:first-child,
+        .list-table td:first-child {
+            width: 10%;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .spec-screenshot-caption {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .spec-container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
-<h1>実在庫管理アプリ（Physical Stock App）UI画面仕様書</h1>
-<p><strong>対象画面:</strong> 実在庫一覧（棚番・ロット別）</p>
-<p><strong>別名:</strong> Lot & Location Master</p>
+<div class="spec-container">
+    <div class="spec-meta">
+        <span class="spec-tag">UI Spec</span>
+        <span class="spec-tag">Physical Stock</span>
+        Version 1.0 / 作成日: ________
+    </div>
 
-<h2>画面の目的（ビジネス上の役割）</h2>
-<p>
-    本アプリは、Credieが保有する**全ての在庫の物理的な所在と数量、およびロット情報**を管理する、**実在庫の唯一の真実の源（Single Source of Truth）**です。
-</p>
-<ul>
-    <li>**ロット別・棚番別管理:** 在庫を Lot（製造ロット）と Location（棚番）の最小単位で管理し、正確な在庫引当（Task App）とトレーサビリティを可能にします。</li>
-    <li>**WMS連携:** Task App（タスク管理）からの完了指示でのみ在庫数が変動し、手動での数量編集は原則禁止とします。</li>
-    <li>**監査とFEFO:** 賞味期限（FEFO: First Expiry, First Out）および監査（Audit）のために、ロット、入庫日、在庫の履歴を保持します。</li>
-</ul>
+    <h1>実在庫管理アプリ（Physical Stock App）UI画面仕様書</h1>
+    <p><strong>対象画面:</strong> 実在庫一覧（棚番・ロット別）</p>
+    <p><strong>別名:</strong> Lot &amp; Location Master</p>
 
-<h2>利用者ストーリー（User Scenario）</h2>
-<ol>
-    <li>**倉庫担当者:** 出荷タスクを処理する際、このアプリを参照して、出荷対象ロット（賞味期限が古いもの）が**どの棚番（ロケーション）**にあるかを特定し、ピッキング（picking）を行います。</li>
-    <li>**監査担当者:** 特定の商品について、現在どの Lot の在庫が、どの倉庫（Gifu）に、どれだけ残っているかを瞬時に把握します。</li>
-    <li>**システム（Task Appから）:** 入荷タスク完了時、このアプリに**新しい在庫レコード**（新しい Lot/Location）を生成するか、既存レコードの**在庫数量**を増加させます。</li>
-</ol>
+    <h2>画面の目的（ビジネス上の役割）</h2>
+    <p>
+        本アプリは、Credieが保有する全ての在庫の物理的な所在と数量、およびロット情報を管理する、実在庫の唯一の真実の源（Single Source of Truth）です。
+    </p>
+    <ul>
+        <li>ロット別・棚番別管理: 在庫を Lot（製造ロット）と Location（棚番）の最小単位で管理し、正確な在庫引当（Task App）とトレーサビリティを可能にします。</li>
+        <li>WMS連携: Task App（タスク管理）からの完了指示でのみ在庫数が変動し、手動での数量編集は原則禁止とします。</li>
+        <li>監査とFEFO: 賞味期限（FEFO: First Expiry, First Out）および監査（Audit）のために、ロット、入庫日、在庫の履歴を保持します。</li>
+    </ul>
 
-<h2>主要機能</h2>
-<ul>
-    <li>商品、ロット番号、棚番をキーとした在庫レコードの一覧表示。</li>
-    <li>ロット番号、棚番、賞味期限による迅速な検索・フィルタリング。</li>
-    <li>Task Appの完了ステータスにのみ連動した、厳格な在庫数量の増減制御。</li>
-    <li>賞味期限（FEFO）に基づくソート機能の提供。</li>
-</ul>
+    <h2>利用者ストーリー（User Scenario）</h2>
+    <ol>
+        <li>倉庫担当者: 出荷タスクを処理する際、このアプリを参照して、出荷対象ロット（賞味期限が古いもの）がどの棚番（ロケーション）にあるかを特定し、ピッキング（picking）を行います。</li>
+        <li>監査担当者: 特定の商品について、現在どの Lot の在庫が、どの倉庫（Gifu）に、どれだけ残っているかを瞬時に把握します。</li>
+        <li>システム（Task Appから）: 入荷タスク完了時、このアプリに新しい在庫レコード（新しい Lot/Location）を生成するか、既存レコードの在庫数量を増加させます。</li>
+    </ol>
 
-<h2>画面レイアウト</h2>
+    <h2>主要機能</h2>
+    <ul>
+        <li>商品、ロット番号、棚番をキーとした在庫レコードの一覧表示。</li>
+        <li>ロット番号、棚番、賞味期限による迅速な検索・フィルタリング。</li>
+        <li>Task Appの完了ステータスにのみ連動した、厳格な在庫数量の増減制御。</li>
+        <li>賞味期限（FEFO）に基づくソート機能の提供。</li>
+    </ul>
 
-<h3>4.1 表示項目（List）</h3>
-<p>本一覧は、同一のロット・棚番に存在する在庫を 1 レコードとして表示します。</p>
-<table class="list-table">
-    <thead>
-        <tr>
-            <th>項目名</th>
-            <th>説明</th>
-            <th>連携元</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td><strong>在庫ID</strong></td><td>Lotと棚番の組み合わせを一意に識別するID。</td><td>システム自動採番</td></tr>
-        <tr><td><strong>商品ID/資材ID</strong></td><td>製品/資材のマスターID。</td><td>商品マスタ</td></tr>
-        <tr><td><strong>商品名</strong></td><td>製品/資材の名称。</td><td>商品マスタ</td></tr>
-        <tr><td><strong>ロット番号</strong></td><td>**当該在庫の製造ロット番号。**（例: 240521K）。</td><td>PO App / 製造実績 App</td></tr>
-        <tr><td><strong>倉庫名</strong></td><td>在庫が保管されている倉庫名。（Gifu固定 - Warehouse Master App ルックアップ）</td><td>Warehouse Master App</td></tr>
-        <tr><td><strong>棚番/ロケーション</strong></td><td>**倉庫内の具体的な保管場所**。（例: A-01-02）</td><td>Warehouse Master App / Task App</td></tr>
-        <tr><td><strong>在庫数量 (実数)</strong></td><td>**当該ロット、当該棚番に存在する物理的な数量。**（Task Appでのみ増減）</td><td>Task App</td></tr>
-        <tr><td><strong>賞味期限</strong></td><td>当該ロットの製品の賞味期限。FEFO管理に使用。</td><td>PO App / 製造実績 App</td></tr>
-        <tr><td><strong>入庫日</strong></td><td>このロットがPhysical Stockに計上された日付。</td><td>Task App / システム</td></tr>
-        <tr><td><strong>梱包形態</strong></td><td>商品の梱包形式。（例: 段ボール、コンテナなど）</td><td>PO App / Master参照</td></tr>
-    </tbody>
-</table>
+    <h2>画面レイアウト</h2>
 
-<h4>UI要素・操作</h4>
-<ul>
-    <li>**画面タイトル:** 実在庫 App (Physical Stock)</li>
-    <li>**検索:** ロット番号、商品名、棚番による検索フィールド。</li>
-    <li>**フィルタリング:** 賞味期限、商品区分によるフィルタリング。</li>
-    <li>**操作:** <code>棚卸</code>（棚卸し）ボタン（将来拡張）、CSVエクスポート。</li>
-</ul>
+    <h3>4.1 表示項目（List）</h3>
+    <p>本一覧は、同一のロット・棚番に存在する在庫を 1 レコードとして表示します。</p>
+    <table class="list-table">
+        <thead>
+            <tr>
+                <th>項目名</th>
+                <th>説明</th>
+                <th>連携元</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>在庫ID</strong></td>
+                <td>Lotと棚番の組み合わせを一意に識別するID。</td>
+                <td>システム自動採番</td>
+            </tr>
+            <tr>
+                <td><strong>商品ID/資材ID</strong></td>
+                <td>製品/資材のマスターID。</td>
+                <td>商品マスタ</td>
+            </tr>
+            <tr>
+                <td><strong>商品名</strong></td>
+                <td>製品/資材の名称。</td>
+                <td>商品マスタ</td>
+            </tr>
+            <tr>
+                <td><strong>ロット番号</strong></td>
+                <td>当該在庫の製造ロット番号。（例: 240521K）。</td>
+                <td>PO App / 製造実績 App</td>
+            </tr>
+            <tr>
+                <td><strong>倉庫名</strong></td>
+                <td>在庫が保管されている倉庫名。（Gifu固定 - Warehouse Master App ルックアップ）</td>
+                <td>Warehouse Master App</td>
+            </tr>
+            <tr>
+                <td><strong>棚番/ロケーション</strong></td>
+                <td>倉庫内の具体的な保管場所。（例: A-01-02）</td>
+                <td>Warehouse Master App / Task App</td>
+            </tr>
+            <tr>
+                <td><strong>在庫数量 (実数)</strong></td>
+                <td>当該ロット、当該棚番に存在する物理的な数量。（Task Appでのみ増減）</td>
+                <td>Task App</td>
+            </tr>
+            <tr>
+                <td><strong>賞味期限</strong></td>
+                <td>当該ロットの製品の賞味期限。FEFO管理に使用。</td>
+                <td>PO App / 製造実績 App</td>
+            </tr>
+            <tr>
+                <td><strong>入庫日</strong></td>
+                <td>このロットがPhysical Stockに計上された日付。</td>
+                <td>Task App / システム</td>
+            </tr>
+            <tr>
+                <td><strong>梱包形態</strong></td>
+                <td>商品の梱包形式。（例: 段ボール、コンテナなど）</td>
+                <td>PO App / Master参照</td>
+            </tr>
+        </tbody>
+    </table>
 
-<h3>4.2 スクリーンショット</h3>
-<div class="image-container">
-    <p>実在庫アプリの画面イメージ</p>
+    <h4>UI要素・操作</h4>
+    <ul>
+        <li>画面タイトル: 実在庫 App (Physical Stock)</li>
+        <li>検索: ロット番号、商品名、棚番による検索フィールド。</li>
+        <li>フィルタリング: 賞味期限、商品区分によるフィルタリング。</li>
+        <li>操作: <code>棚卸</code>（棚卸し）ボタン（将来拡張）、CSVエクスポート。</li>
+    </ul>
+
+    <h3>4.2 スクリーンショット</h3>
+    <div class="image-container">
+        <p>実在庫アプリの画面イメージ</p>
+    </div>
+
+    <h2>お客様に確認いただきたい点</h2>
+    <p>実在庫の管理ロジックに関する重要な確認点です。</p>
+    <ol>
+        <li>
+            在庫移動の制御:
+            <code>在庫数量</code>は、Task Appの完了API以外での手動編集は一切禁止でよろしいでしょうか？（はい/いいえ）
+        </li>
+        <li>
+            棚番（ロケーション）の精度:
+            ロケーション管理は、ロット単位で十分ですか？
+            それとも、より細かい「箱単位」の管理が必要ですか？（ロット単位で十分 / 箱単位も必要）
+        </li>
+        <li>
+            FEFOロジック:
+            出荷時、Task Appは必ず最も賞味期限が古いロットからピッキング指示を行うロジックでよろしいでしょうか？（はい/いいえ）
+        </li>
+    </ol>
+
+    <h2>開発向けメモ（Dev Notes）</h2>
+    <ul>
+        <li>
+            ユニークキー:
+            <code>商品ID</code> + <code>ロット番号</code> + <code>棚番/ロケーション</code>の組み合わせに対してユニーク制約をかける。
+        </li>
+        <li>
+            増減制御:
+            <code>在庫数量</code>フィールドの更新は、Task AppからのWebHook/API経由でのみ許可し、
+            Kintone UIでの直接編集権限はシステム管理者以外から剥奪する。
+        </li>
+        <li>
+            Task App連携:
+            Task Appのレコードが完了した際、このアプリに該当する<code>商品ID</code>、
+            <code>ロット番号</code>、<code>棚番</code>のレコードを検索し、数量を増減させるロジックを実装する。
+        </li>
+    </ul>
 </div>
-<p>
-    
-</p>
-
-<h2>お客様に確認いただきたい点</h2>
-<p>実在庫の管理ロジックに関する重要な確認点です。</p>
-<ol>
-    <li>**在庫移動の制御:** <code>在庫数量</code>は、**Task Appの完了API以外での手動編集は一切禁止**でよろしいでしょうか？（はい/いいえ）</li>
-    <li>**棚番（ロケーション）の精度:** ロケーション管理は、ロット単位で十分ですか？それとも、より細かい「箱単位」の管理が必要ですか？（ロット単位で十分 / 箱単位も必要）</li>
-    <li>**FEFOロジック:** 出荷時、Task Appは必ず**最も賞味期限が古いロット**からピッキング指示を行うロジックでよろしいでしょうか？（はい/いいえ）</li>
-</ol>
-
-<h2>開発向けメモ（Dev Notes）</h2>
-<ul>
-    <li>**ユニークキー:** <code>商品ID</code> + <code>ロット番号</code> + <code>棚番/ロケーション</code>の組み合わせに対してユニーク制約をかける。</li>
-    <li>**増減制御:** <code>在庫数量</code>フィールドの更新は、Task AppからのWebHook/API経由でのみ許可し、Kintone UIでの直接編集権限はシステム管理者以外から剥奪する。</li>
-    <li>**Task App連携:** Task Appのレコードが完了した際、このアプリに該当する<code>商品ID</code>、<code>ロット番号</code>、<code>棚番</code>のレコードを検索し、数量を増減させるロジックを実装する。</li>
-</ul>
 
 </body>
 </html>
