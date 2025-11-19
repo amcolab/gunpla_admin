@@ -3,98 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <title>資材在庫管理アプリ（Material Inventory）UI画面仕様書</title>
+    <link rel="stylesheet" href="kintone-common-v2.css" />
     <style>
-        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
-        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f7; }
-        .list-table th:first-child, .list-table td:first-child { width: 10%; }
-        .image-container { text-align: center; margin-top: 15px; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f7;
+        }
+
+        .spec-container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px 32px 32px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+        }
+
+        .spec-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .spec-tag {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3949ab;
+            margin-right: 6px;
+        }
+
+        h1, h2, h3 {
+            margin-top: 1.4em;
+            margin-bottom: 0.6em;
+        }
+
+        h1 {
+            font-size: 22px;
+            border-bottom: 2px solid #e5e5ea;
+            padding-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        h3 {
+            font-size: 16px;
+        }
+
+        p {
+            font-size: 13px;
+            margin: 0.4em 0;
+        }
+
+        ul, ol {
+            font-size: 13px;
+            margin: 0.4em 0 0.8em 1.5em;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f7;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .list-table th:first-child,
+        .list-table td:first-child {
+            width: 10%;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .spec-screenshot-caption {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .spec-container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
-<h1>資材在庫管理アプリ（Material Inventory Management App）UI画面仕様書</h1>
-<p><strong>対象画面:</strong> 資材在庫一覧</p>
-<p><strong>別名:</strong> 原材料・副資材 在庫ビュー</p>
+<div class="spec-container">
+    <div class="spec-meta">
+        <span class="spec-tag">UI Spec</span>
+        <span class="spec-tag">Material Inventory</span>
+        Version 1.0 / 作成日: ________
+    </div>
 
-<h2>画面の目的（ビジネス上の役割）</h2>
-<p>
-    本アプリは、**製品の製造に必要な原材料、ボトル、キャップなどの副資材**の在庫状況を専門的に管理し、**購買計画（発注）**の意思決定を支援するための画面です。
-</p>
-<ul>
-    <li>**発注管理の起点:** 在庫レベル（<code>現在庫</code>）と<code>発注点</code>を比較し、購買担当者が発注が必要な資材を即座に特定します。</li>
-    <li>**製造計画支援:** 購買担当者や製造担当者が、資材の<code>入庫予定日</code>と<code>入庫予定数</code>を確認し、今後の製造スケジュールを立てる際の基礎情報とします。</li>
-    <li>**論理在庫との連携:** <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>などの数値は、論理在庫アプリ（Logical Stock App）と連携・同期されます。</li>
-</ul>
+    <h1>資材在庫管理アプリ（Material Inventory Management App）UI画面仕様書</h1>
+    <p><strong>対象画面:</strong> 資材在庫一覧</p>
+    <p><strong>別名:</strong> 原材料・副資材 在庫ビュー</p>
 
-<h2>利用者ストーリー（User Scenario）</h2>
-<ol>
-    <li>**購買担当者:** 在庫一覧を確認し、<code>現在庫</code>が<code>発注点</code>を下回っている資材を特定した後、未納品の<code>発注残</code>がないかを確認して、新規の発注（PO Appへのレコード作成）を行う。</li>
-    <li>**製造担当者:** 特定の資材について、いつまでに新しい在庫が入ってくるかを知るため、<code>入庫予定日</code>をチェックし、製造ラインの稼働計画を立てる。</li>
-    <li>**管理者:** <code>発注残</code>と<code>現在庫</code>のバランスをチェックし、過剰な発注や在庫レベルの妥当性を監査する。</li>
-</ol>
+    <h2>画面の目的（ビジネス上の役割）</h2>
+    <p>
+        本アプリは、製品の製造に必要な原材料、ボトル、キャップなどの副資材の在庫状況を専門的に管理し、購買計画（発注）の意思決定を支援するための画面です。
+    </p>
+    <ul>
+        <li>発注管理の起点: 在庫レベル（<code>現在庫</code>）と<code>発注点</code>を比較し、購買担当者が発注が必要な資材を即座に特定します。</li>
+        <li>製造計画支援: 購買担当者や製造担当者が、資材の<code>入庫予定日</code>と<code>入庫予定数</code>を確認し、今後の製造スケジュールを立てる際の基礎情報とします。</li>
+        <li>論理在庫との連携: <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>などの数値は、論理在庫アプリ（Logical Stock App）と連携・同期されます。</li>
+    </ul>
 
-<h2>主要機能</h2>
-<ul>
-    <li>原材料・副資材に特化した在庫一覧表示。</li>
-    <li><code>発注点</code>に基づく在庫アラートの提供。</li>
-    <li>購買発注（PO）情報（入庫予定）の連携表示。</li>
-    <li>資材ID、商品名による迅速な検索・フィルタリング。</li>
-</ul>
+    <h2>利用者ストーリー（User Scenario）</h2>
+    <ol>
+        <li>購買担当者: 在庫一覧を確認し、<code>現在庫</code>が<code>発注点</code>を下回っている資材を特定した後、未納品の<code>発注残</code>がないかを確認して、新規の発注（PO Appへのレコード作成）を行う。</li>
+        <li>製造担当者: 特定の資材について、いつまでに新しい在庫が入ってくるかを知るため、<code>入庫予定日</code>をチェックし、製造ラインの稼働計画を立てる。</li>
+        <li>管理者: <code>発注残</code>と<code>現在庫</code>のバランスをチェックし、過剰な発注や在庫レベルの妥当性を監査する。</li>
+    </ol>
 
-<h2>画面レイアウト</h2>
+    <h2>主要機能</h2>
+    <ul>
+        <li>原材料・副資材に特化した在庫一覧表示。</li>
+        <li><code>発注点</code>に基づく在庫アラートの提供。</li>
+        <li>購買発注（PO）情報（入庫予定）の連携表示。</li>
+        <li>資材ID、商品名による迅速な検索・フィルタリング。</li>
+    </ul>
 
-<h3>4.1 表示項目（List）</h3>
-<p>本一覧は、製品/資材ごとに 1 レコードとして、在庫のステータスを表示します。</p>
-<table class="list-table">
-    <thead>
-        <tr>
-            <th>項目名</th>
-            <th>説明</th>
-            <th>連携元アプリ</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td><strong>商品ID</strong></td><td>資材を識別するためのマスターID。（Product Master Appからのルックアップ）</td><td>商品マスタ</td></tr>
-        <tr><td><strong>商品名</strong></td><td>資材の名称。（例: 乳白 500mL ボトル）</td><td>商品マスタ</td></tr>
-        <tr><td><strong>現在庫</strong></td><td>**現時点のシステム論理在庫数。**</td><td>Logical Stock App</td></tr>
-        <tr><td><strong>発注点</strong></td><td>**PO自動生成のトリガーとなる基準数量。**</td><td>Product Master / Logical Stock App</td></tr>
-        <tr><td><strong>発注残</strong></td><td>**現在発注中**で、未納品のPO（購買発注）の数量合計。</td><td>PO App</td></tr>
-        <tr><td><strong>入庫予定日</strong></td><td>**最も近い次回の納品予定日。**</td><td>PO App (自動計算/集約)</td></tr>
-        <tr><td><strong>入庫予定数</strong></td><td>最も近い納品で入庫予定の数量。</td><td>PO App</td></tr>
-        <tr><td><strong>備考</strong></td><td>資材に関する特記事項やメモ。</td><td>Product Master / PO App</td></tr>
-    </tbody>
-</table>
+    <h2>画面レイアウト</h2>
 
-<h4>UI要素・操作</h4>
-<ul>
-    <li>**画面タイトル:** 資材在庫管理 App (仮称)</li>
-    <li>**検索:** 商品ID、商品名による検索フィールド。</li>
-    <li>**操作:** <code>エクスポート</code> (Export CSV) - 購買計画用。</li>
-</ul>
+    <h3>4.1 表示項目（List）</h3>
+    <p>本一覧は、製品/資材ごとに 1 レコードとして、在庫のステータスを表示します。</p>
+    <table class="list-table">
+        <thead>
+            <tr>
+                <th>項目名</th>
+                <th>説明</th>
+                <th>連携元アプリ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>商品ID</strong></td>
+                <td>資材を識別するためのマスターID。（Product Master Appからのルックアップ）</td>
+                <td>商品マスタ</td>
+            </tr>
+            <tr>
+                <td><strong>商品名</strong></td>
+                <td>資材の名称。（例: 乳白 500mL ボトル）</td>
+                <td>商品マスタ</td>
+            </tr>
+            <tr>
+                <td><strong>現在庫</strong></td>
+                <td>現時点のシステム論理在庫数。</td>
+                <td>Logical Stock App</td>
+            </tr>
+            <tr>
+                <td><strong>発注点</strong></td>
+                <td>PO自動生成のトリガーとなる基準数量。</td>
+                <td>Product Master / Logical Stock App</td>
+            </tr>
+            <tr>
+                <td><strong>発注残</strong></td>
+                <td>現在発注中で、未納品のPO（購買発注）の数量合計。</td>
+                <td>PO App</td>
+            </tr>
+            <tr>
+                <td><strong>入庫予定日</strong></td>
+                <td>最も近い次回の納品予定日。</td>
+                <td>PO App (自動計算/集約)</td>
+            </tr>
+            <tr>
+                <td><strong>入庫予定数</strong></td>
+                <td>最も近い納品で入庫予定の数量。</td>
+                <td>PO App</td>
+            </tr>
+            <tr>
+                <td><strong>備考</strong></td>
+                <td>資材に関する特記事項やメモ。</td>
+                <td>Product Master / PO App</td>
+            </tr>
+        </tbody>
+    </table>
 
-<h3>4.2 スクリーンショット</h3>
-<div class="image-container">
-    <img src="material_inventory_screen.png" alt="資材在庫管理アプリ 一覧画面" />
-    <p class="spec-screenshot-caption">図1. 資材在庫管理アプリ 一覧画面</p>
+    <h4>UI要素・操作</h4>
+    <ul>
+        <li>画面タイトル: 資材在庫管理 App (仮称)</li>
+        <li>検索: 商品ID、商品名による検索フィールド。</li>
+        <li>操作: <code>エクスポート</code> (Export CSV) - 購買計画用。</li>
+    </ul>
+
+    <h3>4.2 スクリーンショット</h3>
+    <div class="image-container">
+        <img src="material_inventory_screen.png" alt="資材在庫管理アプリ 一覧画面" />
+        <p class="spec-screenshot-caption">図1. 資材在庫管理アプリ 一覧画面</p>
+    </div>
+
+    <h2>お客様に確認いただきたい点</h2>
+    <p>購買管理に関する重要な確認点です。</p>
+    <ol>
+        <li>
+            入庫予定日の集約:
+            <code>入庫予定日</code>と<code>入庫予定数</code>は、
+            全ての未完了POの中から最も近い納品日と数量をシステムが自動で集約・表示するロジックでよろしいでしょうか？（はい/いいえ）
+        </li>
+        <li>
+            PO生成トリガー:
+            <code>現在庫</code>が<code>発注点</code>を下回った場合、
+            この画面の情報に基づきPO Appに新規レコードが自動生成されますが、この自動化のトリガーは必要ですか？（はい/いいえ）
+        </li>
+        <li>
+            発注点の設定:
+            <code>発注点</code>の数値は、この画面で手動編集することを許可しますか？（はい/いいえ）
+        </li>
+    </ol>
+
+    <h2>開発向けメモ（Dev Notes）</h2>
+    <ul>
+        <li>
+            データソース:
+            <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>は
+            Logical Stock App および PO Appからのルックアップ/集約によって自動更新される参照情報であること。
+        </li>
+        <li>
+            入庫予定集約ロジック:
+            Ruby Server側で、当該資材に関連するステータスが「待機中」または「発行済み」のPOレコードを検索し、
+            最も近い納品予定日を抽出するロジックを実装する。
+        </li>
+        <li>
+            UI編集制限:
+            <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>は、
+            Kintone UI上での直接編集は禁止し、ソースアプリ側で更新させること。
+        </li>
+    </ul>
 </div>
-
-<h2>お客様に確認いただきたい点</h2>
-<p>購買管理に関する重要な確認点です。</p>
-<ol>
-    <li>**入庫予定日の集約:** <code>入庫予定日</code>と<code>入庫予定数</code>は、**全ての未完了POの中から最も近い納品日と数量**をシステムが自動で集約・表示するロジックでよろしいでしょうか？（はい/いいえ）</li>
-    <li>**PO生成トリガー:** <code>現在庫</code>が<code>発注点</code>を下回った場合、**この画面**の情報に基づきPO Appに新規レコードが自動生成されますが、この自動化のトリガーは必要ですか？（はい/いいえ）</li>
-    <li>**発注点の設定:** <code>発注点</code>の数値は、この画面で手動編集することを許可しますか？（はい/いいえ）</li>
-</ol>
-
-<h2>開発向けメモ（Dev Notes）</h2>
-<ul>
-    <li>**データソース:** <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>は Logical Stock App および PO Appからの**ルックアップ/集約**によって自動更新される参照情報であること。</li>
-    <li>**入庫予定集約ロジック:** Ruby Server側で、当該資材に関連する**ステータスが「待機中」または「発行済み」のPOレコード**を検索し、最も近い納品予定日を抽出するロジックを実装する。</li>
-    <li>**UI編集制限:** <code>現在庫</code>、<code>発注点</code>、<code>発注残</code>は、Kintone UI上での直接編集は禁止し、ソースアプリ側で更新させること。</li>
-</ul>
 
 </body>
 </html>
