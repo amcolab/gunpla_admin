@@ -1,102 +1,248 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>在庫移動履歴アプリ（Stock Movement History）UI画面仕様書</title>
-    <style>
-        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
-        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f7; }
-        .list-table th:first-child, .list-table td:first-child { width: 10%; }
-        .image-container { text-align: center; margin-top: 15px; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification - 在庫移動履歴アプリ（Stock Movement History）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    h4 {
+      font-size: 14px;
+    }
+
+    p {
+      line-height: 1.6;
+      margin: 0.4em 0;
+      font-size: 13px;
+    }
+
+    ul, ol {
+      font-size: 13px;
+      margin: 0.4em 0 0.8em 1.5em;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .list-table th:first-child,
+    .list-table td:first-child {
+      width: 10%;
+    }
+
+    .image-container {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="spec-container">
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Stock Movement</span>
+      Version 1.0 / 作成日: ________
+    </div>
 
-<h1>在庫移動履歴アプリ（Stock Movement History App）UI画面仕様書</h1>
-<p><strong>対象画面:</strong> 在庫移動履歴 一覧</p>
-<p><strong>別名:</strong> 監査ログ (Audit Log) App</p>
+    <h1>在庫移動履歴アプリ（Stock Movement History App）UI画面仕様書</h1>
+    <p><strong>対象画面:</strong> 在庫移動履歴 一覧</p>
+    <p><strong>別名:</strong> 監査ログ (Audit Log) App</p>
 
-<h2>画面の目的（ビジネス上の役割）</h2>
-<p>
-    本アプリは、**実在庫（Physical Stock）の増減およびロケーション変更**に関する全てのトランザクションを**時系列で記録する監査ログ**（Audit Trail）です。
-</p>
-<ul>
-    <li>**在庫追跡（トレーサビリティ）:** 特定の商品・ロットが、いつ、どこから、どこへ、なぜ移動したかを完全に追跡できるようにします。</li>
-    <li>**差異分析の基盤:** 在庫の差異（棚卸差異）が発生した際、どのトランザクションが原因かを特定するための基礎データを提供します。</li>
-    <li>**監査証跡:** 全ての在庫増減が**タスク（Task App）**を通じて発生していることを証明する記録です。</li>
-</ul>
+    <h2>画面の目的（ビジネス上の役割）</h2>
+    <p>
+        本アプリは、実在庫（Physical Stock）の増減およびロケーション変更に関する全てのトランザクションを時系列で記録する監査ログ（Audit Trail）です。
+    </p>
+    <ul>
+        <li>在庫追跡（トレーサビリティ）: 特定の商品・ロットが、いつ、どこから、どこへ、なぜ移動したかを完全に追跡できるようにします。</li>
+        <li>差異分析の基盤: 在庫の差異（棚卸差異）が発生した際、どのトランザクションが原因かを特定するための基礎データを提供します。</li>
+        <li>監査証跡: 全ての在庫増減がタスク（Task App）を通じて発生していることを証明する記録です。</li>
+    </ul>
 
-<h2>利用者ストーリー（User Scenario）</h2>
-<ol>
-    <li>**経理/監査担当者:** 特定の期間における特定ロットの**入庫トランザクション**や、**棚卸調整**のトランザクションのみをフィルタし、在庫計上の正当性を確認したい。</li>
-    <li>**運用担当者:** ある Lot の在庫が突然減っていることに気づいた場合、このアプリでそのLotを検索し、**最終的な移動元（移動元/倉庫）**と**タスクID**を追跡して、原因を究明する。</li>
-    <li>**システム（Task Appから）:** Task Appでタスクが「完了」になった際、Ruby Serverがこのアプリに**新しい移動履歴レコードを自動生成**します。</li>
-</ol>
+    <h2>利用者ストーリー（User Scenario）</h2>
+    <ol>
+        <li>経理/監査担当者: 特定の期間における特定ロットの入庫トランザクションや、棚卸調整のトランザクションのみをフィルタし、在庫計上の正当性を確認したい。</li>
+        <li>運用担当者: ある Lot の在庫が突然減っていることに気づいた場合、このアプリでそのLotを検索し、最終的な移動元（移動元/倉庫）とタスクIDを追跡して、原因を究明する。</li>
+        <li>システム（Task Appから）: Task Appでタスクが「完了」になった際、Ruby Serverがこのアプリに新しい移動履歴レコードを自動生成します。</li>
+    </ol>
 
-<h2>主要機能</h2>
-<ul>
-    <li>在庫移動トランザクションの一覧表示、検索、フィルタリング。</li>
-    <li><code>移動種別</code>、<code>ロット</code>、<code>タスクID</code>に基づく迅速なデータ検索。</li>
-    <li><code>タスクID</code>を通じた Task App（作業指示）へのドリルダウンリンクの提供。</li>
-    <li>在庫監査・障害分析用のCSVエクスポート機能。</li>
-</ul>
+    <h2>主要機能</h2>
+    <ul>
+        <li>在庫移動トランザクションの一覧表示、検索、フィルタリング。</li>
+        <li><code>移動種別</code>、<code>ロット</code>、<code>タスクID</code>に基づく迅速なデータ検索。</li>
+        <li><code>タスクID</code>を通じた Task App（作業指示）へのドリルダウンリンクの提供。</li>
+        <li>在庫監査・障害分析用のCSVエクスポート機能。</li>
+    </ul>
 
-<h2>画面レイアウト</h2>
+    <h2>画面レイアウト</h2>
 
-<h3>4.1 表示項目（List）</h3>
-<p>本一覧は、実在庫の増減が発生するたびに 1 レコードとして、その履歴を記録します。</p>
-<table class="list-table">
-    <thead>
-        <tr>
-            <th>項目名</th>
-            <th>説明</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td><strong>移動ID</strong></td><td>在庫移動トランザクションを一意に識別するID。</td></tr>
-        <tr><td><strong>移動種別</strong></td><td>移動の目的。主な値：<code>入荷</code> (入庫), <code>出荷</code> (出庫), <code>棚移動</code> (ロケーション変更), <code>棚卸調整</code> (監査調整), <code>返品入庫</code>。</td></tr>
-        <tr><td><strong>移動日時</strong></td><td>移動トランザクションが発生した正確な日時。（Task Appの完了日時と一致）</td></tr>
-        <tr><td><strong>商品名</strong></td><td>移動対象となった製品/資材の名称。</td></tr>
-        <tr><td><strong>ロット</strong></td><td>移動対象の在庫ロット番号。</td></tr>
-        <tr><td><strong>数量</strong></td><td>移動した数量。（入庫時はプラス、出庫時はマイナスで表示）</td></tr>
-        <tr><td><strong>移動元/倉庫</strong></td><td>移動前のロケーション、または入庫時の**ソース倉庫**名。（例: <code>Gifu</code> / <code>Manufacture</code>）</td></tr>
-        <tr><td><strong>移動先/ロケーション</strong></td><td>移動後の棚番/ロケーション、または出庫時の**ディスティネーション**。（例: A-01-02 / <code>お客様</code>）</td></tr>
-        <tr><td><strong>タスクID</strong></td><td>当該移動をトリガーしたTask AppのレコードID。クリックでTask App詳細へ遷移。</td></tr>
-        <tr><td><strong>担当者</strong></td><td>当該作業を実行した担当者（Task Appから連携）。</td></tr>
-    </tbody>
-</table>
+    <h3>4.1 表示項目（List）</h3>
+    <p>本一覧は、実在庫の増減が発生するたびに 1 レコードとして、その履歴を記録します。</p>
+    <table class="list-table">
+        <thead>
+            <tr>
+                <th>項目名</th>
+                <th>説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>移動ID</strong></td><td>在庫移動トランザクションを一意に識別するID。</td></tr>
+            <tr><td><strong>移動種別</strong></td><td>移動の目的。主な値：<code>入荷</code> (入庫), <code>出荷</code> (出庫), <code>棚移動</code> (ロケーション変更), <code>棚卸調整</code> (監査調整), <code>返品入庫</code>。</td></tr>
+            <tr><td><strong>移動日時</strong></td><td>移動トランザクションが発生した正確な日時。（Task Appの完了日時と一致）</td></tr>
+            <tr><td><strong>商品名</strong></td><td>移動対象となった製品/資材の名称。</td></tr>
+            <tr><td><strong>ロット</strong></td><td>移動対象の在庫ロット番号。</td></tr>
+            <tr><td><strong>数量</strong></td><td>移動した数量。（入庫時はプラス、出庫時はマイナスで表示）</td></tr>
+            <tr><td><strong>移動元/倉庫</strong></td><td>移動前のロケーション、または入庫時のソース倉庫名。（例: <code>Gifu</code> / <code>Manufacture</code>）</td></tr>
+            <tr><td><strong>移動先/ロケーション</strong></td><td>移動後の棚番/ロケーション、または出庫時のディスティネーション。（例: A-01-02 / <code>お客様</code>）</td></tr>
+            <tr><td><strong>タスクID</strong></td><td>当該移動をトリガーしたTask AppのレコードID。クリックでTask App詳細へ遷移。</td></tr>
+            <tr><td><strong>担当者</strong></td><td>当該作業を実行した担当者（Task Appから連携）。</td></tr>
+        </tbody>
+    </table>
 
-<h4>UI要素・操作</h4>
-<ul>
-    <li>**画面タイトル:** 在庫移動履歴 App (仮称)</li>
-    <li>**検索:** 移動種別、日付、ロット、タスクIDによるフィルタリング。</li>
-    <li>**操作:** <code>エクスポート</code> (Export CSV) - 監査レポート作成に必須。</li>
-</ul>
+    <h4>UI要素・操作</h4>
+    <ul>
+        <li>画面タイトル: 在庫移動履歴 App (仮称)</li>
+        <li>検索: 移動種別、日付、ロット、タスクIDによるフィルタリング。</li>
+        <li>操作: <code>エクスポート</code> (Export CSV) - 監査レポート作成に必須。</li>
+    </ul>
 
-<h3>4.2 スクリーンショット</h3>
-<div class="image-container">
-    <img src="stock_movement_history_screen.png" alt="在庫移動履歴アプリ 一覧画面" />
-    <p class="spec-screenshot-caption">図1. 在庫移動履歴アプリ 一覧画面</p>
-</div>
+    <h3>4.2 スクリーンショット</h3>
+    <div class="image-container">
+        <img src="stock_movement_history_screen.png" alt="在庫移動履歴アプリ 一覧画面" />
+        <p class="spec-screenshot-caption">図1. 在庫移動履歴アプリ 一覧画面</p>
+    </div>
 
-<h2>お客様に確認いただきたい点</h2>
-<p>移動履歴の管理ロジックに関する重要な確認点です。</p>
-<ol>
-    <li>**レコード生成のソース:** このアプリのレコードは、**Task Appが「完了」になった時のみ**自動生成される仕様でよろしいでしょうか？（手動でのレコード追加は禁止）（はい/いいえ）</li>
-    <li>**数量表示:** <code>数量</code>は、入庫時はプラス（+）、出庫時はマイナス（-）で記録する仕様でよろしいでしょうか？（はい/いいえ）</li>
-    <li>**棚卸調整の種別:** <code>移動種別</code>に「棚卸調整（プラス）」と「棚卸調整（マイナス）」のように、**調整の方向**を分けて記録する必要がありますか？（はい/いいえ）</li>
-</ol>
+    <h2>お客様に確認いただきたい点</h2>
+    <p>移動履歴の管理ロジックに関する重要な確認点です。</p>
+    <ol>
+        <li>
+          レコード生成のソース:
+          このアプリのレコードは、Task Appが「完了」になった時のみ自動生成される仕様でよろしいでしょうか？（手動でのレコード追加は禁止）（はい/いいえ）
+        </li>
+        <li>
+          数量表示:
+          <code>数量</code>は、入庫時はプラス（+）、出庫時はマイナス（-）で記録する仕様でよろしいでしょうか？（はい/いいえ）
+        </li>
+        <li>
+          棚卸調整の種別:
+          <code>移動種別</code>に「棚卸調整（プラス）」と「棚卸調整（マイナス）」のように、調整の方向を分けて記録する必要がありますか？（はい/いいえ）
+        </li>
+    </ol>
 
-<h2>開発向けメモ（Dev Notes）</h2>
-<ul>
-    <li>**生成トリガー:** Task AppからのWebhook/APIコールにより、Task Appの完了時に自動生成される。</li>
-    <li>**データ連携:** Task Appのレコード（タスク種別、数量、担当者、タスクID）および Physical Stock App（ロット、入庫日）から必要なデータを集約し、レコードを作成する。</li>
-    <li>**ユニークキー:** <code>移動ID</code>は、プレフィックス+日付+連番で自動採番し、ユニーク性を確保する。</li>
-    <li>**監査:** <code>数量</code>フィールドは編集不可とする（監査証跡のため）。</li>
-</ul>
+    <h2>開発向けメモ（Dev Notes）</h2>
+    <ul>
+        <li>
+          生成トリガー:
+          Task AppからのWebhook/APIコールにより、Task Appの完了時に自動生成される。
+        </li>
+        <li>
+          データ連携:
+          Task Appのレコード（タスク種別、数量、担当者、タスクID）および Physical Stock App（ロット、入庫日）から必要なデータを集約し、レコードを作成する。
+        </li>
+        <li>
+          ユニークキー:
+          <code>移動ID</code>は、プレフィックス+日付+連番で自動採番し、ユニーク性を確保する。
+        </li>
+        <li>
+          監査:
+          <code>数量</code>フィールドは編集不可とする（監査証跡のため）。
+        </li>
+    </ul>
 
+  </div>
 </body>
 </html>
