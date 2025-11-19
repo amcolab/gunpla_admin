@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>タスク管理アプリ（Task Management）UI画面仕様書</title>
+    <style>
+        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
+        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f7; }
+        .list-table th:first-child, .list-table td:first-child { width: 10%; }
+        .image-container { text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>タスク管理アプリ（Task Management App）UI画面仕様書</h1>
+<p><strong>対象画面:</strong> タスク一覧（出荷・入荷・製造入庫）</p>
+<p><strong>別名:</strong> WMSタスクハブ</p>
+
+<h2>画面の目的（ビジネス上の役割）</h2>
+<p>
+    本画面は、**倉庫作業の指示書（タスク）**を一元管理し、Orders AppやPO Appで発生した業務を**実在庫（Physical Stock）へ反映させる**ためのハブとして機能します。
+</p>
+<ul>
+    <li>**作業指示の集約:** 受注、購買、製造の各プロセスから必要な倉庫作業（出荷/入荷）をタスク化し、倉庫担当者へ指示を伝達します。</li>
+    <li>**実在庫連動:** タスクの完了をもって、Task Appと連携しているWarehouse UI（React App）が**Physical Stock App（実在庫）**の数量を増減させるトリガーとなります。</li>
+    <li>**進捗管理:** 各タスクが現在どの状態にあるか（待機中、実行中、完了）を追跡します。</li>
+</ul>
+
+<h2>利用者ストーリー（User Scenario）</h2>
+<ol>
+    <li>**システム（Orders App/PO Appから）:** Orders Appで論理在庫引当が完了、またはPO Appで納品が完了したタイミングで、本アプリに**タスクレコードが自動生成**されます。（タスク種別: 出荷、入荷など）</li>
+    <li>**運用担当者:** タスク一覧画面を開き、<code>タスク種別</code>と<code>ステータス</code>でフィルタし、今日中に処理すべき**未完了の出荷タスク**や、**入荷タスク**を特定します。</li>
+    <li>**倉庫担当者:** Warehouse UI（React UI）からタスクIDを参照し、商品のピッキング（出荷）や検品・棚入れ（入荷）の作業を行います。</li>
+    <li>**システム（Warehouse UIから）:** 倉庫作業者がWarehouse UIで作業完了をスキャンした場合、本アプリのタスクの<code>ステータス</code>が**「完了」**へ自動更新され、実在庫に反映されます。</li>
+</ol>
+
+<h2>主要機能</h2>
+<ul>
+    <li>タスクの自動生成およびステータス管理（待機中、実行中、完了、エラー）。</li>
+    <li>タスク種別（出荷、入荷、棚卸など）によるフィルタリング。</li>
+    <li>関連するOrders App, PO Appへのドリルダウンリンクの提供。</li>
+    <li>各タスクの担当者、期限、対象倉庫の管理。</li>
+</ul>
+
+<h2>画面レイアウト</h2>
+
+<h3>4.1 表示項目（List）</h3>
+<p>本一覧は、倉庫作業の指示を 1 行 1 レコードで表示します。</p>
+<table class="list-table">
+    <thead>
+        <tr>
+            <th>項目名</th>
+            <th>説明</th>
+            <th>連携元</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>タスクID</strong></td><td>作業指示を一意に識別するためのID。（例: TASK-20251120-001）</td><td>システム自動採番</td></tr>
+        <tr><td><strong>タスク種別</strong></td><td>作業の種類。主な値：<code>出荷</code>, <code>入荷</code>, <code>製造入庫</code>。</td><td>Orders App / PO App / 製造実績 App</td></tr>
+        <tr><td><strong>ステータス</strong></td><td>タスクの進捗状況。主な値：<code>待機中</code>, <code>実行中</code>, <code>完了</code>, <code>エラー</code>。</td><td>Warehouse UI / システム連携</td></tr>
+        <tr><td><strong>対象商品</strong></td><td>作業対象となる製品/資材の名称。</td><td>Product Master / Orders App / PO App</td></tr>
+        <tr><td><strong>数量</strong></td><td>作業対象となる数量（出荷数、入荷数）。</td><td>Orders App / PO App / 製造実績 App</td></tr>
+        <tr><td><strong>倉庫</strong></td><td>作業を行う倉庫名。（例: Gifu）</td><td>Warehouse Master App</td></tr>
+        <tr><td><strong>発注元/注文元</strong></td><td>タスクを生成した元のレコードID。（例: PO-105, ORD-5001）。リンクで元のアプリへ遷移可能。</td><td>Orders App / PO App / 製造実績 App</td></tr>
+        <tr><td><strong>担当者</strong></td><td>当該タスクに割り当てられた作業担当者名。</td><td>システム / 運用担当者</td></tr>
+        <tr><td><strong>期限</strong></td><td>当該作業の推奨完了日時/期限。</td><td>運用ルール</td></tr>
+    </tbody>
+</table>
+
+<h4>UI要素・操作</h4>
+<ul>
+    <li>**画面タイトル:** タスク管理 App (仮称)</li>
+    <li>**検索/絞り込み:** タスク種別、ステータス、商品名、タスクIDによるフィルタリング。</li>
+    <li>**ボタン:** レコード追加 (Add Record), ファイル読み込み (Import CSV), エクスポート (Export CSV)。</li>
+</ul>
+
+<h3>4.2 スクリーンショット</h3>
+<div class="image-container">
+    <img src="task_screen.png" alt="タスク管理アプリ 一覧画面" />
+    <p class="spec-screenshot-caption">図1. タスク管理アプリ 一覧画面</p>
+</div>
+
+<h2>お客様に確認いただきたい点</h2>
+<p>タスク管理のロジックに関する重要な確認点です。</p>
+<ol>
+    <li>**タスクの発生源:** 現状の想定では、タスクは Orders App（出荷）、PO App（入荷）、Manufacturing App（製造入庫）の3つが主な発生源でよろしいでしょうか？（はい/いいえ）</li>
+    <li>**実在庫反映のタイミング:** <code>ステータス</code>が「完了」になった時点で、**Physical Stock App**（実在庫）への数量の増減が自動的に行われるロジックでよろしいでしょうか？（はい/いいえ）</li>
+    <li>**担当者割り当て:** <code>担当者</code>（作業者）は、タスク生成時に自動で割り当てますか、それとも倉庫担当者が手動でタスクを選択・割り当てますか？（自動割り当て / 手動選択）</li>
+</ol>
+
+<h2>開発向けメモ（Dev Notes）</h2>
+<ul>
+    <li>**タスク生成のトリガー:** Ruby ServerからのAPIコールにより自動生成されることを前提とする。</li>
+    <li>**在庫反映ロジック:** <code>ステータス</code>を「完了」に更新するAPIコールは、Warehouse UI側から発行されること。このコールを受け取った際に、Task AppとPhysical Stock Appのトランザクションを確保する。</li>
+    <li>**ユニークキー:** <code>タスクID</code>をユニークキーとし、<code>発注元/注文元</code>IDとの紐づけを厳密に行う。</li>
+    <li>**倉庫との連携:** <code>倉庫</code>はWarehouse Master App（Gifu）からのLookupとして、将来の複数倉庫運用に備える。</li>
+</ul>
+
+</body>
+</html>

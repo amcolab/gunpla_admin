@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>倉庫スキャンインターフェース（Warehouse UI）UI画面仕様書</title>
+    <style>
+        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
+        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f7; }
+        .list-table th:first-child, .list-table td:first-child { width: 30%; }
+        .image-container { text-align: center; margin-top: 15px; }
+        .image-container img { max-width: 80%; border: 1px solid #ddd; }
+        .mobile-layout { border: 1px solid #333; border-radius: 10px; padding: 20px; background-color: #f9f9f9; width: 400px; margin: 20px auto; }
+    </style>
+</head>
+<body>
+
+<h1>倉庫スキャンインターフェース（Warehouse UI / WMS）UI画面仕様書</h1>
+<p><strong>対象画面:</strong> タスク実行画面（ピッキング、入荷、棚移動）</p>
+<p><strong>想定利用者:</strong> 倉庫作業員（現場担当者）</p>
+
+<h2>画面の目的（ビジネス上の役割）</h2>
+<p>
+    本画面は、Task App（タスク管理）で生成された作業指示を、**現場で正確かつ効率的に実行・検証する**ためのモバイル対応インターフェースです。
+</p>
+<ul>
+    <li>**デジタルチェック:** 現場での物理的な作業（ピッキング、検品）をバーコードスキャンで検証し、ミスを防止します。</li>
+    <li>**実在庫更新のトリガー:** 作業完了後、Task Appのステータスを「完了」に更新し、Physical Stock Appへの**在庫増減をトリガー**します。</li>
+    <li>**ロット・ロケーションの記録:** どのロットを、どの棚から、どれだけ移動したかを正確に記録します。</li>
+</ul>
+
+<h2>利用者ストーリー（User Scenario）</h2>
+<ol>
+    <li>**倉庫作業員:** タスク一覧（Warehouse UIのホーム画面）から、割り当てられたタスクIDを選択し、本画面に遷移する。</li>
+    <li>**倉庫作業員:** 画面の指示（「棚コードをスキャンしてください」）に従い、商品の保管場所（棚）のバーコードをスキャンする。</li>
+    <li>**倉庫作業員:** 次に商品の**バーコード/ロット**をスキャンし、ピッキング/検品した**数量**を入力・確認する。</li>
+    <li>**倉庫作業員:** 全ての指示が完了したら、**【完了】**ボタンを押して、作業の終了と実在庫の更新をシステムに報告する。</li>
+</ol>
+
+<h2>主要機能</h2>
+<ul>
+    <li>Task Appの指示内容に基づいたスキャン項目の表示と検証。</li>
+    <li>棚コード、バーコード、数量の手入力およびスキャン入力の受け付け。</li>
+    <li>バーコード/ロット情報とTask Appの指示内容のリアルタイム照合。</li>
+    <li>作業完了時のTask Appへのステータス更新APIコール。</li>
+</ul>
+
+<h2>画面レイアウト</h2>
+
+<h3>4.1 表示項目（Detail / Execution Interface）</h3>
+<p>本画面は、モバイルでの操作を前提とした、縦長のインターフェースです。</p>
+<table class="list-table">
+    <thead>
+        <tr>
+            <th>項目名</th>
+            <th>説明 / 連携ロジック</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>**指示情報** (表示エリア)</td><td>Task Appから取得した現在の作業指示（タスクID、商品名、指示数量など）を表示。</td></tr>
+        <tr><td>**スキャン項目** (表示プロンプト)</td><td>次に作業員が行うべきアクション（例: 「棚コードをスキャンしてください」）を指示。</td></tr>
+        <tr><td>**棚コード**</td><td>**入力フィールド:** 商品の保管場所（棚）のコードをスキャンまたは入力。システムはTask Appの指示と照合する。</td></tr>
+        <tr><td>**バーコード**</td><td>**入力フィールド:** 製品/資材のバーコードまたはロット番号をスキャンまたは入力。</td></tr>
+        <tr><td>**数量**</td><td>**入力フィールド:** 実際に出荷/入荷/移動する数量（手入力）。</td></tr>
+        <tr><td><strong>備考 / エラー表示</strong></td><td>スキャン失敗時や数量超過時などにエラーメッセージを表示する領域。</td></tr>
+        <tr><td>**【完了】**</td><td>**ボタン:** 全てのステップが完了し、システムに在庫更新を要求するメインアクション。</td></tr>
+        <tr><td>**【戻る】/【スキップ】**</td><td>**ボタン:** 処理を中断/前のステップに戻る、またはマルチアイテムタスクで現在のステップをスキップする（権限が必要）。</td></tr>
+    </tbody>
+</table>
+
+<h3>4.2 スクリーンショット</h3>
+<div class="image-container">
+    <img src="warehouse_scan_.png" alt="倉庫スキャンインターフェース実行画面" />
+    <p class="spec-screenshot-caption">図1. 倉庫スキャンインターフェース実行画面</p>
+</div>
+
+<h2>お客様に確認いただきたい点</h2>
+<p>現場作業に関する重要な確認点です。</p>
+<ol>
+    <li>**ロット検証の厳格性:** 出荷タスクにおいて、スキャンされたロットが**Task Appが指示するロット**と完全に一致しない場合、エラーとして処理を中断しますか？（はい/いいえ）</li>
+    <li>**数量入力の上限:** 作業員が<code>数量</code>を入力する際、Task Appの指示数量を超える値を入力した場合、警告またはエラーとして処理をロックしますか？（エラーとしてロックする / 警告を出すが続行は可能）</li>
+    <li>**端末環境:** 本UIは、専用のバーコードリーダー付き端末（Android/iOS）での動作を前提としますか？（はい/いいえ）</li>
+</ol>
+
+<h2>開発向けメモ（Dev Notes）</h2>
+<ul>
+    <li>**Task App連携:** 【完了】ボタン押下時、Ruby ServerのAPIをコールし、Task Appのステータスを「完了」に、同時にPhysical Stock Appの在庫を増減させる処理を一連のトランザクションとして実行する。</li>
+    <li>**スキャンバリデーション:** 棚コード、バーコード、ロット番号の検証は全て、Task Appのレコード詳細情報と照合してリアルタイムに行う。</li>
+    <li>**エラーハンドリング:** 連続スキャンや大量入力に対応するため、エラーメッセージは簡潔に、かつ画面上部に大きく表示する。</li>
+</ul>
+
+</body>
+</html>
