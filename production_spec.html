@@ -1,163 +1,453 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>製造実績画面（Manufacturing Results App）UI画面仕様書</title>
-    <style>
-        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
-        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .list-table th:first-child, .list-table td:first-child { width: 10%; }
-        .detail-table th:first-child { width: 30%; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 製造実績アプリ（Production App）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      margin: 0.4em 0 0.8em 1.4em;
+    }
+
+    ol {
+      margin: 0.4em 0 0.8em 1.6em;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="spec-container">
 
-<h1>製造実績画面（Manufacturing Results App）UI画面仕様書</h1>
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Production App</span>
+      Version 1.0 / 作成日: ________
+    </div>
 
-<hr>
+    <h1>UI Screen Specification – 製造実績アプリ（Production / Manufacturing Results App）</h1>
+    <p><strong>対象画面:</strong> 製造実績一覧 / 製造実績詳細</p>
+    <p><strong>想定利用者:</strong> 製造担当、現場リーダー、在庫管理担当（Credie 内部ユーザー）</p>
 
-<h2>画面の目的（ビジネス上の役割）</h2>
-<p>
-    本画面は、**製造/ đóng gói**が完了したロット（Lô hàng）の**実績データ（完成品数量、ロット情報）**を記録し、これに基づいて**在庫システム（Logic_Stock/Physical_DB）の調整**を自動的に行うための最重要画面です。
-</p>
-<ul>
-    <li><strong>入庫処理のトリガー:</strong> 完成品の実績数量に基づき、<strong>入庫タスク（入荷タスク）</strong>を生成し、実在庫（Physical_DB）を増加させます。</li>
-    <li><strong>原材料の消費管理:</strong> 完成品数量と**BOM（部品表/Công thức sản xuất）**に基づき、使用された資材・原料（Vật tư tiêu hao）の論理在庫（Logic_Stock）を自動で引き落とします（Trừ lùi tồn kho）。</li>
-    <li><strong>トレーサビリティの確保:</strong> 製造ロット（<code>製造LOT</code>）と、使用された資材のロット（<code>LOT 資材</code>）を紐づけ、製品の追跡可能性を保証します。</li>
-</ul>
+    <!-- 1. 画面の目的 -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      製造実績アプリは、製造現場で完成した製品ロットの情報を登録し、
+      在庫・BOM と連携して次の処理を一元的に管理するための中核アプリです。
+    </p>
+    <ul>
+      <li>① 完成品の入庫起点となるデータ登録（Physical Stock への IN のトリガー）</li>
+      <li>② BOM に基づく原材料の自動引落（Logic Stock 減算）の起点</li>
+      <li>③ 完成品ロットと原材料ロットの紐づけによるトレーサビリティ管理</li>
+    </ul>
+    <p>
+      生産現場では「生産完了 → 製造実績登録 → 原材料引落 → 入庫タスク作成」という流れで運用し、
+      在庫管理アプリ（Logic Stock / Physical Stock）および Task App と連携します。
+    </p>
 
-<hr>
+    <!-- 2. User Scenario -->
+    <h2>2. User Scenario（利用者ストーリー）</h2>
 
-<h2>利用者ストーリー（User Scenario）</h2>
-<ol>
-    <li><strong>製造/検品担当者:</strong> 製品のロットが完成した後、**レコード追加**ボタンまたは「計画」（Kế hoạch Sản xuất App）から連携されたレコードを開きます。</li>
-    <li><strong>製造/検品担当者:</strong> 詳細画面で、<strong>完成品名</strong>、<strong>製造LOT</strong>、および**数量**（完成数）の実績値を入力します。</li>
-    <li><strong>システム/担当者:</strong> 入力後、<strong>【原材料引落（Trừ lùi tồn kho）】</strong>ボタンを押すか、レコードを<code>Đã ghi nhận</code>ステータスで保存します。これにより、BOMに基づいて使用された資材の論理在庫が自動的に減少します。</li>
-    <li><strong>製造/検品担当者:</strong> 原材料の引落しが完了した後、**【入庫タスク作成】**ボタンを押し、完成品を倉庫の棚へ移動させるための**入庫指示（Task App）**を生成します。</li>
-</ol>
+    <h3>2.1 製造担当者のフロー</h3>
+    <ol>
+      <li>1日の生産が完了したタイミングで、製造担当者が Production App で<strong>「新規レコード作成」</strong>を実行する。</li>
+      <li>完成した製品の SKU、Lot 番号、完成数量、不良数量などを入力し、レコードを保存する。</li>
+      <li>保存後、システムが BOM を参照し、必要となる原材料の消費数量を自動計算して明細エリアに表示する。</li>
+      <li>担当者は原材料と数量を確認し、問題なければ<strong>「原材料引落」</strong>ボタンを押して論理在庫の減算処理を実行する。</li>
+      <li>原材料引落が正常に完了すると、在庫処理ステータスが更新され、必要に応じて<strong>「入庫タスク作成」</strong>ボタンを押す。</li>
+      <li>入庫タスクは Task App に作成され、倉庫担当が実際の入庫処理（Physical Stock への反映）を行う。</li>
+    </ol>
 
-<hr>
+    <h3>2.2 在庫管理担当のフロー</h3>
+    <ul>
+      <li>Task App の入庫タスク一覧から、Production App で作成された入庫タスクを確認する。</li>
+      <li>実際に倉庫へ入庫し、Task App 側で入庫数量を確定する。</li>
+      <li>入庫タスク完了後、Physical Stock アプリの在庫数量が更新され、その結果は必要に応じて Production App やレポートから参照可能。</li>
+    </ul>
 
-<h2>主要機能</h2>
-<ul>
-    <li><strong>製造実績の記録:</strong> 完成品名、製造LOT、完成数量、製造日の正確な記録。</li>
-    <li>**BOMに基づく在庫引落しロジック:** 完成品数量に基づき、資材マスター（BOM）から消費量を計算し、論理在庫（Logic_Stock App）を減算。</li>
-    <li>**入庫タスク生成:** 実績に基づき、実在庫増加のためのタスク（Task App）を生成。</li>
-    <li><strong>フィルタリングと検索:</strong> 製造LOT、完成品名、完了日で実績レコードを迅速に検索・絞り込み。</li>
-</ul>
+    <!-- 3. 主な機能 / Business Impact -->
+    <h2>3. 主な機能（Main Functions / Business Impacts）</h2>
+    <ul>
+      <li>✔ 製造ロット単位での完成数量・不良数量・完成日などの実績登録</li>
+      <li>✔ BOM マスタ参照による原材料消費量の自動計算と表示</li>
+      <li>✔ 原材料の Logic Stock 減算処理（原材料引落）</li>
+      <li>✔ 完成品を倉庫に入庫するための入庫タスク自動生成（Task App 連携）</li>
+      <li>✔ 完成品ロットと原材料ロットの紐づけによるトレーサビリティ管理</li>
+      <li>✔ 在庫処理ステータスの可視化（未処理 / 原材料引落済 / 入庫タスク作成済 など）</li>
+    </ul>
 
-<hr>
+    <!-- 4. Scope / Out of Scope -->
+    <h2>4. Scope / Out of Scope</h2>
 
-<h2>画面レイアウト</h2>
+    <h3>4.1 Scope</h3>
+    <ul>
+      <li>製造ロット単位の実績登録（SKU、Lot 番号、完成数量、不良数量、完成日、担当者など）</li>
+      <li>BOM マスタとの連携による原材料リスト・使用数量の算出</li>
+      <li>原材料引落（Logic Stock 減算）のトリガー処理</li>
+      <li>入庫タスク作成（Task App へのレコード連携）</li>
+      <li>在庫処理ステータスの管理と表示</li>
+      <li>品質メモ・備考の管理</li>
+    </ul>
 
-<h3>4.1 表示項目（List および Detail）</h3>
+    <h3>4.2 Out of Scope</h3>
+    <ul>
+      <li>製造指示書の発行・ラインスケジュール管理（別システム前提）</li>
+      <li>詳細な品質検査項目の管理（別途 Quality App などで管理する想定がある場合）</li>
+      <li>入庫作業そのもの（実作業および数量入力）は Task App 側の画面で実施</li>
+      <li>原材料の購買・入庫（PO App / Stock App 側で管理）</li>
+    </ul>
 
-<h4>一覧画面（List View）主要表示項目 (Screenshot: image_ff1728.png)</h4>
-<table class="list-table">
-    <thead>
-        <tr>
-            <th>項目名</th>
-            <th>説明</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td><strong>レコード番号</strong></td><td>Kintoneで採番される一意の実績レコードID。</td></tr>
-        <tr><td><strong>完了日 (Ngày hoàn thành)</strong></td><td>生産/ đóng góiが完了した日付。</td></tr>
-        <tr><td><strong>完了品名 (Tên thành phẩm)</strong></td><td>生産された**最終製品の名称**。（例: Rice Silica PREMIUM 500mL）</td></tr>
-        <tr><td><strong>数量 (Số lượng)</strong></td><td>生産された**完成品の数量**。</td></tr>
-        <tr><td><strong>製造LOT</strong></td><td>今回生産されたロットに割り当てられた**固有のLOT番号**。</td></tr>
-        <tr><td><strong>ステータス</strong></td><td>実績記録の現在の状態（例: <code>Chưa hoàn tất</code>, <code>Đã ghi nhận</code>, <code>入庫済</code>）。</td></tr>
-    </tbody>
-</table>
+    <!-- 5. 画面レイアウト -->
+    <h2>5. 画面レイアウト（Screen Layout）</h2>
 
-**UI要素・操作 (List View):**
-| 要素名 | 種別 | 説明 |
-| :--- | :--- | :--- |
-| 製造実績 App | 画面タイトル | 製造実績管理アプリケーションの名称。 |
-| 絞り込み | フィルター | 完了品名、完了日、製造LOTで一覧を絞り込む。 |
-| レコード追加 | ボタン | 新しい製造実績レコードを<strong>手動で作成</strong>する。 |
-| アクション... (入荷タスク作成) | ドロップダウンメニュー/ボタン | 選択したレコードに対し、**入庫タスク生成**をトリガーする。 |
-| ページネーション | 表示情報 | <code>1-20 件 / 全 57 件</code> の表示と、ページ送りボタン。 |
+    <!-- 5.1 一覧画面 -->
+    <h3>5.1 製造実績一覧画面（List View）</h3>
 
-<br>
+    <div class="spec-callout">
+      製造実績レコードを一覧で表示し、製品 SKU / Lot / 完成数量 / 不良率 / 完成日 / 在庫処理状況 を一目で確認できる画面です。
+    </div>
 
-<h4>詳細画面（Detail View）主要表示項目 (Screenshot: image_ff1745.png + Flow Logic)</h4>
-<table class="detail-table">
-    <thead>
-        <tr>
-            <th>項目名/セクション</th>
-            <th>説明</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>A. 完成品実績情報（Đầu ra）</strong></td></tr>
-        <tr><td>完了日</td><td>生産完了日。</td></tr>
-        <tr><td>完了品名</td><td>生産された製品名。</td></tr>
-        <tr><td>数量 (完成品)</td><td>**完成品の数量**（実測値）。</td></tr>
-        <tr><td>製造LOT</td><td><strong>製品のロット番号</strong>。（入庫時に使用される）</td></tr>
-        <tr><td>製造年月日</td><td>製造された年月日。</td></tr>
-        <tr><td>賞味期限</td><td>製品の賞味期限。（<code>製造年月日</code>とマスタ情報から自動計算または手動入力）</td></tr>
-        <tr><td>製造担当者</td><td>製造記録を入力した担当者名。</td></tr>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>製造実績ID</td>
+        <td>Kintone 自動採番の一意 ID。クリックで製造実績詳細画面へ遷移する。</td>
+      </tr>
+      <tr>
+        <td>Lot 番号</td>
+        <td>製造ロット番号。現場で管理しているロット体系に合わせて入力。</td>
+      </tr>
+      <tr>
+        <td>製品 SKU</td>
+        <td>完成した製品の SKU（Product Master 参照）。</td>
+      </tr>
+      <tr>
+        <td>製品名</td>
+        <td>SKU に紐づく製品名。</td>
+      </tr>
+      <tr>
+        <td>完成数量</td>
+        <td>製造された完成品の数量。</td>
+      </tr>
+      <tr>
+        <td>不良数量</td>
+        <td>廃棄・不良となった数量。</td>
+      </tr>
+      <tr>
+        <td>不良率</td>
+        <td>不良数量 ÷ 完成数量。表示のみ（計算ロジックは内部実装）。</td>
+      </tr>
+      <tr>
+        <td>完成日</td>
+        <td>製造完了日。</td>
+      </tr>
+      <tr>
+        <td>在庫処理</td>
+        <td>原材料引落・入庫タスク作成の状況（未処理 / 原材料引落済 / 入庫タスク作成済 など）。</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>詳細ボタン。クリックで詳細画面へ。</td>
+      </tr>
+    </table>
 
-        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>B. 資材/原料 tiêu hao (Đầu vào) - サブテーブル</strong></td></tr>
-        <tr><td>資材名 (Tên vật tư)</td><td>使用された資材・原料の名称。</td></tr>
-        <tr><td>使用数量 (Số lượng sử dụng)</td><td>完成品数量とBOMに基づき計算された**資材の消費量**。（手動修正可能）</td></tr>
-        <tr><td>LOT 資材 (LOT Vật tư)</td><td>消費した**資材のロット番号**。（トレーサビリティに必須）</td></tr>
-        
-        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>C. 在庫・タスク連携ステータス</strong></td></tr>
-        <tr><td>在庫反映状況 (Trừ lùi)</td><td>資材・原料の論理在庫が**減算**されたかどうかの状態。（例: <code>Chưa trừ lùi</code>, <code>Đã trừ lùi</code>, <code>Lỗi BOM</code>）。</td></tr>
-        <tr><td>入庫タスクID</td><td>この実績から生成された**入庫タスクのレコードID**（Task Appへのリンク）。</td></tr>
-        <tr><td>入庫タスク作成ステータス</td><td>入庫タスクが**生成されたか**どうかの状態。（例: <code>未作成</code>, <code>作成完了</code>）。</td></tr>
-    </tbody>
-</table>
+    <h4>5.1.1 一覧画面の主な UI 要素</h4>
+    <ul>
+      <li><strong>「＋ 製造実績を記録」</strong>（新規作成ボタン）</li>
+      <li>絞り込み条件（Lot 番号、SKU、完成日、在庫処理ステータス）</li>
+      <li>標準の並び替え（完成日降順など）</li>
+    </ul>
 
-**アクションボタン (Detail View):**
-| 要素名 | 担当者 | 役割/業務フロー |
-| :--- | :--- | :--- |
-| **【原材料引落（Trừ lùi tồn kho）】** | 製造/在庫担当者 | 完成品数量に基づき、システムに**資材の論理在庫を減算**させる処理を指示する。 |
-| **【入荷タスク作成】** | 製造/在庫担当者 | <code>製造LOT</code>と<code>数量</code>に基づき、**完成品の入庫指示**（Task App）を生成する。 |
-| **編集** | 製造担当者 | レコードの実績値を入力・修正する。 |
+    <h4>5.1.2 スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="production_screen.png" alt="製造実績一覧画面" />
+      <div class="spec-screenshot-caption">図1. 製造実績一覧画面（Production List）</div>
+    </div>
 
-<hr>
+    <!-- 5.2 詳細画面 -->
+    <h3>5.2 製造実績詳細画面（Detail View）</h3>
 
-<h2>お客様に確認いただきたい点</h2>
-<p>製造実績業務のロジックを確定するため、以下の点についてご意見をお聞かせください。</p>
-<ol>
-    <li>**原材料引落（Trừ lùi tồn kho）のタイミング:**
-        <ul>
-            <li>資材/原料の論理在庫を減算するタイミングは、**【原材料引落】ボタンを押した時**でよろしいでしょうか？（はい/いいえ）</li>
-        </ul>
-    </li>
-    <li>**資材 LOT の入力義務:**
-        <ul>
-            <li>トレーサビリティのため、消費した**全ての資材**（ボトル、キャップ、ラベル、原料など）について、<code>LOT 資材</code>の入力を**義務付ける**（空欄不可）でよろしいでしょうか？（はい/いいえ）</li>
-        </ul>
-    </li>
-    <li>**タスク作成の前提条件:**
-        <ul>
-            <li><strong>【入荷タスク作成】</strong>ボタンは、<code>在庫反映状況</code>が**「Đã trừ lùi」（減算完了）**のレコードに対してのみ実行可能とするロジックでよろしいでしょうか？（はい/いいえ）</li>
-        </ul>
-    </li>
-</ol>
+    <div class="spec-callout">
+      個別の製造ロットの詳細情報と、BOM 展開による原材料消費、在庫処理ステータスを確認・操作する画面です。
+      入庫処理そのものは Task App 側で実施し、本画面はその起点と記録を管理します。
+    </div>
 
-<hr>
+    <h4>5.2.1 セクション構成</h4>
+    <ul>
+      <li>A. 製造ロット情報</li>
+      <li>B. 在庫処理ステータス</li>
+      <li>C. 原材料消費（BOM 展開）</li>
+      <li>D. メモ・品質情報</li>
+      <li>E. 操作ボタン</li>
+    </ul>
 
-<h2>開発向けメモ（内部用）</h2>
-<ul>
-    <li>**BOM連携:** <code>完了品名</code>をキーとして<code>BOM App</code>（別途定義が必要）を参照し、使用資材と単位消費量を読み込む。</li>
-    <li>**【原材料引落】ロジック:** ボタン押下時、Ruby Serverがトリガーされ、BOM情報と<code>数量 (完成品)</code>から計算した消費量を<code>Logic_Stock App</code>の在庫から減算する。減算成功後、<code>在庫反映状況</code>を<code>Đã trừ lùi</code>に更新。</li>
-    <li>**【入荷タスク作成】ロジック:**
-        <ul>
-            <li>実行条件: <code>在庫反映状況</code>が<code>Đã trừ lùi</code>であること。</li>
-            <li>実行内容: <code>Task App</code>に Type=入庫完成品 のレコードを生成。 Task Appへ<code>完了品名</code>、<code>数量 (完成品)</code>、<code>製造LOT</code>を渡す。</li>
-            <li>結果: 成功後、<code>入庫タスク作成ステータス</code>を<code>作成完了</code>に更新。</li>
-        </ul>
-    </li>
-    <li>**権限:** <code>製造LOT</code>, <code>数量 (完成品)</code>, <code>使用数量</code>は製造/検品担当者ロールのみ編集可。</li>
-</ul>
+    <!-- A. 製造ロット情報 -->
+    <h4>A. 製造ロット情報</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>製造実績ID</td>
+        <td>自動採番レコード ID。</td>
+      </tr>
+      <tr>
+        <td>完成日</td>
+        <td>製造が完了した日付。</td>
+      </tr>
+      <tr>
+        <td>製品 SKU</td>
+        <td>完成品 SKU。Product Master から選択。</td>
+      </tr>
+      <tr>
+        <td>製品名</td>
+        <td>SKU に紐づく名称。読み取り専用。</td>
+      </tr>
+      <tr>
+        <td>Lot 番号</td>
+        <td>製造ロット番号。自由形式だが現場ルールに従う。</td>
+      </tr>
+      <tr>
+        <td>完成数量</td>
+        <td>完成した良品数量。入庫タスク作成時に使用される。</td>
+      </tr>
+      <tr>
+        <td>不良数量</td>
+        <td>不良・廃棄となった数量。</td>
+      </tr>
+      <tr>
+        <td>不良率</td>
+        <td>不良数量 ÷ （完成数量 + 不良数量）など、定義に合わせて計算。表示のみ。</td>
+      </tr>
+      <tr>
+        <td>製造担当者</td>
+        <td>このロットの生産を担当したユーザー名。</td>
+      </tr>
+    </table>
 
+    <!-- B. 在庫処理ステータス -->
+    <h4>B. 在庫処理ステータス</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>原材料引落ステータス</td>
+        <td>未処理 / 処理中 / 処理完了 / エラー など。原材料引落ボタン実行結果で自動更新。</td>
+      </tr>
+      <tr>
+        <td>入庫タスクステータス</td>
+        <td>未作成 / 作成済 / キャンセル など。Task App のタスク生成状況に応じて更新。</td>
+      </tr>
+      <tr>
+        <td>在庫処理メッセージ</td>
+        <td>エラー内容や警告（在庫不足など）を表示するフィールド。</td>
+      </tr>
+    </table>
+
+    <!-- C. 原材料消費（BOM 展開） -->
+    <h4>C. 原材料消費（BOM 展開）</h4>
+    <p>
+      完成品 SKU に紐づく BOM を展開し、完成数量に応じた原材料使用量を自動計算して表示します。
+      原材料ロットの選択により、トレーサビリティ情報を保持します。
+    </p>
+    <table>
+      <tr><th>項目</th><th>説明</th></tr>
+      <tr>
+        <td>資材コード / 名称</td>
+        <td>BOM マスタから自動抽出される原材料の SKU / 名称。</td>
+      </tr>
+      <tr>
+        <td>基準使用量</td>
+        <td>1 個あたりの使用量（BOM に登録されている値）。</td>
+      </tr>
+      <tr>
+        <td>使用数量</td>
+        <td>完成数量 × 基準使用量。原則自動計算・表示のみ。</td>
+      </tr>
+      <tr>
+        <td>資材ロット</td>
+        <td>実際に使用した原材料ロットを選択。必須入力（トレーサビリティのため）。</td>
+      </tr>
+      <tr>
+        <td>ロット在庫残数</td>
+        <td>選択された原材料ロットの現在在庫。参考表示。</td>
+      </tr>
+    </table>
+
+    <!-- D. メモ・品質情報 -->
+    <h4>D. メモ・品質情報</h4>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>品質メモ / 備考</td>
+        <td>ライン停止、設備トラブル、不良発生要因など品質管理に関する自由記述欄。</td>
+      </tr>
+      <tr>
+        <td>添付ファイル</td>
+        <td>検査結果シート、写真、報告書などを添付可能なファイルフィールド（必要に応じて）。</td>
+      </tr>
+    </table>
+
+    <!-- E. 操作ボタン -->
+    <h4>E. 操作ボタン</h4>
+    <ul>
+      <li>
+        <strong>原材料引落</strong>：
+        BOM 展開された原材料について Logic Stock を減算する処理を実行。<br />
+        成功時は原材料引落ステータスを「処理完了」に更新し、在庫不足などエラーの場合はメッセージを表示。
+      </li>
+      <li>
+        <strong>入庫タスク作成</strong>：
+        完成数量・製品 SKU・Lot 番号をもとに Task App に入庫タスクを1件生成する。再生成は原則不可（管理者のみ例外対応）。
+      </li>
+      <li>
+        <strong>編集</strong>：
+        完成数量・不良数量・品質メモなどを修正する標準編集ボタン。
+      </li>
+      <li>
+        <strong>削除</strong>：
+        誤登録レコードを削除（権限は管理者のみ想定）。在庫処理済みレコードの削除は制限する方針を検討。
+      </li>
+    </ul>
+
+    <h4>5.2.2 スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="production_detail_screen.png" alt="製造実績詳細画面" />
+      <div class="spec-screenshot-caption">図2. 製造実績詳細画面（Production Detail）</div>
+    </div>
+
+    <!-- 6. 確認事項 -->
+    <h2>6. お客様に確認いただきたい点</h2>
+    <ul>
+      <li>製造実績として必要な項目（Lot 番号、完成数量、不良数量、品質メモなど）は十分でしょうか？追加で管理したい項目はありますか？</li>
+      <li>BOM 展開の考え方（完成数量 × 基準使用量）や端数処理のルールに、現場ルールとの乖離はありませんか？</li>
+      <li>原材料ロットを必須入力とする運用で問題ないでしょうか？（トレーサビリティ要件）</li>
+      <li>原材料引落、入庫タスク作成のタイミングと権限（誰がいつ実行するか）について、運用イメージに差異はありませんか？</li>
+    </ul>
+
+    <!-- 7. 開発向けメモ -->
+    <h2>7. 開発向けメモ（Dev Notes）</h2>
+    <ul>
+      <li>BOM マスタ（BOM App）との参照が前提。完成品 SKU から BOM を一意に取得できないケースがある場合はエラーとする。</li>
+      <li>原材料ロットは Inventory / Physical Stock 側のロット情報と整合性を保つ必要がある。</li>
+      <li>原材料引落と入庫タスク作成は、二重実行を防ぐためフラグ管理を行う（再実行時は警告表示）。</li>
+      <li>在庫不足の場合は原材料引落処理をロールバックし、ユーザーへメッセージ表示。</li>
+      <li>将来的に生産計画との連携を行う場合に備え、製造指示IDなどの拡張フィールドを追加できるようにしておく。</li>
+    </ul>
+
+  </div>
 </body>
 </html>
