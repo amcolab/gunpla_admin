@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Credie Agency Portal 画面仕様書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Common Kintone-like stylesheet -->
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+
+  <style>
+    body {
+      background: #f3f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      color: #333;
+    }
+
+    .spec-container {
+      max-width: 1120px;
+      margin: 24px auto 40px;
+      padding: 0 16px;
+    }
+
+    .spec-header {
+      margin-bottom: 24px;
+    }
+
+    .spec-header-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .spec-header-subtitle {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .toc {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(15, 35, 52, 0.07);
+    }
+
+    .toc-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .toc-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+
+    .toc-list li {
+      margin: 4px 0;
+    }
+
+    .toc-list a {
+      color: #0070c9;
+      text-decoration: none;
+    }
+
+    .toc-list a:hover {
+      text-decoration: underline;
+    }
+
+    .spec-section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 18px 20px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(15, 35, 52, 0.06);
+    }
+
+    .spec-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      border-left: 4px solid #00a0e9;
+      padding-left: 8px;
+    }
+
+    .spec-heading {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 14px 0 6px;
+    }
+
+    .spec-body {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .spec-list {
+      margin: 4px 0 4px 18px;
+      padding-left: 0;
+    }
+
+    .spec-list li {
+      margin-bottom: 4px;
+    }
+
+    .spec-image {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e0e4ea;
+      margin-top: 6px;
+    }
+
+    .spec-code {
+      background: #f5f7fb;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="spec-container">
+    <!-- Header -->
+    <header class="spec-header">
+      <div class="spec-header-title">Credie Agency Portal 画面仕様書</div>
+      <div class="spec-header-subtitle">
+        本書は Agency Portal の画面仕様を定義する。対象は以下の画面：
+        Portal Login、注文履歴一覧、 新規注文／再注文、注文詳細、
+        および Rewards Rule Master との連携ロジック。
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <nav class="toc">
+      <div class="toc-title">目次</div>
+      <ol class="toc-list">
+        <li><a href="#section-1-purpose">1. 目的</a></li>
+        <li><a href="#section-2-user-story">2. ユーザーストーリー</a></li>
+        <li>
+          <a href="#section-3-functions">3. 機能</a>
+          <ol class="toc-list">
+            <li><a href="#section-3-1-login">3.1 Portal Login</a></li>
+            <li><a href="#section-3-2-order-list">3.2 注文履歴一覧</a></li>
+            <li><a href="#section-3-3-order-create">3.3 新規注文／再注文</a></li>
+            <li><a href="#section-3-4-order-detail">3.4 注文詳細</a></li>
+            <li><a href="#section-3-5-rewards">3.5 Rewards Rule 連携ロジック</a></li>
+          </ol>
+        </li>
+        <li>
+          <a href="#section-4-layout">4. レイアウト</a>
+          <ol class="toc-list">
+            <li><a href="#section-4-1-layout-login">4.1 Portal Login</a></li>
+            <li><a href="#section-4-2-layout-list">4.2 注文履歴一覧</a></li>
+            <li><a href="#section-4-3-layout-create">4.3 新規注文／再注文</a></li>
+            <li><a href="#section-4-4-layout-detail">4.4 注文詳細</a></li>
+          </ol>
+        </li>
+        <li><a href="#section-5-open-questions">5. 確認事項</a></li>
+        <li><a href="#section-6-business-impact">6. ビジネス影響</a></li>
+        <li><a href="#section-7-scope">7. Scope / Out of Scope</a></li>
+        <li><a href="#section-8-dev-memo">8. Devメモ</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <!-- 1. 目的 -->
+      <section id="section-1-purpose" class="spec-section">
+        <h2 class="spec-title">1. 目的</h2>
+        <div class="spec-body">
+          <ul class="spec-list">
+            <li>代理店（Agency）が自社の注文をオンラインで作成・確認できるポータルを提供する。</li>
+            <li>過去の注文履歴、配送状況、支払状況をセルフサービスで閲覧できるようにし、問い合わせコストを削減する。</li>
+            <li>Rewards Rule Master による割引ロジックを適用し、注文画面で「どのルールでいくら割引されたか」を可視化する。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 2. ユーザーストーリー -->
+      <section id="section-2-user-story" class="spec-section">
+        <h2 class="spec-title">2. ユーザーストーリー</h2>
+        <div class="spec-body">
+          <h3 class="spec-heading">2.1 Portal Login</h3>
+          <ul class="spec-list">
+            <li>US-PL-01: 代理店担当者として、ログイン ID / メールアドレスとパスワードで安全にログインしたい。</li>
+            <li>US-PL-02: 社内 PC からの利用では「次回から自動ログインする」で入力の手間を減らしたい。</li>
+          </ul>
+
+          <h3 class="spec-heading">2.2 注文履歴一覧</h3>
+          <ul class="spec-list">
+            <li>US-AL-01: 今月どれくらい発注したか、配送中か配送完了かを一覧で把握したい。</li>
+            <li>US-AL-02: 特定の注文番号から詳細画面へすぐにアクセスし、請求書と照合したい。</li>
+            <li>US-AL-03: よく発注する注文をベースに「再注文」で簡単に新規注文を作りたい。</li>
+          </ul>
+
+          <h3 class="spec-heading">2.3 新規注文／再注文</h3>
+          <ul class="spec-list">
+            <li>US-AC-01: SKU / JAN から商品を検索して追加し、オンラインで発注を完了したい。</li>
+            <li>US-AC-02: 過去注文をコピーして最小限の修正だけで再発注したい。</li>
+            <li>US-AC-03: 割引前金額・割引率・最終金額を明確に表示してほしい。</li>
+          </ul>
+
+          <h3 class="spec-heading">2.4 注文詳細</h3>
+          <ul class="spec-list">
+            <li>US-AD-01: 各製品ごとの「注文数・出荷済数・ステータス・配送予定日」を確認したい。</li>
+            <li>US-AD-02: 返品・交換・キャンセルが発生した製品と理由を把握したい。</li>
+            <li>US-AD-03: 必要に応じて請求書 PDF をダウンロードしたい。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 3. 機能 -->
+      <section id="section-3-functions" class="spec-section">
+        <h2 class="spec-title">3. 機能</h2>
+        <div class="spec-body">
+
+          <!-- 3.1 Login -->
+          <h3 id="section-3-1-login" class="spec-heading">3.1 Portal Login 機能</h3>
+
+          <h4 class="spec-heading">3.1.1 入力項目・操作</h4>
+          <ul class="spec-list">
+            <li>ログイン ID / メールアドレス（必須）</li>
+            <li>パスワード（必須）</li>
+            <li>チェックボックス：<code>次回から自動ログインする</code></li>
+            <li><strong>ログイン</strong> ボタン：認証 API をコールし、成功時に注文履歴一覧へ遷移。</li>
+            <li>リンク：<code>パスワードをお忘れの方はこちら</code>（パスワードリセット画面へ遷移）</li>
+          </ul>
+
+          <h4 class="spec-heading">3.1.2 バリデーション・エラー</h4>
+          <ul class="spec-list">
+            <li>未入力時：各フィールド下に「必須項目です」を表示。</li>
+            <li>認証失敗時：フォーム上部に <code>ログインIDまたはパスワードが正しくありません。</code> を表示。</li>
+            <li>アカウント無効・ロック時：<code>このアカウントは現在ご利用いただけません。</code> などの共通メッセージ。</li>
+          </ul>
+
+          <!-- 3.2 Order List -->
+          <h3 id="section-3-2-order-list" class="spec-heading">3.2 注文履歴一覧 機能</h3>
+
+          <h4 class="spec-heading">3.2.1 検索・フィルター</h4>
+          <ul class="spec-list">
+            <li>期間（ドロップダウン）: 今日 / 今週 / 今月 / 過去3ヶ月 / 全期間（初期値: 今月）</li>
+            <li>ステータス（ドロップダウン）: すべて / 出荷中 / 配送完了 / キャンセル など</li>
+            <li>注文番号（テキスト）: プレースホルダ <code>ORD-</code>、前方一致検索。</li>
+            <li>製品名（テキスト）: Product Name を部分一致で検索（Order Detail を参照）。</li>
+            <li>ボタン：
+              <ul>
+                <li><code>リセット</code>：条件を初期値に戻し、1ページ目で再検索。</li>
+                <li><code>適用</code>：現在の条件で再検索。</li>
+              </ul>
+            </li>
+          </ul>
+
+          <h4 class="spec-heading">3.2.2 一覧テーブル・アクション</h4>
+          <ul class="spec-list">
+            <li>列構成：
+              <ul>
+                <li>注文番号（リンク）</li>
+                <li>注文日</li>
+                <li>合計金額（割引後）</li>
+                <li>ステータス（配送状態）</li>
+                <li>配送予定日</li>
+                <li>アクション（再注文ボタン）</li>
+              </ul>
+            </li>
+            <li>注文番号クリック：注文詳細画面へ遷移。</li>
+            <li>再注文ボタン：
+              <ul>
+                <li>元注文の明細・配送先情報をコピーした状態で新規注文画面を開く。</li>
+                <li>元注文 ID を <code>reorder_from_order_id</code> として新注文に保持。</li>
+              </ul>
+            </li>
+            <li>ページネーション：下部に <code>« 1 2 3 »</code> を表示（1ページあたり10〜20件）。</li>
+          </ul>
+
+          <!-- 3.3 Order Create -->
+          <h3 id="section-3-3-order-create" class="spec-heading">3.3 新規注文／再注文 機能</h3>
+
+          <h4 class="spec-heading">3.3.1 製品追加セクション</h4>
+          <ul class="spec-list">
+            <li>SKU / JAN 検索ボックス：
+              <ul>
+                <li>プレースホルダ：<code>SKU または JAN コードを入力してください</code></li>
+                <li>入力に応じて Product Master から候補をサジェスト。</li>
+              </ul>
+            </li>
+            <li>追加ボタン：
+              <ul>
+                <li>選択した商品を注文明細に追加。</li>
+                <li>同一 SKU の集約ルール（加算 or 別行）は後述 Devメモで指定。</li>
+              </ul>
+            </li>
+          </ul>
+
+          <h4 class="spec-heading">3.3.2 注文明細（行）</h4>
+          <ul class="spec-list">
+            <li>表示項目：
+              <ul>
+                <li>商品コード / SKU</li>
+                <li>商品名</li>
+                <li>数量（編集可能）</li>
+                <li>単価：Product Master の <strong>標準単価（Standard Price）</strong> を表示</li>
+                <li>小計：<code>数量 × 単価（標準単価）</code>（割引前金額）</li>
+                <li>税区分・備考（必要に応じて）</li>
+              </ul>
+            </li>
+            <li>ここでは Agency 個別単価や割引後単価は表示しない。割引ロジックは合計ブロックで扱う。</li>
+          </ul>
+
+          <h4 class="spec-heading">3.3.3 合計・割引ブロック</h4>
+          <ul class="spec-list">
+            <li>商品合計（割引前）：全明細の小計合計。</li>
+            <li>適用中の Rewards Rule 情報：
+              <ul>
+                <li>ルールID / 名称（例：<code>RULE-AGENCY-2025-01</code>）</li>
+                <li>パートナー区分（大口 / 小口 など）</li>
+                <li>対象金額帯・有効期間</li>
+                <li>割引率（例：10%）</li>
+              </ul>
+            </li>
+            <li>割引額：<code>商品合計 × 割引率</code></li>
+            <li>注文合計（割引後）：<code>商品合計 − 割引額</code></li>
+            <li>必要に応じて送料・手数料・税額を加算項目として表示。</li>
+          </ul>
+
+          <h4 class="spec-heading">3.3.4 配送先情報</h4>
+          <ul class="spec-list">
+            <li>会社名（初期値：ログイン中 Agency 名、編集可・必須）</li>
+            <li>担当者名（必須）</li>
+            <li>郵便番号（必須）</li>
+            <li>住所（必須）</li>
+            <li>電話番号（必須）</li>
+            <li>建物名・部屋番号（任意）</li>
+            <li>配送に関する特記事項（任意テキストエリア）</li>
+          </ul>
+
+          <h4 class="spec-heading">3.3.5 バリデーション</h4>
+          <ul class="spec-list">
+            <li>商品が1件もない場合、「注文を確定」できない。</li>
+            <li>会社名・担当者名・郵便番号・住所・電話番号・数量が未入力の場合はエラー。</li>
+          </ul>
+
+          <!-- 3.4 Order Detail -->
+          <h3 id="section-3-4-order-detail" class="spec-heading">3.4 注文詳細 機能</h3>
+
+          <h4 class="spec-heading">3.4.1 上部サマリー</h4>
+          <ul class="spec-list">
+            <li>注文番号 / 注文日 / 注文金額（割引後） / 支払ステータス をカード形式で表示。</li>
+            <li>操作ボタン：
+              <ul>
+                <li><strong>戻る</strong>：注文履歴一覧へ。</li>
+                <li><strong>印刷</strong>：ブラウザ印刷。</li>
+                <li><strong>請求書</strong>：
+                  <ul>
+                    <li>Invoice レコードが存在する場合：PDF を新規タブで表示。</li>
+                    <li>存在しない場合：簡易メッセージ「請求書はまだ発行されていません」。</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+          <h4 class="spec-heading">3.4.2 配送先情報・注文内容</h4>
+          <ul class="spec-list">
+            <li>配送先カード：会社名・住所・担当者名・電話番号・郵便番号。</li>
+            <li>注文内容テーブル：
+              <ul>
+                <li>製品名＋SKU</li>
+                <li>注文数</li>
+                <li>配送済数量</li>
+                <li>ステータス（配送完了／出荷中／一部配送済／入荷待ち／返品／交換済／キャンセル等）</li>
+                <li>配送予定日（または最終出荷日）</li>
+              </ul>
+            </li>
+            <li>備考カード：配送要望や返品・交換の概要を表示（閲覧のみ）。</li>
+          </ul>
+
+          <!-- 3.5 Rewards Rule -->
+          <h3 id="section-3-5-rewards" class="spec-heading">3.5 Rewards Rule 連携ロジック（概要）</h3>
+          <ul class="spec-list">
+            <li>Agency Price Master は使用せず、割引率はすべて <strong>Rewards Rule Master</strong> で管理する。</li>
+            <li>検索条件：
+              <ul>
+                <li>注文日：<code>開始日 &lt;= 注文日 &lt;= 終了日</code> のルール。</li>
+                <li>パートナー区分（大口／小口 など）。</li>
+                <li>商品合計（割引前）の金額帯。</li>
+              </ul>
+            </li>
+            <li>ヒットしたルールから 1 件を選択（詳細マッチ &gt; 金額帯適合 &gt; 優先度 or 開始日）。</li>
+            <li>選択されたルールの割引率を合計ブロックに適用し、画面上にルール情報を表示する。</li>
+            <li>注文保存時に、Rewards Ledger / Transaction History へアフィリエイト報酬・投資家配当の元データを記録（詳細は別仕様）。</li>
+            <li>返品・交換時：
+              <ul>
+                <li>元の注文で適用されたルールを再利用し、返品金額に対してマイナス取引を作成。</li>
+                <li>交換は「返品＋新規注文」として扱い、新規注文側で改めてルール適用。</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 4. レイアウト -->
+      <section id="section-4-layout" class="spec-section">
+        <h2 class="spec-title">4. レイアウト</h2>
+        <div class="spec-body">
+
+          <h3 id="section-4-1-layout-login" class="spec-heading">4.1 Portal Login レイアウト</h3>
+          <ul class="spec-list">
+            <li>中央にログインカードを配置（タイトル・説明・ID/パスワード・チェックボックス・ボタン）。</li>
+            <li>Contact ボタン／リンクは表示しない。サポート窓口は別途周知。</li>
+          </ul>
+          <p>
+            UIイメージ：<br />
+            <img src="portal_login.png" alt="Agency Portal Login Screen" class="spec-image" />
+          </p>
+
+          <h3 id="section-4-2-layout-list" class="spec-heading">4.2 注文履歴一覧 レイアウト</h3>
+          <ul class="spec-list">
+            <li>ヘッダー：<code>CREDIE Order Portal</code> タイトル、代理店名を右上に表示。</li>
+            <li>パンくず：<code>ホーム &gt; 注文履歴</code></li>
+            <li>メイン：
+              <ul>
+                <li>上部：検索・フィルタカード。</li>
+                <li>下部：注文一覧テーブル＋ページネーション。</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            UIイメージ：<br />
+            <img src="agency_order_list_screen.png" alt="Agency Order List Screen" class="spec-image" />
+          </p>
+
+          <h3 id="section-4-3-layout-create" class="spec-heading">4.3 新規注文／再注文 レイアウト</h3>
+          <ul class="spec-list">
+            <li>上部：パンくず（<code>ホーム &gt; 注文履歴 &gt; 新規注文</code>）。</li>
+            <li>メイン：
+              <ul>
+                <li>製品追加カード（SKU / JAN 検索＋追加ボタン）。</li>
+                <li>注文明細テーブル。</li>
+                <li>合計・割引ブロック。</li>
+                <li>配送先情報フォーム。</li>
+                <li>フッターに「キャンセル」「注文を確定」ボタン。</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            UIイメージ：<br />
+            <img src="agency_order_create_screen.png" alt="Agency Order Create Screen" class="spec-image" />
+          </p>
+
+          <h3 id="section-4-4-layout-detail" class="spec-heading">4.4 注文詳細 レイアウト</h3>
+          <ul class="spec-list">
+            <li>ヘッダー：戻る／印刷／請求書ボタン＋代理店名。</li>
+            <li>メイン：
+              <ul>
+                <li>注文サマリーカード（4つ）。</li>
+                <li>配送先住所カード。</li>
+                <li>注文内容テーブル。</li>
+                <li>備考カード。</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            UIイメージ：<br />
+            <img src="agency_order_detail_screen.png" alt="Agency Order Detail Screen" class="spec-image" />
+          </p>
+        </div>
+      </section>
+
+      <!-- 5. 確認事項 -->
+      <section id="section-5-open-questions" class="spec-section">
+        <h2 class="spec-title">5. 確認事項</h2>
+        <div class="spec-body">
+          <ul class="spec-list">
+            <li>ログイン ID をメールアドレスで統一するか、別 ID を発行するか。</li>
+            <li>再注文時に元注文との関連をどの程度 UI 上で表示するか（「再注文元: ORD-XXXX」など）。</li>
+            <li>標準単価と割引率の関係：Agency 向けに「標準価格」をどこまで見せるか。</li>
+            <li>注文確定後の編集ポリシー（完全禁止／出荷前のみ一部項目編集可など）。</li>
+            <li>Rewards Rule の例外ケース（特別キャンペーン・手動割引）の扱い方。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 6. ビジネス影響 -->
+      <section id="section-6-business-impact" class="spec-section">
+        <h2 class="spec-title">6. ビジネス影響</h2>
+        <div class="spec-body">
+          <ul class="spec-list">
+            <li>代理店によるセルフサービス発注・確認により、バックオフィスの問い合わせ対応工数を削減できる。</li>
+            <li>再注文機能によりリピート発注がしやすくなり、売上の安定化に貢献する。</li>
+            <li>割引ルールの可視化により、B2B 取引での「なぜこの金額か」の説明コストを低減できる。</li>
+            <li>注文詳細で返品・交換履歴を可視化することで、トラブル時の検証と関係者間の認識合わせが容易になる。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 7. Scope / Out of Scope -->
+      <section id="section-7-scope" class="spec-section">
+        <h2 class="spec-title">7. Scope / Out of Scope</h2>
+        <div class="spec-body">
+          <h3 class="spec-heading">7.1 Scope（本フェーズで対応）</h3>
+          <ul class="spec-list">
+            <li>Agency Portal のログイン認証。</li>
+            <li>注文履歴一覧の表示・検索・再注文トリガー。</li>
+            <li>新規注文／再注文画面での SKU 検索・注文明細・割引計算・配送先入力。</li>
+            <li>注文詳細画面でのサマリー／配送先／注文内容／備考の表示、請求書 PDF 表示。</li>
+            <li>Rewards Rule Master を利用した割引率適用（単純な 1 ルール選択）。</li>
+          </ul>
+
+          <h3 class="spec-heading">7.2 Out of Scope（本フェーズでは非対応）</h3>
+          <ul class="spec-list">
+            <li>オンライン決済機能（クレジットカード・口座振替など）。</li>
+            <li>代理店側からの注文キャンセル・返品依頼のオンライン受付。</li>
+            <li>多要素認証（MFA）、SSO（Google / Microsoft 等）。</li>
+            <li>Rewards / 配当金額の詳細明細画面（これは Rewards Ledger / Payment 画面で対応）。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 8. Devメモ -->
+      <section id="section-8-dev-memo" class="spec-section">
+        <h2 class="spec-title">8. Devメモ</h2>
+        <div class="spec-body">
+          <ul class="spec-list">
+            <li>データソース：
+              <ul>
+                <li>Order App（ヘッダー、配送先、明細、備考、ステータス）。</li>
+                <li>Rewards Rule Master（割引率・適用条件）。</li>
+                <li>Invoice App（請求書 PDF リンク）。</li>
+              </ul>
+            </li>
+            <li>ログインユーザーの Partner ID / Agency ID で、全 API クエリにテナントフィルタを必ず適用する。</li>
+            <li>再注文時は元注文レコードから配送先・明細をコピーし、新たなレコードIDで保存する（元注文は更新しない）。</li>
+            <li>価格計算ロジックはバックエンドで一元管理し、フロント側はサーバ返却値を表示するだけにする。</li>
+            <li>文言は i18n 対応しやすいようキー化して管理（将来の多言語対応を想定）。</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    console.log("portal_agency_spec.html loaded");
+  </script>
+</body>
+</html>
