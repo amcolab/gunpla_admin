@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>portal_supplier_spec - Credie Supplier Portal 画面仕様書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Common Kintone-like stylesheet -->
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+
+  <style>
+    body {
+      background: #f3f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      color: #333;
+    }
+
+    .spec-container {
+      max-width: 1120px;
+      margin: 24px auto 40px;
+      padding: 0 16px;
+    }
+
+    .spec-header {
+      margin-bottom: 24px;
+    }
+
+    .spec-header-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .spec-header-subtitle {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .toc {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(15, 35, 52, 0.07);
+    }
+
+    .toc-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .toc-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+
+    .toc-list li {
+      margin: 4px 0;
+    }
+
+    .toc-list a {
+      color: #0070c9;
+      text-decoration: none;
+    }
+
+    .toc-list a:hover {
+      text-decoration: underline;
+    }
+
+    .spec-section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 18px 20px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(15, 35, 52, 0.06);
+    }
+
+    .spec-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      border-left: 4px solid #00a0e9;
+      padding-left: 8px;
+    }
+
+    .spec-heading {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 14px 0 6px;
+    }
+
+    .spec-body {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .spec-list {
+      margin: 4px 0 4px 18px;
+      padding-left: 0;
+    }
+
+    .spec-list li {
+      margin-bottom: 4px;
+    }
+
+    .spec-image {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e0e4ea;
+      margin-top: 6px;
+    }
+
+    .spec-code {
+      background: #f5f7fb;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="spec-container">
+    <!-- Header -->
+    <header class="spec-header">
+      <div class="spec-header-title">Credie Supplier Portal 画面仕様書</div>
+      <div class="spec-header-subtitle">
+        本書は Supplier Portal の共通ログイン画面および受注管理（PO一覧）画面の UI／機能仕様を定義する。
+        レイアウト・スタイルは product_master_spec と同一フォーマットを使用する。
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <section class="toc">
+      <div class="toc-title">目次</div>
+      <ol class="toc-list">
+        <li><a href="#section-1-purpose">1. 目的</a></li>
+        <li><a href="#section-2-user-story">2. ユーザーストーリー</a></li>
+        <li><a href="#section-3-functions">3. 機能</a></li>
+        <li><a href="#section-4-layout">4. レイアウト</a></li>
+        <li><a href="#section-5-open-questions">5. 確認事項</a></li>
+        <li><a href="#section-6-business-impact">6. ビジネス影響</a></li>
+        <li><a href="#section-7-scope">7. Scope / Out of Scope</a></li>
+        <li><a href="#section-8-dev-memo">8. Devメモ</a></li>
+      </ol>
+    </section>
+
+    <!-- 1. 目的 -->
+    <section id="section-1-purpose" class="spec-section">
+      <h2 class="spec-title">1. 目的</h2>
+      <div class="spec-body">
+        <ul class="spec-list">
+          <li>Credie と取引するサプライヤー向けに、<strong>発注情報・請求情報をオンラインで共有するポータル</strong>を提供する。</li>
+          <li>共通ログイン画面から Agency / Supplier 両ポータルへアクセスできるようにし、アカウント運用を統一する。</li>
+          <li>Supplier Portal では、受注（PO）一覧・ステータス・配送予定・請求書アップロード状況を一元的に確認できるようにする。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. ユーザーストーリー -->
+    <section id="section-2-user-story" class="spec-section">
+      <h2 class="spec-title">2. ユーザーストーリー</h2>
+      <div class="spec-body">
+        <h3 class="spec-heading">2.1 Portal Login（共通）</h3>
+        <ul class="spec-list">
+          <li>
+            US-PL-01: パートナー担当者として、登録済みのメールアドレスとパスワードで安全にログインしたい。<br>
+            そうすることで、自社向けの注文・請求情報にアクセスできる。
+          </li>
+          <li>
+            US-PL-02: パートナー担当者として、毎回の入力手間を減らすために、<br>
+            社内PCからは「次回から自動ログインする」を利用したい。
+          </li>
+        </ul>
+
+        <h3 class="spec-heading">2.2 Supplier Portal – 受注管理（PO一覧）</h3>
+        <ul class="spec-list">
+          <li>
+            US-SP-01: サプライヤー担当者として、今月の受注一覧を素早く確認したい。<br>
+            そうすることで、出荷計画や生産計画を立てやすくなる。
+          </li>
+          <li>
+            US-SP-02: サプライヤー担当者として、ステータス別（確認待ち／支払待ち／配送中／完了）でフィルタして、<br>
+            今どの対応が必要かを一目で把握したい。
+          </li>
+          <li>
+            US-SP-03: サプライヤー担当者として、完了した発注に対して請求書をアップロード・参照したい。<br>
+            そうすることで、請求漏れや二重請求を防ぎたい。
+          </li>
+        </ul>
+      </div>
+              <h3 class="spec-heading">2.3 Supplier Portal – 受注詳細（PO詳細）</h3>
+        <ul class="spec-list">
+          <li>
+            US-SP-04: サプライヤー担当者として、1つの発注に対して製品ごとの「数量・単価・小計・ステータス」を確認したい。<br>
+            そうすることで、どの商品をいつどれだけ出荷すればよいかを把握できる。
+          </li>
+          <li>
+            US-SP-05: サプライヤー担当者として、発注数量を複数回に分けて出荷するスケジュール（配送回数・数量・配送予定日）を登録したい。<br>
+            そうすることで、自社の生産能力や在庫状況に合わせた納品計画を Credie 側と共有できる。
+          </li>
+          <li>
+            US-SP-06: サプライヤー担当者として、出荷スケジュールを入力したあとに「この商品を確定」ボタンで確定させたい。<br>
+            そうすることで、スケジュールが確定したことをシステム上で明確にし、後から曖昧にならないようにしたい。
+          </li>
+        </ul>
+    </section>
+
+    <!-- 3. 機能 -->
+    <section id="section-3-functions" class="spec-section">
+      <h2 class="spec-title">3. 機能</h2>
+      <div class="spec-body">
+        <!-- 3.1 Portal Login -->
+        <h3 class="spec-heading">3.1 共通ログイン画面（Portal Login）</h3>
+        <h4 class="spec-heading">3.1.1 入力項目</h4>
+        <ul class="spec-list">
+          <li>メールアドレス（必須, 形式チェックあり）</li>
+          <li>パスワード（必須）</li>
+          <li>チェックボックス：<code>次回から自動ログインする</code></li>
+        </ul>
+
+        <h4 class="spec-heading">3.1.2 ボタン・リンク</h4>
+        <ul class="spec-list">
+          <li><strong>ログイン</strong> ボタン
+            <ul>
+              <li>入力バリデーション OK の場合に認証 API をコールする。</li>
+            </ul>
+          </li>
+          <li><strong>パスワードをお忘れの方はこちら</strong> リンク
+            <ul>
+              <li>パスワードリセット用の画面またはメール送信フローへ遷移。</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4 class="spec-heading">3.1.3 バリデーション・エラー表示</h4>
+        <ul class="spec-list">
+          <li>メールアドレス未入力／形式不正時は入力欄下にエラーメッセージ表示。</li>
+          <li>パスワード未入力時も同様にエラーメッセージ表示。</li>
+          <li>認証失敗時：<code>メールアドレスまたはパスワードが正しくありません。</code></li>
+          <li>アカウント無効・ロック時：<code>このアカウントは現在ご利用いただけません。管理者までお問い合わせください。</code></li>
+        </ul>
+
+        <h4 class="spec-heading">3.1.4 ロール判定・遷移</h4>
+        <ul class="spec-list">
+          <li>認証成功時、ユーザーに紐づくロールを取得する。</li>
+          <li>ロール = Agency → Credie Agency Portal のトップ画面へ遷移。</li>
+          <li>ロール = Supplier → Credie Supplier Portal のトップ画面へ遷移。</li>
+          <li>Phase 1 では 1 ユーザー 1 ロール前提。複数ロールは将来検討。</li>
+        </ul>
+
+        <!-- 3.2 Supplier PO List -->
+        <h3 class="spec-heading">3.2 Supplier Portal – 受注管理（PO一覧）</h3>
+
+        <h4 class="spec-heading">3.2.1 検索・フィルター</h4>
+        <ul class="spec-list">
+          <li><strong>期間</strong>（ドロップダウン）
+            <ul>
+              <li>初期値：<code>今月</code></li>
+              <li>選択肢：今月 / 先月 / 過去3ヶ月 / 過去6ヶ月 / すべて</li>
+            </ul>
+          </li>
+          <li><strong>注文ステータス</strong>（ドロップダウン）
+            <ul>
+              <li>初期値：<code>すべて</code></li>
+              <li>想定値：確認待ち / 支払待ち / 配送中 / 完了 / キャンセル</li>
+            </ul>
+          </li>
+          <li><strong>支払いステータス</strong>（ドロップダウン）
+            <ul>
+              <li>初期値：<code>すべて</code></li>
+              <li>想定値：未請求 / 請求書提出済 / 支払済</li>
+            </ul>
+          </li>
+          <li><strong>注文番号</strong>（テキスト）
+            <ul>
+              <li>部分一致検索。プレースホルダー：<code>PO-</code></li>
+            </ul>
+          </li>
+          <li><strong>ボタン</strong>
+            <ul>
+              <li><code>リセット</code>：全条件を初期値（今月 / すべて / 空）に戻す。</li>
+              <li><code>適用</code>：現在の条件で一覧を再検索。</li>
+              <li>ヘッダー右上：<code>更新</code> ボタンで一覧をリロード（フィルター条件は維持）。</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4 class="spec-heading">3.2.2 受注一覧テーブル</h4>
+        <ul class="spec-list">
+          <li><strong>列</strong>
+            <ul>
+              <li>注文番号（例：<code>PO-2025-015</code>）</li>
+              <li>注文日</li>
+              <li>金額（発注金額）</li>
+              <li>ステータス（受注ステータス）</li>
+              <li>配送予定日（未設定の場合は <code>未設定</code>）</li>
+              <li>アクション</li>
+            </ul>
+          </li>
+          <li><strong>ステータス表示例</strong>
+            <ul>
+              <li>確認待ち（オレンジ）</li>
+              <li>支払待ち</li>
+              <li>配送中</li>
+              <li>✓ 完了（緑）</li>
+              <li>キャンセル（グレー）</li>
+            </ul>
+          </li>
+          <li><strong>アクションボタン</strong>
+            <ul>
+              <li>ステータス = 確認待ち → 「確認」ボタン
+                <ul>
+                  <li>受注詳細画面を開き、内容確認と承諾／却下を行う。</li>
+                </ul>
+              </li>
+              <li>ステータス = 支払待ち / 配送中 → 「詳細」ボタン
+                <ul>
+                  <li>受注詳細画面へ遷移し、出荷予定・納品状況・請求状況を確認する。</li>
+                </ul>
+              </li>
+              <li>ステータス = 完了 → 「請求書」ボタン
+                <ul>
+                  <li>請求書アップロード画面または PDF ビューを開く。</li>
+                  <li>既にアップロード済みの場合、PDF 表示／再アップロードを選択可能。</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>ページネーション</strong>
+            <ul>
+              <li>一覧下部に <code>« 1 2 3 »</code> のページネーションを表示。</li>
+              <li>1ページあたりの表示件数は 10〜20 件程度（共通設定に合わせる）。</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+              <!-- 3.3 Supplier PO Detail -->
+        <h3 class="spec-heading">3.3 Supplier Portal – 受注詳細（PO詳細）</h3>
+
+        <h4 class="spec-heading">3.3.1 上部サマリー</h4>
+        <ul class="spec-list">
+          <li>カード形式で以下の情報を表示する。
+            <ul>
+              <li>注文番号（例：<code>PO-2025-015</code>）</li>
+              <li>注文日</li>
+              <li>注文金額（当該 PO 全体の金額）</li>
+              <li>ステータス（例：確認待ち / 配送中 / 完了 など）</li>
+            </ul>
+          </li>
+          <li>値はすべて Purchase Order App に保存されている内容を参照する。</li>
+        </ul>
+
+        <h4 class="spec-heading">3.3.2 注文内容テーブル（商品一覧）</h4>
+        <ul class="spec-list">
+          <li>列構成
+            <ul>
+              <li>商品名（1行目：名称、2行目：SKU コード）</li>
+              <li>数量（発注数量、例：150本）</li>
+              <li>単価</li>
+              <li>小計（数量 × 単価）</li>
+              <li>ステータス（当該商品の受注ステータス）
+                <ul>
+                  <li>例：未設定 / スケジュール確定 / 出荷中 / 出荷完了 など</li>
+                </ul>
+              </li>
+              <li>アクション（確認ボタン）</li>
+            </ul>
+          </li>
+          <li>「確認」ボタンをクリックすると、対象商品の下に <strong>配送スケジュール編集パネル</strong> が展開される。</li>
+        </ul>
+
+        <h4 class="spec-heading">3.3.3 配送スケジュール編集パネル</h4>
+        <ul class="spec-list">
+          <li>ヘッダー：
+            <ul>
+              <li>タイトル例：<code>配送スケジュール - オリジナルTシャツ（150本）</code></li>
+              <li>右上に <strong>＋ 配送回を追加</strong> ボタン。</li>
+            </ul>
+          </li>
+          <li>各配送回（第1回配送／第2回配送…）は以下の項目を持つ。
+            <ul>
+              <li>数量（数値入力、必須）</li>
+              <li>配送予定日（日付入力、必須）</li>
+              <li>備考（任意のテキスト）</li>
+              <li>2回目以降の行には <strong>削除</strong> ボタンを表示。</li>
+            </ul>
+          </li>
+          <li>バリデーションルール（基本案）：
+            <ul>
+              <li>各行の数量は 0 より大きい整数。</li>
+              <li>配送予定日は今日以降の日付を推奨（過去日は警告 or 入力不可を検討）。</li>
+              <li>全配送回の数量合計 = 発注数量 になるようにする。
+                <ul>
+                  <li>数量合計 &lt; 発注数量 または &gt; 発注数量 の場合はエラー表示し、確定できない。</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>ボタン
+            <ul>
+              <li><strong>キャンセル</strong>：
+                <ul>
+                  <li>編集中のスケジュール内容を破棄し、パネルを閉じる。</li>
+                  <li>画面表示・DB 反映方法は実装方針により「編集中はローカル状態のみ」または「即時保存＋キャンセルで再取得」などを選択。</li>
+                </ul>
+              </li>
+              <li><strong>✓ この商品を確定</strong>：
+                <ul>
+                  <li>バリデーション通過時に配送スケジュールを保存し、当該商品のステータスを「スケジュール確定」（仮）に変更。</li>
+                  <li>確定後は数量・日付の編集をロックするかどうかは別途運用ルールに合わせて決定（Phase1 では「再度確認ボタンで再編集可能」とする案もあり）。</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4 class="spec-heading">3.3.4 ステータスとの関係</h4>
+        <ul class="spec-list">
+          <li>初期状態：配送スケジュール未設定の商品のステータスは <code>未設定</code> とする。</li>
+          <li>「この商品を確定」押下後：
+            <ul>
+              <li>配送スケジュールが保存され、ステータスを <code>スケジュール確定</code> または同等の名称に変更。</li>
+              <li>別途、出荷処理（倉庫側）にて「出荷中」「出荷完了」へ遷移していく。</li>
+            </ul>
+          </li>
+          <li>各商品のステータスは PO 全体のステータス（確認待ち / 配送中 / 完了）と連動する（例：全商品がスケジュール確定済みになったら PO ステータスを「確認済」へ）。</li>
+        </ul>
+    </section>
+
+    <!-- 4. レイアウト -->
+    <section id="section-4-layout" class="spec-section">
+      <h2 class="spec-title">4. レイアウト</h2>
+      <div class="spec-body">
+        <h3 class="spec-heading">4.1 Portal Login レイアウト</h3>
+        <ul class="spec-list">
+          <li>上部：ポータルヘッダー（ロゴ＋タイトル「Credie Portal」＋ Powered by Credie）。</li>
+          <li>中央：ログインカード（タイトル、説明、メール・パスワード入力、チェックボックス、ボタン、リンク）。</li>
+          <li>下部：注意書き（パートナー専用ポータルである旨）。</li>
+        </ul>
+        <p>
+          UIイメージ：<br />
+          <img src="portal_login.png" alt="Portal Login Screen" class="spec-image" />
+        </p>
+
+        <h3 class="spec-heading">4.2 Supplier 受注管理（PO一覧）レイアウト</h3>
+        <ul class="spec-list">
+          <li>ポータルヘッダー：<code>CREDIE Supplier Portal</code> タイトル、ロールバッジ「サプライヤー」、会社名。</li>
+          <li>パンくず：<code>ホーム &gt; 受注管理</code></li>
+          <li>メイン：
+            <ul>
+              <li>カード1：検索・フィルター</li>
+              <li>カード2：受注一覧テーブル＋ページネーション</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          UIイメージ：<br />
+          <img src="supplier_order_list_screen.png" alt="Supplier PO List Screen" class="spec-image" />
+        </p>
+      </div>
+            <h3 class="spec-heading">4.3 Supplier 受注詳細（PO詳細）レイアウト</h3>
+      <div class="spec-body">
+        <ul class="spec-list">
+          <li>上部：ポータルヘッダー（「CREDIE Supplier Portal」、ロールバッジ「サプライヤー」、会社名）。</li>
+          <li>パンくず：<code>ホーム &gt; 受注管理 &gt; 受注詳細</code></li>
+          <li>メインエリア：
+            <ul>
+              <li>サマリーカード 4枚（注文番号／注文日／注文金額／ステータス）。</li>
+              <li>「注文内容」カード：
+                <ul>
+                  <li>商品一覧テーブル（商品名・数量・単価・小計・ステータス・アクション）。</li>
+                  <li>行の「確認」ボタン押下時に、当該商品の直下に配送スケジュール編集パネルを表示。</li>
+                </ul>
+              </li>
+              <li>画面下部右側に PO 合計金額（例：<code>合計：¥256,000</code>）を表示。</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          UIイメージ：<br />
+          <img src="supplier_order_detail_screen.png" alt="Supplier PO Detail Screen" class="spec-image" />
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. 確認事項 -->
+    <section id="section-5-open-questions" class="spec-section">
+      <h2 class="spec-title">5. 確認事項</h2>
+      <div class="spec-body">
+        <ul class="spec-list">
+          <li>パスワードリセットフローの詳細（メールリンクのみか、追加認証を挟むか）。</li>
+          <li>アカウントロックの条件（認証失敗回数・ロック時間）。</li>
+          <li>受注ステータス・支払いステータスの正確な定義と、内部ワークフローとの整合性。</li>
+          <li>請求書アップロードの許容ファイル形式（PDF のみか、Excel 等も含めるか）。</li>
+          <li>Supplier 側から出荷完了報告などのステータス更新を、一覧画面で行うか詳細画面に限定するか。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. ビジネス影響 -->
+    <section id="section-6-business-impact" class="spec-section">
+      <h2 class="spec-title">6. ビジネス影響</h2>
+      <div class="spec-body">
+        <ul class="spec-list">
+          <li>受注情報・請求情報をポータルで自動共有することで、メールや Excel ベースのやり取りを削減できる。</li>
+          <li>請求書アップロードを標準フロー化することで、支払処理の漏れや齟齬を減らすことができる。</li>
+          <li>ステータス・フィルターにより、サプライヤーとのコミュニケーションコストを低減し、リードタイムを短縮できる。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. Scope / Out of Scope -->
+    <section id="section-7-scope" class="spec-section">
+      <h2 class="spec-title">7. Scope / Out of Scope</h2>
+      <div class="spec-body">
+        <h3 class="spec-heading">7.1 Scope（本フェーズで対応）</h3>
+        <ul class="spec-list">
+          <li>共通ログイン画面（メール＋パスワード認証、Remember Me、パスワードリセット）。</li>
+          <li>Supplier 受注一覧の閲覧。</li>
+          <li>期間・ステータス・注文番号によるフィルター／検索。</li>
+          <li>ステータスに応じたアクションボタン（確認 / 詳細 / 請求書）の表示。</li>
+        </ul>
+
+        <h3 class="spec-heading">7.2 Out of Scope（本フェーズでは非対応）</h3>
+        <ul class="spec-list">
+          <li>SSO（Google / Microsoft / SAML 等）。</li>
+          <li>多要素認証（MFA）。</li>
+          <li>受注の新規作成・編集（PO 発行は社内システム側で実施）。</li>
+          <li>オンライン決済機能。</li>
+          <li>詳細な納品スケジュール編集やチャット機能などの高度なコラボレーション機能。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 8. Devメモ -->
+    <section id="section-8-dev-memo" class="spec-section">
+      <h2 class="spec-title">8. Devメモ</h2>
+      <div class="spec-body">
+        <ul class="spec-list">
+          <li>認証バックエンドは Partner Master＋Login User Master と連携し、ロール情報を保持する。</li>
+          <li>Session / JWT の有効期限、および RememberMe Cookie の有効期間は環境変数で調整可能とする。</li>
+          <li>Supplier Portal の PO データソースは Kintone の Purchase Order App・Invoice App を利用する。</li>
+          <li>ログインユーザーの Supplier ID に紐づく PO のみ取得し、マルチテナントを担保する。</li>
+          <li>一覧取得 API では、期間・ステータス・注文番号をクエリパラメータとして受け取り、Kintone クエリにマッピングする。</li>
+          <li>将来的な「受注詳細画面」「請求書アップロード画面」とのルーティング連携を考慮し、URL 設計を RESTful に統一する。</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    console.log("portal_supplier_spec.html loaded");
+  </script>
+</body>
+</html>
