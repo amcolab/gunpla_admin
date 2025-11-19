@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 物理倉庫マスタ（Store / Warehouse Master）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      margin: 0.4em 0 0.8em 1.4em;
+    }
+
+    ol {
+      margin: 0.4em 0 0.8em 1.6em;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Warehouse / Store Master</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 物理倉庫マスタ（Store / Warehouse Master）</h1>
+    <p><strong>対象画面:</strong> 物理倉庫マスタ一覧 / 倉庫詳細</p>
+    <p><strong>想定利用者:</strong> 在庫管理担当、倉庫担当、ロジスティクス責任者（Credie 内部ユーザー）</p>
+
+    <!-- 1. 目的 -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      物理倉庫マスタは、自社倉庫および 3PL 委託倉庫（Gifu, Marusho, Amazaki など）の
+      基本情報を一元管理するためのマスタ画面です。
+    </p>
+    <ul>
+      <li>入出庫や在庫管理で使用する「倉庫ID」「倉庫名」「所在地」「倉庫種別（自社 / 3PL）」「担当者」「緊急連絡先」を統一管理する。</li>
+      <li>Logic Stock / Physical Stock / Orders / Channel など各種アプリから参照される「倉庫一覧」のソースを提供する。</li>
+      <li>無効化された倉庫を誤って新規運用に使用しないように制御する。</li>
+    </ul>
+
+    <!-- 2. ユーザーストーリー -->
+    <h2>2. ユーザーストーリー（User Stories）</h2>
+
+    <h3>2.1 在庫管理担当</h3>
+    <ul>
+      <li>新しく 3PL 倉庫と契約した場合、物理倉庫マスタで「倉庫ID・名称・所在地・連絡先」を登録する。</li>
+      <li>倉庫統廃合や移転があった場合、既存レコードを編集し、ステータスを「無効」に切り替える。</li>
+      <li>「有効のみ」フィルタを使って、現時点で運用中の倉庫だけを一覧表示する。</li>
+    </ul>
+
+    <h3>2.2 倉庫担当・ロジ担当</h3>
+    <ul>
+      <li>出荷指示や入庫手配の際、現在利用中の倉庫の住所・担当者・緊急連絡先を素早く確認する。</li>
+      <li>新しいチャネルやストア連携（Shopify 店舗、BtoB サイトなど）を設定する際に、紐づけ先の倉庫ID を選択する。</li>
+    </ul>
+
+    <!-- 3. 機能 -->
+    <h2>3. 機能概要（Functions）</h2>
+    <ul>
+      <li>倉庫マスタ一覧表示（絞り込み・検索・ソート）</li>
+      <li>新規倉庫登録・既存倉庫の編集</li>
+      <li>ステータスによる有効 / 無効管理（一覧フィルタ「有効のみ」）</li>
+      <li>CSV エクスポート（全件 / 現在の絞り込み結果）</li>
+      <li>各倉庫の詳細（住所・担当者・連絡先・メモなど）の参照</li>
+    </ul>
+
+    <!-- 4. レイアウト -->
+    <h2>4. 画面レイアウト（Layout）</h2>
+
+    <h3>4.1 一覧画面 – 物理倉庫マスタ</h3>
+
+    <div class="spec-callout">
+      倉庫マスタ一覧画面では、全ての倉庫レコードを一覧表示し、ステータス・所在地・担当者などを一目で確認できます。<br>
+      上部のビュー／検索／フィルタ／CSV エクスポートは Kintone 標準コンポーネントを利用します。
+    </div>
+
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>倉庫ID（Unique）</td>
+        <td>
+          倉庫を一意に識別するコード（例: <code>GIFU</code>, <code>MARUSHO</code>, <code>AMAZAKI</code>）。<br>
+          他アプリ（Logic Stock / Physical Stock / Channel App など）から参照されるキー。
+          クリックすると倉庫詳細画面へ遷移。
+        </td>
+      </tr>
+      <tr>
+        <td>倉庫名</td>
+        <td>倉庫の正式名称。例: 甲陽園オフィス倉庫（Gifu）、丸正物流センター、甘崎サテライト倉庫。</td>
+      </tr>
+      <tr>
+        <td>倉庫種別</td>
+        <td>
+          自社倉庫 / 委託倉庫（3PL） を選択。<br>
+          レポートやチャネル設定でのフィルタ条件として利用予定。
+        </td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>
+          有効 / 無効。<br>
+          有効のみ一覧で使用するのが基本運用。無効は過去の倉庫（利用停止・契約終了など）。
+          一覧では緑（有効）・赤（無効）のバッジで表示。
+        </td>
+      </tr>
+      <tr>
+        <td>所在地（郵便番号）</td>
+        <td>倉庫所在地の郵便番号。</td>
+      </tr>
+      <tr>
+        <td>所在地（住所）</td>
+        <td>倉庫の住所（都道府県・市区町村・番地・ビル名など）。</td>
+      </tr>
+      <tr>
+        <td>担当者名</td>
+        <td>その倉庫の一次窓口となる担当者。自社倉庫の場合は社員名、3PL の場合は先方担当者名。</td>
+      </tr>
+      <tr>
+        <td>業者連絡先</td>
+        <td>
+          電話番号やメールアドレスなど、緊急時連絡に使用するコンタクト情報。<br>
+          例: <code>Tel: 03-1234-5678 / logi@marusho.co.jp</code>、<code>※利用停止中</code> などメモとしても利用可。
+        </td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>
+          詳細表示・レコード編集・削除などのアイコンボタン。<br>
+          仕様上は Kintone 標準の「詳細」「編集」「削除」操作を使用。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.1.1 一覧画面のツールバー</h4>
+    <ul>
+      <li><strong>ビュー選択（全件ビュー）:</strong> 「全件」「有効のみ」などのビュー切替。</li>
+      <li><strong>検索ボックス:</strong> 倉庫ID・倉庫名・住所などを対象としたキーワード検索。</li>
+      <li><strong>有効のみ（チェック）:</strong> 「ステータス = 有効」のレコードのみを表示するクイックフィルタ。</li>
+      <li><strong>CSV エクスポート:</strong> 現在のビュー（絞り込み結果）を CSV で出力。</li>
+      <li><strong>＋ボタン:</strong> 新しい倉庫レコードの追加（標準の「新規レコード」）。</li>
+    </ul>
+
+    <h4>4.1.2 スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="warehouse_screen.png" alt="物理倉庫マスタ一覧画面" />
+      <div class="spec-screenshot-caption">図1. 物理倉庫マスタ一覧画面（Warehouse / Store Master List）</div>
+    </div>
+
+    <h3>4.2 倉庫詳細画面（想定フィールド）</h3>
+    <p>
+      詳細画面では、一覧で表示している項目に加えて、備考・地図リンクなどを追加できるようにします。
+      現段階では以下のフィールド構成を想定しています。
+    </p>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr><td>倉庫ID（Unique）</td><td>一覧と同じ。編集不可。</td></tr>
+      <tr><td>倉庫名</td><td>一覧と同じ。</td></tr>
+      <tr><td>倉庫種別</td><td>自社 / 3PL の区分。</td></tr>
+      <tr><td>ステータス</td><td>有効 / 無効。利用停止時は「無効」に変更。</td></tr>
+      <tr><td>所在地（郵便番号）</td><td>郵便番号。</td></tr>
+      <tr><td>所在地（住所）</td><td>住所詳細。</td></tr>
+      <tr><td>担当者名</td><td>一次窓口となる担当者。</td></tr>
+      <tr><td>担当者メール</td><td>担当者のメールアドレス（任意）。</td></tr>
+      <tr><td>電話番号 / FAX</td><td>代表電話・FAX 番号。</td></tr>
+      <tr><td>業者連絡先（自由記述）</td><td>先方業者の代表窓口・緊急連絡先などを自由形式で記載。</td></tr>
+      <tr><td>備考</td><td>利用条件や注意事項、稼働時間帯などのメモ。</td></tr>
+    </table>
+
+    <!-- 5. 確認事項 -->
+    <h2>5. お客様に確認したい点（Questions）</h2>
+    <ul>
+      <li>倉庫マスタとして、上記の項目（倉庫ID / 種別 / 住所 / 担当者 / 連絡先）は十分でしょうか？ 追加したい項目はありますか？</li>
+      <li>「倉庫種別」の区分は「自社倉庫 / 委託倉庫（3PL）」で足りますか？ 他に区分（工場・一時保管など）が必要でしょうか？</li>
+      <li>ステータス「有効 / 無効」の他に、運用上必要な状態（例: 一時停止・試験運用など）はありますか？</li>
+      <li>業者連絡先フィールドは、単一のテキストで十分か、それとも電話 / メール / 緊急連絡先を別フィールドで管理したいですか？</li>
+    </ul>
+
+    <!-- 6. ビジネス影響 -->
+    <h2>6. ビジネス影響（Business Impact）</h2>
+    <ul>
+      <li>倉庫マスタが一元化されることで、出荷・入庫・棚卸などの在庫オペレーションにおける「倉庫識別のブレ」がなくなる。</li>
+      <li>ストア / チャネル別レポートや在庫レポートで、倉庫単位の集計が容易になる。</li>
+      <li>無効倉庫を利用しないようにすることで、誤出荷や誤入庫のリスクを低減できる。</li>
+    </ul>
+
+    <!-- 7. Scope / Out of Scope -->
+    <h2>7. Scope / Out of Scope</h2>
+
+    <h3>7.1 Scope</h3>
+    <ul>
+      <li>倉庫マスタの CRUD（登録・更新・無効化・参照）</li>
+      <li>倉庫ステータス（有効 / 無効）の管理と、一覧でのフィルタリング</li>
+      <li>他アプリからの倉庫ID 参照（リレーション用キーとして使用）</li>
+      <li>CSV エクスポートによる外部共有</li>
+    </ul>
+
+    <h3>7.2 Out of Scope</h3>
+    <ul>
+      <li>倉庫内ロケーション（棚・列・段など）の詳細管理（Physical Stock 側で扱う）</li>
+      <li>倉庫ごとの在庫数量・在庫評価額の管理（在庫アプリ側で管理）</li>
+      <li>契約書ファイル管理や SLA 管理（必要であれば別システム・別アプリ）</li>
+    </ul>
+
+    <!-- 8. 開発メモ -->
+    <h2>8. 開発メモ（Dev Notes）</h2>
+    <ul>
+      <li>倉庫ID は全システムで一意になるようにバリデーションを行う（重複不可）。</li>
+      <li>Channel App や Orders App の「出荷元」フィールドは、この倉庫マスタのレコードを参照する。</li>
+      <li>ステータスが「無効」の倉庫は、新規受注や新規ストア設定時の選択肢から除外する想定（実装方針は後続ロジックで調整）。</li>
+      <li>CSV エクスポートは Kintone 標準機能を利用し、追加カスタマイズは行わない（Phase 1）。</li>
+      <li>将来的に「倉庫グループ」や「拠点種別（工場・店舗・DC）」などを追加する拡張性を考慮し、フィールド名・コード名は汎用的にしておく。</li>
+    </ul>
+
+  </div>
+</body>
+</html>
