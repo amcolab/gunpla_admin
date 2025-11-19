@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 請求管理アプリ（Invoice Management）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+    p { margin: 0.4em 0; }
+    ul { margin: 0.4em 0 0.8em 1.4em; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Invoice</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 請求管理アプリ（Invoice Management）</h1>
+    <p><strong>対象画面:</strong> 請求管理 一覧</p>
+    <p><strong>想定利用者:</strong> 経理担当、ファイナンス担当、Sales、管理者</p>
+
+    <!-- 1. 目的 -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      請求管理アプリは、Agency 向け請求書（Invoice）の一覧と入金ステータスを管理するための画面である。
+      主に以下を目的とする。
+    </p>
+    <ul>
+      <li>Agency Portal 経由の注文に対して発行された請求書を一元管理する。</li>
+      <li>仮想口座（VA）に対する入金状況を把握し、「未入金 / 入金済 / 失敗」を管理する。</li>
+      <li>入金確認完了後に、関連する Agency Order のステータスを「入金待ち → 出荷可能」に更新し、出荷フローを解放する。</li>
+    </ul>
+
+    <!-- 2. User Stories -->
+    <h2>2. ユーザーストーリー（User Stories）</h2>
+
+    <h3>2.1 経理担当 / Finance</h3>
+    <ul>
+      <li>月次で発行された Invoice を一覧し、入金期限を過ぎている「未入金」案件をすぐに把握したい。</li>
+      <li>銀行からの入金情報（VA ベース）と突合し、入金済みの Invoice を一括で「入金済」に更新したい。</li>
+      <li>入金に失敗した（口座エラー、期限切れなど）ケースを識別し、Sales にフォローを依頼したい。</li>
+    </ul>
+
+    <h3>2.2 Sales / CS</h3>
+    <ul>
+      <li>各 Agency の支払状況を確認し、未入金が続いている場合にリマインド連絡を行いたい。</li>
+      <li>関連注文へのリンクから、どの案件に対する請求なのかを即座に把握したい。</li>
+    </ul>
+
+    <!-- 3. 機能概要 -->
+    <h2>3. 機能概要（Functions）</h2>
+    <ul>
+      <li>請求書レコードの一覧表示・検索・ステータスフィルタ</li>
+      <li>請求IDから Invoice 詳細画面へのドリルダウン</li>
+      <li>関連注文へのリンク（ORD-xxxx）</li>
+      <li>選択行に対する「入金確認済み」一括更新（ステータス=入金済）</li>
+      <li>VA ID による銀行入金情報との突合（内部ロジック）</li>
+    </ul>
+
+    <!-- 4. Layout -->
+    <h2>4. 画面レイアウト（Layout & Fields）</h2>
+
+    <h3>4.1 ヘッダー / 操作ボタン</h3>
+    <ul>
+      <li><strong>入金確認済み（ボタン）</strong><br>
+        ・チェックボックスで選択した請求レコードのステータスを「入金済」に更新する一括操作。<br>
+        ・主な利用パターン：銀行明細や VA 入金レポートを確認後、対象請求を選択して更新。<br>
+        ・更新時には確認ダイアログ（「選択した請求を入金済に更新しますか？」）を表示。</li>
+      <li><strong>ステータスフィルタ（全ステータス）</strong><br>
+        ・ドロップダウンで <code>全ステータス / 未入金 / 入金済 / 失敗</code> を選択して絞り込み。</li>
+      <li><strong>説明テキスト</strong><br>
+        ・画面上部の注記：「※入金確認ボタンでステータスが『入金済』に更新されます。」<br>
+        ・ユーザーに一括更新の挙動を明示する。</li>
+    </ul>
+
+    <h3>4.2 一覧カラム仕様</h3>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+
+      <tr>
+        <td>チェックボックス</td>
+        <td>
+          レコード選択用チェックボックス。<br>
+          ・複数選択後に「入金確認済み」ボタンで一括更新。<br>
+          ・ステータスがすでに「入金済」のものは選択不可とする運用も検討。
+        </td>
+      </tr>
+
+      <tr>
+        <td>請求ID</td>
+        <td>
+          Invoice の一意な ID（例: <code>INV-2025-0001</code>）。<br>
+          ・クリックすると請求書詳細画面を表示。<br>
+          ・フォーマット: プレフィックス + 年度 + 連番。
+        </td>
+      </tr>
+
+      <tr>
+        <td>請求日</td>
+        <td>
+          請求書発行日。例: <code>2025/11/01</code>。<br>
+          ・Agency に PDF / メール送信した日と一致。<br>
+          ・編集不可（再発行は別レコードまたはバージョン管理で対応）。
+        </td>
+      </tr>
+
+      <tr>
+        <td>代理店</td>
+        <td>
+          請求先の Agency 名。例: クレディ株式会社、リブ合同会社。<br>
+          ・Partner Master と紐づく。<br>
+          ・将来的にはクリックで Partner 詳細画面へ遷移可能にする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>請求金額</td>
+        <td>
+          請求書の総額（税込）。例: <code>¥120,000</code>, <code>¥580,000</code>。<br>
+          ・基本通貨は JPY。多通貨対応する場合は別フィールドで通貨を保持。<br>
+          ・編集不可。金額修正は元となる Order / Commission で行い、再発行とする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>VA ID</td>
+        <td>
+          仮想口座（Virtual Account）の ID。例: <code>VA1283920</code>, <code>VA1983752</code>。<br>
+          ・銀行・決済代行（GMO など）から払い出される。<br>
+          ・銀行側の入金データと照合するためのキーとなる。<br>
+          ・入金連携バッチでは「VA ID + 金額」でマッチングを行い、該当請求を自動で「入金済」に更新する実装も可能。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払期日</td>
+        <td>
+          Agency に通知される支払期限。例: <code>2025/11/15</code>。<br>
+          ・期限を過ぎてもステータスが「未入金」のままの場合、督促フローの対象となる。<br>
+          ・将来的には「期日超過アラート」や自動リマインドメールにも利用できる。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          請求書の入金状態。主な値：<br>
+          <ul>
+            <li><strong>未入金:</strong> 請求書発行済みだが、まだ入金が確認されていない状態。</li>
+            <li><strong>入金済:</strong> 銀行入金が確認され、入金処理が完了した状態。</li>
+            <li><strong>失敗:</strong> 入金処理に問題があった状態（例: 入金金額不一致、VA 期限切れ、返金など）。</li>
+          </ul>
+          ・入金済への変更は「入金確認済み」ボタンまたは入金連携バッチにより行う。<br>
+          ・失敗の場合は Error Log アプリに詳細理由を保持する想定。
+        </td>
+      </tr>
+
+      <tr>
+        <td>関連注文</td>
+        <td>
+          請求の元となる Agency Order ID（例: <code>ORD-1001</code>）。<br>
+          ・リンククリックで注文詳細画面へ遷移。<br>
+          ・Invoice と Order は 1:1 を基本とする（将来 1:N のパターンがある場合は別途設計）。
+        </td>
+      </tr>
+    </table>
+
+    <h3>4.3 スクリーンショット</h3>
+    <div class="spec-screenshot">
+      <img src="invoice_screen.png" alt="請求管理アプリ 一覧画面" />
+      <div class="spec-screenshot-caption">図1. 請求管理アプリ 一覧画面</div>
+    </div>
+
+    <!-- 4.4 Business Flow -->
+    <h3>4.4 入金確認フロー（Business Flow）</h3>
+    <ol>
+      <li>
+        <strong>① Invoice 生成</strong><br>
+        ・Agency Order が「確定」したタイミングで、本アプリに請求レコードを自動作成。<br>
+        ・VA 発行 API を呼び出し、VA ID を取得して保存。<br>
+        ・同時に Agency へ PDF 請求書と支払案内メールを送信（別途、Notification Template を利用）。
+      </li>
+      <li>
+        <strong>② 入金待ち</strong><br>
+        ・初期ステータスは <code>未入金</code>。<br>
+        ・Credie 側では当該注文のステータスを「入金待ち」とし、出荷処理をブロックする。
+      </li>
+      <li>
+        <strong>③ 入金確認</strong><br>
+        ・銀行側から VA 入金データを取得（API / ファイル連携）。<br>
+        ・システムが VA ID と請求金額で突合し、一致するレコードのステータスを <code>入金済</code> に自動更新。<br>
+        ・または、Finance が通帳・レポートを見ながら対象レコードを選択し、「入金確認済み」ボタンで一括更新。
+      </li>
+      <li>
+        <strong>④ Order への反映</strong><br>
+        ・Invoice ステータスが <code>入金済</code> に更新されたタイミングで、関連 Order のステータスを「入金待ち → 出荷中 or 出荷可」に変更。<br>
+        ・これにより、出荷タスクが作成され、倉庫側で出荷処理が進められる。
+      </li>
+      <li>
+        <strong>⑤ 失敗 / 例外処理</strong><br>
+        ・入金額不一致、VA 無効などのエラーが発生した場合、ステータスを <code>失敗</code> に更新し、Error Log アプリに詳細を保存。<br>
+        ・Sales / CS に自動通知（メール）を行い、Agency と調整する。
+      </li>
+    </ol>
+    <!-- 4.5 請求詳細画面 -->
+    <h3>4.5 請求詳細画面</h3>
+
+    <div class="spec-callout">
+      請求管理一覧から請求IDリンク（INV-2025-0001 など）をクリックしたときに表示される詳細画面。<br>
+      個々の請求書の内容・入金状況・エラー情報を確認し、必要に応じてステータスやメモを更新する。
+      金額や VA ID など、元データと整合性が必要な項目は原則参照専用とする。
+    </div>
+
+    <h4>4.5.1 フォーム構成（基本情報）</h4>
+    <p>画面上部は 2 カラムのフォームで、次の項目を表示する。</p>
+
+    <table>
+      <tr><th>項目名</th><th>説明 / 編集可否</th></tr>
+
+      <tr>
+        <td>請求ID</td>
+        <td>
+          請求書の一意な ID（INV-2025-0001 など）。<br>
+          ・自動採番。編集不可。<br>
+          ・監査・問い合わせ時のキーとして利用する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>請求日</td>
+        <td>
+          請求書発行日。<br>
+          ・通常は自動設定。原則編集不可。<br>
+          ・再発行などで日付を変更する場合は、別レコードで扱うことを推奨。
+        </td>
+      </tr>
+
+      <tr>
+        <td>代理店</td>
+        <td>
+          請求先の Agency 名。<br>
+          ・Partner Master と紐づく参照フィールド。編集不可。<br>
+          ・クリックで Partner 詳細画面を別タブで開く。
+        </td>
+      </tr>
+
+      <tr>
+        <td>請求金額</td>
+        <td>
+          請求書合計金額（税込）。<br>
+          ・Order / Commission から計算された値。編集不可。<br>
+          ・差額調整が必要な場合は元 Order 側を修正し、新しい Invoice を発行する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>通貨</td>
+        <td>
+          請求通貨。Phase 1 では JPY 固定。<br>
+          ・将来的な多通貨対応を見据えたフィールド。編集不可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>VA ID</td>
+        <td>
+          仮想口座 ID（VA1283920 など）。<br>
+          ・決済代行から払い出される ID を保存。編集不可。<br>
+          ・入金連携バッチの突合キーとなる。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払期日</td>
+        <td>
+          Agency と取り決めた支払期限。<br>
+          ・必要に応じて経理が編集可（期日延長等）。<br>
+          ・期日を過ぎてもステータスが未入金の場合、督促対象になる。
+        </td>
+      </tr>
+
+      <tr>
+        <td>入金日</td>
+        <td>
+          実際に入金が確認された日。<br>
+          ・自動連携で入金済になった場合は、連携データの日付をセット。<br>
+          ・手動で「入金済」に変更した場合は、経理が入力または当日を自動セット。<br>
+          ・ステータスが未入金・失敗のときは空。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          請求書の入金状態（未入金 / 入金済 / 失敗）。<br>
+          ・<strong>経理ロールのみ編集可</strong>。<br>
+          ・一覧画面の一括更新と同じロジックで更新される。<br>
+          ・ステータスを更新すると、関連 Order のステータス更新ロジックも同時に実行される。
+        </td>
+      </tr>
+
+      <tr>
+        <td>関連注文</td>
+        <td>
+          請求の元となる注文ID（ORD-1001 など）。<br>
+          ・リンククリックで Order 詳細画面へ遷移。<br>
+          ・編集不可。複数注文をまとめて請求する仕様は Phase 1 では対象外。
+        </td>
+      </tr>
+
+      <tr>
+        <td>備考</td>
+        <td>
+          当該請求に関するメモ。<br>
+          例：支払方法変更の相談中、分割支払予定、再請求済みなど。<br>
+          ・経理 / Sales が編集可。運用メモとして自由記述。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.5.2 ステータス更新 / 操作ボタン</h4>
+    <ul>
+      <li><strong>保存ボタン</strong><br>
+        ・ステータス・支払期日・入金日・備考など、編集可能フィールドの変更を保存。<br>
+        ・ステータスが「入金済」に変更された場合は、関連 Order のステータスも
+          「入金待ち → 出荷可」に更新する。</li>
+
+      <li><strong>入金確認済みボタン（単票）※任意</strong><br>
+        ・一覧画面と同様の処理を単一レコードに対して実行するボタン。<br>
+        ・クリック時、ステータスを入金済に変更し、入金日を当日（または指定日）でセット。</li>
+
+      <li><strong>入金再チェックボタン（将来拡張）</strong><br>
+        ・VA 連携 API を呼び出して再度入金状況を確認するためのボタンとして将来追加可能。<br>
+        ・実装する場合は、Error ログのクリアおよび最新結果の上書きを行う。
+      </li>
+    </ul>
+
+    <h4>4.5.3 エラー情報表示（ステータス＝失敗時）</h4>
+    <p>
+      入金連携や VA 側処理でエラーが発生し、ステータスが <code>失敗</code> に設定された場合、
+      詳細画面下部にエラー情報を表示する。
+    </p>
+
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+
+      <tr>
+        <td>エラーコード</td>
+        <td>
+          決済代行または内部連携処理から返却されたエラーコード。<br>
+          例：<code>VA_NOT_FOUND</code>（VA 不存在）、<code>AMOUNT_MISMATCH</code>（金額不一致）など。<br>
+          ・参照専用。詳細調査のキーとして利用する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>エラーメッセージ</td>
+        <td>
+          エラー内容のメッセージ。<br>
+          ・API から返却された原文、またはシステム側で整形した日本語メッセージを表示。<br>
+          ・読み取り専用テキストエリア。複数行のメッセージを保持可能。
+        </td>
+      </tr>
+
+      <tr>
+        <td>最終確認日時</td>
+        <td>
+          VA 連携や入金確認バッチを最後に実行した日時。<br>
+          ・いつの時点の情報かを把握するための参照フィールド。
+        </td>
+      </tr>
+
+      <tr>
+        <td>再確認メモ</td>
+        <td>
+          経理担当が手動調査した内容や、銀行とのやり取りログを記録するメモ欄。<br>
+          ・編集可。<br>
+          例：<br>
+          「○月△日 銀行に確認、VA は期限切れのため再発行依頼中」<br>
+          「Agency から振込金額修正の連絡あり、差額は次回請求にて調整予定」など。
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      エラー情報ブロックは、ステータスが <code>失敗</code> の場合のみ強調表示（背景色を淡い赤系）し、
+      未入金・入金済のケースでは非表示または折りたたみ表示とする。
+      これにより、経理担当が「対応が必要な請求」をすぐに認識できるようにする。
+    </p>
+    <!-- 5. Business Impact -->
+    <h2>5. ビジネス影響（Business Impact）</h2>
+    <ul>
+      <li>請求と入金の対応関係が明確になり、入金漏れや二重入金チェックが容易になる。</li>
+      <li>Invoice ステータスに基づき出荷可否を制御することで、「未入金のまま出荷してしまう」リスクを防止できる。</li>
+      <li>VA ID をキーとした自動照合により、経理の入金確認作業を大幅に削減できる。</li>
+    </ul>
+
+    <!-- 6. Dev Notes -->
+    <h2>6. 開発メモ（Dev Notes）</h2>
+    <ul>
+      <li>請求ID・VA ID・代理店ID にインデックスを張り、入金連携バッチの突合性能を確保する。</li>
+      <li>「入金確認済み」ボタンは、選択レコードのステータスが未入金の場合のみ更新対象とする。</li>
+      <li>Invoice ステータス更新と同時に、関連 Order アプリ側のステータス更新ロジックをトランザクション的に扱う（更新失敗時のログを残す）。</li>
+      <li>将来的なクレジットカード決済など、他の決済チャネルに対応できるよう、payment_method フィールドを追加する余地を残す。</li>
+    </ul>
+
+  </div>
+</body>
+</html>
