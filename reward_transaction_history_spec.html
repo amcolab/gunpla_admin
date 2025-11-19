@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 報酬取引履歴アプリ</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+    p { margin: 0.4em 0; }
+    ul { margin: 0.4em 0 0.8em 1.4em; }
+    ol { margin: 0.4em 0 0.8em 1.6em; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+    @media print {
+      body { background:#fff; padding:0; }
+      .spec-container { box-shadow:none; border-radius:0; max-width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Rewards</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 報酬取引履歴アプリ（Reward Transaction History）</h1>
+    <p><strong>対象画面:</strong> 報酬取引履歴 一覧</p>
+    <p><strong>想定利用者:</strong> 経理担当、ファイナンス担当、Biz オーナー、監査担当</p>
+
+    <!-- 1. Purpose -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      報酬取引履歴アプリは、アフィリエイト報酬および投資家配当など、
+      報酬関連の「個々の取引」を時系列で管理するための一覧画面である。
+    </p>
+    <ul>
+      <li>各注文・返品に紐づく報酬金額（正・負）を記録し、月次レベルでの集計や Payment Record 生成の元データとする。</li>
+      <li>報酬種別（アフィリエイト報酬 / 投資家配当など）と、トランザクション種別（注文 / 返品調整など）を分けて管理する。</li>
+      <li>将来的な Rewards Ledger（報酬元帳）や Payment App との連携を前提とした履歴管理を行う。</li>
+    </ul>
+
+    <!-- 2. User Stories -->
+    <h2>2. ユーザーストーリー（User Stories）</h2>
+
+    <h3>2.1 経理担当 / Finance</h3>
+    <ul>
+      <li>月次締め時に、対象期間の報酬取引を「期間（○○年度○月度）」でフィルタし、アフィリエイト・投資家ごとの合計を確認したい。</li>
+      <li>返品やキャンセルに伴うマイナス取引（返品調整）が正しく記録されているかチェックしたい。</li>
+      <li>Payment Record（支払実績）と突合するために、「確定済」の取引のみを CSV 出力したい。</li>
+    </ul>
+
+    <h3>2.2 Biz オーナー / マーケ担当</h3>
+    <ul>
+      <li>特定アフィリエイトの実績を確認するため、取引先名で検索し、どの注文からいくら報酬が発生しているかを一覧で見たい。</li>
+      <li>キャンペーン期間中の成果を確認するために、「期間＋報酬種別＋取引先」で絞り込み、数値を把握したい。</li>
+    </ul>
+
+    <!-- 3. Functions -->
+    <h2>3. 機能概要（Functions）</h2>
+    <ul>
+      <li>報酬取引レコードの一覧表示・検索・フィルタ（期間、ステータス、報酬種別など）</li>
+      <li>各行から注文詳細へのドリルダウン（注文IDリンク）</li>
+      <li>取引先（Affiliate / 投資家）へのドリルダウン</li>
+      <li>ステータス（確定済 / 一時計上 等）による取引の確定管理</li>
+      <li>CSV エクスポート（会計処理・分析用）</li>
+    </ul>
+
+    <!-- 4. Layout -->
+    <h2>4. 画面レイアウト（Layout）</h2>
+
+    <h3>4.1 一覧ヘッダー / ツールバー</h3>
+    <ul>
+      <li><strong>ビュー選択（すべてのレコード）:</strong> 全件表示のほか、「今月度」「先月度」などのビューを定義可能。</li>
+      <li><strong>検索ボックス:</strong> 注文ID・取引先名・報酬種別などを対象にした全文検索。</li>
+      <li><strong>月度フィルタ:</strong> 期間（○○年度○月度）での絞り込み。例: 「2025年09月度」のみ表示。</li>
+      <li><strong>CSVエクスポート:</strong> 現在表示中のフィルタ条件で CSV をダウンロード。月次集計用。</li>
+      <li><strong>＋ボタン:</strong> 通常は自動生成のみを想定するが、検証や例外対応用に手動登録を許容してもよい（仕様次第）。</li>
+    </ul>
+
+    <h3>4.2 一覧カラム仕様</h3>
+
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+
+      <tr>
+        <td>期間</td>
+        <td>
+          取引が属する会計上の期間（例: <code>2025年09月度</code>, <code>2025年10月度</code>）。<br>
+          ・基準日は原則、注文日または売上計上日。<br>
+          ・月次集計・Rewards Ledger 作成時の主キーの一つ。
+        </td>
+      </tr>
+
+      <tr>
+        <td>注文ID</td>
+        <td>
+          報酬の元となる注文番号（例: <code>ORD-2025-0001</code>, <code>ORD-2025-0010</code>）。<br>
+          ・リンククリックで Order 詳細画面へ遷移。<br>
+          ・返品調整の場合も、元注文の ID を保持する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>トランザクション種別</td>
+        <td>
+          取引の種類を表す区分。例：<br>
+          <ul>
+            <li><strong>注文:</strong> 通常の売上に伴う報酬発生。</li>
+            <li><strong>返品調整:</strong> 返品・キャンセル等による報酬のマイナス調整。</li>
+          </ul>
+          ・今後、ボーナス加算・手数料調整等の種別を追加できるよう拡張性を持たせる。
+        </td>
+      </tr>
+
+      <tr>
+        <td>報酬種別</td>
+        <td>
+          報酬の性質を表す区分。例：<br>
+          <ul>
+            <li><strong>アフィリエイト報酬:</strong> Affiliate パートナー向けの成果報酬。</li>
+            <li><strong>投資家配当:</strong> Investor 向けの配当額。</li>
+          </ul>
+          ・Rewards Rule Master で定義されたルールに基づき、自動計算される。
+        </td>
+      </tr>
+
+      <tr>
+        <td>取引先名</td>
+        <td>
+          報酬の対象となるパートナー名。例: <code>Affiliate X</code>, <code>投資家A</code>。<br>
+          ・リンククリックで Partner 詳細画面または Rewards Ledger（個別）画面へ遷移する想定。
+        </td>
+      </tr>
+
+      <tr>
+        <td>取引金額（JPY）</td>
+        <td>
+          当該取引で発生した報酬金額（日本円）。<br>
+          ・アフィリエイト報酬の場合は通常プラス。<br>
+          ・返品調整等、報酬の減額はマイナス金額で表示（例: <code>¥ -1,000</code>, <code>¥ -2,000</code>）。<br>
+          ・通貨は v1 では JPY 固定だが、将来多通貨対応する場合は別フィールドで通貨コードを保持。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          報酬取引の確定状態。代表的な値：<br>
+          <ul>
+            <li><strong>確定済:</strong> 金額・対象が確定しており、月次集計・支払対象に含めてよい状態。</li>
+            <li><strong>一時計上:</strong> 暫定計上中。返品期間などが終了するまで最終確定しない状態。</li>
+          </ul>
+          ・Rewards Ledger / Payment 作成時は、原則「確定済」のみを対象とする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>登録日時</td>
+        <td>
+          この報酬取引レコードが作成された日時。例: <code>2025/09/05 10:15</code>。<br>
+          ・多くの場合、Order 確定やバッチ処理のタイミングで自動登録される。<br>
+          ・編集不可。監査・ログ用。
+        </td>
+      </tr>
+
+      <tr>
+        <td>操作</td>
+        <td>
+          詳細アイコン（目のマーク）など。<br>
+          ・クリックで報酬取引の詳細画面（今後実装予定）を開く。<br>
+          ・v1 では必要に応じて注文詳細にジャンプさせてもよい。
+        </td>
+      </tr>
+    </table>
+
+    <h3>4.3 スクリーンショット</h3>
+    <div class="spec-screenshot">
+      <img src="reward_transaction_history_screen.png" alt="報酬取引履歴アプリ 一覧画面" />
+      <div class="spec-screenshot-caption">図1. 報酬取引履歴アプリ 一覧画面</div>
+    </div>
+    <!-- 4.4 報酬取引詳細画面 -->
+    <h3>4.4 報酬取引詳細画面</h3>
+
+    <div class="spec-callout">
+      報酬取引履歴一覧から 1 行をクリックした際に表示される詳細画面。<br>
+      個々の取引内容（注文・返品・調整など）を確認し、必要に応じてステータスやメモを更新する。
+      金額や報酬種別などのコアデータは原則として参照専用とする。
+    </div>
+
+    <h4>4.4.1 基本情報ブロック</h4>
+    <p>画面上部は 2 カラムを基本としたフォームレイアウトで、次の項目を表示する。</p>
+
+    <table>
+      <tr><th>項目名</th><th>説明 / 編集可否</th></tr>
+
+      <tr>
+        <td>期間</td>
+        <td>
+          取引が属する会計期間（例: 2025年09月度）。<br>
+          ・自動計算された値。編集不可。<br>
+          ・月次締めや Rewards Ledger 集計のキーとして利用される。
+        </td>
+      </tr>
+
+      <tr>
+        <td>注文ID</td>
+        <td>
+          元となる注文番号（ORD-2025-0001 など）。<br>
+          ・リンククリックで注文詳細画面を別タブで開く。<br>
+          ・返品調整の場合も元注文の ID を保持する。編集不可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>トランザクション種別</td>
+        <td>
+          取引の種類（注文 / 返品調整 / その他調整 等）。<br>
+          ・元システムのロジックに基づき自動設定。編集不可。<br>
+          ・分析時に「マイナス調整の原因」を切り分けるために使用する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>報酬種別</td>
+        <td>
+          アフィリエイト報酬 / 投資家配当 などの区分。<br>
+          ・Rewards Rule Master に基づき自動設定。編集不可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>取引先</td>
+        <td>
+          報酬対象のパートナー名（Affiliate X、投資家A など）。<br>
+          ・リンククリックで Partner 詳細画面へ遷移。<br>
+          ・参照専用。パートナー変更が必要な場合は元データ側で修正する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>取引金額</td>
+        <td>
+          当該取引で発生した報酬金額（JPY）。<br>
+          ・プラス：報酬発生、マイナス：返品・減額調整。<br>
+          ・自動計算結果であり、編集不可。金額を修正する場合は元注文 / 調整ロジック側で行う。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          確定状態を示すフィールド（確定済 / 一時計上 など）。<br>
+          ・<strong>Finance / 経理のみ編集可</strong>。<br>
+          ・返品期間終了後などに「一時計上 → 確定済」へ更新することで、支払対象に含めるかどうかを制御する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>備考</td>
+        <td>
+          当該取引に関するメモ・補足説明。<br>
+          例：キャンペーン分ボーナス、手動調整の理由、特記事項など。<br>
+          ・編集可。監査ログとは別に運用メモとして利用する。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.4.2 関連情報 / リンク</h4>
+    <ul>
+      <li><strong>注文詳細へのリンク:</strong> 注文IDフィールドから遷移。</li>
+      <li><strong>Partner詳細へのリンク:</strong> 取引先名から Partner Master の詳細画面へ遷移。</li>
+      <li><strong>元計算ロジックへのトレース:</strong> 必要に応じて、報酬計算履歴（別アプリ）へのリンクを追加可能。</li>
+    </ul>
+
+    <h4>4.4.3 監査情報</h4>
+    <p>
+      画面下部には Kintone 標準の監査情報を表示する。
+    </p>
+    <ul>
+      <li>作成者 / 作成日時（自動セット、編集不可）</li>
+      <li>更新者 / 更新日時（ステータスや備考更新時に自動更新）</li>
+      <li>これにより、いつ誰がステータスを「確定済」に変更したかを追跡可能とする。</li>
+    </ul>
+    <!-- 5. Business Impact -->
+    <h2>5. ビジネス影響（Business Impact）</h2>
+    <ul>
+      <li>アフィリエイトおよび投資家向けの報酬を「取引レベル」で可視化することで、月次支払の根拠が明確になり、トラブルを防止できる。</li>
+      <li>注文・返品・調整をすべて一か所で管理することで、報酬の過大支払・支払漏れのリスクを削減できる。</li>
+      <li>ステータス（確定済 / 一時計上）を明示することで、「どの取引が支払対象か」を一目で把握でき、経理処理がスムーズになる。</li>
+    </ul>
+
+    <!-- 6. Scope -->
+    <h2>6. Scope / Out of Scope</h2>
+
+    <h3>6.1 Scope</h3>
+    <ul>
+      <li>報酬取引レコードの一覧表示と基本検索・フィルタ</li>
+      <li>注文・Partner へのリンクによるドリルダウン</li>
+      <li>ステータスに基づく「確定済」取引の識別</li>
+      <li>CSV エクスポート機能</li>
+    </ul>
+
+    <h3>6.2 Out of Scope</h3>
+    <ul>
+      <li>報酬金額の計算ロジック（Rewards Rule Master と Order モジュール側で実装）</li>
+      <li>Payment 実行（振込リクエスト生成や支払処理）は別アプリ（Payment / Payout App）で行う。</li>
+      <li>複雑なグラフ・ダッシュボード表示（必要であれば BI ツールや別画面で対応）。</li>
+    </ul>
+
+    <!-- 7. Dev Notes -->
+    <h2>7. 開発メモ（Dev Notes）</h2>
+    <ul>
+      <li>レコードは原則として Order / Return から自動生成し、UI での手動編集は最小限にする（ステータス変更程度）。</li>
+      <li>注文ID・取引先ID・期間・ステータスにインデックスを張り、月次集計・検索性能を確保する。</li>
+      <li>ステータス「一時計上」→「確定済」への切替タイミング（例：返品可能期間の終了）を別途バッチ・ルールで定義する。</li>
+      <li>マイナス金額の表示フォーマット（<code>¥ -1,000</code> 等）を統一し、エクスポート時にも同じ形式で出力する。</li>
+    </ul>
+
+  </div>
+</body>
+</html>

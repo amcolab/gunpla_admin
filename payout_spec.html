@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 支払実行リクエスト管理</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      margin: 0.4em 0 0.8em 1.4em;
+    }
+
+    ol {
+      margin: 0.4em 0 0.8em 1.6em;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Payment Execution</span>
+      Version 1.1 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 支払実行リクエスト管理</h1>
+    <p><strong>対象画面:</strong> 支払実行リクエスト一覧 / 支払実行リクエスト詳細</p>
+    <p><strong>想定利用者:</strong> 経理担当、ファイナンス担当、CEO（承認者）、システム管理者</p>
+
+    <!-- 1. 目的 -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      支払実行リクエスト管理アプリは、Credie から外部パートナーへ行う
+      銀行振込支払の「実行依頼」を一元管理するための画面です。
+    </p>
+    <ul>
+      <li>支払対象: コミッション報酬、投資家への配当、サプライヤーへの仕入支払など。</li>
+      <li>GMO ペイメントゲートウェイの振込 API と連携し、承認済みリクエストを自動で銀行振込実行する。</li>
+      <li>CEO 承認ワークフロー、通貨管理、ステータス管理、エラー時のリトライと通知を提供する。</li>
+    </ul>
+
+    <!-- 2. ユーザーストーリー -->
+    <h2>2. ユーザーストーリー（User Stories）</h2>
+
+    <h3>2.1 経理担当（Finance）</h3>
+    <ul>
+      <li>月次処理で、仕入先・エージェンシー・投資家への支払データが AP / Rewards / Dividend モジュールから集計される。</li>
+      <li>各レコードについて、本アプリに「支払実行リクエスト」が <strong>自動作成</strong> される。<br>
+        ・ステータス：<code>待機中（承認待ち）</code><br>
+        ・支払種別・支払金額・通貨は、元アプリ（PO / Rewards / Dividend）から連携され、画面上は参照のみ（編集不可）。</li>
+      <li>レコード作成と同時に、システムが CEO に承認依頼メールを自動送信するため、経理担当は「メール送信」の操作を行わない。</li>
+      <li>経理担当の役割は、一覧で状況をモニタリングし、エラーや失敗ステータスが出た場合に原因調査・再処理を行うこと。</li>
+    </ul>
+
+    <h3>2.2 CEO / 承認者</h3>
+    <ul>
+      <li>CEO は受信した「支払承認依頼メール」から対象レコードへのリンクをクリックして詳細画面を開く。</li>
+      <li>支払種別・金額・振込先・支払予定日を確認し、問題なければ「承認」ボタンを押下する。</li>
+      <li>承認後：<br>
+        ・レコードの「承認者」に CEO の氏名が自動セットされる。<br>
+        ・承認日時を記録（監査用）。<br>
+        ・ステータスは <code>待機中</code> のままだが、「承認済みフラグ = ON」として GMO 実行条件を満たす。</li>
+    </ul>
+
+    <h3>2.3 システム（バッチ / Webhook）</h3>
+    <ul>
+      <li>一定間隔で、「承認済みフラグ=ON」「ステータス=待機中」「支払予定日≦本日」のレコードを抽出し、GMO 振込 API を実行する。</li>
+      <li>成功した場合は GMO取引ID を保存し、ステータスを「完了」（必要に応じて一時的に「実行中」）へ更新。</li>
+      <li>エラーの場合はステータスを「失敗」に更新し、Error Log アプリに詳細を記録。<br>
+        さらに Finance 向けに自動通知メールを送信する。</li>
+    </ul>
+
+    <!-- 3. 機能 -->
+    <h2>3. 機能概要（Functions）</h2>
+    <ul>
+      <li>支払実行リクエストレコードの一覧表示・検索・フィルタ</li>
+      <li>支払種別（仕入支払 / 配当支払 / コミッション支払など）の管理（元アプリ連携）</li>
+      <li>支払予定日・通貨・金額の確認</li>
+      <li>CEO 承認者の記録と「承認済みフラグ」による GMO 実行制御</li>
+      <li>GMO 取引 ID と実行ステータス（待機中 / 実行中 / 完了 / 失敗）の管理</li>
+      <li>レコード作成時の CEO 自動通知メール送信</li>
+      <li>支払失敗時の Finance 自動通知メール送信</li>
+      <li>CSV エクスポート、および詳細画面からのリトライ操作（詳細仕様は別途）</li>
+    </ul>
+
+    <!-- 4. 画面レイアウト -->
+    <h2>4. 画面レイアウト（Layout & Flow）</h2>
+
+    <h3>4.1 支払実行リクエスト一覧画面</h3>
+
+    <div class="spec-callout">
+      本一覧は、振込支払の実行リクエストを 1 行 1 レコードで表示する。<br>
+      経理・CEO が「どの支払がいつ、どこへ、いくら支払われるか」を俯瞰するための画面。
+    </div>
+
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+
+      <tr>
+        <td>支払ID</td>
+        <td>
+          振込リクエストの一意な ID。例: <code>PAY-2025-001156</code>。<br>
+          クリックすると支払リクエスト詳細画面へ遷移する。<br>
+          形式: 年度＋連番。ログ・監査追跡に使用。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払種別</td>
+        <td>
+          支払の種類を表す区分。<br>
+          例: <strong>仕入支払</strong>（サプライヤー）、<strong>配当支払</strong>（投資家）、
+          今後 <strong>コミッション支払</strong> などを追加予定。<br>
+          元アプリで決定され、本画面では参照のみ（編集不可）。
+        </td>
+      </tr>
+
+      <tr>
+        <td>関連PO番号</td>
+        <td>
+          仕入支払の場合に紐づく PO 番号（例: <code>PO-2025-0892</code>）。<br>
+          リンククリックで PO 詳細画面を開く。<br>
+          配当・コミッション等 PO に紐づかない場合は <code>-</code> 表示。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払金額</td>
+        <td>
+          振込予定の金額。例: <code>¥1,250,000</code>, <code>¥680,400</code>, <code>$15,800</code>。<br>
+          元アプリから連携され、本画面では編集不可。通貨は別フィールドで管理。
+        </td>
+      </tr>
+
+      <tr>
+        <td>通貨</td>
+        <td>
+          支払に使用する通貨。Phase 1 のメインは JPY だが、海外仕入・投資家向けに USD 等も許容。<br>
+          通貨コードとして保持し、本画面では <code>JPY</code>, <code>USD</code> などで表示。編集不可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払予定日</td>
+        <td>
+          振込実行予定日。<br>
+          バッチ実行では「支払予定日≦本日」でかつ承認済みのレコードのみを対象に GMO API をコールする。<br>
+          キャッシュフロー調整のため、Finance による編集を許可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>振込先</td>
+        <td>
+          支払先名称（例: 山田商事、東京流通センター、Marusho運送、健康アフィリエイト など）。<br>
+          実際の銀行口座情報は Partner / Supplier マスタ側に保持し、本画面では名寄せ済みの表示名のみを表示。
+        </td>
+      </tr>
+
+      <tr>
+        <td>承認者</td>
+        <td>
+          当該支払を承認した CEO（または権限者）の氏名。<br>
+          未承認の場合は空欄または <code>-</code>。<br>
+          GMO API 実行条件として「承認者がセットされていること」を必須とする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          支払実行処理の現在ステータス。代表的な状態：<br>
+          <ul>
+            <li><strong>待機中:</strong> レコード作成済みだが、まだ GMO 振込実行が行われていない状態（承認待ち／実行待ち）。</li>
+            <li><strong>実行中:</strong> GMO API へ振込依頼送信済みで、結果確定待ち。</li>
+            <li><strong>完了:</strong> GMO から成功レスポンスを受信し、銀行振込が完了した状態。</li>
+            <li><strong>失敗:</strong> GMO API のエラーやタイムアウトなどで振込に失敗した状態。</li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td>GMO取引ID</td>
+        <td>
+          GMO 側で発行される取引 ID。例: <code>GMO240928001</code>。<br>
+          成功・失敗に関わらず、GMO とやり取りしたトランザクションがある場合は ID を保持し、
+          GMO 管理画面での検索キーとして利用。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.1.1 一覧画面のツールバー</h4>
+    <ul>
+      <li><strong>ビュー選択（全支払）:</strong> 「全支払」「今月支払」「失敗のみ」などのビューを定義。</li>
+      <li><strong>通貨フィルタ（全通貨）:</strong> JPY のみ / USD のみ など、通貨別に絞り込み。</li>
+      <li><strong>ステータスフィルタ（全ステータス）:</strong> 待機中 / 実行中 / 完了 / 失敗 で絞り込み。</li>
+      <li><strong>検索ボックス:</strong> 支払ID・振込先・承認者などを対象とした全文検索。</li>
+      <li><strong>CSV エクスポート:</strong> 現在のビュー結果を CSV で出力。</li>
+      <li><strong>＋ 支払リクエスト:</strong> 例外的に手入力で支払リクエストを作成するためのボタン（通常は自動生成）。</li>
+    </ul>
+
+    <h4>4.1.2 一覧画面スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="payout_screen.png" alt="支払実行リクエスト管理一覧画面" />
+      <div class="spec-screenshot-caption">図1. 支払実行リクエスト管理 一覧画面</div>
+    </div>
+
+    <!-- 4.2 Flow -->
+    <h3>4.2 運用フロー（システム＋CEO 承認＋通知）</h3>
+
+    <div class="spec-callout">
+      本フローは、支払データ生成 → CEO 承認 → GMO 実行 → 結果通知までを自動化することを目的とする。
+    </div>
+
+    <ol>
+      <li>
+        <strong>① 支払データ生成（自動）</strong><br>
+        ・AP / Rewards / Dividend などから支払データを集計し、本アプリにレコードを自動作成。<br>
+        ・初期値：ステータス = <code>待機中</code>、承認者 = 空欄、承認済みフラグ = OFF。<br>
+        ・支払種別・支払金額・通貨は元アプリから連携され、読み取り専用として保持。
+      </li>
+
+      <li>
+        <strong>② CEO への承認依頼メール送信（自動）</strong><br>
+        ・レコード作成直後、システムが CEO に承認依頼メールを自動送信する。<br>
+        ・件名例：<code>[Credie] 支払承認依頼 – PAY-2025-001156</code><br>
+        ・本文には 支払ID / 支払種別 / 金額 / 支払予定日 / 振込先 のサマリと、当該レコードの URL を記載。<br>
+        ・メールテンプレートには System Setting の「CEO approval request」を利用。
+      </li>
+
+      <li>
+        <strong>③ CEO 承認</strong><br>
+        ・CEO はメール内のリンクから詳細画面を開き、内容を確認して「承認」ボタンを押下。<br>
+        ・承認時：<br>
+        &nbsp;&nbsp;– 承認者フィールドに CEO 氏名をセット。<br>
+        &nbsp;&nbsp;– 承認日時を記録。<br>
+        &nbsp;&nbsp;– 承認済みフラグ = ON。<br>
+        ・必要に応じて「差戻し」ボタンを実装し、コメントを残して元アプリ側で修正 → 再生成という運用も想定。
+      </li>
+
+      <li>
+        <strong>④ GMO 振込 API 実行（バッチ・自動）</strong><br>
+        ・バッチが定期的に以下条件でレコードを抽出：<br>
+        &nbsp;&nbsp;– 承認済みフラグ = ON<br>
+        &nbsp;&nbsp;– ステータス = <code>待機中</code><br>
+        &nbsp;&nbsp;– 支払予定日 ≦ 本日<br>
+        ・該当レコードごとに GMO 銀行振込 API をコール。<br>
+        ・成功レスポンス：GMO取引ID を保存し、ステータスを <code>完了</code> に更新。<br>
+        ・処理中の場合は一時的に <code>実行中</code> を使用してもよい。
+      </li>
+
+      <li>
+        <strong>⑤ 失敗時の自動通知（Finance 向け）</strong><br>
+        ・API エラー・タイムアウトなどで失敗した場合：<br>
+        &nbsp;&nbsp;– ステータス = <code>失敗</code> に更新。<br>
+        &nbsp;&nbsp;– Error Log アプリにエラーコード・メッセージ・対象支払ID を記録。<br>
+        &nbsp;&nbsp;– Finance / 経理ロール向けに自動メール通知を送信：<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;件名例：<code>[Credie] 支払実行失敗 – PAY-2025-001156</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;本文：支払ID、支払種別、金額、振込先、GMO取引ID（あれば）、失敗理由、レコードURL。<br>
+        ・メールテンプレートには System Setting の「Payment failed」を利用する想定。
+      </li>
+    </ol>
+
+    <!-- 4.3 編集可否 -->
+    <h3>4.3 フィールド編集可否ポリシー</h3>
+    <table>
+      <tr><th>フィールド</th><th>編集可否</th><th>備考</th></tr>
+      <tr>
+        <td>支払種別</td>
+        <td>画面上：編集不可</td>
+        <td>元アプリ（PO / Rewards / Dividend）から連携。変更が必要な場合は元アプリ側で修正し、再連携する。</td>
+      </tr>
+      <tr>
+        <td>支払金額</td>
+        <td>画面上：編集不可</td>
+        <td>同上。Payment アプリ上で金額を変更すると元データと不整合になるため、必ず元アプリで修正する。</td>
+      </tr>
+      <tr>
+        <td>通貨</td>
+        <td>画面上：原則編集不可</td>
+        <td>元データに準拠。特別な例外運用が必要な場合は別途ルール化。</td>
+      </tr>
+      <tr>
+        <td>支払予定日</td>
+        <td>編集可</td>
+        <td>Finance がキャッシュフロー調整のために変更可能。</td>
+      </tr>
+      <tr>
+        <td>振込先</td>
+        <td>通常：編集不可</td>
+        <td>Partner / Supplier マスタから連携。例外的に修正が必要な場合は運用ルールに従う。</td>
+      </tr>
+      <tr>
+        <td>備考</td>
+        <td>編集可</td>
+        <td>一時対応メモや特記事項を記載する自由記述欄。</td>
+      </tr>
+    </table>
+
+    <!-- 4.4 詳細画面 -->
+    <h3>4.4 支払実行リクエスト詳細画面</h3>
+
+    <div class="spec-callout">
+      一覧から支払IDをクリックした際に表示される詳細画面。<br>
+      振込内容の確認、API 結果の確認、ステータスの手動更新および再実行指示を行う。
+    </div>
+
+    <h4>4.4.1 基本情報ブロック</h4>
+    <p>画面上部は 2 カラム構成で、一覧と同じ項目をより詳細に表示する。</p>
+
+    <table>
+      <tr><th>項目名</th><th>説明 / 編集可否</th></tr>
+      <tr>
+        <td>支払ID</td>
+        <td>
+          レコードのタイトルとして画面先頭に表示（例: <code>PAY-2025-01156</code>）。<br>
+          自動採番。編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>支払種別</td>
+        <td>
+          例: 仕入支払・配当支払・コミッション支払。<br>
+          元アプリから連携される値であり、詳細画面でも編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>関連PO番号</td>
+        <td>
+          仕入支払の場合の紐づく PO 番号（例: <code>PO-2025-0892</code>）。<br>
+          リンククリックで PO 詳細画面を別タブで開く。編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>支払金額</td>
+        <td>
+          振込予定金額。3 桁カンマ付きで表示（例: <code>¥1,250,000</code>）。<br>
+          元アプリで確定した金額であり、編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>通貨</td>
+        <td>
+          通貨コード（例: JPY / USD）。<br>
+          元アプリから連携。編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>支払予定日</td>
+        <td>
+          振込実行予定日（例: 2025/09/30）。<br>
+          Finance による変更を許可（キャッシュフロー調整目的）。
+        </td>
+      </tr>
+      <tr>
+        <td>振込先</td>
+        <td>
+          支払先名称（例: 山田商事）。Partner / Supplier マスタ由来。<br>
+          通常は編集不可。例外的な修正は運用ルールに従う。
+        </td>
+      </tr>
+      <tr>
+        <td>GMO取引ID</td>
+        <td>
+          GMO 側で発行される取引 ID（例: <code>GMO240892801</code>）。<br>
+          GMO API 実行後にシステムが自動セットする。編集不可。
+        </td>
+      </tr>
+      <tr>
+        <td>承認者</td>
+        <td>
+          CEO 等の承認者名（例: 吉村）。<br>
+          承認ボタン押下時に自動セットされる。編集不可。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.4.2 API結果 / エラーログブロック</h4>
+    <p>
+      「API結果 / エラーログ」セクションは、GMO 振込 API のレスポンス内容をテキストで表示する読み取り専用エリア。
+      失敗時は赤背景で強調表示する。
+    </p>
+    <ul>
+      <li>表示例：
+        <pre style="font-size:12px; background:#ffecee; border:1px solid #f5b5b5; padding:8px;">
+ErrorCode: GMO_500_INTERNAL
+Message: Timeout while contacting bank API
+RequestID: req-9abdc89123
+Response: null
+Date: 2025-09-30T10:45:32Z
+        </pre>
+      </li>
+      <li>成功時はサマリ情報または「Success / 正常終了」を表示する想定。</li>
+      <li>詳細な JSON は Error Log アプリ側に保持し、本画面では人が読める程度の要約を表示する。</li>
+    </ul>
+
+    <h4>4.4.3 手動更新 / 管理者操作ブロック</h4>
+    <p>
+      GMO API 実行後の例外対応や再実行指示を行うための管理者向け操作領域。
+    </p>
+
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <td>ステータス変更</td>
+        <td>
+          ドロップダウンでステータスを手動変更できるフィールド。候補値：待機中 / 実行中 / 完了 / 失敗 / 手動完了 など。<br>
+          通常フローではシステムが自動更新するが、例外対応で「失敗 → 待機中（再実行予定）」「失敗 → 手動完了」などを選択可能。<br>
+          編集権限は管理者・Finance のみに制限。
+        </td>
+      </tr>
+      <tr>
+        <td>更新理由</td>
+        <td>
+          ステータスを手動変更する際の理由を記載するテキストエリア。<br>
+          例: 「銀行窓口で手動振込済みのため手動完了に変更」「GMO 側一時障害のため再実行指示」。<br>
+          監査・トレーサビリティのため、手動変更時は入力必須としてもよい。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.4.4 アクションボタン</h4>
+    <ul>
+      <li><strong>再実行（ボタン）</strong><br>
+        ・対象レコードのステータスが「失敗」の場合に表示・有効。<br>
+        ・クリックすると、GMO 振込 API を <strong>再度実行</strong> する処理をトリガーする。<br>
+        ・実行前に確認ダイアログ（例：「この支払を再実行します。二重振込にならないことを確認してください。」）を表示。<br>
+        ・再実行結果は 4.2 のフロー⑤と同じくステータスとエラーログに反映される。
+      </li>
+      <li><strong>手動完了（ボタン）</strong><br>
+        ・GMO API を介さず、銀行窓口や別システムで振込を完了したケースで使用。<br>
+        ・クリックすると、ステータスを <code>手動完了</code> に変更し、更新理由の入力を求める。<br>
+        ・この操作では GMO API は呼び出されず、GMO取引ID も更新しない。
+      </li>
+    </ul>
+
+    <h4>4.4.5 監査情報</h4>
+    <p>
+      画面下部には Kintone 標準の監査情報が表示される。
+    </p>
+    <ul>
+      <li>作成者 / 作成日時（例: 作成者: 中村, 作成日時: 2025/09/25 10:15）</li>
+      <li>更新者 / 更新日時（例: 更新者: 吉村, 更新日時: 2025/09/30 11:00）</li>
+      <li>これらは編集不可であり、内部監査や問題発生時の追跡に利用する。</li>
+    </ul>
+
+    <h4>4.4.6 詳細画面スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="payout_detail_screen.png" alt="支払実行リクエスト詳細画面" />
+      <div class="spec-screenshot-caption">図2. 支払実行リクエスト 詳細画面</div>
+    </div>
+    <!-- 4.5 新規支払リクエスト作成ダイアログ -->
+    <h3>4.5 新規支払リクエスト作成ダイアログ</h3>
+
+    <div class="spec-callout">
+      自動生成された支払リクエストとは別に、例外対応やテスト、スポット支払などのために、
+      手動で支払実行リクエストを作成するための入力ダイアログ。
+      通常は経理・管理者のみが使用する。
+    </div>
+
+    <h4>4.5.1 入力項目</h4>
+    <table>
+      <tr><th>項目名</th><th>説明 / バリデーション</th></tr>
+
+      <tr>
+        <td>関連PO番号<span style="color:#d00;">＊</span></td>
+        <td>
+          手動作成する支払が特定の PO に紐づく場合の PO 番号。<br>
+          ・入力方式：テキスト＋サジェスト、または PO 選択ダイアログからの選択。<br>
+          ・必須。PO に紐づかない支払（例：雑費、特別ボーナス等）は、別運用とするか
+            「その他」モジュール側から生成する想定。<br>
+          ・存在しない PO 番号を入力した場合はエラー。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払金額<span style="color:#d00;">＊</span></td>
+        <td>
+          手動で指定する支払金額。<br>
+          ・必須。0 以下は不可。<br>
+          ・数値のみ。通貨は「通貨」フィールドで指定。<br>
+          ・自動作成フローと同様に 3 桁カンマ付きで表示。
+        </td>
+      </tr>
+
+      <tr>
+        <td>通貨<span style="color:#d00;">＊</span></td>
+        <td>
+          支払に利用する通貨。ドロップダウンから選択。<br>
+          ・候補：JPY / USD（Phase 1）。<br>
+          ・必須。支払金額とセットで保持。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払予定日<span style="color:#d00;">＊</span></td>
+        <td>
+          GMO 振込を実行したい予定日。カレンダーから選択。<br>
+          ・必須。過去日は原則不可（特別な運用が必要な場合は別途検討）。<br>
+          ・バッチがこの日付を基準に実行対象を抽出する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>支払期限</td>
+        <td>
+          取引先との合意上の支払期限。表示・管理用の任意項目。<br>
+          ・未入力可。<br>
+          ・将来的に「支払遅延のアラート」などに利用可能。
+        </td>
+      </tr>
+
+      <tr>
+        <td>振込先Partner<span style="color:#d00;">＊</span></td>
+        <td>
+          振込先となる Partner（Supplier / Agency / Investor など）。<br>
+          ・必須。Partner マスタからのプルダウン選択。<br>
+          ・選択された Partner に紐づく銀行口座情報を内部的に利用し、GMO API の口座パラメータを生成する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>依頼人名<span style="color:#d00;">＊</span></td>
+        <td>
+          振込人名義として銀行側に表示される名称。<br>
+          ・初期値：<code>CREDIE CO., LTD.</code>（System Setting で変更可能）。<br>
+          ・必須。通常は編集不可でもよいが、海外送金等の事情により変更が必要な場合は、権限を制限した上で編集可とする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>エラーメッセージ</td>
+        <td>
+          前回実行時に発生したエラー内容を表示するフィールド。<br>
+          ・新規作成時は空。<br>
+          ・GMO API 実行時にエラーが発生した場合、システムが自動でメッセージを書き込む。<br>
+          ・ユーザーは編集不可（読み取り専用）。
+        </td>
+      </tr>
+    </table>
+
+    <h4>4.5.2 ボタン動作</h4>
+    <ul>
+      <li><strong>登録</strong><br>
+        ・必須項目（関連PO番号 / 支払金額 / 通貨 / 支払予定日 / 振込先Partner / 依頼人名）がすべて入力されているかをチェック。<br>
+        ・バリデーション OK の場合、支払実行リクエストレコードを新規作成し、ステータス = <code>待機中</code>、承認者 = 空欄、承認済みフラグ = OFF で保存。<br>
+        ・保存後、一覧画面に戻り、4.2 のフロー②に従って CEO へ承認依頼メールが自動送信される。</li>
+      <li><strong>キャンセル</strong><br>
+        ・ダイアログを閉じ、何も保存しない。</li>
+    </ul>
+
+    <h4>4.5.3 作成ダイアログ スクリーンショット</h4>
+    <div class="spec-screenshot">
+      <img src="payout_create_screen.png" alt="新規支払リクエスト作成ダイアログ" />
+      <div class="spec-screenshot-caption">図3. 新規支払リクエスト作成ダイアログ</div>
+    </div>
+    <!-- 5. ビジネス影響 -->
+    <h2>5. ビジネス影響（Business Impact）</h2>
+    <ul>
+      <li>CEO 承認を必ず経由しつつ、承認依頼メールを自動送信することで、大口送金や不正送金リスクを削減しながら、運用負荷を最小化できる。</li>
+      <li>支払種別・通貨・チャネル別に支出が可視化され、投資家配当・コミッション・仕入コストの管理が容易になる。</li>
+      <li>GMO API による自動振込で、経理の手作業を大幅に削減し、入力ミス・振込漏れを防止できる。</li>
+      <li>失敗時の自動通知により、問題発生から対応開始までのタイムラグを最小化できる。</li>
+    </ul>
+
+    <!-- 6. Scope / Out of Scope -->
+    <h2>6. Scope / Out of Scope</h2>
+
+    <h3>6.1 Scope</h3>
+    <ul>
+      <li>支払実行リクエストのマスタ管理（作成・参照・ステータス更新）</li>
+      <li>CEO 承認者の記録と承認済みフラグによる GMO 実行制御</li>
+      <li>レコード作成時の CEO 自動通知メール送信</li>
+      <li>GMO 振込 API の実行トリガーとなるデータセットの提供</li>
+      <li>実行ステータス（待機中 / 実行中 / 完了 / 失敗）の管理</li>
+      <li>支払失敗時の Finance 自動通知メール送信</li>
+    </ul>
+
+    <h3>6.2 Out of Scope</h3>
+    <ul>
+      <li>銀行口座情報そのものの管理（Partner / Supplier マスタで管理）</li>
+      <li>GMO 側の管理画面での操作・設定</li>
+      <li>為替レート計算や FX リスク管理（必要であれば別モジュールで対応）</li>
+    </ul>
+
+    <!-- 7. 開発メモ -->
+    <h2>7. 開発メモ（Dev Notes）</h2>
+    <ul>
+      <li>支払ID はユニーク制約をかけ、他モジュールから参照しやすい形式（プレフィックス＋年度＋連番）とする。</li>
+      <li>レコード作成トリガーで、CEO 向け承認依頼メールを自動送信するロジックを実装する（System Setting のテンプレート「CEO approval request」を使用）。</li>
+      <li>GMO API 呼び出し結果が「失敗」となった場合、Finance ロール向けに自動メール通知を送信する（テンプレート「Payment failed」を利用）。</li>
+      <li>支払種別・支払金額・通貨は UI では読み取り専用にし、更新は必ず元アプリ経由とする。</li>
+      <li>GMO API 呼び出し結果は Error Log アプリにも記録し、トレース可能なようにする。</li>
+      <li>多通貨に対応できるよう、金額＋通貨コードをセットで持ち、表示時のみフォーマット済み文字列を生成する。</li>
+      <li>将来的な複数ゲートウェイ対応を見据え、GMO 固有の項目は <code>gmo_*</code> のようなプレフィックスを付けて実装する。</li>
+    </ul>
+
+  </div>
+</body>
+</html>
