@@ -1490,7 +1490,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     以下の点を目的とします。
   </p>
   <ul>
-    <li>Adjustment_App による論理・物理在庫のGifu倉庫での一元管理</li>
+    <li>入出庫履歴管理 による論理・物理在庫のGifu倉庫での一元管理</li>
     <li>注文・購買アプリの正確なステータス更新</li>
     <li>支払済みコミッション（報酬）の報酬取引履歴管理による履歴管理と手動調整</li>
     <li>出荷指示後のキャンセル（未出荷）時の論理在庫の即時解放とTask停止</li>
@@ -1512,10 +1512,10 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <tr><td>Orders_App（受注アプリ）</td><td>販売注文の管理、サブテーブルで明細を保持、キャンセル・返品理由・数量を保持</td></tr>
       <tr><td>PO_App（購買アプリ）</td><td>購買注文の入庫状況とキャンセル処理</td></tr>
       <tr><td>Task_App（Kintone 出荷依頼/Task App）</td><td>出荷依頼タスクの管理。Orders_Appからの指示によりキャンセル・停止処理を行う。</td></tr>
-      <tr><td>Adjustment_App（調整アプリ）</td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録</td></tr>
+      <tr><td>入出庫履歴管理</td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録（Adjustment Appの役割）</td></tr>
       <tr><td>Stock_App（在庫アプリ）</td><td>論理在庫の更新・照合（引当／引当解除）</td></tr>
       <tr><td>Physical_DB（実在庫DB）</td><td>棚・LOT単位の実在庫を保持（Gifu倉庫のみ対象）</td></tr>
-      <tr><td>報酬取引履歴管理</td><td>コミッションの手動補正の履歴を記録・管理（Rewards Transaction History App）</td></tr>
+      <tr><td>報酬取引履歴管理</td><td>コミッションの手動補正の履歴を記録・管理（Rewards Transaction History Appの役割）</td></tr>
       <tr><td>Op_Staff（運用担当者）</td><td>手動で各アプリの調整を行う担当者</td></tr>
       <tr><td>EC_Channel／Mekaポータル</td><td>顧客／仕入先が注文・キャンセル・返品を実行するチャネル</td></tr>
     </tbody>
@@ -1532,9 +1532,9 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <tr><td>全キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>90: キャンセル</code></td><td>日付と理由を記録。サブテーブルを無効化。</td><td>なし（論理在庫未引当）</td><td></td></tr>
       <tr><td>部分キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>91: 部分キャンセル</code></td><td>サブテーブルのキャンセル数量を記録。</td><td>なし（論理在庫未引当）</td><td></td></tr>
       <tr><td>キャンセル（10 出荷指示済だが未出荷）</td><td><code>10: 出荷指示済</code> → <code>90: キャンセル</code></td><td>Stock_Appで論理在庫を引当解除。Task_Appのタスクを停止/キャンセル。</td><td>論理在庫を戻す（引当解除）</td><td>*出荷指示後の取り消し対応*</td></tr>
-      <tr><td>全返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td><td>Adjustment_App に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> を登録。</td><td>論理・物理在庫を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
-      <tr><td>部分返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td><td>Adjustment_App に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> を登録。</td><td>該当数量を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
-      <tr><td>サンプル出庫／廃棄／社内利用</td><td>ステータス変更なし</td><td>Adjustment_App に <code>Type=廃棄／サンプル出庫</code></td><td>論理・物理在庫を減算</td><td>コミッション非対象</td></tr>
+      <tr><td>全返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td><td>入出庫履歴管理 に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> を登録。</td><td>論理・物理在庫を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>部分返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td><td>入出庫履歴管理 に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> を登録。</td><td>該当数量を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>サンプル出庫／廃棄／社内利用</td><td>ステータス変更なし</td><td>入出庫履歴管理 に <code>Type=廃棄／サンプル出庫</code></td><td>論理・物理在庫を減算</td><td>コミッション非対象</td></tr>
     </tbody>
   </table>
 
@@ -1569,9 +1569,9 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <tbody>
       <tr><td>全キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>90: キャンセル</code></td><td>日付・理由を記録。</td><td>なし</td><td></td></tr>
       <tr><td>部分キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>91: 部分完了</code></td><td>サブテーブルの数量を減算し、<code>キャンセル数量</code>を更新。</td><td>なし</td><td></td></tr>
-      <tr><td>全返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td><td>Adjustment_App に <code>Type=返品出庫</code>、<code>Qty=-数量</code> を登録。</td><td>論理・物理在庫を減算</td><td></td></tr>
-      <tr><td>部分返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td><td>Adjustment_App に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> を登録。返品数量を記録。</td><td>該当数量を減算</td><td></td></tr>
-      <tr><td>棚卸差異・在庫修正</td><td>ステータス変更なし</td><td>Adjustment_App に <code>Type=棚卸差異</code>、<code>Qty=±X</code></td><td>実在庫と論理在庫を調整</td><td></td></tr>
+      <tr><td>全返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td><td>入出庫履歴管理 に <code>Type=返品出庫</code>、<code>Qty=-数量</code> を登録。</td><td>論理・物理在庫を減算</td><td></td></tr>
+      <tr><td>部分返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td><td>入出庫履歴管理 に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> を登録。返品数量を記録。</td><td>該当数量を減算</td><td></td></tr>
+      <tr><td>棚卸差異・在庫修正</td><td>ステータス変更なし</td><td>入出庫履歴管理 に <code>Type=棚卸差異</code>、<code>Qty=±X</code></td><td>実在庫と論理在庫を調整</td><td></td></tr>
     </tbody>
   </table>
 </section>
@@ -1581,7 +1581,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 <section id="flow9-5">
   <h2>5. 運用補足</h2>
   <ul>
-    <li>返品や廃棄、在庫修正が発生した場合、Adjustment_App で処理を統一します。</li>
+    <li>返品や廃棄、在庫修正が発生した場合、入出庫履歴管理 で処理を統一します。</li>
     <li>在庫数は常に Stock_App（論理） と Physical_DB（物理 - Gifu倉庫） 間で一致させます。</li>
     <li>報酬補正は 報酬取引履歴管理 で手動登録し、翌月の支払バッチに反映します。</li>
     <li>本フローは、Ruby 自動処理を行わずとも、Kintoneアプリ操作のみで整合性が取れるよう設計されています。</li>
@@ -1593,15 +1593,17 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 <section id="flow9-6">
   <h2>6. 成果・効果</h2>
   <ul>
-    <li>販売・購買に関わる返品／キャンセル処理を Adjustment_App に集約し、シンプル化。</li>
+    <li>販売・購買に関わる返品／キャンセル処理を 入出庫履歴管理 に集約し、シンプル化。</li>
     <li>Task_Appを組み込むことで、出荷指示後のキャンセル時にも論理在庫を確実に解放。</li>
     <li>在庫・注文・コミッションの整合性を維持し、運用コストを最小化。</li>
-    <li>後続フェーズで自動連携に拡張可能なデータ設計を確保（報酬取引履歴管理ログ、Adjustmentログ）。</li>
+    <li>後続フェーズで自動連携に拡張可能なデータ設計を確保（報酬取引履歴管理ログ、入出庫履歴管理ログ）。</li>
   </ul>
   <blockquote>
     💡 本フローにより、販売・購買・報酬データの一貫性を維持しながら、手動運用でも正確な返品・キャンセル処理が可能となります。
   </blockquote>
 </section>
+
+<hr>
 
 <section id="flow9-sequence">
   <h2>7. シーケンス図</h2>
