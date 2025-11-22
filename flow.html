@@ -1483,186 +1483,135 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   <h1 class="flow-title">Flow9: 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</h1>
 
   <section id="flow9-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローは、販売注文（Order）および購買注文（PO）における
-      <strong>全返品・キャンセル（全数／一部）</strong> の処理を統一し、
-      以下の点を目的とする。
-    </p>
-    <ul>
-      <li><strong>Adjustment_App</strong> による論理・物理在庫の一元管理</li>
-      <li>注文・購買アプリのステータス更新</li>
-      <li>支払済みコミッション（報酬）の手動調整</li>
-      <li>返品・キャンセル・廃棄処理を単一の運用フローに統合し、シンプルに管理</li>
-    </ul>
-    <p>
-      これにより、在庫・注文・コミッションのデータ整合性を常に維持し、
-      MVP段階では複雑なRuby自動化ロジックを不要とする。
-    </p>
-  </section>
-
-  <section id="flow9-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Orders_App（受注アプリ）</strong></td><td>販売注文の管理、キャンセル・返品理由を保持</td></tr>
-        <tr><td><strong>PO_App（購買アプリ）</strong></td><td>購買注文の入庫状況とキャンセル処理</td></tr>
-        <tr><td><strong>Adjustment_App（調整アプリ）</strong></td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録</td></tr>
-        <tr><td><strong>Stock_App（在庫アプリ）</strong></td><td>論理在庫の更新・照合</td></tr>
-        <tr><td><strong>Physical_DB（実在庫DB）</strong></td><td>棚・LOT単位の実在庫を保持</td></tr>
-        <tr><td><strong>Commission_App（コミッションアプリ）</strong></td><td>コミッションの手動補正管理</td></tr>
-        <tr><td><strong>Op_Staff（運用担当者）</strong></td><td>手動で各アプリの調整を行う担当者</td></tr>
-        <tr><td><strong>EC_Channel／Mekaポータル</strong></td><td>顧客／仕入先が注文・キャンセル・返品を実行するチャネル</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow9-3">
-    <h2>3. 販売注文（Sales Order）フロー</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>全キャンセル（未出荷）</td><td><code>Orders_App.Status = キャンセル</code></td><td>なし</td><td>日付と理由を記録</td></tr>
-        <tr><td>部分キャンセル（未出荷）</td><td><code>キャンセル数量</code> を登録、<code>Status = 部分キャンセル</code></td><td>なし</td><td>残り分は有効</td></tr>
-        <tr><td>全キャンセル（出荷済み）</td><td><strong>Adjustment_App</strong> に <code>Type=返品</code>、<code>Qty=＋数量</code> を登録</td><td>論理・物理在庫を加算</td><td><code>Reason = 出荷後キャンセル</code></td></tr>
-        <tr><td>部分キャンセル（出荷済み）</td><td>Adjustment_App に <code>Type=返品</code>、<code>Qty=＋部分数量</code></td><td>該当数量を加算</td><td><code>Reason = 部分返品</code></td></tr>
-        <tr><td>サンプル出庫／廃棄／社内利用</td><td>Adjustment_App に <code>Type=廃棄／サンプル出庫</code></td><td>論理・物理在庫を減算</td><td>コミッション非対象</td></tr>
-      </tbody>
-    </table>
-
-    <h3>➕ コミッション（報酬）の補正</h3>
-    <p>既にコミッションが発生・支払済みの場合、返品・キャンセル時に手動補正を行う。</p>
-    <ol>
-      <li><strong>Commission_App</strong> に新規レコードを作成：
-        <ul>
-          <li><code>Type = 調整（マイナス）</code></li>
-          <li><code>金額 = -支払済み報酬額</code></li>
-          <li><code>Reason = キャンセル補正／返品補正</code></li>
-          <li><code>次回期適用 = true</code></li>
-        </ul>
-      </li>
-      <li>交換や追加購入による加算がある場合：
-        <ul>
-          <li><code>Type = 調整（プラス）</code></li>
-          <li><code>金額 = +追加報酬額</code></li>
-          <li><code>Reason = 交換対応／追加入庫</code></li>
-        </ul>
-      </li>
-      <li>これらの補正レコードは次回支払サイクルで反映される。</li>
-    </ol>
-  </section>
-
-  <section id="flow9-4">
-    <h2>4. 購買注文（Purchase Order）フロー</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>全キャンセル（未入庫）</td><td><code>Status = キャンセル</code> に更新</td><td>なし</td><td>日付・理由を記録</td></tr>
-        <tr><td>部分キャンセル（未入庫）</td><td><code>入庫予定数</code>／<code>キャンセル数量</code> を更新</td><td>なし</td><td>残り分は有効</td></tr>
-        <tr><td>全返品（入庫後）</td><td><strong>Adjustment_App</strong> に <code>Type=返品</code>、<code>Qty=-数量</code> を登録</td><td>論理・物理在庫を減算</td><td><code>Reason = 不良返品</code></td></tr>
-        <tr><td>部分返品（入庫後）</td><td>Adjustment_App に <code>Type=返品</code>、<code>Qty=-部分数量</code></td><td>該当数量を減算</td><td><code>Reason = 一部返品</code></td></tr>
-        <tr><td>棚卸差異・在庫修正</td><td>Adjustment_App に <code>Type=棚卸差異</code>、<code>Qty=±X</code></td><td>実在庫と論理在庫を調整</td><td><code>Reason = 棚卸修正</code></td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow9-5">
-    sequenceDiagram
-    title 🧾 Flow 9: 注文・購買におけるキャンセル／返品 + コミッション調整フロー (Gifu単一倉庫・サブテーブル対応)
-
-    participant EC_Channel as 🛒 ECチャネル / Mekaポータル
-    participant Orders_App as 📄 Kintone 受注アプリ（サブテーブル利用）
-    participant PO_App as 📝 Kintone 購買アプリ（仕入）
-    participant Task_App as 📦 Kintone 出荷依頼/Task App
-    participant Adjustment_App as ⚖️ Kintone 調整アプリ（入出庫修正）
-    participant Stock_App as 📈 Kintone 在庫アプリ（論理在庫）
-    participant Physical_DB as 🏭 実在庫DB（Gifu倉庫）
-    participant Commission_History_App as 💰 Kintone コミッション履歴アプリ
-    participant Op_Staff as 🧑‍💻 運用担当者
-
-    %% === 第一部：販売注文（ORDER） ===
-    note over EC_Channel, Orders_App: 【販売注文】キャンセル／返品フロー (Orders App Status)
-
-    %% A1 全キャンセル（出荷指示前）
-    EC_Channel->>Orders_App: 1A. 顧客が注文キャンセル（Status: 00 受注確定）
-    Orders_App->>Orders_App: 2A. ステータス更新 = 90: キャンセル
-    Orders_App->>Orders_App: 3A. キャンセル日／理由を記録
-    note right of Orders_App: *論理在庫は未引当のため、在庫操作なし
-
-    %% A2 一部キャンセル（出荷指示前）
-    EC_Channel->>Orders_App: 1B. 顧客が一部キャンセル（Status: 00 受注確定）
-    Orders_App->>Orders_App: 2B. サブテーブル内の数量を減算
-    Orders_App->>Orders_App: 3B. ステータス更新 = 91: 部分キャンセル
-    note right of Orders_App: *コミッションは未発生
-
-    %% A3 キャンセル（出荷指示後, 出荷前）
-    EC_Channel->>Orders_App: 1C. 顧客がキャンセル（Status: 10 出荷指示済）
-    Orders_App->>Orders_App: 2C. ステータス更新 = 90: キャンセル
-    Orders_App->>Orders_App: 3C. キャンセル日／理由を記録
-    Orders_App->>Stock_App: 4C. 論理在庫を戻す（引当解除）
-    Orders_App->>Task_App: 5C. 該当する出荷依頼Taskを検索・更新
-    Task_App->>Task_App: 6C. Taskステータス更新 = キャンセル済 / 停止
-    note right of Orders_App: *論理在庫を解放し、倉庫への作業指示を停止
-
-    %% A4 全返品（出荷完了後）
-    EC_Channel->>Orders_App: 1D. 出荷後に顧客返品（Status: 20 or 30）
-    Orders_App->>Orders_App: 2D. ステータス更新 = 94: 返品処理中
-    Op_Staff->>Adjustment_App: 3D. 調整レコード作成（Type=返品入庫, Qty=+100）
-    Adjustment_App->>Physical_DB: 4D. 実在庫を加算（Gifu倉庫へ返品入庫）
-    Adjustment_App->>Stock_App: 5D. 論理在庫を加算
-    Orders_App->>Orders_App: 6D. ステータス更新 = 92: 返品完了
-    Op_Staff->>Commission_History_App: 7D. コミッション調整レコード作成
-    note right of Commission_History_App: Type=マイナス, 金額=-X, 理由=返品補正
-
-    %% A5 一部返品（出荷完了後）
-    EC_Channel->>Orders_App: 1E. 顧客が一部返品（Status: 20 or 30）
-    Orders_App->>Orders_App: 2E. ステータス更新 = 94: 返品処理中
-    Orders_App->>Orders_App: 3E. サブテーブルに返品数量を記録
-    Op_Staff->>Adjustment_App: 4E. 調整レコード作成（Type=返品入庫, Qty=+10）
-    Adjustment_App->>Physical_DB: 5E. 実在庫を+10（Gifu倉庫へ返品入庫）
-    Adjustment_App->>Stock_App: 6E. 論理在庫も+10
-    Orders_App->>Orders_App: 7E. ステータス更新 = 93: 部分返品
-    Op_Staff->>Commission_History_App: 8E. コミッション調整レコード作成
-    note right of Commission_History_App: Type=マイナス, 金額=-部分分, 理由=部分返品調整
-
-    %% A6 サンプル・廃棄調整
-    Op_Staff->>Adjustment_App: 1F. 調整レコード（Type=廃棄／サンプル出庫）
-    Adjustment_App->>Physical_DB: 2F. 実在庫を減算（Gifu倉庫）
-    Adjustment_App->>Stock_App: 3F. 論理在庫を減算
-    note right of Adjustment_App: *コミッション非対象
-
-    %% === 第二部：購買注文（PURCHASE ORDER） ===
-    note over PO_App, Physical_DB: 【購買】キャンセル／返品フロー (PO App Status)
-
-    %% B1 全キャンセル（入庫前）
-    Op_Staff->>PO_App: 1G. ステータス=90: キャンセルに更新 (Status: 00 発注済)
-    PO_App->>PO_App: 2G. 理由・日付を入力
-    note right of PO_App: *在庫・支払には影響なし
-
-    %% B2 一部キャンセル（入庫前）
-    Op_Staff->>PO_App: 1H. サブテーブル内の数量を減算
-    PO_App->>PO_App: 2H. ステータス=91: 部分完了に更新 (Status: 00 発注済)
-
-    %% B3 全返品（入庫後）
-    Op_Staff->>Adjustment_App: 1I. 調整レコード（Type=返品出庫, Qty=-100）
-    Adjustment_App->>Physical_DB: 2I. 実在庫を減算（Gifu倉庫から返品出庫）
-    Adjustment_App->>Stock_App: 3I. 論理在庫を減算
-    PO_App->>PO_App: 4I. ステータス=92: 返品完了 (Status: 10 入庫完了などから遷移)
-
-    %% B4 一部返品（入庫後）
-    Op_Staff->>Adjustment_App: 1J. 調整レコード（Type=返品出庫, Qty=-10）
-    Adjustment_App->>Physical_DB: 2J. 実在庫を-10（Gifu倉庫から返品出庫）
-    Adjustment_App->>Stock_App: 3J. 論理在庫を-10
-    PO_App->>PO_App: 4J. 返品数量を記録, ステータス=93: 部分返品
-
-    %% B5 調整（入庫過多・棚卸差異）
-    Op_Staff->>Adjustment_App: 1K. 調整レコード（Type=棚卸差異, Qty=±X）
-    Adjustment_App->>Physical_DB: 2K. 実在庫を調整（Gifu倉庫）
-    Adjustment_App->>Stock_App: 3K. 論理在庫も同期
-    note right of Adjustment_App: *棚卸時の差異修正を管理
-    
+  <h2>1. 目的</h2>
+  <p>
+    本フローは、販売注文（Order）および購買注文（PO）における
+    返品・キャンセル（全数／一部）、および在庫調整の処理を統一し、
+    以下の点を目的とします。
+  </p>
+  <ul>
+    <li>Adjustment_App による論理・物理在庫のGifu倉庫での一元管理</li>
+    <li>注文・購買アプリの正確なステータス更新</li>
+    <li>支払済みコミッション（報酬）の報酬取引履歴管理による履歴管理と手動調整</li>
+    <li>出荷指示後のキャンセル（未出荷）時の論理在庫の即時解放とTask停止</li>
+    <li>返品・キャンセル・廃棄処理を単一の運用フローに統合し、シンプルに管理</li>
+  </ul>
+  <p>
+    これにより、在庫・注文・コミッションのデータ整合性を常に維持し、
+    MVP段階では複雑なRuby自動化ロジックを不要とします。
+  </p>
 </section>
+
+<hr>
+
+<section id="flow9-2">
+  <h2>2. システム構成</h2>
+  <table>
+    <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
+    <tbody>
+      <tr><td>Orders_App（受注アプリ）</td><td>販売注文の管理、サブテーブルで明細を保持、キャンセル・返品理由・数量を保持</td></tr>
+      <tr><td>PO_App（購買アプリ）</td><td>購買注文の入庫状況とキャンセル処理</td></tr>
+      <tr><td>Task_App（Kintone 出荷依頼/Task App）</td><td>出荷依頼タスクの管理。Orders_Appからの指示によりキャンセル・停止処理を行う。</td></tr>
+      <tr><td>Adjustment_App（調整アプリ）</td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録</td></tr>
+      <tr><td>Stock_App（在庫アプリ）</td><td>論理在庫の更新・照合（引当／引当解除）</td></tr>
+      <tr><td>Physical_DB（実在庫DB）</td><td>棚・LOT単位の実在庫を保持（Gifu倉庫のみ対象）</td></tr>
+      <tr><td>報酬取引履歴管理</td><td>コミッションの手動補正の履歴を記録・管理（Rewards Transaction History App）</td></tr>
+      <tr><td>Op_Staff（運用担当者）</td><td>手動で各アプリの調整を行う担当者</td></tr>
+      <tr><td>EC_Channel／Mekaポータル</td><td>顧客／仕入先が注文・キャンセル・返品を実行するチャネル</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr>
+
+<section id="flow9-3">
+  <h2>3. 販売注文（Sales Order）フロー</h2>
+  <table>
+    <thead><tr><th>ケース</th><th>Orders_Appステータス遷移</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr></thead>
+    <tbody>
+      <tr><td>全キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>90: キャンセル</code></td><td>日付と理由を記録。サブテーブルを無効化。</td><td>なし（論理在庫未引当）</td><td></td></tr>
+      <tr><td>部分キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>91: 部分キャンセル</code></td><td>サブテーブルのキャンセル数量を記録。</td><td>なし（論理在庫未引当）</td><td></td></tr>
+      <tr><td>キャンセル（10 出荷指示済だが未出荷）</td><td><code>10: 出荷指示済</code> → <code>90: キャンセル</code></td><td>Stock_Appで論理在庫を引当解除。Task_Appのタスクを停止/キャンセル。</td><td>論理在庫を戻す（引当解除）</td><td>*出荷指示後の取り消し対応*</td></tr>
+      <tr><td>全返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td><td>Adjustment_App に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> を登録。</td><td>論理・物理在庫を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>部分返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td><td>Adjustment_App に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> を登録。</td><td>該当数量を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>サンプル出庫／廃棄／社内利用</td><td>ステータス変更なし</td><td>Adjustment_App に <code>Type=廃棄／サンプル出庫</code></td><td>論理・物理在庫を減算</td><td>コミッション非対象</td></tr>
+    </tbody>
+  </table>
+
+  <h3>➕ コミッション（報酬）の補正</h3>
+  <p>既にコミッションが発生・支払済みの場合、返品・キャンセル時に手動補正を行います。補正データは報酬取引履歴管理に記録します。</p>
+  <ol>
+    <li>報酬取引履歴管理に新規レコードを作成（マイナス補正）：
+      <ul>
+        <li><code>Type = 調整（マイナス）</code></li>
+        <li><code>金額 = -支払済み報酬額</code></li>
+        <li><code>Reason = キャンセル補正／返品補正</code></li>
+        <li><code>次回期適用 = true</code></li>
+      </ul>
+    </li>
+    <li>交換や追加購入による加算がある場合（プラス補正）：
+      <ul>
+        <li><code>Type = 調整（プラス）</code></li>
+        <li><code>金額 = +追加報酬額</code></li>
+        <li><code>Reason = 交換対応／追加入庫</code></li>
+      </ul>
+    </li>
+    <li>これらの補正レコードは次回支払サイクルで反映されます。</li>
+  </ol>
+</section>
+
+<hr>
+
+<section id="flow9-4">
+  <h2>4. 購買注文（Purchase Order）フロー</h2>
+  <table>
+    <thead><tr><th>ケース</th><th>PO_Appステータス遷移</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr></thead>
+    <tbody>
+      <tr><td>全キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>90: キャンセル</code></td><td>日付・理由を記録。</td><td>なし</td><td></td></tr>
+      <tr><td>部分キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>91: 部分完了</code></td><td>サブテーブルの数量を減算し、<code>キャンセル数量</code>を更新。</td><td>なし</td><td></td></tr>
+      <tr><td>全返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td><td>Adjustment_App に <code>Type=返品出庫</code>、<code>Qty=-数量</code> を登録。</td><td>論理・物理在庫を減算</td><td></td></tr>
+      <tr><td>部分返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td><td>Adjustment_App に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> を登録。返品数量を記録。</td><td>該当数量を減算</td><td></td></tr>
+      <tr><td>棚卸差異・在庫修正</td><td>ステータス変更なし</td><td>Adjustment_App に <code>Type=棚卸差異</code>、<code>Qty=±X</code></td><td>実在庫と論理在庫を調整</td><td></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr>
+
+<section id="flow9-5">
+  <h2>5. 運用補足</h2>
+  <ul>
+    <li>返品や廃棄、在庫修正が発生した場合、Adjustment_App で処理を統一します。</li>
+    <li>在庫数は常に Stock_App（論理） と Physical_DB（物理 - Gifu倉庫） 間で一致させます。</li>
+    <li>報酬補正は 報酬取引履歴管理 で手動登録し、翌月の支払バッチに反映します。</li>
+    <li>本フローは、Ruby 自動処理を行わずとも、Kintoneアプリ操作のみで整合性が取れるよう設計されています。</li>
+  </ul>
+</section>
+
+<hr>
+
+<section id="flow9-6">
+  <h2>6. 成果・効果</h2>
+  <ul>
+    <li>販売・購買に関わる返品／キャンセル処理を Adjustment_App に集約し、シンプル化。</li>
+    <li>Task_Appを組み込むことで、出荷指示後のキャンセル時にも論理在庫を確実に解放。</li>
+    <li>在庫・注文・コミッションの整合性を維持し、運用コストを最小化。</li>
+    <li>後続フェーズで自動連携に拡張可能なデータ設計を確保（報酬取引履歴管理ログ、Adjustmentログ）。</li>
+  </ul>
+  <blockquote>
+    💡 本フローにより、販売・購買・報酬データの一貫性を維持しながら、手動運用でも正確な返品・キャンセル処理が可能となります。
+  </blockquote>
+</section>
+
+<section id="flow9-sequence">
+  <h2>7. シーケンス図</h2>
+  <p>
+    以下は本フロー（返品・キャンセル・調整統合フロー）の全体処理を示すシーケンス図です。（以前に提供済み）
+  </p>
+  <figure>
+    <img src="Flow9.png" alt="返品・キャンセル・調整統合フロー シーケンス図">
+    <figcaption>図9. 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</figcaption>
+  </figure>
 </section>
 
 </section>
