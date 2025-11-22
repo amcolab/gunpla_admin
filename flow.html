@@ -41,6 +41,10 @@
     .container{padding:0 10mm 10mm}
   }
 </style>
+  <script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true });
+</script>
 </head>
 <body>
   <div class="container">
@@ -1564,40 +1568,101 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   </section>
 
   <section id="flow9-5">
-    <h2>5. 運用補足</h2>
-    <ul>
-      <li>返品や廃棄が発生した場合、<strong>Adjustment_App</strong> で処理を統一。</li>
-      <li>在庫数は常に <strong>Stock_App（論理）</strong> と <strong>Physical_DB（物理）</strong> 間で一致させる。</li>
-      <li>報酬補正は <strong>Commission_App</strong> で手動登録し、翌月の支払バッチに反映。</li>
-      <li>Ruby 自動処理を行わずとも、Kintoneアプリ操作のみで整合性が取れる。</li>
-    </ul>
-  </section>
+    sequenceDiagram
+    title 🧾 Flow 9: 注文・購買におけるキャンセル／返品 + コミッション調整フロー (Gifu単一倉庫・サブテーブル対応)
 
-  <section id="flow9-6">
-    <h2>6. 成果・効果</h2>
-    <ul>
-      <li>販売・購買に関わる返品／キャンセル処理を <strong>Adjustment_App</strong> に集約。</li>
-      <li>在庫・注文・コミッションの整合性を維持し、運用コストを最小化。</li>
-      <li>Rubyによる自動化を省き、MVP段階でも十分な運用品質を確保。</li>
-      <li>後続フェーズで自動連携に拡張可能（Webhook／API化対応）。</li>
-    </ul>
+    participant EC_Channel as 🛒 ECチャネル / Mekaポータル
+    participant Orders_App as 📄 Kintone 受注アプリ（サブテーブル利用）
+    participant PO_App as 📝 Kintone 購買アプリ（仕入）
+    participant Task_App as 📦 Kintone 出荷依頼/Task App
+    participant Adjustment_App as ⚖️ Kintone 調整アプリ（入出庫修正）
+    participant Stock_App as 📈 Kintone 在庫アプリ（論理在庫）
+    participant Physical_DB as 🏭 実在庫DB（Gifu倉庫）
+    participant Commission_History_App as 💰 Kintone コミッション履歴アプリ
+    participant Op_Staff as 🧑‍💻 運用担当者
 
-    <blockquote>
-      💡 本フローにより、販売・購買・報酬データの一貫性を維持しながら、  
-      手動運用でも正確な返品・キャンセル処理が可能となる。
-    </blockquote>
-  </section>
+    %% === 第一部：販売注文（ORDER） ===
+    note over EC_Channel, Orders_App: 【販売注文】キャンセル／返品フロー (Orders App Status)
 
-  <section id="flow9-sequence">
-    <h2>7. シーケンス図</h2>
-    <p>
-      以下は本フロー（返品・キャンセル・調整統合フロー）の全体処理を示すシーケンス図です。<br>
-    </p>
-    <figure>
-      <img src="Flow9.png" alt="返品・キャンセル・調整統合フロー シーケンス図">
-      <figcaption>図9. 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</figcaption>
-    </figure>
-  </section>
+    %% A1 全キャンセル（出荷指示前）
+    EC_Channel->>Orders_App: 1A. 顧客が注文キャンセル（Status: 00 受注確定）
+    Orders_App->>Orders_App: 2A. ステータス更新 = 90: キャンセル
+    Orders_App->>Orders_App: 3A. キャンセル日／理由を記録
+    note right of Orders_App: *論理在庫は未引当のため、在庫操作なし
+
+    %% A2 一部キャンセル（出荷指示前）
+    EC_Channel->>Orders_App: 1B. 顧客が一部キャンセル（Status: 00 受注確定）
+    Orders_App->>Orders_App: 2B. サブテーブル内の数量を減算
+    Orders_App->>Orders_App: 3B. ステータス更新 = 91: 部分キャンセル
+    note right of Orders_App: *コミッションは未発生
+
+    %% A3 キャンセル（出荷指示後, 出荷前）
+    EC_Channel->>Orders_App: 1C. 顧客がキャンセル（Status: 10 出荷指示済）
+    Orders_App->>Orders_App: 2C. ステータス更新 = 90: キャンセル
+    Orders_App->>Orders_App: 3C. キャンセル日／理由を記録
+    Orders_App->>Stock_App: 4C. 論理在庫を戻す（引当解除）
+    Orders_App->>Task_App: 5C. 該当する出荷依頼Taskを検索・更新
+    Task_App->>Task_App: 6C. Taskステータス更新 = キャンセル済 / 停止
+    note right of Orders_App: *論理在庫を解放し、倉庫への作業指示を停止
+
+    %% A4 全返品（出荷完了後）
+    EC_Channel->>Orders_App: 1D. 出荷後に顧客返品（Status: 20 or 30）
+    Orders_App->>Orders_App: 2D. ステータス更新 = 94: 返品処理中
+    Op_Staff->>Adjustment_App: 3D. 調整レコード作成（Type=返品入庫, Qty=+100）
+    Adjustment_App->>Physical_DB: 4D. 実在庫を加算（Gifu倉庫へ返品入庫）
+    Adjustment_App->>Stock_App: 5D. 論理在庫を加算
+    Orders_App->>Orders_App: 6D. ステータス更新 = 92: 返品完了
+    Op_Staff->>Commission_History_App: 7D. コミッション調整レコード作成
+    note right of Commission_History_App: Type=マイナス, 金額=-X, 理由=返品補正
+
+    %% A5 一部返品（出荷完了後）
+    EC_Channel->>Orders_App: 1E. 顧客が一部返品（Status: 20 or 30）
+    Orders_App->>Orders_App: 2E. ステータス更新 = 94: 返品処理中
+    Orders_App->>Orders_App: 3E. サブテーブルに返品数量を記録
+    Op_Staff->>Adjustment_App: 4E. 調整レコード作成（Type=返品入庫, Qty=+10）
+    Adjustment_App->>Physical_DB: 5E. 実在庫を+10（Gifu倉庫へ返品入庫）
+    Adjustment_App->>Stock_App: 6E. 論理在庫も+10
+    Orders_App->>Orders_App: 7E. ステータス更新 = 93: 部分返品
+    Op_Staff->>Commission_History_App: 8E. コミッション調整レコード作成
+    note right of Commission_History_App: Type=マイナス, 金額=-部分分, 理由=部分返品調整
+
+    %% A6 サンプル・廃棄調整
+    Op_Staff->>Adjustment_App: 1F. 調整レコード（Type=廃棄／サンプル出庫）
+    Adjustment_App->>Physical_DB: 2F. 実在庫を減算（Gifu倉庫）
+    Adjustment_App->>Stock_App: 3F. 論理在庫を減算
+    note right of Adjustment_App: *コミッション非対象
+
+    %% === 第二部：購買注文（PURCHASE ORDER） ===
+    note over PO_App, Physical_DB: 【購買】キャンセル／返品フロー (PO App Status)
+
+    %% B1 全キャンセル（入庫前）
+    Op_Staff->>PO_App: 1G. ステータス=90: キャンセルに更新 (Status: 00 発注済)
+    PO_App->>PO_App: 2G. 理由・日付を入力
+    note right of PO_App: *在庫・支払には影響なし
+
+    %% B2 一部キャンセル（入庫前）
+    Op_Staff->>PO_App: 1H. サブテーブル内の数量を減算
+    PO_App->>PO_App: 2H. ステータス=91: 部分完了に更新 (Status: 00 発注済)
+
+    %% B3 全返品（入庫後）
+    Op_Staff->>Adjustment_App: 1I. 調整レコード（Type=返品出庫, Qty=-100）
+    Adjustment_App->>Physical_DB: 2I. 実在庫を減算（Gifu倉庫から返品出庫）
+    Adjustment_App->>Stock_App: 3I. 論理在庫を減算
+    PO_App->>PO_App: 4I. ステータス=92: 返品完了 (Status: 10 入庫完了などから遷移)
+
+    %% B4 一部返品（入庫後）
+    Op_Staff->>Adjustment_App: 1J. 調整レコード（Type=返品出庫, Qty=-10）
+    Adjustment_App->>Physical_DB: 2J. 実在庫を-10（Gifu倉庫から返品出庫）
+    Adjustment_App->>Stock_App: 3J. 論理在庫を-10
+    PO_App->>PO_App: 4J. 返品数量を記録, ステータス=93: 部分返品
+
+    %% B5 調整（入庫過多・棚卸差異）
+    Op_Staff->>Adjustment_App: 1K. 調整レコード（Type=棚卸差異, Qty=±X）
+    Adjustment_App->>Physical_DB: 2K. 実在庫を調整（Gifu倉庫）
+    Adjustment_App->>Stock_App: 3K. 論理在庫も同期
+    note right of Adjustment_App: *棚卸時の差異修正を管理
+    
+</section>
 </section>
 
 </section>
