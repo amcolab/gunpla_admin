@@ -221,113 +221,125 @@
     <section id="flow2">
       <h1 class="flow-title">Flow2: BtoB分割出荷フロー</h1>
 
-      <section id="flow2-sec1">
-        <h2>1. 目的</h2>
-        <p>BtoB受注で複数回出荷（分割出荷）を可能にし、以下を目的とする。</p>
-        <ul>
-          <li>受注確定時に論理在庫を引き当て、在庫を確保。</li>
-          <li>棚・LOT単位の実在庫を正確に管理。</li>
-          <li>手動再出荷に対応。</li>
-          <li>請求・出荷・在庫の状態をシステム間で同期。</li>
-        </ul>
-      </section>
+  <section id="flow2-sec1">
+  <h2>1. 目的</h2>
+  <p>BtoB受注で複数回出荷（分割出荷）を可能にし、以下を目的とする。</p>
+  <ul>
+    <li>受注確定時に論理在庫を引き当て、在庫を確保。</li>
+    <li>棚・LOT単位の実在庫を正確に管理。</li>
+    <li>手動再出荷に対応。</li>
+    <li>請求・出荷・在庫の状態をシステム間で同期。</li>
+  </ul>
+</section>
 
-      <section id="sec2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
-      <tbody>
-        <tr><td>Sales_Staff</td><td>代理店登録・受注承認を担当。</td></tr>
-        <tr><td>パートナーマスタ</td><td>代理店情報（区分、割引率、口座情報など）の管理。</td></tr>
-        <tr><td>注文アプリ</td><td>受注データの管理。</td></tr>
-        <tr><td>Agent（代理店）</td><td>受発注ポータルで注文を行うユーザー。</td></tr>
-        <tr><td>代理店ポータル</td><td>代理店が受注・出荷状況を確認できる画面。</td></tr>
-        <tr><td>Ruby_Server</td><td>ロジック処理、VA ID発行、全体制御。</td></tr>
-        <tr><td>GMO_API</td><td>仮想口座（VA）発行および入金確認API。</td></tr>
-        <tr><td>請求管理アプリ</td><td>請求書および入金照合を管理。</td></tr>
-        <tr><td>在庫管理アプリ</td><td>論理在庫（引当管理）を管理。</td></tr>
-        <tr><td>タスク管理アプリ</td><td>出荷・入荷タスク管理。</td></tr>
-        <tr><td>Scan barcode画面</td><td>倉庫担当者向けの実作業画面（バーコード・棚・LOT入力）。</td></tr>
-        <tr><td>実在庫管理アプリ</td><td>実在庫（棚・LOT単位）の管理。</td></tr>
-        <tr><td>Ship&amp;Co</td><td>送り状発行・トラッキング番号取得。</td></tr>
-        <tr><td>Op_Staff</td><td>手動オペレーション・例外対応。</td></tr>
-      </tbody>
-    </table>
-  </section>
+<section id="sec2">
+  <h2>2. システム構成</h2>
+  <table>
+    <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
+    <tbody>
+      <tr><td>Sales_Staff</td><td>代理店登録・受注承認を担当。</td></tr>
+      <tr><td>パートナーマスタ</td><td>代理店情報（区分、割引率、口座情報など）の管理。</td></tr>
+      <tr><td>注文アプリ</td><td>受注データの管理。</td></tr>
+      <tr><td>Agent（代理店）</td><td>受発注ポータルで注文を行うユーザー。</td></tr>
+      <tr><td>代理店ポータル</td><td>代理店が受注・出荷状況を確認できる画面。</td></tr>
+      <tr><td>Ruby_Server</td><td>ロジック処理、VA ID発行、全体制御。</td></tr>
+      <tr><td>GMO_API</td><td>仮想口座（VA）発行および入金確認API。</td></tr>
+      <tr><td>請求管理アプリ</td><td>請求書および入金照合を管理。</td></tr>
+      <tr><td>在庫管理アプリ</td><td>論理在庫（引当管理）を管理。</td></tr>
+      <tr><td>タスク管理アプリ</td><td>出荷・入荷タスク管理。</td></tr>
+      <tr><td>Scan barcode画面</td><td>倉庫担当者向けの実作業画面（バーコード・棚・LOT入力）。</td></tr>
+      <tr><td>実在庫管理アプリ</td><td>実在庫（棚・LOT単位）の管理。</td></tr>
+      <tr><td>Ship&amp;Co</td><td>送り状発行・トラッキング番号取得。</td></tr>
+      <tr><td>Op_Staff</td><td>手動オペレーション・例外対応。</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <section id="sec3">
-    <h2>3. 全体プロセス</h2>
+<section id="sec3">
+  <h2>3. 全体プロセス</h2>
 
-    <h3>3.1 代理店登録・受注作成</h3>
-    <ol>
-      <li>Sales_Staff が <span class="kbd">パートナーマスタ</span> に代理店を登録（区分、割引、口座等）。</li>
-      <li>システムは 代理店ポータル アカウントを自動発行。</li>
-      <li>代理店は 代理店ポータル にログインし、商品選択・割引後価格を確認。</li>
-      <li>注文送信により <span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
-      <li>Sales_Staff が承認するとステータスが <span class="kbd">承認済み</span> になる。</li>
-    </ol>
+  <h3>3.1 代理店登録・受注作成</h3>
+  <ol>
+    <li>Sales_Staff が <span class="kbd">パートナーマスタ</span> に代理店を登録（区分、割引、口座等）。</li>
+    <li>システムは 代理店ポータル アカウントを自動発行。</li>
+    <li>代理店は 代理店ポータル にログインし、商品選択・割引後価格を確認。</li>
+    <li>注文送信により <span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
+    <li>Sales_Staff が承認するとステータスが <span class="kbd">承認済み</span> になる。</li>
+  </ol>
 
-    <h3>3.2 請求書発行・入金確認</h3>
-    <ol>
-      <li>承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出し、仮想口座（VA ID）を発行。</li>
-      <li><span class="kbd">請求管理アプリ</span> に VA ID を保存し、代理店へ請求書を送信。</li>
-      <li>代理店が銀行振込を行い、<span class="kbd">GMO API</span> が Webhook により結果を通知。</li>
-      <li><span class="kbd">Ruby_Server</span> が取引結果を確認：
-        <ul>
-          <li>成功時 → ステータス <span class="kbd">支払い済み</span>。</li>
-          <li>失敗時 → ステータス <span class="kbd">入金エラー</span>。</li>
-        </ul>
-      </li>
-    </ol>
+  <h3>3.2 請求書発行・入金確認（Agency → Credie）</h3>
+  <ol>
+    <li>承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出し、仮想口座（VA ID）を発行。</li>
+    <li><span class="kbd">請求管理アプリ</span> に VA ID を保存し、代理店へ請求書を送信。</li>
+    <li>代理店が <strong>Credie 指定口座</strong> へ銀行振込を行う（資金の流れは常に <strong>Agency → Credie</strong>）。</li>
+    <li><span class="kbd">GMO API</span> が Webhook により入金結果を <span class="kbd">Ruby_Server</span> へ通知。</li>
+    <li><span class="kbd">Ruby_Server</span> が取引結果を確認し、該当請求のステータスを自動更新する：
+      <ul>
+        <li>入金マッチ成功時 → ステータス <span class="kbd">支払い済み</span>。</li>
+        <li>入金エラー／マッチング不可 → ステータス <span class="kbd">入金エラー</span>。</li>
+      </ul>
+    </li>
+  </ol>
+  <p>
+    本フローでは、<strong>Credie から Partner への支払い処理は発生しない</strong>。仕入側の支払フローは別フローで定義する。
+  </p>
 
-    <h3>3.3 在庫引当（論理在庫）</h3>
-    <ol>
-      <li>支払い完了時、システムが <span class="kbd">引当</span> 処理を起動。</li>
-      <li><span class="kbd">在庫管理アプリ</span> が論理在庫を照会。</li>
-      <li>在庫十分 → 対応数量を論理在庫から減算、ステータスを <span class="kbd">引当済み</span> に更新。</li>
-      <li>在庫不足 → 受注を A（出荷可能分）と B（不足分）に分割。</li>
-      <li>A分は論理在庫引当、B分は入荷待ち状態で保持。</li>
-    </ol>
+  <h3>3.3 在庫引当（論理在庫）</h3>
+  <ol>
+    <li>支払い完了時、システムが <span class="kbd">引当</span> 処理を起動。</li>
+    <li><span class="kbd">在庫管理アプリ</span> が論理在庫を照会。</li>
+    <li>在庫十分 → 対応数量を論理在庫から減算、ステータスを <span class="kbd">引当済み</span> に更新。</li>
+    <li>在庫不足 → 受注を A（出荷可能分）と B（不足分）に分割。</li>
+    <li>A分は論理在庫引当、B分は入荷待ち状態で保持。</li>
+  </ol>
 
-    <h3>3.4 第一次出荷（A分）</h3>
-    <ol>
-      <li><span class="kbd">Ruby_Server</span> が <span class="kbd">タスク管理アプリ</span> に出荷タスクを作成。</li>
-      <li>倉庫担当者が <span class="kbd">Scan barcode画面</span> にて対象商品を確認。</li>
-      <li>各商品についてバーコード・棚コード・LOT番号をスキャン。</li>
-      <li>確認後、<span class="kbd">実在庫管理アプリ</span> に {SKU, Location_ID, LOT_No, 数量} を記録し、在庫を減算。</li>
-      <li><span class="kbd">タスク管理アプリ</span> と <span class="kbd">注文アプリ</span> に完了情報を更新。</li>
-      <li><span class="kbd">Ship&amp;Co</span> API により送り状を発行し、トラッキング番号を取得。</li>
-      <li>代理店ポータル に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
-    </ol>
+  <h3>3.4 第一次出荷（A分）</h3>
+  <ol>
+    <li><span class="kbd">Ruby_Server</span> が <span class="kbd">タスク管理アプリ</span> に出荷タスクを作成。</li>
+    <li>倉庫担当者が <span class="kbd">Scan barcode画面</span> にて対象商品を確認。</li>
+    <li>各商品についてバーコード・棚コード・LOT番号をスキャン。</li>
+    <li>確認後、<span class="kbd">実在庫管理アプリ</span> に {SKU, Location_ID, LOT_No, 数量} を記録し、実在庫を減算。</li>
+    <li>
+      倉庫担当者が出荷タスクを「完了」にすると、<span class="kbd">タスク管理アプリ</span> が
+      Webhook 経由で <span class="kbd">注文アプリ</span> に完了情報を<strong>自動連携</strong>し、
+      対象受注の出荷ステータスを更新する。
+    </li>
+    <li><span class="kbd">Ship&amp;Co</span> API により送り状を発行し、トラッキング番号を取得。</li>
+    <li>代理店ポータル に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
+  </ol>
 
-    <h3>3.5 残り出荷（B分）</h3>
-    <ol>
-      <li>在庫補充後、運用担当者が <span class="kbd">注文アプリ</span> で <span class="kbd">出荷指示</span> を実行。</li>
-      <li>新しいタスクを <span class="kbd">タスク管理アプリ</span> に生成。</li>
-      <li>倉庫担当者が再度スキャン作業を行い、出荷を確定。</li>
-      <li><span class="kbd">実在庫管理アプリ</span> で実在庫を減算し、<span class="kbd">タスク管理アプリ</span> が完了を <span class="kbd">注文アプリ</span> に反映。</li>
-      <li>代理店ポータル にも更新結果を通知。</li>
-    </ol>
+  <h3>3.5 残り出荷（B分）</h3>
+  <ol>
+    <li>在庫補充後、運用担当者が <span class="kbd">注文アプリ</span> で <span class="kbd">出荷指示</span> を実行。</li>
+    <li>新しいタスクを <span class="kbd">タスク管理アプリ</span> に生成。</li>
+    <li>倉庫担当者が再度スキャン作業を行い、出荷を確定。</li>
+    <li>
+      <span class="kbd">実在庫管理アプリ</span> で実在庫を減算し、タスク完了時に
+      <span class="kbd">タスク管理アプリ</span> が Webhook 経由で完了情報を
+      <span class="kbd">注文アプリ</span> に<strong>自動反映</strong>する。
+    </li>
+    <li>代理店ポータル にも更新結果を通知。</li>
+  </ol>
 
-    <h3>3.6 受注完了</h3>
-    <ol>
-      <li>全ての出荷が完了すると、<span class="kbd">注文アプリ</span> はステータスを <span class="kbd">出荷完了</span> に更新。</li>
-      <li>代理店ポータル 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
-    </ol>
-  </section>
+  <h3>3.6 受注完了</h3>
+  <ol>
+    <li>全ての出荷が完了すると、<span class="kbd">注文アプリ</span> はステータスを <span class="kbd">出荷完了</span> に更新。</li>
+    <li>代理店ポータル 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
+  </ol>
+</section>
 
-  <section id="sec4">
-    <h2>4. 在庫ロジック</h2>
-    <table>
-      <thead><tr><th>在庫種別</th><th>更新タイミング</th><th>データソース</th><th>目的</th></tr></thead>
-      <tbody>
-        <tr><td>論理在庫</td><td>受注確定・支払完了時</td><td>在庫管理アプリ</td><td>在庫確保・オーバーブッキング防止。</td></tr>
-        <tr><td>実在庫</td><td>倉庫出荷確定時</td><td>実在庫管理アプリ</td><td>棚・LOT単位での実在庫管理。</td></tr>
-      </tbody>
-    </table>
+<section id="sec4">
+  <h2>4. 在庫ロジック</h2>
+  <table>
+    <thead><tr><th>在庫種別</th><th>更新タイミング</th><th>データソース</th><th>目的</th></tr></thead>
+    <tbody>
+      <tr><td>論理在庫</td><td>受注確定・支払完了時</td><td>在庫管理アプリ</td><td>在庫確保・オーバーブッキング防止。</td></tr>
+      <tr><td>実在庫</td><td>倉庫出荷確定時</td><td>実在庫管理アプリ</td><td>棚・LOT単位での実在庫管理。</td></tr>
+    </tbody>
+  </table>
 
-    <p>実在庫データ構造（例）:</p>
-    <pre style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
+  <p>実在庫データ構造（例）:</p>
+  <pre style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
 {
   "SKU": "RS-500ML",
   "Product_Name": "Rice Silica 500mL",
@@ -337,31 +349,31 @@
   "Last_Updated": "2025-11-07T15:40:00Z",
   "Task_ID": "TASK-2025-1107-001"
 }
-    </pre>
-  </section>
+  </pre>
+</section>
 
-  <section id="sec5">
-    <h2>5. 例外処理</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
-      <tbody>
-        <tr><td>キャンセル</td><td>未出荷の場合 → タスク削除と論理在庫戻し。<br>出荷済みの場合 → 返品タスクを作成し、棚・LOT単位で実在庫を増加。</td></tr>
-        <tr><td>在庫差異</td><td>棚別監査（Location Audit）で定期的に確認。</td></tr>
-        <tr><td>入金エラー</td><td>エラーログ管理アプリ にログ記録し、手動で再処理。</td></tr>
-        <tr><td>返品時の在庫・請求・コミッション調整は Flow9 に準拠する。</td></tr>
-      </tbody>
-    </table>
-  </section>
+<section id="sec5">
+  <h2>5. 例外処理</h2>
+  <table>
+    <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
+    <tbody>
+      <tr><td>キャンセル</td><td>未出荷の場合 → タスク削除と論理在庫戻し。<br>出荷済みの場合 → 返品タスクを作成し、棚・LOT単位で実在庫を増加。</td></tr>
+      <tr><td>在庫差異</td><td>棚別監査（Location Audit）で定期的に確認。</td></tr>
+      <tr><td>入金エラー</td><td>エラーログ管理アプリ にログ記録し、手動で再処理。</td></tr>
+      <tr><td>返品時の在庫・請求・コミッション調整は Flow9 に準拠する。</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <section id="sec6">
-    <h2>6. 期待される結果</h2>
-    <ul>
-      <li>論理在庫と実在庫を分離して正確に追跡できる。</li>
-      <li>商品ごとに LOT・棚位置までトレーサビリティを確保。</li>
-      <li>出荷・返品・入荷タスクの履歴が監査可能。</li>
-      <li>代理店がリアルタイムで出荷状況・トラッキングを閲覧可能。</li>
-    </ul>
-  </section>
+<section id="sec6">
+  <h2>6. 期待される結果</h2>
+  <ul>
+    <li>論理在庫と実在庫を分離して正確に追跡できる。</li>
+    <li>商品ごとに LOT・棚位置までトレーサビリティを確保。</li>
+    <li>出荷・返品・入荷タスクの履歴が監査可能。</li>
+    <li>代理店がリアルタイムで出荷状況・トラッキングを閲覧可能。</li>
+  </ul>
+</section>
 
       <section id="flow2-sequence">
         <h2>7. シーケンス図</h2>
