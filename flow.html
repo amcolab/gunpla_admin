@@ -348,6 +348,7 @@
         <tr><td>キャンセル</td><td>未出荷の場合 → タスク削除と論理在庫戻し。<br>出荷済みの場合 → 返品タスクを作成し、棚・LOT単位で実在庫を増加。</td></tr>
         <tr><td>在庫差異</td><td>棚別監査（Location Audit）で定期的に確認。</td></tr>
         <tr><td>入金エラー</td><td>エラーログ管理アプリ にログ記録し、手動で再処理。</td></tr>
+        <tr><td>返品時の在庫・請求・コミッション調整は Flow9 に準拠する。</td></tr>
       </tbody>
     </table>
   </section>
@@ -405,8 +406,8 @@
       <thead><tr><th>コンポーネント</th><th>説明</th></tr></thead>
       <tbody>
         <tr><td>GoAffPro</td><td>アフィリエイト報酬・アフィリエイト用の販売URLを管理する外部システム。</td></tr>
-        <tr><td>Partner_App（Kintone）</td><td>アフィリエイト情報・銀行口座・現在のランクを管理。</td></tr>
-        <tr><td>Rule_App（Kintone）</td><td>ランク別報酬率ルールを保持。</td></tr>
+        <tr><td>パートナーマスタ（Kintone）</td><td>アフィリエイト情報・銀行口座・現在のランクを管理。</td></tr>
+        <tr><td>報酬ルールマスタ（Kintone）</td><td>ランク別報酬率ルールを保持。</td></tr>
         <tr><td>注文アプリ（Kintone）</td><td>注文情報と支払・キャンセル・返品ステータスを保持。</td></tr>
         <tr><td>報酬取引履歴管理アプリ（Kintone）</td><td>月次コミッション集計・承認を管理。</td></tr>
         <tr><td>支払管理アプリ（Kintone）</td><td>振込依頼・支払ステータスを管理。</td></tr>
@@ -450,13 +451,14 @@
         <tr><td>GoAffPro</td><td>Shopify からの Refund Webhook を受信し、自動で Reward を減算。</td></tr>
         <tr><td>Kintone</td><td>運用担当者が <span class="kbd">注文アプリ.status</span> を <span class="kbd">キャンセル／返品</span> に更新（手動）。</td></tr>
         <tr><td>Ruby_Server</td><td>月次集計時に GoAffPro 上の最終報酬を照合し、重複計上を防止。</td></tr>
+        <tr><td>報酬取引履歴管理アプリ は、GoAffPro 連携の報酬と、Credie内部ロジックによる調整（Flow9）をいずれも一元管理する。</td></tr>
       </tbody>
     </table>
     <p class="note">返金は GoAffPro 側の実報酬にのみ影響し、Kintone では監査用に状態を保持する。</p>
 
     <h3>3.4 月次ランク同期（毎月初）</h3>
     <ol>
-      <li><span class="kbd">Partner_App</span> の現在ランクを GoAffPro へ送信。</li>
+      <li><span class="kbd">パートナーマスタ</span> の現在ランクを GoAffPro へ送信。</li>
       <li>GoAffPro から前月の成果データを受信：
         <ul>
           <li>総売上</li>
@@ -465,8 +467,8 @@
           <li>返品率／パフォーマンス指標</li>
         </ul>
       </li>
-      <li><span class="kbd">Ruby_Server</span> が <span class="kbd">Rule_App</span> の基準と比較しランクを再評価。</li>
-      <li>新ランクを <span class="kbd">Partner_App</span> に反映し、GoAffPro に再同期。</li>
+      <li><span class="kbd">Ruby_Server</span> が <span class="kbd">報酬ルールマスタ</span> の基準と比較しランクを再評価。</li>
+      <li>新ランクを <span class="kbd">パートナーマスタ</span> に反映し、GoAffPro に再同期。</li>
     </ol>
     <div class="callout">
       例：Partner A の月間売上が ¥2,300,000 の場合、翌月ランクは Gold へ昇格し、報酬率が 7% → 10% に上昇。
@@ -475,7 +477,7 @@
     <h3>3.5 月末コミッション集計（毎月末）</h3>
     <ol>
       <li><span class="kbd">Ruby_Server</span> が GoAffPro API より Partner ごとの報酬データを取得。</li>
-      <li><span class="kbd">Rule_App</span> のランク別報酬率を参照し、正確な比率を適用。</li>
+      <li><span class="kbd">報酬ルールマスタ</span> のランク別報酬率を参照し、正確な比率を適用。</li>
       <li><span class="kbd">報酬取引履歴管理アプリ</span> に以下の情報でレコードを作成：
         <ul>
           <li>Partner ID</li>
@@ -708,7 +710,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <tr><td>LOT または 棚コード入力ミス</td><td>警告を表示し再入力を促す。</td></tr>
         <tr><td>同一棚で LOT 重複</td><td>同一製品の場合は警告のみで許可。</td></tr>
         <tr><td>製造中止</td><td>Ruby_Server がタスクを削除し、論理在庫をロールバック。</td></tr>
-        <tr><td>在庫差異</td><td>実在庫管理アプリ 側で手動補正可能（操作ログを保存）。</td></tr>
+        <tr><td>在庫差異</td><td>入出庫履歴アプリ に Type=ADJUSTMENT でレコード登録し、その結果として 実在庫管理アプリ・在庫管理アプリ を Ruby_Server 経由で調整する。</td></tr>
         <tr><td>バーコード破損・紛失</td><td>外部システムから再印刷対応。</td></tr>
       </tbody>
     </table>
@@ -1356,7 +1358,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>3️⃣ 実在庫更新とタスク完了処理</h3>
     <ol>
-      <li><strong>Scan barcode画面</strong> は結果を <strong>Physical DB</strong> に送信。
+      <li><strong>Scan barcode画面</strong> は結果を <strong>実在庫アプリ</strong> に送信。
         <ul>
           <li>出庫／マイナス調整 → 在庫減少</li>
           <li>入庫／プラス調整 → 在庫増加</li>
@@ -1365,6 +1367,19 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <li>DB が更新を完了すると <strong>タスク管理アプリ</strong> へステータスを返却。</li>
       <li><strong>タスク管理アプリ</strong> が Webhook 経由で <strong>Ruby_Server</strong> に通知し、<code>Status = 完了</code> とする。</li>
     </ol>
+    <h4>📘 入出庫履歴アプリへの記録ルール</h4>
+    <p>
+      Ruby_Server は、完了したタスク種別に応じて <strong>入出庫履歴アプリ</strong> に在庫移動の実績レコードを必ず作成する。
+    </p>
+    <ul>
+      <li>Picking（販売出庫）タスク：Type = 出庫（販売）として記録</li>
+      <li>Putaway（購買入庫）タスク：Type = 入庫（購買）として記録</li>
+      <li>X-Out／X-In（製造関連）：Type = 出庫（製造）／入庫（製造）として記録</li>
+      <li>Transfer／Adjustment／Sample など：各タスク種別に応じた Type で記録</li>
+    </ul>
+    <p>
+      これにより、全ての入出庫処理を入出庫履歴アプリで一元的にトレースできる。
+    </p>
 
     <h4>✅ 論理在庫更新のタイミング</h4>
     <table>
@@ -1432,6 +1447,11 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <tr><td>在庫管理アプリ ↔ DB</td><td>双方向</td><td>タスク完了時に同期（Step10–11）</td></tr>
         <tr><td>タスク管理アプリ ↔ Scan barcode画面</td><td>リアルタイム</td><td>WebSocket／API</td></tr>
         <tr><td>タスク管理アプリ ↔ Source Apps</td><td>単方向</td><td>Webhookによる状態更新</td></tr>
+                <tr>
+          <td>入出庫履歴アプリ ← Ruby_Server</td>
+          <td>単方向（書き込み）</td>
+          <td>タスク完了時に入出庫実績をジャーナルとして自動登録</td>
+        </tr>
       </tbody>
     </table>
   </section>
@@ -1479,7 +1499,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 </section>
 
 <div style="page-break-before: always;"></div>
-<section id="flow9">
+  <section id="flow9">
   <h1 class="flow-title">Flow9: 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</h1>
 
   <section id="flow9-1">
