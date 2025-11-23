@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>Credie 権限モデル仕様書（Staff & Permission）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --fg:#111827;
+      --bg:#f5f5f7;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#0b63f6;
+      --accent-soft:#eef2ff;
+    }
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--fg);
+      font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+           "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",
+           Helvetica,Arial,sans-serif;
+    }
+    .container{
+      max-width:1024px;
+      margin:0 auto;
+      padding:28px 20px 60px;
+    }
+    header{
+      border-bottom:1px solid var(--border);
+      padding-bottom:14px;
+      margin-bottom:22px;
+    }
+    header h1{
+      margin:0 0 6px;
+      font-size:24px;
+      letter-spacing:.03em;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:18px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .meta div{display:flex;gap:6px;}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      background:#e0f2fe;
+      color:#0369a1;
+      font-weight:500;
+      margin-left:8px;
+    }
+    h2{
+      margin:28px 0 10px;
+      font-size:18px;
+      border-left:3px solid var(--accent);
+      padding-left:8px;
+    }
+    h3{
+      margin:20px 0 8px;
+      font-size:16px;
+    }
+    p{margin:8px 0;}
+    ul,ol{margin:6px 0 10px 20px;}
+    .note{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .callout{
+      border-left:3px solid #f59e0b;
+      background:#fffbeb;
+      padding:10px 12px;
+      border-radius:6px;
+      margin:14px 0;
+      color:#7c5a00;
+      font-size:13px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:10px;
+      border:1px solid var(--border);
+      padding:18px 20px;
+      margin:12px 0 18px;
+      box-shadow:0 6px 18px rgba(15,23,42,0.04);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin:10px 0 18px;
+      background:var(--card);
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(15,23,42,0.03);
+    }
+    th,td{
+      border:1px solid var(--border);
+      padding:8px 10px;
+      vertical-align:top;
+      font-size:13px;
+    }
+    th{
+      background:#f9fafb;
+      text-align:left;
+      white-space:nowrap;
+    }
+    tr:nth-child(even) td{
+      background:#fcfcff;
+    }
+    .role-chip{
+      display:inline-flex;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      background:var(--accent-soft);
+      color:#1d4ed8;
+      margin-right:6px;
+    }
+    .tagline{
+      font-size:13px;
+      color:var(--muted);
+    }
+    .check{
+      text-align:center;
+      font-size:14px;
+    }
+    .role-col{
+      background:#eff6ff;
+      font-weight:600;
+    }
+    code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
+      background:#f3f4f6;
+      padding:1px 4px;
+      border-radius:4px;
+    }
+    .section-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    @media print{
+      body{background:#ffffff;}
+      .container{padding:0 8mm 8mm;}
+      header{box-shadow:none;border-color:#d1d5db;}
+      .card,table{box-shadow:none;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Credie 権限モデル仕様書（Staff & Permission）</h1>
+      <div class="meta">
+        <div><strong>対象:</strong> Credie MVP</div>
+        <div><strong>作成者:</strong> AMCOLAB（QuyNT）</div>
+        <div><strong>版数:</strong> v1.1</div>
+        <div><strong>更新日:</strong> 2025-11-23</div>
+      </div>
+    </header>
+
+    <!-- 1. 概要 -->
+    <section id="overview">
+      <div class="section-label">Section 1</div>
+      <h2>権限モデルの概要</h2>
+      <div class="card">
+        <p>
+          本ドキュメントでは、Credie システムの <strong>権限モデル（Role & Permission）</strong> を定義する。
+          MVP フェーズでは運用をシンプルに保ちつつ、将来の拡張（人員増加・業務分離）に耐えられる設計とすることを目的とする。
+        </p>
+        <ul>
+          <li>アカウントに対して <strong>3 種類のロール</strong> を定義する。</li>
+          <li>ロールは「誰が何をできるか」をシンプルなマトリクスで管理する。</li>
+          <li>MVP 時点では <strong>CEO が System Admin + Payment Approver を兼任</strong> し、その他社員は共通の Business Staff ロールとする。</li>
+        </ul>
+        <p class="tagline">
+          設計上は 3 ロール構成だが、運用上は「CEO vs Staff」という分かりやすい形でスタートする。
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. ロール定義 -->
+    <section id="roles">
+      <div class="section-label">Section 2</div>
+      <h2>ロール定義（Role Definitions）</h2>
+
+      <h3><span class="role-chip">Role A</span>System Admin</h3>
+      <p>
+        Credie 全体の <strong>システム管理者</strong>。ユーザー・ロール・システム設定を管理し、
+        必要に応じて全アプリのフルアクセス権を持つ。ただし、日々のオペレーションには極力使用せず、
+        原則として「設定用・メンテナンス用」として利用する想定。
+      </p>
+      <ul>
+        <li>ユーザーアカウントの作成・停止・ロール付与／剥奪</li>
+        <li>各種マスタ設定（税率、ビジネスルール、メールテンプレートなど）の変更</li>
+        <li>すべての Kintone アプリに対するフルアクセス（閲覧・編集・削除）</li>
+        <li>必要に応じて Payment Approver ロールも兼任可能</li>
+      </ul>
+      <p class="note">
+        MVP では CEO に付与し、CEO = System Admin + Payment Approver とする。
+      </p>
+
+      <h3><span class="role-chip">Role B</span>Payment Approver</h3>
+      <p>
+        <strong>送金・支払に関する最終承認者</strong>。銀行 API（GMO）を通じた出金処理をトリガーできる唯一のロール。
+        システム設定やユーザー管理は行わない。
+      </p>
+      <ul>
+        <li>支払管理アプリ（AP Hub）上での「支払承認」（最終承認）</li>
+        <li>GMO API による一括振込バッチの実行（Ruby Server 経由）</li>
+        <li>支払履歴・請求履歴・報酬履歴の閲覧</li>
+        <li>ユーザー／ロール管理は不可（System Admin に限定）</li>
+      </ul>
+      <p class="note">
+        MVP では Payment Approver も CEO が担当する。将来、経理責任者に委譲することを想定。
+      </p>
+
+      <h3><span class="role-chip">Role C</span>Business Staff（共通スタッフ）</h3>
+      <p>
+        日々の <strong>業務オペレーションを担当する共通スタッフロール</strong>。
+        Order／PO／在庫／タスク／請求・支払依頼のドラフト作成など、ほぼ全ての業務データを操作できるが、
+        ユーザー管理と <strong>支払の最終承認</strong> は行えない。
+      </p>
+      <ul>
+        <li>注文アプリ・発注アプリ・在庫関連アプリ・タスク管理アプリの CRUD</li>
+        <li>請求書作成、支払依頼（Payment Request）の作成・更新・ドラフト管理</li>
+        <li>コミッション（報酬取引履歴）データの確認・登録・調整案作成</li>
+        <li><strong>不可：</strong> ユーザー作成／権限変更／System Setting 変更／支払最終承認</li>
+      </ul>
+      <p class="note">
+        MVP では、CEO 以外の全ユーザーが Business Staff ロールのみを持つ。
+      </p>
+    </section>
+
+    <!-- 3. 権限マトリクス -->
+    <section id="matrix">
+      <div class="section-label">Section 3</div>
+      <h2>権限マトリクス（Permission Matrix）</h2>
+
+      <p>
+        以下は代表的なアプリ／機能ごとの権限一覧である。<br>
+        ◎ = フルアクセス / ◯ = 主に閲覧・一部更新 / ― = 権限なし
+      </p>
+
+      <h3>3.1 アプリ別 権限一覧</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>アプリ / 機能</th>
+            <th class="role-col">System Admin</th>
+            <th class="role-col">Payment Approver</th>
+            <th class="role-col">Business Staff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ユーザー / ロール管理</td>
+            <td class="check">◎（作成・停止・ロール付与）</td>
+            <td class="check">―</td>
+            <td class="check">―</td>
+          </tr>
+          <tr>
+            <td>System Setting（税・メール・Business Rule）</td>
+            <td class="check">◎（変更可）</td>
+            <td class="check">―</td>
+            <td class="check">―</td>
+          </tr>
+          <tr>
+            <td>商品マスタ / パートナーマスタ</td>
+            <td class="check">◎（全権）</td>
+            <td class="check">◯（閲覧）</td>
+            <td class="check">◎（登録・更新・利用）</td>
+          </tr>
+          <tr>
+            <td>注文アプリ（Sales Order）</td>
+            <td class="check">◎（全権）</td>
+            <td class="check">◯（閲覧）</td>
+            <td class="check">◎（作成・編集・ステータス更新）</td>
+          </tr>
+          <tr>
+            <td>発注アプリ（Purchase Order）</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧）</td>
+            <td class="check">◎（作成・承認フローの一次側）</td>
+          </tr>
+          <tr>
+            <td>在庫管理アプリ / 実在庫管理アプリ</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧中心）</td>
+            <td class="check">◎（入出庫関連タスクに応じた更新）</td>
+          </tr>
+          <tr>
+            <td>タスク管理アプリ（Warehouse Task）</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧）</td>
+            <td class="check">◎（タスク実行・進捗更新）</td>
+          </tr>
+          <tr>
+            <td>入出庫履歴アプリ</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧）</td>
+            <td class="check">◎（自動＋一部手動登録）</td>
+          </tr>
+          <tr>
+            <td>請求管理アプリ（AR Hub）</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧・監査）</td>
+            <td class="check">◎（請求データ作成・更新）</td>
+          </tr>
+          <tr>
+            <td>支払管理アプリ（AP Hub）</td>
+            <td class="check">◎（設定・運用全般）</td>
+            <td class="check">◎（最終承認 / GMO 実行）</td>
+            <td class="check">◎（支払依頼の作成・ドラフト更新のみ）</td>
+          </tr>
+          <tr>
+            <td>報酬取引履歴管理アプリ（Commission）</td>
+            <td class="check">◎</td>
+            <td class="check">◯（閲覧・支払結果確認）</td>
+            <td class="check">◎（集計・調整前のレビュー）</td>
+          </tr>
+          <tr>
+            <td>Ruby Server ログ / テック監査</td>
+            <td class="check">◎（閲覧・設定変更）</td>
+            <td class="check">◯（監査用閲覧）</td>
+            <td class="check">―（通常不要）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 支払フローにおける責任分解</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ステップ</th>
+            <th>概要</th>
+            <th class="role-col">主担当ロール</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>① 支払依頼の登録</td>
+            <td>仕入先・代理店報酬などの支払依頼（Payment Request）の作成</td>
+            <td>Business Staff</td>
+          </tr>
+          <tr>
+            <td>② 社内一次チェック</td>
+            <td>内容・金額・期日などの妥当性確認（必要に応じて別担当を設定可能）</td>
+            <td>Business Staff / Accounting Staff（将来）</td>
+          </tr>
+          <tr>
+            <td>③ 最終承認</td>
+            <td>支払管理アプリ上での「承認」操作。ここで初めて GMO API バッチが実行可能となる。</td>
+            <td>Payment Approver</td>
+          </tr>
+          <tr>
+            <td>④ GMO 振込実行</td>
+            <td>Ruby Server 経由で GMO /payments をコールし、一括送金を実行</td>
+            <td>Payment Approver（ボタン押下）</td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <div class="callout">
+        ポイント：<br>
+        <ul>
+          <li><strong>誰でも支払依頼は作成できる</strong> が、<strong>送金実行は Payment Approver に限定</strong> される。</li>
+          <li>System Admin は「設定と全体監査」の責任を持つが、日次の支払オペレーションは必須ではない。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. MVP ロール割当 -->
+    <section id="mvp-mapping">
+      <div class="section-label">Section 4</div>
+      <h2>MVP におけるロール割当（Who has which role?）</h2>
+
+      <p>
+        Credie MVP では、運用チームが小規模であるため、
+        実際のアカウント割り当ては以下のようにシンプルに開始する。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ユーザー種別</th>
+            <th>付与ロール</th>
+            <th>補足</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CEO</td>
+            <td>
+              <span class="role-chip">System Admin</span>
+              <span class="role-chip">Payment Approver</span>
+            </td>
+            <td>システム設定と支払最終承認を兼任する、唯一のフルコントロールアカウント。</td>
+          </tr>
+          <tr>
+            <td>Back-office / 経理担当（将来）</td>
+            <td><span class="role-chip">Payment Approver</span></td>
+            <td>CEO から権限委譲する場合を想定。System Admin は持たない。</td>
+          </tr>
+          <tr>
+            <td>一般スタッフ（営業・倉庫・CS など）</td>
+            <td><span class="role-chip">Business Staff</span></td>
+            <td>業務データの入力・更新を担当。支払承認・ユーザー管理は行わない。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="note">
+        将来的に、必要に応じて Business Staff をさらに細分化（例：Warehouse Staff / Sales Staff / Viewer など）する余地を残しているが、
+        本仕様では「システム設計レベルでは 3 ロール、運用開始時は 2 区分（CEO vs Staff）」という方針とする。
+      </p>
+    </section>
+
+    <!-- 5. 拡張方針 -->
+    <section id="future">
+      <div class="section-label">Section 5</div>
+      <h2>今後の拡張方針（Future Extension）</h2>
+      <ul>
+        <li>アクセスログ・IP 制限などのセキュリティレイヤーは、インフラ／SaaS 側で別途設計する。</li>
+        <li>案件・部門・国別などでデータスコープを絞る場合は、Business Staff をさらにサブロールに分解する。</li>
+        <li>外部監査や税務調査に備え、Payment Approver の操作ログは必ず保持し、System Admin が監査できるようにする。</li>
+      </ul>
+      <p class="note">
+        これらは MVP 以降の課題とし、本ドキュメントではロールと操作権限の骨格のみを定義する。
+      </p>
+    </section>
+  </div>
+</body>
+</html>
