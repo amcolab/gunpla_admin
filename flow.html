@@ -238,13 +238,13 @@
       <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
       <tbody>
         <tr><td>Sales_Staff</td><td>代理店登録・受注承認を担当。</td></tr>
-        <tr><td>Partner_Master</td><td>代理店情報（区分、割引率、口座情報など）の管理。</td></tr>
+        <tr><td>パートナーマスタ</td><td>代理店情報（区分、割引率、口座情報など）の管理。</td></tr>
         <tr><td>注文アプリ</td><td>受注データの管理。</td></tr>
         <tr><td>Agent（代理店）</td><td>受発注ポータルで注文を行うユーザー。</td></tr>
-        <tr><td>Portal</td><td>代理店が受注・出荷状況を確認できる画面。</td></tr>
+        <tr><td>代理店ポータル</td><td>代理店が受注・出荷状況を確認できる画面。</td></tr>
         <tr><td>Ruby_Server</td><td>ロジック処理、VA ID発行、全体制御。</td></tr>
         <tr><td>GMO_API</td><td>仮想口座（VA）発行および入金確認API。</td></tr>
-        <tr><td>Invoice_App</td><td>請求書および入金照合を管理。</td></tr>
+        <tr><td>請求管理アプリ</td><td>請求書および入金照合を管理。</td></tr>
         <tr><td>在庫管理アプリ</td><td>論理在庫（引当管理）を管理。</td></tr>
         <tr><td>タスク管理アプリ</td><td>出荷・入荷タスク管理。</td></tr>
         <tr><td>Scan barcode画面</td><td>倉庫担当者向けの実作業画面（バーコード・棚・LOT入力）。</td></tr>
@@ -260,9 +260,9 @@
 
     <h3>3.1 代理店登録・受注作成</h3>
     <ol>
-      <li>Sales_Staff が <span class="kbd">Partner_Master</span> に代理店を登録（区分、割引、口座等）。</li>
-      <li>システムは Portal アカウントを自動発行。</li>
-      <li>代理店は Portal にログインし、商品選択・割引後価格を確認。</li>
+      <li>Sales_Staff が <span class="kbd">パートナーマスタ</span> に代理店を登録（区分、割引、口座等）。</li>
+      <li>システムは 代理店ポータル アカウントを自動発行。</li>
+      <li>代理店は 代理店ポータル にログインし、商品選択・割引後価格を確認。</li>
       <li>注文送信により <span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
       <li>Sales_Staff が承認するとステータスが <span class="kbd">承認済み</span> になる。</li>
     </ol>
@@ -270,7 +270,7 @@
     <h3>3.2 請求書発行・入金確認</h3>
     <ol>
       <li>承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出し、仮想口座（VA ID）を発行。</li>
-      <li><span class="kbd">Invoice_App</span> に VA ID を保存し、代理店へ請求書を送信。</li>
+      <li><span class="kbd">請求管理アプリ</span> に VA ID を保存し、代理店へ請求書を送信。</li>
       <li>代理店が銀行振込を行い、<span class="kbd">GMO API</span> が Webhook により結果を通知。</li>
       <li><span class="kbd">Ruby_Server</span> が取引結果を確認：
         <ul>
@@ -297,7 +297,7 @@
       <li>確認後、<span class="kbd">実在庫管理アプリ</span> に {SKU, Location_ID, LOT_No, 数量} を記録し、在庫を減算。</li>
       <li><span class="kbd">タスク管理アプリ</span> と <span class="kbd">注文アプリ</span> に完了情報を更新。</li>
       <li><span class="kbd">Ship&amp;Co</span> API により送り状を発行し、トラッキング番号を取得。</li>
-      <li>代理店 Portal に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
+      <li>代理店ポータル に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
     </ol>
 
     <h3>3.5 残り出荷（B分）</h3>
@@ -306,13 +306,13 @@
       <li>新しいタスクを <span class="kbd">タスク管理アプリ</span> に生成。</li>
       <li>倉庫担当者が再度スキャン作業を行い、出荷を確定。</li>
       <li><span class="kbd">実在庫管理アプリ</span> で実在庫を減算し、<span class="kbd">タスク管理アプリ</span> が完了を <span class="kbd">注文アプリ</span> に反映。</li>
-      <li>Portal にも更新結果を通知。</li>
+      <li>代理店ポータル にも更新結果を通知。</li>
     </ol>
 
     <h3>3.6 受注完了</h3>
     <ol>
       <li>全ての出荷が完了すると、<span class="kbd">注文アプリ</span> はステータスを <span class="kbd">出荷完了</span> に更新。</li>
-      <li>Portal 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
+      <li>代理店ポータル 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
     </ol>
   </section>
 
@@ -747,7 +747,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <p>
       本フローは、<strong>資材購買（Meka 取引）</strong> に関する一連の業務を管理する。
       在庫監視、発注（PO）作成、承認、支払、分納入庫までを自動化し、
-      <strong>Meka Portal</strong> および <strong>GMO 銀行API</strong> と連携することで効率化を図る。
+      <strong>仕入ポータル</strong> および <strong>GMO 銀行API</strong> と連携することで効率化を図る。
     </p>
     <ul>
       <li><strong>Scan barcode画面（ReactJS 倉庫UI）</strong> により入庫バーコードスキャンを実現。</li>
@@ -767,9 +767,9 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <table>
       <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
       <tbody>
-        <tr><td>🗂️ Partner_Master</td><td>Meka 仕入先情報（口座・連絡先・Portal ID）管理。</td></tr>
+        <tr><td>🗂️ パートナーマスタ</td><td>Meka 仕入先情報（口座・連絡先・代理店ポータル ID）管理。</td></tr>
         <tr><td>📈 在庫管理アプリ</td><td>資材在庫・発注点（しきい値）の監視。</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>自動PO生成・GMO API呼出・Meka Portal連携ロジックを担当。</td></tr>
+        <tr><td>🖥️ Ruby_Server</td><td>自動PO生成・GMO API呼出・仕入ポータル連携ロジックを担当。</td></tr>
         <tr><td>🙋‍♀️ Purchasing_Staff</td><td>購買担当（一次承認者）。</td></tr>
         <tr><td>👑 Representative</td><td>代表者（最終承認者・CEO）。</td></tr>
         <tr><td>📝 発注アプリ</td><td>発注書（PO）の管理、一次承認、入庫状態の追跡。</td></tr>
@@ -787,8 +787,8 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>3.1 仕入先登録（Meka）</h3>
     <ul>
-      <li>購買担当が <strong>Partner_Master</strong> に仕入先情報（名称・メール・銀行口座）を登録。</li>
-      <li><strong>Ruby_Server</strong> が Meka Portal にアカウントを自動発行し、ログイン情報をメール送信。</li>
+      <li>購買担当が <strong>パートナーマスタ</strong> に仕入先情報（名称・メール・銀行口座）を登録。</li>
+      <li><strong>Ruby_Server</strong> が　仕入ポータル にアカウントを自動発行し、ログイン情報をメール送信。</li>
     </ul>
 
     <h3>3.2 在庫監視と自動PO生成</h3>
@@ -1108,7 +1108,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
       <tbody>
         <tr><td>📄 注文アプリ</td><td>受注情報管理（Sales Orders）</td><td>売上発生元</td></tr>
-        <tr><td>🧾 Invoice_App（AR Hub）</td><td>請求書・VA ID 管理</td><td>発行・入金照合・支払状態管理</td></tr>
+        <tr><td>🧾 請求管理アプリ（AR Hub）</td><td>請求書・VA ID 管理</td><td>発行・入金照合・支払状態管理</td></tr>
         <tr><td>🙋‍♂️ Agent／Agency</td><td>代理店・顧客</td><td>VA ID への入金者</td></tr>
         <tr><td>🖥️ Ruby_Server</td><td>Kintone と GMO API の中間処理</td><td>API呼び出し・状態更新・照合ロジック</td></tr>
         <tr><td>👑 Representative（CEO）</td><td>最終承認者</td><td>送金前の最終承認を実施</td></tr>
@@ -1130,7 +1130,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <ol>
       <li><strong>注文アプリ</strong> のステータスが <code>Approved</code> になると、Ruby_Server へトリガー送信。</li>
       <li><strong>Ruby_Server</strong> が <strong>GMO API</strong> に接続し、<strong>VA ID（仮想口座）</strong> を発行。</li>
-      <li>同時に <strong>Invoice_App</strong> に以下を登録：
+      <li>同時に <strong>請求管理アプリ</strong> に以下を登録：
         <ul>
           <li>VA ID</li>
           <li>請求金額</li>
@@ -1138,20 +1138,20 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
           <li>支払期限</li>
         </ul>
       </li>
-      <li><strong>Invoice_App</strong> から <strong>代理店（Agency）</strong> へ VA ID 通知メールを自動送信。</li>
+      <li><strong>請求管理アプリ</strong> から <strong>代理店（Agency）</strong> へ VA ID 通知メールを自動送信。</li>
     </ol>
 
     <h4>2️⃣ 入金と自動照合</h4>
     <ol>
       <li>代理店が GMO 発行の VA ID に入金。</li>
       <li><strong>GMO_API</strong> が Webhook／定期ポーリングで Ruby_Server に入金情報を通知。</li>
-      <li><strong>Ruby_Server</strong> が VA ID を照合し、<strong>Invoice_App</strong> を更新：
+      <li><strong>Ruby_Server</strong> が VA ID を照合し、<strong>請求管理アプリ</strong> を更新：
         <ul>
           <li><code>Status = PAID</code></li>
           <li>入金日時・トランザクションIDを記録</li>
         </ul>
       </li>
-      <li><strong>Invoice_App</strong> は入金結果を <strong>注文アプリ</strong> に反映：
+      <li><strong>請求管理アプリ</strong> は入金結果を <strong>注文アプリ</strong> に反映：
         <ul>
           <li><code>Order.Status = PAID</code></li>
           <li>出荷（Fulfillment）フローを自動開始</li>
@@ -1207,7 +1207,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>アプリ</th><th>保持データ</th><th>トリガー／アクション</th></tr></thead>
       <tbody>
         <tr><td>注文アプリ</td><td>OrderID・金額・状態</td><td>請求作成トリガー</td></tr>
-        <tr><td>Invoice_App</td><td>VA ID・支払状態・入金日</td><td>GMO→Ruby 経由で更新</td></tr>
+        <tr><td>請求管理アプリ</td><td>VA ID・支払状態・入金日</td><td>GMO→Ruby 経由で更新</td></tr>
         <tr><td>発注アプリ</td><td>仕入先・金額・期日</td><td>Payment_Request 送信</td></tr>
         <tr><td>報酬取引履歴管理</td><td>代理店・報酬・期間</td><td>Payment_Request 送信</td></tr>
         <tr><td>支払管理アプリ</td><td>支払明細・手数料・状態</td><td>CEO 承認・GMO API 呼出</td></tr>
@@ -1235,7 +1235,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>発生状況</th><th>対応アクション</th></tr></thead>
       <tbody>
         <tr><td>送金失敗（APIエラー）</td><td>Ruby_Server が <code>Status = Failed</code> に更新し、ログと通知を記録</td></tr>
-        <tr><td>金額不一致／VA ID 不整合</td><td>Invoice_App 上で <code>要確認</code> ステータスへ保持し、経理が手動確認</td></tr>
+        <tr><td>金額不一致／VA ID 不整合</td><td>請求管理アプリ 上で <code>要確認</code> ステータスへ保持し、経理が手動確認</td></tr>
         <tr><td>銀行手数料発生</td><td>Ruby_Server が自動的に <code>Transfer_Fee</code> を 支払管理アプリ に記録</td></tr>
         <tr><td>仕入先口座情報変更</td><td>CEO 承認前に確認アラートを表示</td></tr>
       </tbody>
@@ -1248,7 +1248,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <li><strong>Kintone – Ruby Server – GMO API</strong> 間で資金の入出金を完全自動化。</li>
       <li><strong>VA ID</strong> により各入金（AR）の追跡が明確。</li>
       <li><strong>Batch Payment</strong> で複数支払を一括処理し、二段階承認で安全運用。</li>
-      <li><strong>支払管理アプリ</strong> が支払制御の中枢、<strong>Invoice_App</strong> が入金制御の中枢となる。</li>
+      <li><strong>支払管理アプリ</strong> が支払制御の中枢、<strong>請求管理アプリ</strong> が入金制御の中枢となる。</li>
     </ul>
 
     <blockquote>
