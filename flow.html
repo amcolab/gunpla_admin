@@ -93,7 +93,7 @@
           <tr><td>在庫管理アプリ（Kintone）</td><td>論理在庫（システム内引当）を管理。</td></tr>
           <tr><td>実在庫管理アプリ</td><td>実在庫（実棚・ロット単位）の管理。</td></tr>
           <tr><td>タスク管理アプリ（Kintone）</td><td>出荷／入荷タスク管理。</td></tr>
-          <tr><td>Scan barcode画面（React）</td><td>倉庫作業者のスキャン UI（バーコード、棚コード）。</td></tr>
+          <tr><td>Scan barcode画面（ReactJS 倉庫UI）</td><td>倉庫作業者のスキャン UI（バーコード、棚コード）。</td></tr>
           <tr><td>Ship&amp;Co</td><td>送り状発行、ラベル出力、トラッキング連携。</td></tr>
           <tr><td>S3_Storage</td><td>配送ラベル（PDF）保管。</td></tr>
           <tr><td>Op_Staff</td><td>キャンセル／返品の例外対応（手動介入）。</td></tr>
@@ -647,7 +647,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>3.4 倉庫タスク実行（Scan barcode画面）</h3>
     <ol>
-      <li>倉庫担当者は <strong>Scan barcode画面（ReactJS）</strong> でタスクを選択。</li>
+      <li>倉庫担当者は <strong>Scan barcode画面（ReactJS 倉庫UI）</strong> でタスクを選択。</li>
       <li>バーコードスキャンによる手順：
         <ul>
           <li>① 対象タスク選択</li>
@@ -750,7 +750,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <strong>Meka Portal</strong> および <strong>GMO 銀行API</strong> と連携することで効率化を図る。
     </p>
     <ul>
-      <li><strong>Scan barcode画面（ReactJS）</strong> により入庫バーコードスキャンを実現。</li>
+      <li><strong>Scan barcode画面（ReactJS 倉庫UI）</strong> により入庫バーコードスキャンを実現。</li>
       <li>支払は「前払い一括」だが、納品は「複数回分納（分割納入）」を許可。</li>
       <li><strong>2段階承認フロー</strong>：
         <ul>
@@ -947,9 +947,9 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
       <tbody>
         <tr><td>🧑‍💼 Sales_Staff／管理者</td><td>移動・返品・サンプル出荷依頼の作成および承認</td><td>Kintone 上で操作</td></tr>
-        <tr><td>📄 報酬取引履歴管理アプリ</td><td>在庫移動／調整／返品履歴を記録する中心アプリ</td><td>SKU・数量・From/To棚・LOT・理由などを保持</td></tr>
+        <tr><td>📄 入出庫履歴アプリ</td><td>在庫移動／調整／返品履歴を記録する中心アプリ</td><td>SKU・数量・From/To棚・LOT・理由などを保持</td></tr>
         <tr><td>🖥️ Ruby_Server</td><td>在庫ロジック処理・実在庫管理アプリ 同期</td><td>Kintone Webhook によりトリガー実行</td></tr>
-        <tr><td>📱 Scan barcode画面（ReactJS）</td><td>倉庫用バーコードスキャン画面</td><td>SKU・棚・LOT 入力および作業確定を行う</td></tr>
+        <tr><td>📱 Scan barcode画面（ReactJS 倉庫UI）</td><td>倉庫用バーコードスキャン画面</td><td>SKU・棚・LOT 入力および作業確定を行う</td></tr>
         <tr><td>🏭 実在庫管理アプリ</td><td>棚・LOT 単位の実在庫データベース</td><td>現場実在庫を保持</td></tr>
         <tr><td>📈 在庫管理アプリ</td><td>Kintone 上の論理在庫管理</td><td>在庫報告・システム連携用</td></tr>
       </tbody>
@@ -961,7 +961,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>1️⃣ 移動・返品依頼の作成</h3>
     <ul>
-      <li><strong>Sales_Staff</strong> が <strong>報酬取引履歴管理アプリ</strong> に新規レコードを作成。</li>
+      <li><strong>Sales_Staff</strong> が <strong>入出庫履歴アプリ</strong> に新規レコードを作成。</li>
       <li>入力項目：
         <ul>
           <li>SKU、数量</li>
@@ -1014,7 +1014,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>4️⃣ 履歴保存・通知</h3>
     <ul>
-      <li><strong>Ruby_Server</strong> が <strong>報酬取引履歴管理アプリ</strong> に以下を記録：
+      <li><strong>Ruby_Server</strong> が <strong>入出庫履歴アプリリ</strong> に以下を記録：
         <ul>
           <li>実績情報（LOT・棚・数量・日時・担当者）</li>
         </ul>
@@ -1025,7 +1025,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   </section>
 
   <section id="flow6-4">
-    <h2>5. 報酬取引履歴管理アプリ データ構造</h2>
+    <h2>5. 入出庫履歴アプリ データ構造</h2>
     <table>
       <thead><tr><th>項目名</th><th>データ型</th><th>説明</th></tr></thead>
       <tbody>
@@ -1063,7 +1063,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <h2>7. 期待される結果</h2>
     <ul>
       <li>社内倉庫業務（返品・棚移動・調整）を単一システムで統合管理。</li>
-      <li><strong>報酬取引履歴管理アプリ</strong> が在庫履歴の中枢データベースとして機能。</li>
+      <li><strong>入出庫履歴アプリリ</strong> が在庫履歴の中枢データベースとして機能。</li>
       <li><strong>Ruby_Server</strong> により論理在庫と実在庫を双方向同期。</li>
       <li><strong>Scan barcode画面</strong> によるバーコード入力でミスを最小化。</li>
     </ul>
@@ -1287,7 +1287,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <li><strong>実在庫（Physical）と論理在庫（Logic）の連携監視</strong></li>
     </ul>
     <p>
-      すべての倉庫タスクは <strong>TaskApp</strong> によって制御され、  
+      すべての倉庫タスクは <strong>タスク管理アプリ</strong> によって制御され、  
       倉庫担当者は <strong>ReactJS製 Scan UI</strong> でバーコードスキャンを行う。  
       スキャン完了後、システムは <strong>物理在庫DB</strong> と <strong>論理在庫（在庫管理アプリ）</strong> の両方を自動更新する。
     </p>
@@ -1300,9 +1300,9 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <tbody>
         <tr><td>📦 Order／PO／SX／Movement Apps</td><td>各種指示元（販売・購買・生産・移動）</td><td>Ruby Serverへタスク作成トリガーを送信</td></tr>
         <tr><td>🖥️ Ruby_Server</td><td>タスク生成・在庫ロジック処理・DB同期</td><td>倉庫業務のロジックエンジン</td></tr>
-        <tr><td>🗂️ TaskApp</td><td>入出庫タスクの作成・進捗管理</td><td>各操作に対して個別レコードを保持</td></tr>
+        <tr><td>🗂️ タスク管理アプリ</td><td>入出庫タスクの作成・進捗管理</td><td>各操作に対して個別レコードを保持</td></tr>
         <tr><td>👩‍🔧 倉庫担当者（Staff）</td><td>現場オペレーター</td><td>Scan UIを使用して作業実施</td></tr>
-        <tr><td>💻 Scan barcode画面（ReactJS）</td><td>バーコードスキャン画面</td><td>SKU・棚・数量・LOTを入力／表示</td></tr>
+        <tr><td>💻 Scan barcode画面（ReactJS 倉庫UI）</td><td>バーコードスキャン画面</td><td>SKU・棚・数量・LOTを入力／表示</td></tr>
         <tr><td>🗃️ DB（Physical Stock）</td><td>棚・LOT・数量ごとの実在庫DB</td><td>現物在庫を保持</td></tr>
         <tr><td>📈 在庫管理アプリ（Logic Stock）</td><td>Kintone上の論理在庫</td><td>レポート／分析用データ</td></tr>
       </tbody>
@@ -1315,7 +1315,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <h3>1️⃣ タスク作成と初期ロジック処理</h3>
     <p>
       販売・購買・生産・ムーブメント等、すべての倉庫指示は <strong>Ruby_Server</strong> を経由し、  
-      <strong>TaskApp</strong> にタスクを自動生成する。
+      <strong>タスク管理アプリ</strong> にタスクを自動生成する。
     </p>
 
     <h4>🧾 主なタスク種別</h4>
@@ -1334,7 +1334,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     </p>
     <ol>
       <li><strong>在庫管理アプリ</strong> で対象商品の在庫を減算または確保。</li>
-      <li><strong>TaskApp</strong> にタスクを生成（Type・SKU・数量・棚・LOT含む）。</li>
+      <li><strong>タスク管理アプリ</strong> にタスクを生成（Type・SKU・数量・棚・LOT含む）。</li>
       <li><strong>Scan barcode画面</strong> にタスクデータを送信し、現場準備を行う。</li>
     </ol>
 
@@ -1362,8 +1362,8 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
           <li>入庫／プラス調整 → 在庫増加</li>
         </ul>
       </li>
-      <li>DB が更新を完了すると <strong>TaskApp</strong> へステータスを返却。</li>
-      <li><strong>TaskApp</strong> が Webhook 経由で <strong>Ruby_Server</strong> に通知し、<code>Status = 完了</code> とする。</li>
+      <li>DB が更新を完了すると <strong>タスク管理アプリ</strong> へステータスを返却。</li>
+      <li><strong>タスク管理アプリ</strong> が Webhook 経由で <strong>Ruby_Server</strong> に通知し、<code>Status = 完了</code> とする。</li>
     </ol>
 
     <h4>✅ 論理在庫更新のタイミング</h4>
@@ -1378,7 +1378,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>4️⃣ 元指示への反映とログ記録</h3>
     <ol>
-      <li><strong>TaskApp</strong> が元アプリ（Order／PO／SX／Movement）へ状態を反映：
+      <li><strong>タスク管理アプリ</strong> が元アプリ（Order／PO／SX／Movement）へ状態を反映：
         <ul>
           <li>出庫完了 → <code>Status = Fulfilled／Issued</code></li>
           <li>入庫完了 → <code>Status = Received</code></li>
@@ -1392,7 +1392,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   <section id="flow8-4">
     <h2>4. データ構造例</h2>
 
-    <h3>(a) TaskApp</h3>
+    <h3>(a) タスク管理アプリ</h3>
     <table>
       <thead><tr><th>フィールド</th><th>説明</th></tr></thead>
       <tbody>
@@ -1419,7 +1419,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <tr><td>LOT_No</td><td>製造／入庫ロット番号</td></tr>
         <tr><td>Quantity</td><td>在庫数量</td></tr>
         <tr><td>Last_Updated</td><td>最終更新日時</td></tr>
-        <tr><td>Task_ID</td><td>TaskApp とのリンク</td></tr>
+        <tr><td>Task_ID</td><td>タスク管理アプリ とのリンク</td></tr>
       </tbody>
     </table>
   </section>
@@ -1430,8 +1430,8 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>関係</th><th>同期方向</th><th>同期方法</th></tr></thead>
       <tbody>
         <tr><td>在庫管理アプリ ↔ DB</td><td>双方向</td><td>タスク完了時に同期（Step10–11）</td></tr>
-        <tr><td>TaskApp ↔ Scan barcode画面</td><td>リアルタイム</td><td>WebSocket／API</td></tr>
-        <tr><td>TaskApp ↔ Source Apps</td><td>単方向</td><td>Webhookによる状態更新</td></tr>
+        <tr><td>タスク管理アプリ ↔ Scan barcode画面</td><td>リアルタイム</td><td>WebSocket／API</td></tr>
+        <tr><td>タスク管理アプリ ↔ Source Apps</td><td>単方向</td><td>Webhookによる状態更新</td></tr>
       </tbody>
     </table>
   </section>
@@ -1452,7 +1452,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   <section id="flow8-7">
     <h2>7. 成果・効果</h2>
     <ul>
-      <li>全ての入出庫・調整作業を <strong>TaskApp</strong> 経由で完全トレーサブルに管理。</li>
+      <li>全ての入出庫・調整作業を <strong>タスク管理アプリ</strong> 経由で完全トレーサブルに管理。</li>
       <li><strong>実在庫管理アプリ（DB）</strong> と <strong>Logic Stock（Kintone）</strong> をリアルタイム同期。</li>
       <li><strong>Scan barcode画面</strong> による高速・正確な現場作業とLOT／棚単位の記録。</li>
       <li>Return／Movement／Production の追加API拡張も容易。</li>
@@ -1460,7 +1460,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <blockquote>
       💡 本フローは Credie 倉庫管理のコア基盤であり、  
-      全ての業務（受注・購買・生産・社内移動）は TaskApp を中心に運用。  
+      全ての業務（受注・購買・生産・社内移動）は タスク管理アプリ を中心に運用。  
       Ruby_Server がロジック統制の中心としてシステムと現場の一貫性を保証する。
     </blockquote>
   </section>
@@ -1490,7 +1490,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     以下の点を目的とします。
   </p>
   <ul>
-    <li>報酬取引履歴管理アプリ による論理・物理在庫のGifu倉庫での一元管理</li>
+    <li>入出庫履歴アプリ による論理・物理在庫のGifu倉庫での一元管理</li>
     <li>注文・購買アプリの正確なステータス更新</li>
     <li>支払済みコミッション（報酬）の報酬取引履歴管理アプリによる履歴管理と手動調整</li>
     <li>出荷指示後のキャンセル（未出荷）時の論理在庫の即時解放とTask停止</li>
@@ -1512,7 +1512,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <tr><td>注文アプリ（受注アプリ）</td><td>販売注文の管理、サブテーブルで明細を保持、キャンセル・返品理由・数量を保持</td></tr>
       <tr><td>発注アプリ（購買アプリ）</td><td>購買注文の入庫状況とキャンセル処理</td></tr>
       <tr><td>タスク管理アプリ（Kintone 出荷依頼/Task App）</td><td>出荷依頼タスクの管理。注文アプリからの指示によりキャンセル・停止処理を行う。</td></tr>
-      <tr><td>報酬取引履歴管理アプリ</td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録（Adjustment Appの役割）</td></tr>
+      <tr><td>入出庫履歴アプリ</td><td>返品・廃棄・サンプル・棚卸差異などの在庫調整を記録（Adjustment Appの役割）</td></tr>
       <tr><td>在庫管理アプリ（在庫アプリ）</td><td>論理在庫の更新・照合（引当／引当解除）</td></tr>
       <tr><td>実在庫管理アプリ（実在庫DB）</td><td>棚・LOT単位の実在庫を保持（Gifu倉庫のみ対象）</td></tr>
       <tr><td>報酬取引履歴管理アプリ</td><td>コミッションの手動補正の履歴を記録・管理（Rewards Transaction History Appの役割）</td></tr>
@@ -1532,8 +1532,8 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <tr><td>全キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>90: キャンセル</code></td><td>日付と理由を記録。サブテーブルを無効化。</td><td>なし（論理在庫未引当）</td><td></td></tr>
       <tr><td>部分キャンセル（出荷指示前）</td><td><code>00: 受注確定</code> → <code>91: 部分キャンセル</code></td><td>サブテーブルのキャンセル数量を記録。</td><td>なし（論理在庫未引当）</td><td></td></tr>
       <tr><td>キャンセル（10 出荷指示済だが未出荷）</td><td><code>10: 出荷指示済</code> → <code>90: キャンセル</code></td><td>在庫管理アプリで論理在庫を引当解除。タスク管理アプリのタスクを停止/キャンセル。</td><td>論理在庫を戻す（引当解除）</td><td>*出荷指示後の取り消し対応*</td></tr>
-      <tr><td>全返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td><td>報酬取引履歴管理アプリ に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> を登録。</td><td>論理・物理在庫を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
-      <tr><td>部分返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td><td>報酬取引履歴管理アプリ に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> を登録。</td><td>該当数量を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>全返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td><td>入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> を登録。</td><td>論理・物理在庫を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
+      <tr><td>部分返品（出荷完了後）</td><td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td><td>入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> を登録。</td><td>該当数量を加算</td><td>報酬取引履歴管理に補正レコード登録。</td></tr>
       <tr><td>サンプル出庫／廃棄／社内利用</td><td>ステータス変更なし</td><td>報酬取引履歴管理アプリ に <code>Type=廃棄／サンプル出庫</code></td><td>論理・物理在庫を減算</td><td>コミッション非対象</td></tr>
     </tbody>
   </table>
@@ -1569,8 +1569,8 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <tbody>
       <tr><td>全キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>90: キャンセル</code></td><td>日付・理由を記録。</td><td>なし</td><td></td></tr>
       <tr><td>部分キャンセル（未入庫）</td><td><code>00: 発注済</code> → <code>91: 部分完了</code></td><td>サブテーブルの数量を減算し、<code>キャンセル数量</code>を更新。</td><td>なし</td><td></td></tr>
-      <tr><td>全返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td><td>報酬取引履歴管理アプリ に <code>Type=返品出庫</code>、<code>Qty=-数量</code> を登録。</td><td>論理・物理在庫を減算</td><td></td></tr>
-      <tr><td>部分返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td><td>報酬取引履歴管理アプリ に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> を登録。返品数量を記録。</td><td>該当数量を減算</td><td></td></tr>
+      <tr><td>全返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td><td>入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-数量</code> を登録。</td><td>論理・物理在庫を減算</td><td></td></tr>
+      <tr><td>部分返品（入庫後）</td><td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td><td>入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> を登録。返品数量を記録。</td><td>該当数量を減算</td><td></td></tr>
       <tr><td>棚卸差異・在庫修正</td><td>ステータス変更なし</td><td>報酬取引履歴管理アプリ に <code>Type=棚卸差異</code>、<code>Qty=±X</code></td><td>実在庫と論理在庫を調整</td><td></td></tr>
     </tbody>
   </table>
@@ -1581,7 +1581,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 <section id="flow9-5">
   <h2>5. 運用補足</h2>
   <ul>
-    <li>返品や廃棄、在庫修正が発生した場合、報酬取引履歴管理アプリ で処理を統一します。</li>
+    <li>返品や廃棄、在庫修正が発生した場合、入出庫履歴アプリ で処理を統一します。</li>
     <li>在庫数は常に 在庫管理アプリ（論理） と 実在庫管理アプリ（物理 - Gifu倉庫） 間で一致させます。</li>
     <li>報酬補正は 報酬取引履歴管理アプリ で手動登録し、翌月の支払バッチに反映します。</li>
     <li>本フローは、Ruby 自動処理を行わずとも、Kintoneアプリ操作のみで整合性が取れるよう設計されています。</li>
