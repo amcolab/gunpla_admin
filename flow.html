@@ -408,7 +408,7 @@
         <tr><td>Partner_App（Kintone）</td><td>アフィリエイト情報・銀行口座・現在のランクを管理。</td></tr>
         <tr><td>Rule_App（Kintone）</td><td>ランク別報酬率ルールを保持。</td></tr>
         <tr><td>Orders_App（Kintone）</td><td>注文情報と支払・キャンセル・返品ステータスを保持。</td></tr>
-        <tr><td>Commission_App（Kintone）</td><td>月次コミッション集計・承認を管理。</td></tr>
+        <tr><td>報酬取引履歴管理（Kintone）</td><td>月次コミッション集計・承認を管理。</td></tr>
         <tr><td>Payments_App（Kintone）</td><td>振込依頼・支払ステータスを管理。</td></tr>
         <tr><td>Ruby_Server</td><td>バッチロジック実行・GoAffPro/GMO 連携を行うミドルウェア。</td></tr>
         <tr><td>GMO_API</td><td>アフィリエイトへの一括送金 API。</td></tr>
@@ -476,7 +476,7 @@
     <ol>
       <li><span class="kbd">Ruby_Server</span> が GoAffPro API より Partner ごとの報酬データを取得。</li>
       <li><span class="kbd">Rule_App</span> のランク別報酬率を参照し、正確な比率を適用。</li>
-      <li><span class="kbd">Commission_App</span> に以下の情報でレコードを作成：
+      <li><span class="kbd">報酬取引履歴管理</span> に以下の情報でレコードを作成：
         <ul>
           <li>Partner ID</li>
           <li>対象月</li>
@@ -497,7 +497,7 @@
       <li>結果を反映：
         <ul>
           <li><span class="kbd">Payments_App.status</span> = 支払済み or 失敗</li>
-          <li><span class="kbd">Commission_App.status</span> = 支払済み</li>
+          <li><span class="kbd">報酬取引履歴管理.status</span> = 支払済み</li>
         </ul>
       </li>
       <li>支払結果を GoAffPro 側へ同期し、アフィリエイトが報酬状況を確認可能にする。</li>
@@ -516,7 +516,7 @@
     </table>
     <p>
       <strong>Commission = Sales × Rate</strong>（算出時点の Rank に基づく）。<br>
-      GoAffPro 上の報酬率と Rule_App の設定値に乖離がある場合、<span class="kbd">Commission_App</span> に警告を出す。
+      GoAffPro 上の報酬率と Rule_App の設定値に乖離がある場合、<span class="kbd">報酬取引履歴管理</span> に警告を出す。
     </p>
   </section>
 
@@ -891,7 +891,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <tr><td>納品不足</td><td><code>PO_App.Status = 部分入庫中</code> のまま維持。</td></tr>
         <tr><td>支払後の PO キャンセル</td><td>Payout_App に返金レコードを手動登録。</td></tr>
         <tr><td>LOT／棚コード未入力</td><td>Warehouse_UI に警告表示、「完了」不可。</td></tr>
-        <tr><td>在庫差異</td><td>Stock_History_App で手動修正（履歴ログ保持）。</td></tr>
+        <tr><td>在庫差異</td><td>入出庫履歴管理 で手動修正（履歴ログ保持）。</td></tr>
       </tbody>
     </table>
   </section>
@@ -947,7 +947,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
       <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
       <tbody>
         <tr><td>🧑‍💼 Sales_Staff／管理者</td><td>移動・返品・サンプル出荷依頼の作成および承認</td><td>Kintone 上で操作</td></tr>
-        <tr><td>📄 StockMovement_App</td><td>在庫移動／調整／返品履歴を記録する中心アプリ</td><td>SKU・数量・From/To棚・LOT・理由などを保持</td></tr>
+        <tr><td>📄 入出庫履歴管理</td><td>在庫移動／調整／返品履歴を記録する中心アプリ</td><td>SKU・数量・From/To棚・LOT・理由などを保持</td></tr>
         <tr><td>🖥️ Ruby_Server</td><td>在庫ロジック処理・Physical_DB 同期</td><td>Kintone Webhook によりトリガー実行</td></tr>
         <tr><td>📱 Warehouse_UI（ReactJS）</td><td>倉庫用バーコードスキャン画面</td><td>SKU・棚・LOT 入力および作業確定を行う</td></tr>
         <tr><td>🏭 Physical_DB</td><td>棚・LOT 単位の実在庫データベース</td><td>現場実在庫を保持</td></tr>
@@ -961,7 +961,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>1️⃣ 移動・返品依頼の作成</h3>
     <ul>
-      <li><strong>Sales_Staff</strong> が <strong>StockMovement_App</strong> に新規レコードを作成。</li>
+      <li><strong>Sales_Staff</strong> が <strong>入出庫履歴管理</strong> に新規レコードを作成。</li>
       <li>入力項目：
         <ul>
           <li>SKU、数量</li>
@@ -1014,7 +1014,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
 
     <h3>4️⃣ 履歴保存・通知</h3>
     <ul>
-      <li><strong>Ruby_Server</strong> が <strong>StockMovement_App</strong> に以下を記録：
+      <li><strong>Ruby_Server</strong> が <strong>入出庫履歴管理</strong> に以下を記録：
         <ul>
           <li>実績情報（LOT・棚・数量・日時・担当者）</li>
         </ul>
@@ -1025,7 +1025,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
   </section>
 
   <section id="flow6-4">
-    <h2>5. StockMovement_App データ構造</h2>
+    <h2>5. 入出庫履歴管理 データ構造</h2>
     <table>
       <thead><tr><th>項目名</th><th>データ型</th><th>説明</th></tr></thead>
       <tbody>
@@ -1063,7 +1063,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
     <h2>7. 期待される結果</h2>
     <ul>
       <li>社内倉庫業務（返品・棚移動・調整）を単一システムで統合管理。</li>
-      <li><strong>StockMovement_App</strong> が在庫履歴の中枢データベースとして機能。</li>
+      <li><strong>入出庫履歴管理</strong> が在庫履歴の中枢データベースとして機能。</li>
       <li><strong>Ruby_Server</strong> により論理在庫と実在庫を双方向同期。</li>
       <li><strong>Warehouse_UI</strong> によるバーコード入力でミスを最小化。</li>
     </ul>
@@ -1325,7 +1325,7 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <tr><td>販売（Order）</td><td>Picking</td><td>出庫</td><td>タスク作成時に論理在庫を減算</td></tr>
         <tr><td>購買（PO）</td><td>Putaway</td><td>入庫</td><td>実入庫確定後に論理在庫を加算</td></tr>
         <tr><td>生産（Production）</td><td>X-Out／X-In</td><td>原料出庫／製品入庫</td><td>X-Out減算／X-In加算</td></tr>
-        <tr><td>社内移動（Movement）</td><td>Transfer／Sample／Adjustment</td><td>移動・サンプル出荷・調整</td><td>タイプに応じて±</td></tr>
+        <tr><td>入出庫履歴（Movement）</td><td>Transfer／Sample／Adjustment</td><td>移動・サンプル出荷・調整</td><td>タイプに応じて±</td></tr>
       </tbody>
     </table>
 
