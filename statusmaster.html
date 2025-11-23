@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>Credie Status Master Spec</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --fg:#111827;
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --accent:#0b63f6;
+      --accent-soft:#e0ecff;
+      --muted:#6b7280;
+    }
+    * { box-sizing:border-box; }
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--fg);
+      font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+            "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",
+            Helvetica,Arial,sans-serif;
+    }
+    .container{
+      max-width:1080px;
+      margin:0 auto;
+      padding:28px 20px 60px;
+    }
+    header{
+      background:var(--card);
+      border-radius:12px;
+      padding:20px 24px;
+      box-shadow:0 8px 18px rgba(15,23,42,.06);
+      border:1px solid var(--border);
+      margin-bottom:24px;
+    }
+    header h1{
+      margin:0 0 8px;
+      font-size:24px;
+      letter-spacing:.02em;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .meta span::before{
+      content:"●";
+      font-size:10px;
+      margin-right:6px;
+      color:var(--accent);
+    }
+    .lead{
+      margin-top:10px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding:2px 10px;
+      border-radius:999px;
+      font-size:11px;
+      background:var(--accent-soft);
+      color:#1d4ed8;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+
+    /* TOC */
+    .toc{
+      background:var(--card);
+      border-radius:10px;
+      border:1px solid var(--border);
+      padding:16px 18px;
+      margin-bottom:26px;
+    }
+    .toc h2{
+      margin:0 0 6px;
+      font-size:14px;
+    }
+    .toc p{
+      margin:0 0 8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .toc ul{
+      margin:0;
+      padding-left:18px;
+      font-size:13px;
+    }
+    .toc a{
+      color:var(--accent);
+      text-decoration:none;
+    }
+    .toc a:hover{
+      text-decoration:underline;
+    }
+
+    h2.section-title{
+      margin:30px 0 10px;
+      font-size:18px;
+      border-left:4px solid var(--accent);
+      padding-left:10px;
+    }
+    h3.sub-title{
+      margin:18px 0 8px;
+      font-size:15px;
+    }
+    p{ margin:8px 0; }
+
+    .note{
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 0 10px;
+    }
+
+    /* tables */
+    .status-card{
+      background:var(--card);
+      border-radius:10px;
+      border:1px solid var(--border);
+      padding:12px 14px 4px;
+      margin-bottom:20px;
+      box-shadow:0 4px 10px rgba(15,23,42,.03);
+    }
+    .status-card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:8px;
+      margin-bottom:4px;
+    }
+    .status-card-title{
+      font-size:14px;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .status-card-tag{
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin:6px 0 10px;
+      font-size:13px;
+    }
+    th,td{
+      padding:6px 8px;
+      border:1px solid var(--border);
+      vertical-align:top;
+    }
+    th{
+      background:#f9fafb;
+      text-align:left;
+      font-weight:600;
+      white-space:nowrap;
+    }
+    tbody tr:nth-child(odd){
+      background:#fcfcfd;
+    }
+    code{
+      font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
+      background:#f3f4f6;
+      padding:1px 4px;
+      border-radius:4px;
+    }
+
+    @media (max-width:720px){
+      header{padding:16px 18px;}
+      .status-card{padding:10px 10px 4px;}
+      th,td{font-size:12px;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="pill">🔄 Status Master – Appendix</div>
+    <h1>Credie ステータスマスタ定義</h1>
+    <div class="meta">
+      <span>作成者: AMCOLAB（QuyNT）</span>
+      <span>最終更新日: 2025-11-23</span>
+      <span>バージョン: v1.0</span>
+    </div>
+    <p class="lead">
+      本ドキュメントは、Credie システム全体で利用する主なステータスコードとラベルを一覧化した
+      <strong>ステータスマスタ定義集</strong>です。<br>
+      各業務アプリ（受注・発注・タスク・入出庫履歴・請求／支払・報酬など）ごとに
+      「コード」「ステータス名」「説明」を整理し、実装と運用ルールを揃えるためのリファレンスとして利用します。
+    </p>
+  </header>
+
+  <nav class="toc">
+    <h2>目次</h2>
+    <p>各アプリごとのステータス定義にジャンプできます。</p>
+    <ul>
+      <li><a href="#order-status">1. 注文アプリ（Sales Order）</a></li>
+      <li><a href="#purchase-status">2. 発注アプリ（Purchase Order）</a></li>
+      <li><a href="#task-status">3. タスク管理アプリ</a></li>
+      <li><a href="#io-history-status">4. 入出庫履歴アプリ</a></li>
+      <li><a href="#inventory-status">5. 在庫管理・実在庫管理</a></li>
+      <li><a href="#invoice-status">6. 請求管理アプリ（AR）</a></li>
+      <li><a href="#payment-status">7. 支払管理アプリ（AP）</a></li>
+      <li><a href="#commission-status">8. 報酬取引履歴管理アプリ</a></li>
+      <li><a href="#partner-rank-status">9. パートナーマスタ（Rank）</a></li>
+    </ul>
+  </nav>
+
+  <!-- 1. Order -->
+  <h2 id="order-status" class="section-title">1. 注文アプリ（Sales Order）ステータス</h2>
+  <p class="note">
+    EC（Shopify）／BtoB 受注に共通する注文ステータス。Flow1・Flow2・Flow9 の仕様に基づく。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">
+        注文ステータス（<code>order_status</code>）
+      </div>
+      <div class="status-card-tag">対象: 注文アプリ メインステータス</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+          <th>代表的な遷移元／先</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00</code></td>
+          <td>受注確定</td>
+          <td>注文内容・金額が確定し、在庫引当の対象となる初期状態。</td>
+          <td>（新規作成）→ 10 出荷指示済／90 キャンセル／91 部分キャンセル</td>
+        </tr>
+        <tr>
+          <td><code>05</code></td>
+          <td>支払い済み（未出荷）</td>
+          <td>GMO VA 入金済みだが、出荷指示はまだ行っていない状態。</td>
+          <td>00 受注確定 → 05 支払い済み → 10 出荷指示済</td>
+        </tr>
+        <tr>
+          <td><code>10</code></td>
+          <td>出荷指示済</td>
+          <td>倉庫向け Picking タスクが発行された状態。論理在庫は引当済み。</td>
+          <td>05 支払い済み → 10 出荷指示済 → 20 出荷完了／90 キャンセル</td>
+        </tr>
+        <tr>
+          <td><code>20</code></td>
+          <td>出荷完了</td>
+          <td>指定数量が出荷され、配送ラベルおよびトラッキング番号が発行された状態。</td>
+          <td>10 出荷指示済 → 20 出荷完了 → 30 配送完了／94 返品処理中</td>
+        </tr>
+        <tr>
+          <td><code>30</code></td>
+          <td>配送完了</td>
+          <td>配送業者からの Delivered 情報が連携された状態。</td>
+          <td>20 出荷完了 → 30 配送完了 → 92 返品完了／93 部分返品</td>
+        </tr>
+        <tr>
+          <td><code>90</code></td>
+          <td>キャンセル</td>
+          <td>注文全体がキャンセルされた状態。論理在庫・関連タスクは Ruby_Server により解除／停止される。</td>
+          <td>00 / 10 から遷移</td>
+        </tr>
+        <tr>
+          <td><code>91</code></td>
+          <td>部分キャンセル</td>
+          <td>一部明細のみキャンセルされた状態。キャンセル数量分のみ引当解除を行う。</td>
+          <td>00 受注確定 → 91 部分キャンセル</td>
+        </tr>
+        <tr>
+          <td><code>94</code></td>
+          <td>返品処理中</td>
+          <td>出荷完了後、返品依頼が登録され倉庫で返品入庫タスクを処理中の状態。</td>
+          <td>20 / 30 → 94 → 92 / 93</td>
+        </tr>
+        <tr>
+          <td><code>92</code></td>
+          <td>返品完了</td>
+          <td>注文分すべてが返品され、在庫・コミッション補正が完了した状態。</td>
+          <td>94 返品処理中 → 92 返品完了</td>
+        </tr>
+        <tr>
+          <td><code>93</code></td>
+          <td>部分返品</td>
+          <td>一部数量のみ返品された状態。返品数量分のみ在庫・コミッションを調整。</td>
+          <td>94 返品処理中 → 93 部分返品</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. Purchase -->
+  <h2 id="purchase-status" class="section-title">2. 発注アプリ（Purchase Order）ステータス</h2>
+  <p class="note">
+    Flow5（資材購買・分納・自動振込フロー）に基づく発注ステータス。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">発注ステータス（<code>po_status</code>）</div>
+      <div class="status-card-tag">対象: 発注アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+          <th>代表的な遷移</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00</code></td>
+          <td>下書き</td>
+          <td>自動／手動で発注レコードが作成された直後の状態。</td>
+          <td>00 下書き → 10 一次承認済み</td>
+        </tr>
+        <tr>
+          <td><code>10</code></td>
+          <td>一次承認済み</td>
+          <td>購買担当（Purchasing_Staff）が内容を確認し承認した状態。</td>
+          <td>10 一次承認済み → 20 発注済み</td>
+        </tr>
+        <tr>
+          <td><code>20</code></td>
+          <td>発注済み</td>
+          <td>Meka 仕入先へ PO が送信された状態。</td>
+          <td>20 発注済み → 30 部分入庫中／40 入庫完了</td>
+        </tr>
+        <tr>
+          <td><code>30</code></td>
+          <td>部分入庫中</td>
+          <td>分納の一部が納品済み。残数量の入庫待ち状態。</td>
+          <td>30 部分入庫中 → 40 入庫完了</td>
+        </tr>
+       <tr>
+  <td><code>40</code></td>
+  <td>入庫完了</td>
+  <td>
+    PO で指定した数量すべての入庫が完了した状態。<br>
+    支払はすでに 50 支払済み になっていることを前提とする。
+  </td>
+  <td>30 部分入庫中 → 40 入庫完了</td>
+</tr>
+        <tr>
+  <td><code>50</code></td>
+  <td>支払済み</td>
+  <td>
+    仕入先への支払が完了した状態。<br>
+    支払は必ず納品（入庫）より前に 1 回行われることを前提とする
+    （分納の場合も、支払は一括で先に行い、その後に複数回の入庫が発生する）。
+  </td>
+  <td>20 発注済み → 50 支払済み → 30 部分入庫中／40 入庫完了</td>
+</tr>
+        <tr>
+          <td><code>90</code></td>
+          <td>キャンセル</td>
+          <td>発注自体がキャンセルされた状態。必要に応じて入庫・支払を手動調整。</td>
+          <td>00 / 10 / 20 → 90 キャンセル</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. Task -->
+  <h2 id="task-status" class="section-title">3. タスク管理アプリ ステータス</h2>
+  <p class="note">
+    Flow4〜Flow8 に登場する倉庫タスク（Picking／Putaway／X-In／X-Out／Transfer など）の共通ステータス。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">タスク状態（<code>task_status</code>）</div>
+      <div class="status-card-tag">対象: タスク管理アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>PENDING</code></td>
+          <td>未開始</td>
+          <td>タスクが生成されたが、倉庫担当がまだ作業を開始していない状態。</td>
+          <td>新規作成時の初期値。</td>
+        </tr>
+        <tr>
+          <td><code>IN_PROGRESS</code></td>
+          <td>作業中</td>
+          <td>倉庫担当が Scan UI 上でタスクを開き、スキャン作業を進行中。</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>PARTIAL</code></td>
+          <td>部分完了</td>
+          <td>指示数量の一部のみ処理された状態（スキャン不足など）。</td>
+          <td>Flow8 特殊ケース「スキャン不足」に相当。</td>
+        </tr>
+        <tr>
+          <td><code>COMPLETED</code></td>
+          <td>完了</td>
+          <td>指示数量が処理され、実在庫・論理在庫の更新が完了した状態。</td>
+          <td>Ruby_Server が入出庫履歴アプリに実績を記録。</td>
+        </tr>
+        <tr>
+          <td><code>CANCELLED</code></td>
+          <td>キャンセル</td>
+          <td>元の Order／PO／Movement がキャンセルされ、タスクが停止された状態。</td>
+          <td>Flow9 のキャンセル処理時に利用。</td>
+        </tr>
+        <tr>
+          <td><code>ERROR</code></td>
+          <td>エラー</td>
+          <td>スキャン結果と論理在庫の不整合など、システムで処理できなかった状態。</td>
+          <td>運用担当者が確認・再処理を行う。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. IO History -->
+  <h2 id="io-history-status" class="section-title">4. 入出庫履歴アプリ ステータス・種別</h2>
+  <p class="note">
+    Flow6・Flow9 で定義される入出庫の「Type」と「Status」。倉庫ジャーナルとして全ての在庫移動を保持する。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">取引種別（<code>io_type</code>）</div>
+      <div class="status-card-tag">対象: 入出庫履歴アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>種別名</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>IN_PURCHASE</code></td><td>入庫（購買）</td><td>仕入 PO に紐づく入庫。</td></tr>
+        <tr><td><code>IN_PRODUCTION</code></td><td>入庫（製造）</td><td>製造完了による製品入庫。</td></tr>
+        <tr><td><code>IN_RETURN</code></td><td>返品入庫</td><td>販売返品による再入庫。</td></tr>
+        <tr><td><code>OUT_SALES</code></td><td>出庫（販売）</td><td>販売出荷による出庫。</td></tr>
+        <tr><td><code>OUT_SAMPLE</code></td><td>サンプル出荷</td><td>試供品・サンプル出荷。</td></tr>
+        <tr><td><code>OUT_PRODUCTION</code></td><td>出庫（製造）</td><td>製造に使用する原材料出庫。</td></tr>
+        <tr><td><code>TRANSFER</code></td><td>棚移動</td><td>同一倉庫内の Location 間移動。</td></tr>
+        <tr><td><code>ADJUSTMENT</code></td><td>在庫調整</td><td>棚卸差異・不良品処理などによる調整。</td></tr>
+        <tr><td><code>DISPOSAL</code></td><td>廃棄</td><td>破損・期限切れによる廃棄。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">履歴ステータス（<code>io_status</code>）</div>
+      <div class="status-card-tag">対象: 入出庫履歴アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>PENDING</code></td><td>未完了</td><td>指示のみ存在し、まだ倉庫作業が完了していない状態。</td></tr>
+        <tr><td><code>COMPLETED</code></td><td>完了</td><td>倉庫作業が確定し、在庫更新が完了した状態。</td></tr>
+        <tr><td><code>ERROR</code></td><td>エラー</td><td>数量差異などの理由で自動反映できなかった状態。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. Inventory -->
+  <h2 id="inventory-status" class="section-title">5. 在庫管理・実在庫管理</h2>
+  <p class="note">
+    在庫管理アプリ／実在庫管理アプリは基本的に数量管理のみだが、SKU やロケーションの有効・無効を表すフラグを設ける。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">在庫レコード状態（<code>stock_flag</code>）</div>
+      <div class="status-card-tag">対象: 在庫管理アプリ・実在庫管理アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>名称</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>ACTIVE</code></td><td>有効</td><td>通常運用中の SKU／ロケーション。</td></tr>
+        <tr><td><code>INACTIVE</code></td><td>無効</td><td>廃盤・利用停止の SKU／ロケーション。新規タスク対象外。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. Invoice (AR) -->
+  <h2 id="invoice-status" class="section-title">6. 請求管理アプリ（AR）ステータス</h2>
+  <p class="note">
+    Flow7（AR フロー）に基づき、VA ID 連携と入金照合の状態を管理する。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">請求ステータス（<code>invoice_status</code>）</div>
+      <div class="status-card-tag">対象: 請求管理アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>DRAFT</code></td><td>下書き</td><td>VA ID 未発行の仮状態。</td></tr>
+        <tr><td><code>ISSUED</code></td><td>発行済み</td><td>GMO で VA ID を発行し、請求書を顧客へ送付済み。</td></tr>
+        <tr><td><code>PAID</code></td><td>入金済み</td><td>VA への入金が確認され、注文が出荷フローへ進む状態。</td></tr>
+        <tr><td><code>OVERDUE</code></td><td>期限超過</td><td>支払期限を過ぎても入金が確認できていない状態。</td></tr>
+        <tr><td><code>CANCELLED</code></td><td>キャンセル</td><td>注文キャンセル等により請求が無効化された状態。</td></tr>
+        <tr><td><code>ON_HOLD</code></td><td>要確認</td><td>金額不一致・VA ID 不整合など、手動確認が必要な状態。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7. Payment (AP) -->
+  <h2 id="payment-status" class="section-title">7. 支払管理アプリ（AP）ステータス</h2>
+  <p class="note">
+    発注アプリ・報酬取引履歴管理アプリから集約された支払依頼に対して、CEO 承認と GMO 一括送金の状態を管理する。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">支払ステータス（<code>payment_status</code>）</div>
+      <div class="status-card-tag">対象: 支払管理アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>DRAFT</code></td><td>下書き</td><td>元アプリから支払依頼が作成された直後の状態。</td></tr>
+        <tr><td><code>READY</code></td><td>一次承認済み</td><td>経理・購買担当による社内承認が完了し、CEO 承認待ち。</td></tr>
+        <tr><td><code>APPROVED</code></td><td>最終承認済み</td><td>CEO が支払を承認し、GMO API 呼び出し待ち。</td></tr>
+        <tr><td><code>PROCESSING</code></td><td>送金処理中</td><td>Ruby_Server が GMO API へリクエストを送信済みで結果待ち。</td></tr>
+        <tr><td><code>COMPLETED</code></td><td>支払完了</td><td>GMO 側で送金が成功し、元アプリにも支払済みが反映された状態。</td></tr>
+        <tr><td><code>FAILED</code></td><td>支払失敗</td><td>口座エラー・残高不足などにより送金が失敗した状態。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. Commission -->
+  <h2 id="commission-status" class="section-title">8. 報酬取引履歴管理アプリ ステータス</h2>
+  <p class="note">
+    Flow3（アフィリエイト報酬管理フロー）に基づく月次コミッションの状態。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">コミッションステータス（<code>commission_status</code>）</div>
+      <div class="status-card-tag">対象: 報酬取引履歴管理アプリ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ステータス名</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>DRAFT</code></td><td>下書き</td><td>月次集計が自動作成された状態。営業・経理確認前。</td></tr>
+        <tr><td><code>APPROVED</code></td><td>承認済み</td><td>社内確認が完了し、支払管理アプリへ送信済み。</td></tr>
+        <tr><td><code>PAID</code></td><td>支払済み</td><td>GMO による送金が完了した状態。</td></tr>
+        <tr><td><code>ADJUSTED</code></td><td>調整済み</td><td>返品やキャンセルによりマイナス補正が入った状態。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 9. Partner Rank -->
+  <h2 id="partner-rank-status" class="section-title">9. パートナーマスタ（Rank）</h2>
+  <p class="note">
+    Flow3 で利用するアフィリエイト Partner のランクマスタ。
+  </p>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">ランク（<code>partner_rank</code>）</div>
+      <div class="status-card-tag">対象: パートナーマスタ</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>コード</th>
+          <th>ランク名</th>
+          <th>売上範囲（目安）</th>
+          <th>報酬率（例）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>BRONZE</code></td><td>Bronze</td><td>〜 ¥500,000</td><td>5%</td></tr>
+        <tr><td><code>SILVER</code></td><td>Silver</td><td>¥500,000〜¥2,000,000</td><td>7%</td></tr>
+        <tr><td><code>GOLD</code></td><td>Gold</td><td>¥2,000,000 以上</td><td>10%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">
+    ※上記コード・名称は現時点の実装イメージです。実際の Enum / 数値コードは実装側の定義に合わせて調整してください。
+  </p>
+
+</div>
+</body>
+</html>
