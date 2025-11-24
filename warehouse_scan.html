@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>出庫作業実行 - Picking Execution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "メイリオ", Meiryo, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            padding-bottom: 160px; /* Space for sticky buttons */
+        }
+
+        /* Sticky Header */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-main {
+            background: linear-gradient(135deg, #1e8449 0%, #27ae60 100%);
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-title-sub {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .task-info {
+            background: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .task-id {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .task-id span {
+            font-family: "Courier New", monospace;
+            color: #1e8449;
+        }
+
+        .progress-info {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e67e22;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 6px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #e67e22 0%, #f39c12 100%);
+            height: 100%;
+            width: 40%; /* 4/10 = 40% */
+            transition: width 0.3s ease;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 16px;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border: 3px solid #1e8449;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e8449;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .product-qty {
+            font-size: 16px;
+            color: #e74c3c;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .location-info {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 12px 16px;
+            border-radius: 6px;
+        }
+
+        .location-shelf {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .location-shelf .shelf-code {
+            color: #3498db;
+            font-family: "Courier New", monospace;
+            font-size: 17px;
+        }
+
+        .location-note {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .step-card.active {
+            border-color: #27ae60;
+            box-shadow: 0 4px 16px rgba(39, 174, 96, 0.2);
+        }
+
+        .step-card.completed {
+            border-color: #95a5a6;
+            opacity: 0.7;
+        }
+
+        .step-header {
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .step-card.active .step-header {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            color: white;
+        }
+
+        .step-card.completed .step-header {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .step-body {
+            padding: 20px;
+        }
+
+        /* Input Group */
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #27ae60;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .input-field.filled {
+            background: #e8f8f5;
+            border-color: #27ae60;
+        }
+
+        .input-placeholder {
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            background: white;
+            padding: 0 6px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Scan Button */
+        .scan-button {
+            flex-shrink: 0;
+            width: 64px;
+            height: 56px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .scan-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 4px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Helper Text */
+        .helper-text {
+            font-size: 13px;
+            color: #7f8c8d;
+            padding-left: 4px;
+        }
+
+        /* Quantity Controls */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .qty-btn {
+            width: 48px;
+            height: 48px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .qty-btn:active {
+            transform: scale(0.95);
+            background: #2980b9;
+        }
+
+        .qty-display {
+            flex: 1;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #27ae60;
+            padding: 8px;
+            background: #e8f8f5;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+
+        /* Quick Number Pad */
+        .quick-numbers {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-num-btn {
+            padding: 12px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-num-btn:active {
+            transform: scale(0.95);
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        /* Sticky Action Buttons */
+        .action-buttons-sticky {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px;
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+            z-index: 90;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 12px;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:active {
+            background: #bdc3c7;
+        }
+
+        /* Success Checkmark */
+        .checkmark {
+            color: #27ae60;
+            font-size: 24px;
+            margin-left: 8px;
+        }
+
+        /* Validation Message */
+        .validation-message {
+            background: #fee;
+            border-left: 4px solid #e74c3c;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #c0392b;
+            display: none;
+        }
+
+        .validation-message.show {
+            display: block;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #ecf0f1;
+            border-top-color: #27ae60;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            body {
+                max-width: 480px;
+                margin: 0 auto;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <div class="header-sticky">
+        <div class="header-main">
+            <div class="header-title">出庫作業実行</div>
+            <div class="header-title-sub">Picking Execution</div>
+        </div>
+        <div class="task-info">
+            <div class="task-id">Task ID: <span id="taskId">WMS-OUT-0010</span></div>
+            <div class="progress-info">進捗: <span id="currentProgress">4</span> / <span id="totalProgress">10</span> 行</div>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Product Card -->
+        <div class="product-card">
+            <div class="product-name">
+                <span id="productCode">RS-500ML-PRM</span><br>
+                <span style="font-size: 15px; color: #666;">(Rice Silica 500ml)</span>
+            </div>
+            <div class="product-qty">
+                必要数量: <span id="requiredQty">10</span> 本
+            </div>
+            <div class="location-info">
+                <div class="location-shelf">
+                    指定位置: 棚 <span class="shelf-code" id="shelfCode">A-01-B2</span>
+                    <span style="color: #7f8c8d; font-size: 13px; margin-left: 8px;">(LOT: <span id="lotCode">L0032</span>)</span>
+                </div>
+                <div class="location-note">
+                    ※ 指定されたLOTから先入れ先出し (FIFO) でピッキングしてください。
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Shelf Barcode -->
+        <div class="step-card active" id="step1">
+            <div class="step-header">
+                ステップ1: 棚バーコードをスキャン
+            </div>
+            <div class="step-body">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <div class="input-placeholder">棚コード</div>
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="shelfInput"
+                            placeholder="A-01-B2"
+                            autocomplete="off"
+                            autofocus
+                        >
+                    </div>
+                    <button class="scan-button" onclick="scanBarcode('shelf')">
+                        📷
+                    </button>
+                </div>
+                <div class="helper-text">📱 カメラでスキャンするか、手動入力してください</div>
+                <div class="validation-message" id="shelfValidation"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Product Barcode -->
+        <div class="step-card" id="step2">
+            <div class="step-header">
+                ステップ2: 商品バーコードをスキャン
+            </div>
+            <div class="step-body">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <div class="input-placeholder">商品コード</div>
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="productInput"
+                            placeholder="RS-500ML-PRM"
+                            autocomplete="off"
+                            disabled
+                        >
+                    </div>
+                    <button class="scan-button" onclick="scanBarcode('product')" disabled>
+                        📷
+                    </button>
+                </div>
+                <div class="helper-text">📱 カメラでスキャンするか、手動入力してください</div>
+                <div class="validation-message" id="productValidation"></div>
+            </div>
+        </div>
+
+        <!-- Step 3: LOT Number -->
+        <div class="step-card" id="step3">
+            <div class="step-header">
+                ステップ3: LOT番号を入力
+            </div>
+            <div class="step-body">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <div class="input-placeholder">LOT番号</div>
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="lotInput"
+                            placeholder="L0032"
+                            autocomplete="off"
+                            disabled
+                        >
+                    </div>
+                    <button class="scan-button" onclick="scanBarcode('lot')" disabled>
+                        📷
+                    </button>
+                </div>
+                <div class="helper-text">📱 カメラでスキャンするか、手動入力してください</div>
+                <div class="validation-message" id="lotValidation"></div>
+            </div>
+        </div>
+
+        <!-- Step 4: Quantity -->
+        <div class="step-card" id="step4">
+            <div class="step-header">
+                ステップ4: 実際にピッキングした数量
+            </div>
+            <div class="step-body">
+                <div class="quantity-controls">
+                    <button class="qty-btn" onclick="changeQuantity(-1)" id="qtyMinus" disabled>−</button>
+                    <div class="qty-display" id="qtyDisplay">0</div>
+                    <button class="qty-btn" onclick="changeQuantity(1)" id="qtyPlus" disabled>+</button>
+                </div>
+                <div class="quick-numbers">
+                    <button class="quick-num-btn" onclick="setQuantity(1)" disabled>1</button>
+                    <button class="quick-num-btn" onclick="setQuantity(5)" disabled>5</button>
+                    <button class="quick-num-btn" onclick="setQuantity(10)" disabled>10</button>
+                    <button class="quick-num-btn" onclick="setQuantity(20)" disabled>20</button>
+                    <button class="quick-num-btn" onclick="setQuantity(50)" disabled>50</button>
+                </div>
+                <div class="helper-text" style="margin-top: 12px;">
+                    🎯 必要数量: <strong id="requiredQtyDisplay">10</strong> 本
+                </div>
+                <div class="validation-message" id="qtyValidation"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Action Buttons -->
+    <div class="action-buttons-sticky">
+        <button class="btn-primary" id="confirmBtn" disabled onclick="confirmAndNext()">
+            確認して次へ (<span id="confirmQty">0</span>/<span id="confirmTotal">10</span>)
+        </button>
+        <button class="btn-secondary" onclick="reportError()">
+            誤差を報告する
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div style="font-size: 16px; font-weight: 600; color: #2c3e50;">処理中...</div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentStep = 1;
+        let pickedQuantity = 0;
+        const requiredQty = 10;
+        const expectedShelf = 'A-01-B2';
+        const expectedProduct = 'RS-500ML-PRM';
+        const expectedLot = 'L0032';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+
+        // Scan Barcode (Simulated)
+        function scanBarcode(type) {
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+                let value = '';
+                
+                if (type === 'shelf') {
+                    value = expectedShelf;
+                    document.getElementById('shelfInput').value = value;
+                    validateShelf();
+                } else if (type === 'product') {
+                    value = expectedProduct;
+                    document.getElementById('productInput').value = value;
+                    validateProduct();
+                } else if (type === 'lot') {
+                    value = expectedLot;
+                    document.getElementById('lotInput').value = value;
+                    validateLot();
+                }
+                
+                playBeep();
+            }, 800);
+        }
+
+        // Validate Shelf
+        function validateShelf() {
+            const input = document.getElementById('shelfInput').value.trim();
+            const validation = document.getElementById('shelfValidation');
+            
+            if (input === '') {
+                validation.textContent = '棚コードを入力してください';
+                validation.classList.add('show');
+                return false;
+            }
+            
+            if (input !== expectedShelf) {
+                validation.textContent = `⚠️ 棚コードが違います。期待値: ${expectedShelf}`;
+                validation.classList.add('show');
+                return false;
+            }
+            
+            validation.classList.remove('show');
+            document.getElementById('shelfInput').classList.add('filled');
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('completed');
+            
+            // Move to step 2
+            currentStep = 2;
+            activateStep(2);
+            playSuccess();
+            
+            return true;
+        }
+
+        // Validate Product
+        function validateProduct() {
+            const input = document.getElementById('productInput').value.trim();
+            const validation = document.getElementById('productValidation');
+            
+            if (input === '') {
+                validation.textContent = '商品コードを入力してください';
+                validation.classList.add('show');
+                return false;
+            }
+            
+            if (input !== expectedProduct) {
+                validation.textContent = `⚠️ 商品コードが違います。期待値: ${expectedProduct}`;
+                validation.classList.add('show');
+                return false;
+            }
+            
+            validation.classList.remove('show');
+            document.getElementById('productInput').classList.add('filled');
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step2').classList.add('completed');
+            
+            // Move to step 3
+            currentStep = 3;
+            activateStep(3);
+            playSuccess();
+            
+            return true;
+        }
+
+        // Validate LOT
+        function validateLot() {
+            const input = document.getElementById('lotInput').value.trim();
+            const validation = document.getElementById('lotValidation');
+            
+            if (input === '') {
+                validation.textContent = 'LOT番号を入力してください';
+                validation.classList.add('show');
+                return false;
+            }
+            
+            if (input !== expectedLot) {
+                validation.textContent = `⚠️ LOT番号が違います。期待値: ${expectedLot}`;
+                validation.classList.add('show');
+                return false;
+            }
+            
+            validation.classList.remove('show');
+            document.getElementById('lotInput').classList.add('filled');
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step3').classList.add('completed');
+            
+            // Move to step 4
+            currentStep = 4;
+            activateStep(4);
+            playSuccess();
+            
+            return true;
+        }
+
+        // Activate Step
+        function activateStep(step) {
+            const stepCard = document.getElementById(`step${step}`);
+            stepCard.classList.add('active');
+            
+            if (step === 2) {
+                document.getElementById('productInput').disabled = false;
+                document.querySelector('#step2 .scan-button').disabled = false;
+                document.getElementById('productInput').focus();
+            } else if (step === 3) {
+                document.getElementById('lotInput').disabled = false;
+                document.querySelector('#step3 .scan-button').disabled = false;
+                document.getElementById('lotInput').focus();
+            } else if (step === 4) {
+                document.getElementById('qtyMinus').disabled = false;
+                document.getElementById('qtyPlus').disabled = false;
+                document.querySelectorAll('.quick-num-btn').forEach(btn => btn.disabled = false);
+            }
+            
+            // Scroll to step
+            stepCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Change Quantity
+        function changeQuantity(delta) {
+            pickedQuantity = Math.max(0, Math.min(999, pickedQuantity + delta));
+            updateQuantityDisplay();
+        }
+
+        // Set Quantity
+        function setQuantity(value) {
+            pickedQuantity = value;
+            updateQuantityDisplay();
+            playBeep();
+        }
+
+        // Update Quantity Display
+        function updateQuantityDisplay() {
+            document.getElementById('qtyDisplay').textContent = pickedQuantity;
+            document.getElementById('confirmQty').textContent = pickedQuantity;
+            
+            // Enable/disable confirm button
+            const confirmBtn = document.getElementById('confirmBtn');
+            if (pickedQuantity > 0 && currentStep === 4) {
+                confirmBtn.disabled = false;
+            } else {
+                confirmBtn.disabled = true;
+            }
+        }
+
+        // Confirm and Next
+        function confirmAndNext() {
+            if (pickedQuantity === 0) {
+                showValidation('qty', '数量を入力してください');
+                return;
+            }
+            
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+                alert(`✅ ピッキング完了！\n\n` +
+                      `商品: ${expectedProduct}\n` +
+                      `棚: ${expectedShelf}\n` +
+                      `LOT: ${expectedLot}\n` +
+                      `数量: ${pickedQuantity} 本\n\n` +
+                      `次のタスクに進みます...`);
+                
+                // Reset for next task
+                resetForm();
+            }, 1000);
+        }
+
+        // Report Error
+        function reportError() {
+            const reason = prompt('誤差の理由を入力してください:', '');
+            if (reason) {
+                alert(`誤差報告を送信しました:\n\n` +
+                      `Task ID: WMS-OUT-0010\n` +
+                      `商品: ${expectedProduct}\n` +
+                      `理由: ${reason}\n\n` +
+                      `管理者に通知されます。`);
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            location.reload();
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const current = 4;
+            const total = 10;
+            const percentage = (current / total) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // Show Validation
+        function showValidation(type, message) {
+            const validation = document.getElementById(`${type}Validation`);
+            validation.textContent = `⚠️ ${message}`;
+            validation.classList.add('show');
+            setTimeout(() => validation.classList.remove('show'), 3000);
+        }
+
+        // Show/Hide Loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // Sound Effects
+        function playBeep() {
+            // Vibrate if supported
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function playSuccess() {
+            if (navigator.vibrate) {
+                navigator.vibrate([50, 100, 50]);
+            }
+        }
+
+        // Auto-validate on input
+        document.getElementById('shelfInput').addEventListener('input', function(e) {
+            if (e.target.value.length >= 7) {
+                validateShelf();
+            }
+        });
+
+        document.getElementById('productInput').addEventListener('input', function(e) {
+            if (e.target.value.length >= 5) {
+                validateProduct();
+            }
+        });
+
+        document.getElementById('lotInput').addEventListener('input', function(e) {
+            if (e.target.value.length >= 5) {
+                validateLot();
+            }
+        });
+
+        // Enter key support
+        document.getElementById('shelfInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateShelf();
+            }
+        });
+
+        document.getElementById('productInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateProduct();
+            }
+        });
+
+        document.getElementById('lotInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateLot();
+            }
+        });
+    </script>
+</body>
+</html>
