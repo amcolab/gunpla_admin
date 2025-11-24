@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部品表管理 (BOM) - Kintone</title>
+    
+    <!-- Kintone Common Stylesheet -->
+    <link rel="stylesheet" href="kintone-common-v2.css">
+    
+    <style>
+        /* BOM-specific styles */
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 8px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        
+        .expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .sub-row {
+            background-color: #f9f9f9;
+            padding-left: 40px !important;
+            font-size: 12px;
+        }
+        
+        .sub-components {
+            display: none;
+        }
+        
+        .sub-components.show {
+            display: table-row;
+        }
+        
+        .total-cost {
+            font-weight: 600;
+            color: #e67e22;
+        }
+        
+        .cost-value {
+            color: #666;
+        }
+        
+        .quantity-value {
+            font-weight: 500;
+        }
+        
+        .component-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            background-color: #e8f4f8;
+            color: #1769aa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">📋</div>
+        <div class="app-title-header">部品表管理 (BOM)</div>
+    </div>
+
+    <!-- Secondary Navigation -->
+    <div class="secondary-nav">
+        <div class="nav-icon">🏠</div>
+        <span class="breadcrumb-text">アプリ: 部品表管理</span>
+        <div class="nav-right">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-icon">❓</div>
+        </div>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        部品表（BOM - Bill of Materials）管理アプリは、製品の構成部品、原料、資材の情報を管理します。
+        各製品の原価計算にも使用されます。
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <button class="view-button">
+            <span class="view-icon">📋</span>
+            <span class="view-text">全BOM一覧</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+        
+        <button class="control-btn">
+            <span class="control-btn-icon">🔍</span>
+        </button>
+        
+        <button class="control-btn">
+            <span class="control-btn-icon">📊</span>
+        </button>
+
+        <div class="controls-right">
+            <button class="icon-only-btn" onclick="addBOM()">➕</button>
+            <button class="icon-only-btn">⚙️</button>
+            <button class="icon-only-btn">⋯</button>
+        </div>
+    </div>
+
+    <!-- Record Count Top -->
+    <div class="record-count" id="topCount">1 - 8（8件中）</div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>BOM ID</th>
+                    <th>製品名</th>
+                    <th>構成品</th>
+                    <th>区分</th>
+                    <th>数量</th>
+                    <th>単位</th>
+                    <th>単価</th>
+                    <th>金額</th>
+                    <th>合計原価</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="bomTableBody">
+                <!-- Data will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Record Count Bottom -->
+    <div class="bottom-count" id="bottomCount">1 - 8（8件中）</div>
+
+    <script>
+        // BOM data structure
+        const bomData = [
+            {
+                id: '00001',
+                product: 'Rice Silica 500mL',
+                totalCost: 95.02,
+                components: [
+                    { name: '田七人参', type: '原料', quantity: 50, unit: 'g', unitCost: 0.80, amount: 40.00 },
+                    { name: 'ボトル PEPI-500', type: '資材', quantity: 1, unit: '本', unitCost: 45.00, amount: 45.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 4.02, amount: 4.02 },
+                    { name: 'キャップ P-27', type: '資材', quantity: 1, unit: '個', unitCost: 6.00, amount: 6.00 }
+                ]
+            },
+            {
+                id: '00002',
+                product: 'Si+ 250mL',
+                totalCost: 78.50,
+                components: [
+                    { name: 'ライスシリカ原料', type: '原料', quantity: 200, unit: 'g', unitCost: 0.20, amount: 40.00 },
+                    { name: 'ボトル PEPI-250', type: '資材', quantity: 1, unit: '本', unitCost: 28.00, amount: 28.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 3.50, amount: 3.50 },
+                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 7.00, amount: 7.00 }
+                ]
+            },
+            {
+                id: '00003',
+                product: 'Rice Silica PREMIUM 500mL',
+                totalCost: 120.00,
+                components: [
+                    { name: '高濃度ライスシリカ', type: '原料', quantity: 400, unit: 'g', unitCost: 0.15, amount: 60.00 },
+                    { name: 'プレミアムボトル', type: '資材', quantity: 1, unit: '本', unitCost: 50.00, amount: 50.00 },
+                    { name: 'プレミアムラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 6.00, amount: 6.00 },
+                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 4.00, amount: 4.00 }
+                ]
+            },
+            {
+                id: '00004',
+                product: 'Rice Silica 200mL',
+                totalCost: 65.30,
+                components: [
+                    { name: 'ライスシリカ原料', type: '原料', quantity: 150, unit: 'g', unitCost: 0.20, amount: 30.00 },
+                    { name: 'ボトル 200mL', type: '資材', quantity: 1, unit: '本', unitCost: 25.00, amount: 25.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 3.30, amount: 3.30 },
+                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 7.00, amount: 7.00 }
+                ]
+            },
+            {
+                id: '00005',
+                product: 'Rice Silica 75mL',
+                totalCost: 42.15,
+                components: [
+                    { name: 'ライスシリカ原料', type: '原料', quantity: 60, unit: 'g', unitCost: 0.20, amount: 12.00 },
+                    { name: 'ボトル 75mL', type: '資材', quantity: 1, unit: '本', unitCost: 20.00, amount: 20.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 2.15, amount: 2.15 },
+                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 8.00, amount: 8.00 }
+                ]
+            },
+            {
+                id: '00006',
+                product: 'Rice Silica 50mL',
+                totalCost: 38.20,
+                components: [
+                    { name: 'ライスシリカ原料', type: '原料', quantity: 40, unit: 'g', unitCost: 0.20, amount: 8.00 },
+                    { name: 'ボトル 50mL', type: '資材', quantity: 1, unit: '本', unitCost: 18.00, amount: 18.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 2.20, amount: 2.20 },
+                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 10.00, amount: 10.00 }
+                ]
+            },
+            {
+                id: '00007',
+                product: 'SASA-LABO 50mL',
+                totalCost: 85.50,
+                components: [
+                    { name: 'ササヘルス原料', type: '原料', quantity: 45, unit: 'g', unitCost: 1.00, amount: 45.00 },
+                    { name: 'ボトル NCC-180', type: '資材', quantity: 1, unit: '本', unitCost: 22.00, amount: 22.00 },
+                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 8.50, amount: 8.50 },
+                    { name: 'キャップ CSキャップ', type: '資材', quantity: 1, unit: '個', unitCost: 10.00, amount: 10.00 }
+                ]
+            },
+            {
+                id: '00008',
+                product: 'Dr\'s Power (OEM)',
+                totalCost: 150.00,
+                components: [
+                    { name: 'OEM原料ミックス', type: '原料', quantity: 300, unit: 'g', unitCost: 0.30, amount: 90.00 },
+                    { name: 'OEMボトル', type: '資材', quantity: 1, unit: '本', unitCost: 40.00, amount: 40.00 },
+                    { name: 'OEMラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 12.00, amount: 12.00 },
+                    { name: 'OEMキャップ', type: '資材', quantity: 1, unit: '個', unitCost: 8.00, amount: 8.00 }
+                ]
+            }
+        ];
+
+        // Track expanded rows
+        const expandedRows = new Set();
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('bomTableBody');
+            let html = '';
+
+            bomData.forEach(bom => {
+                const isExpanded = expandedRows.has(bom.id);
+                
+                // Main BOM row
+                html += `
+                    <tr>
+                        <td>
+                            <button class="expand-btn ${isExpanded ? 'expanded' : ''}" 
+                                    onclick="toggleExpand('${bom.id}')">▶</button>
+                            <a href="#" class="record-link" onclick="viewBOM('${bom.id}'); return false;">
+                                ${bom.id}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" class="record-link" onclick="viewProduct('${bom.product}'); return false;">
+                                ${bom.product}
+                            </a>
+                        </td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>
+                            <span class="total-cost">¥${bom.totalCost.toFixed(2)}</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-icon edit" 
+                                        title="編集" 
+                                        onclick="editBOM('${bom.id}')">
+                                </button>
+                                <button class="action-icon delete" 
+                                        title="削除" 
+                                        onclick="deleteBOM('${bom.id}')">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                // Component rows
+                bom.components.forEach(comp => {
+                    html += `
+                        <tr class="sub-components ${isExpanded ? 'show' : ''}" data-parent="${bom.id}">
+                            <td class="sub-row"></td>
+                            <td class="sub-row"></td>
+                            <td class="sub-row">
+                                <a href="#" class="record-link" onclick="viewComponent('${comp.name}'); return false;">
+                                    ${comp.name}
+                                </a>
+                            </td>
+                            <td class="sub-row">
+                                <span class="component-type">${comp.type}</span>
+                            </td>
+                            <td class="sub-row">
+                                <span class="quantity-value">${comp.quantity}</span>
+                            </td>
+                            <td class="sub-row">
+                                <span>${comp.unit}</span>
+                            </td>
+                            <td class="sub-row">
+                                <span class="cost-value">¥${comp.unitCost.toFixed(2)}</span>
+                            </td>
+                            <td class="sub-row">
+                                <span class="cost-value">¥${comp.amount.toFixed(2)}</span>
+                            </td>
+                            <td class="sub-row"></td>
+                            <td class="sub-row"></td>
+                        </tr>
+                    `;
+                });
+            });
+
+            tbody.innerHTML = html;
+            updateRecordCount();
+        }
+
+        // Toggle expand/collapse
+        function toggleExpand(bomId) {
+            if (expandedRows.has(bomId)) {
+                expandedRows.delete(bomId);
+            } else {
+                expandedRows.add(bomId);
+            }
+            renderTable();
+        }
+
+        // Update record count
+        function updateRecordCount() {
+            const count = bomData.length;
+            const countText = `1 - ${count}（${count}件中）`;
+            document.getElementById('topCount').textContent = countText;
+            document.getElementById('bottomCount').textContent = countText;
+        }
+
+        // View BOM details
+        function viewBOM(id) {
+            const bom = bomData.find(b => b.id === id);
+            if (bom) {
+                alert(`BOM詳細:\n\n` +
+                      `BOM ID: ${bom.id}\n` +
+                      `製品名: ${bom.product}\n` +
+                      `構成品数: ${bom.components.length}点\n` +
+                      `合計原価: ¥${bom.totalCost.toFixed(2)}\n\n` +
+                      `※ BOM詳細画面を開きます`);
+            }
+        }
+
+        // View product
+        function viewProduct(productName) {
+            alert(`製品詳細:\n\n` +
+                  `製品名: ${productName}\n\n` +
+                  `※ 製品マスタ詳細画面を開きます`);
+        }
+
+        // View component
+        function viewComponent(componentName) {
+            alert(`構成品詳細:\n\n` +
+                  `構成品名: ${componentName}\n\n` +
+                  `※ 資材マスタ詳細画面を開きます`);
+        }
+
+        // Edit BOM
+        function editBOM(id) {
+            const bom = bomData.find(b => b.id === id);
+            if (bom) {
+                alert(`BOMを編集:\n\n` +
+                      `BOM ID: ${bom.id}\n` +
+                      `製品名: ${bom.product}\n\n` +
+                      `※ 編集画面を開きます`);
+            }
+        }
+
+        // Delete BOM
+        function deleteBOM(id) {
+            const bom = bomData.find(b => b.id === id);
+            if (bom) {
+                if (confirm(`このBOMを削除してもよろしいですか？\n\n` +
+                           `BOM ID: ${bom.id}\n` +
+                           `製品名: ${bom.product}`)) {
+                    const index = bomData.findIndex(b => b.id === id);
+                    if (index > -1) {
+                        bomData.splice(index, 1);
+                        expandedRows.delete(id);
+                        renderTable();
+                        alert('BOMを削除しました。');
+                    }
+                }
+            }
+        }
+
+        // Add new BOM
+        function addBOM() {
+            alert('新規BOM追加画面を開きます。\n\n' +
+                  '※ 実装時はBOM登録フォームを表示します。');
+        }
+
+        // Initial render
+        renderTable();
+
+        // Log info
+        console.log('部品表管理アプリ - ロード完了');
+        console.log(`BOM数: ${bomData.length}件`);
+    </script>
+</body>
+</html>
