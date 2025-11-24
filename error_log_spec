@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification – 例外管理アプリ（Error / Exception Management）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      line-height: 1.7;
+    }
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+    }
+    h1, h2, h3, h4 {
+      margin-top: 1.4em;
+      margin-bottom: 0.6em;
+      color: #222;
+    }
+    h1 {
+      font-size: 22px;
+      border-bottom: 2px solid #e5e5ea;
+      padding-bottom: 8px;
+    }
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+    p { margin: 0.4em 0; }
+    ul { margin: 0.4em 0 0.8em 1.4em; }
+    ol { margin: 0.4em 0 0.8em 1.6em; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0 1.2em;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f7;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .spec-meta {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .spec-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3949ab;
+      margin-right: 6px;
+    }
+    .spec-callout {
+      border-left: 4px solid #3f51b5;
+      background: #f5f7ff;
+      padding: 8px 12px;
+      margin: 10px 0 16px;
+      font-size: 13px;
+    }
+    .spec-screenshot {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+      text-align: center;
+      margin: 8px 0 16px;
+    }
+    .spec-screenshot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    .spec-screenshot-caption {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+
+    <div class="spec-meta">
+      <span class="spec-tag">UI Spec</span>
+      <span class="spec-tag">Error Log</span>
+      Version 1.0 / 作成日: ________
+    </div>
+
+    <h1>UI Screen Specification – 例外管理アプリ（Error / Exception Management）</h1>
+    <p><strong>対象画面:</strong> 例外管理 一覧</p>
+    <p><strong>想定利用者:</strong> 開発者 / 運用担当 / SRE / 経理（支払関連エラー確認）</p>
+
+    <!-- 1. Purpose -->
+    <h2>1. 画面の目的（Purpose）</h2>
+    <p>
+      例外管理アプリは、Credie システム全体で発生したシステム例外・エラーイベントを一元管理するための画面である。
+      API 障害、同期エラー、タイムアウト、バリデーションエラーなどを記録・追跡し、
+      「いつ・どの処理で・どのレコードに対して・何が起きたか」を可視化する。
+    </p>
+    <ul>
+      <li>Payment Request / Invoice / Order など各アプリで発生した例外を一か所で確認できる。</li>
+      <li>エラー対応のステータス（New / Investigating / Fixed）を管理する。</li>
+      <li>一部のエラーについては「Fix」ボタンからリトライ処理をトリガーできる。</li>
+    </ul>
+
+    <!-- 2. User Stories -->
+    <h2>2. ユーザーストーリー（User Stories）</h2>
+
+    <h3>2.1 開発・運用担当</h3>
+    <ul>
+      <li>GMO API 連携や外部サービス連携に失敗したとき、原因となった例外をすぐに特定したい。</li>
+      <li>例外タイプや Source ごとにフィルタし、頻発している障害を分析したい。</li>
+      <li>一時的なタイムアウトなど、再実行で解決できるエラーを「Fix」ボタンから素早く再処理したい。</li>
+    </ul>
+
+    <h3>2.2 経理 / ビジネス側</h3>
+    <ul>
+      <li>支払や請求に関する処理（Payment Request, Invoice）でエラーが起きた場合、その影響範囲を把握したい。</li>
+      <li>「Investigating」や「New」のまま放置されている致命的なエラーがないかを一覧で確認したい。</li>
+    </ul>
+
+    <!-- 3. Functions -->
+    <h2>3. 機能概要（Functions）</h2>
+    <ul>
+      <li>例外レコードの一覧表示・検索・フィルタ</li>
+      <li>Exception ID リンクから詳細画面への遷移</li>
+      <li>ステータス（New / Investigating / Fixed）の更新</li>
+      <li>関連アプリ・関連レコードへのドリルダウン</li>
+      <li>Fix ボタンによるリトライ処理（対応可能な例外のみ）</li>
+      <li>CSV 出力による障害分析・監査ログの保存</li>
+    </ul>
+
+    <!-- 4. Layout -->
+    <h2>4. 画面レイアウト（Layout & Fields）</h2>
+
+    <h3>4.1 ヘッダー / ツールバー</h3>
+    <ul>
+      <li><strong>新規作成:</strong> 手動で例外レコードを登録するためのボタン（検証用・手動登録用）。通常運用では自動登録がメイン。</li>
+      <li><strong>編集 / 削除:</strong> 選択した複数レコードの一括編集・削除。削除は原則開発チームのみ許可。</li>
+      <li><strong>CSV出力:</strong> 検索結果を CSV でエクスポートし、障害分析や監査用に保管。</li>
+      <li><strong>検索ボックス:</strong> Exception ID、要約、API パスなどで全文検索。<br>
+          プレースホルダ: 「Exception ID、要約、APIで検索…」。</li>
+    </ul>
+
+    <h3>4.2 一覧カラム仕様</h3>
+    <table>
+      <tr><th>項目名</th><th>説明</th></tr>
+
+      <tr>
+        <td>チェックボックス</td>
+        <td>
+          レコード選択用。<br>
+          ・複数選択して一括編集や CSV 出力対象の指定に使用。<br>
+          ・「Fix」処理は各行のボタンで行うため、このチェックボックスからはトリガーしない。
+        </td>
+      </tr>
+
+      <tr>
+        <td>Exception ID</td>
+        <td>
+          例外レコードの一意な ID（例: <code>EX-20251107-0003</code>）。<br>
+          ・クリックで詳細画面へ遷移。<br>
+          ・プレフィックス + 発生日 + 連番の形式。
+        </td>
+      </tr>
+
+      <tr>
+        <td>ステータス</td>
+        <td>
+          例外対応の状態。主な値：<br>
+          <ul>
+            <li><strong>New:</strong> 発生直後で未対応の状態。</li>
+            <li><strong>Investigating:</strong> 調査中。担当者が原因分析を行っている状態。</li>
+            <li><strong>Fixed:</strong> 対応完了。再発防止策も含めて処置済みの状態。</li>
+          </ul>
+          ・色付きラベルで表示（例: New=グレー, Investigating=オレンジ, Fixed=グリーン）。<br>
+          ・一覧画面から一括編集で更新可能。
+        </td>
+      </tr>
+
+      <tr>
+        <td>例外タイプ</td>
+        <td>
+          エラーのカテゴリ。例：<br>
+          <ul>
+            <li><strong>Validation Error:</strong> 入力値・フォーマット不正。</li>
+            <li><strong>Sync Mismatch:</strong> データ同期時の不整合（件数不一致など）。</li>
+            <li><strong>API Error:</strong> 外部 API からのエラー応答。</li>
+          </ul>
+          ・分析用にカテゴリを標準化し、集計やダッシュボード表示に利用する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>Source</td>
+        <td>
+          例外が発生したソースコンポーネント。例：<br>
+          <ul>
+            <li><code>Kintone_App</code>（Kintone プラグイン / カスタマイズ）</li>
+            <li><code>Ruby_Server</code>（外部バッチ・API サーバ）</li>
+            <li><code>GMO_API</code>（決済代行 API）</li>
+          </ul>
+          ・どのシステム層で問題が起きているかを切り分けるために使用。
+        </td>
+      </tr>
+
+      <tr>
+        <td>関連アプリ</td>
+        <td>
+          エラーに関連する業務アプリ名。例：<br>
+          <ul>
+            <li><code>Payment_Request</code> – 支払実行リクエスト</li>
+            <li><code>Orders_App</code> – 受注アプリ</li>
+            <li><code>Invoice_App</code> – 請求管理アプリ</li>
+          </ul>
+          ・文字列または関連レコードフィールド。<br>
+          ・詳細画面から関連アプリの該当レコードへジャンプできるようにする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>関連レコードID</td>
+        <td>
+          エラーが紐づくレコードの ID（例: 305, 12009, 8821）。<br>
+          ・アプリ側レコード番号または内部 ID。<br>
+          ・クリックで該当レコード詳細を別タブで開く実装も検討。
+        </td>
+      </tr>
+
+      <tr>
+        <td>要約</td>
+        <td>
+          例外内容の短い説明（日本語）。<br>
+          例：<br>
+          ・「支払依頼 金額フォーマット不正」<br>
+          ・「Ship&amp;Co 追跡番号登録が未完了」<br>
+          ・「GMO /payments タイムアウト」<br>
+          ・一覧で状況を把握しやすいよう、1 行で概要が分かる文章にする。
+        </td>
+      </tr>
+
+      <tr>
+        <td>API/URL</td>
+        <td>
+          問題が発生した API パスまたは URL。<br>
+          例：<code>/labels</code>, <code>/payments</code> など。<br>
+          ・外部サービスとのインターフェースを特定するために使用する。
+        </td>
+      </tr>
+
+      <tr>
+        <td>Retry</td>
+        <td>
+          当該例外に対して実行されたリトライ回数。<br>
+          ・初期値は 0。<br>
+          ・Fix ボタンによる再実行やバッチの自動再試行によりインクリメントされる。<br>
+          ・Retry 回数が一定以上の場合、恒久対策が必要な「要注意例外」として扱う。
+        </td>
+      </tr>
+
+      <tr>
+        <td>発生日時</td>
+        <td>
+          例外が初めて発生した日時。<br>
+          ・監査・障害報告書作成時の基準となる。<br>
+          ・編集不可。
+        </td>
+      </tr>
+
+      <tr>
+        <td>操作</td>
+        <td>
+          各行に「編集」ボタンと <strong>Fix</strong> ボタンを表示。<br>
+          ・<strong>編集:</strong> ステータスや要約、備考などを更新する通常編集。<br>
+          ・<strong>Fix:</strong> 再実行可能な例外に対してリトライ処理をトリガーする。<br>
+          例：再度 GMO API を呼ぶ、同期ジョブを再キックする等。<br>
+          ・Fix 実行時は Retry カウントを +1 し、成功した場合はステータスを Fixed に変更。
+        </td>
+      </tr>
+    </table>
+
+    <h3>4.3 スクリーンショット</h3>
+    <div class="spec-screenshot">
+      <img src="error_screen.png" alt="例外管理アプリ 一覧画面" />
+      <div class="spec-screenshot-caption">図1. 例外管理アプリ 一覧画面</div>
+    </div>
+
+    <!-- 4.4 Business Flow -->
+    <h2>4.4 例外発生〜対応フロー（Business Flow）</h2>
+    <ol>
+      <li>
+        <strong>① 例外発生</strong><br>
+        ・Payment Request / Invoice / Orders / Stock などで API エラーや同期失敗が発生した場合、<br>
+          それぞれの処理が本アプリに例外レコードを自動作成する。<br>
+        ・ステータス = <code>New</code>、Retry=0 で登録。
+      </li>
+      <li>
+        <strong>② 通知（任意）</strong><br>
+        ・重要度が高い例外（支払関連、決済 API 障害など）は、メール / Slack で運用担当に通知することを想定。<br>
+        ・通知ロジックは「例外タイプ」「Source」などでフィルタ可能。
+      </li>
+      <li>
+        <strong>③ 調査・解析</strong><br>
+        ・運用/開発担当が一覧から対象レコードを開き、詳細情報や関連レコードを確認。<br>
+        ・調査を開始したらステータスを <code>Investigating</code> に変更し、備考に進捗を書く。
+      </li>
+      <li>
+        <strong>④ Fix / リトライ</strong><br>
+        ・一時的な障害（タイムアウト、ネットワークエラーなど）の場合は、<strong>Fix</strong> ボタンで再実行をトリガー。<br>
+        ・処理が成功した場合: ステータスを <code>Fixed</code> に変更し、関連アプリ側のレコードも正常状態に戻る。<br>
+        ・再実行しても失敗する場合: Retry をインクリメントし、恒久対応が必要な障害として記録。
+      </li>
+      <li>
+        <strong>⑤ クローズ</strong><br>
+        ・原因分析・修正・再発防止策が完了したら、ステータスを <code>Fixed</code> で確定。<br>
+        ・必要に応じて備考に対策内容を残し、将来のトラブルシュートに活用する。
+      </li>
+    </ol>
+
+    <!-- 5. Dev Notes -->
+    <h2>5. 開発メモ（Dev Notes）</h2>
+    <ul>
+      <li>Exception ID にユニークインデックスを張り、外部ログとの紐付けを行いやすくする。</li>
+      <li>Fix ボタンは例外タイプごとに処理内容が異なるため、バックエンド側でタイプ別ハンドラを実装する。</li>
+      <li>支払関連の致命的な例外（Payment_Request, Invoice_App など）は、別途レベル分け（Severity）フィールドを追加する余地を残す。</li>
+      <li>長期保管のため、一定期間経過した Fixed レコードをアーカイブするバッチを将来的に検討する。</li>
+    </ul>
+
+  </div>
+</body>
+</html>
