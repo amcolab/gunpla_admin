@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資材マスタ - Kintone</title>
+    
+    <!-- Kintone Common Stylesheet -->
+    <link rel="stylesheet" href="kintone-common-v2.css">
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">📦</div>
+        <div class="app-title-header">資材マスタ</div>
+    </div>
+
+    <!-- Secondary Navigation -->
+    <div class="secondary-nav">
+        <div class="nav-icon">🏠</div>
+        <span class="breadcrumb-text">アプリ: 資材マスタ</span>
+        <div class="nav-right">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-icon">❓</div>
+        </div>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        資材マスタアプリは、製品製造に使用される原料、パッケージ資材、OEM資材を管理します。
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <button class="view-button">
+            <span class="view-icon">📋</span>
+            <span class="view-text">全資材一覧</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+        
+        <button class="control-btn">
+            <span class="control-btn-icon">🔍</span>
+        </button>
+        
+        <button class="control-btn">
+            <span class="control-btn-icon">📊</span>
+        </button>
+
+        <div class="controls-right">
+            <button class="icon-only-btn" onclick="addMaterial()">➕</button>
+            <button class="icon-only-btn">⚙️</button>
+            <button class="icon-only-btn">⋯</button>
+        </div>
+    </div>
+
+    <!-- Record Count Top -->
+    <div class="record-count" id="topCount">1 - 15（15件中）</div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>資材ID</th>
+                    <th>資材名</th>
+                    <th>商品名</th>
+                    <th>型番</th>
+                    <th>重量</th>
+                    <th>サプライヤー</th>
+                    <th>発注点</th>
+                    <th>購買担当者</th>
+                    <th>資材区分</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="materialsTableBody">
+                <!-- Data will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Record Count Bottom -->
+    <div class="bottom-count" id="bottomCount">1 - 15（15件中）</div>
+
+    <script>
+        // Sample materials data
+        const materials = [
+            {
+                id: '00001',
+                name: 'ライスシリカ原料',
+                product: '全製品共通',
+                isCommon: true,
+                modelNo: 'RM-SILI-001',
+                weight: '1,000g/袋',
+                supplier: '山田商事',
+                reorderPoint: '500',
+                purchaser: '山田太郎',
+                category: 'raw',
+                categoryName: '原料'
+            },
+            {
+                id: '00002',
+                name: 'ビタミンC粉末',
+                product: '全製品共通',
+                isCommon: true,
+                modelNo: 'VC-POWDER',
+                weight: '100g/袋',
+                supplier: '佐藤ケミカル',
+                reorderPoint: '300',
+                purchaser: '佐藤花子',
+                category: 'raw',
+                categoryName: '原料'
+            },
+            {
+                id: '00003',
+                name: 'ラベル',
+                product: 'シリックス 500mL',
+                isCommon: false,
+                modelNo: '',
+                weight: '4.02g/枚',
+                supplier: '丸正産業',
+                reorderPoint: '2,500',
+                purchaser: '山田太郎',
+                category: 'packaging',
+                categoryName: 'パッケージ'
+            },
+            {
+                id: '00004',
+                name: 'ラベル',
+                product: 'シリックス 200mL',
+                isCommon: false,
+                modelNo: '',
+                weight: '2.65g/枚',
+                supplier: '丸正産業',
+                reorderPoint: '2,000',
+                purchaser: '佐藤花子',
+                category: 'packaging',
+                categoryName: 'パッケージ'
+            },
+            {
+                id: '00005',
+                name: '化粧箱',
+                product: 'シリックス 200mL',
+                isCommon: false,
+                modelNo: 'BOX-SLX-200',
+                weight: '',
+                supplier: '丸正産業',
+                reorderPoint: '1,500',
+                purchaser: '山田太郎',
+                category: 'packaging',
+                categoryName: 'パッケージ'
+            },
+            {
+                id: '00006',
+                name: 'ボトル',
+                product: 'SASA-LABO 50mL',
+                isCommon: false,
+                modelNo: 'NCC-180(HDPE)',
+                weight: '',
+                supplier: '鈴木ボトル',
+                reorderPoint: '5,000',
+                purchaser: '田中一郎',
+                category: 'bottle',
+                categoryName: 'ボトル'
+            },
+            {
+                id: '00007',
+                name: 'ラベルシール',
+                product: 'Dr\'s Power',
+                isCommon: false,
+                modelNo: '',
+                weight: '',
+                supplier: 'OEM製造',
+                reorderPoint: '10,000',
+                purchaser: '佐藤花子',
+                category: 'oem',
+                categoryName: 'OEM資材'
+            },
+            {
+                id: '00008',
+                name: '中栓',
+                product: 'SASA-LABO 50mL',
+                isCommon: false,
+                modelNo: 'FLキャップ用中栓',
+                weight: '1.22g/個',
+                supplier: '鈴木ボトル',
+                reorderPoint: '5,000',
+                purchaser: '田中一郎',
+                category: 'cap',
+                categoryName: '中栓'
+            },
+            {
+                id: '00009',
+                name: 'キャップ',
+                product: 'SASA-LABO 50mL',
+                isCommon: false,
+                modelNo: 'CSキャップ45S',
+                weight: '',
+                supplier: '鈴木ボトル',
+                reorderPoint: '5,000',
+                purchaser: '山田太郎',
+                category: 'cap',
+                categoryName: 'キャップ'
+            },
+            {
+                id: '00010',
+                name: 'ダンボール',
+                product: 'kelso',
+                isCommon: false,
+                modelNo: '',
+                weight: '',
+                supplier: '山田商事',
+                reorderPoint: '100',
+                purchaser: '佐藤花子',
+                category: 'packaging',
+                categoryName: 'ダンボール'
+            },
+            {
+                id: '00011',
+                name: '底板',
+                product: 'kelso',
+                isCommon: false,
+                modelNo: '',
+                weight: '',
+                supplier: '山田商事',
+                reorderPoint: '100',
+                purchaser: '山田太郎',
+                category: 'packaging',
+                categoryName: '底板'
+            },
+            {
+                id: '00012',
+                name: 'ラベル',
+                product: 'KOYOケイ素',
+                isCommon: false,
+                modelNo: '',
+                weight: '3.42g/枚',
+                supplier: '丸正産業',
+                reorderPoint: '1,500',
+                purchaser: '佐藤花子',
+                category: 'packaging',
+                categoryName: 'ラベル'
+            },
+            {
+                id: '00013',
+                name: 'アルミボトル',
+                product: '全製品共通',
+                isCommon: true,
+                modelNo: 'AL-300ML',
+                weight: '180g/本',
+                supplier: '容器メーカーB',
+                reorderPoint: '1,000',
+                purchaser: '田中一郎',
+                category: 'bottle',
+                categoryName: 'ボトル'
+            },
+            {
+                id: '00014',
+                name: '計量カップ',
+                product: '全製品共通',
+                isCommon: true,
+                modelNo: 'CAP-10ML-PPP',
+                weight: '5g/個',
+                supplier: '容器メーカーC',
+                reorderPoint: '5,000',
+                purchaser: '佐藤花子',
+                category: 'packaging',
+                categoryName: '容器'
+            },
+            {
+                id: '00015',
+                name: '天然保湿成分"G"',
+                product: '全製品共通',
+                isCommon: true,
+                modelNo: 'GHY2514',
+                weight: '1000g/kg',
+                supplier: '化学工業株式会社',
+                reorderPoint: '200',
+                purchaser: '山田次郎',
+                category: 'raw',
+                categoryName: '原料'
+            }
+        ];
+
+        // Get category badge info
+        function getCategoryBadge(category, categoryName) {
+            const categoryMap = {
+                'raw': 'status-active',
+                'packaging': 'status-new',
+                'bottle': 'status-pending',
+                'cap': 'status-pending',
+                'oem': 'status-completed'
+            };
+            
+            return {
+                class: categoryMap[category] || 'status-draft',
+                text: categoryName
+            };
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('materialsTableBody');
+            
+            tbody.innerHTML = materials.map(material => {
+                const categoryInfo = getCategoryBadge(material.category, material.categoryName);
+                
+                // Product link - only if not common
+                const productDisplay = material.isCommon 
+                    ? material.product 
+                    : `<a href="#" class="record-link" onclick="viewProduct('${material.product}'); return false;">${material.product}</a>`;
+                
+                return `
+                    <tr>
+                        <td>
+                            <a href="#" class="record-link" onclick="viewMaterial('${material.id}'); return false;">
+                                ${material.id}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" class="record-link" onclick="viewMaterialDetail('${material.id}'); return false;">
+                                ${material.name}
+                            </a>
+                        </td>
+                        <td>${productDisplay}</td>
+                        <td>${material.modelNo}</td>
+                        <td>${material.weight}</td>
+                        <td>
+                            <a href="#" class="record-link" onclick="viewSupplier('${material.supplier}'); return false;">
+                                ${material.supplier}
+                            </a>
+                        </td>
+                        <td>${material.reorderPoint}</td>
+                        <td>
+                            <a href="#" class="record-link" onclick="viewPurchaser('${material.purchaser}'); return false;">
+                                ${material.purchaser}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="status-badge ${categoryInfo.class}">
+                                ${categoryInfo.text}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-icon edit" 
+                                        title="編集" 
+                                        onclick="editMaterial('${material.id}')">
+                                </button>
+                                <button class="action-icon delete" 
+                                        title="削除" 
+                                        onclick="deleteMaterial('${material.id}')">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateRecordCount();
+        }
+
+        // Update record count
+        function updateRecordCount() {
+            const count = materials.length;
+            const countText = `1 - ${count}（${count}件中）`;
+            document.getElementById('topCount').textContent = countText;
+            document.getElementById('bottomCount').textContent = countText;
+        }
+
+        // View material details
+        function viewMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (material) {
+                alert(`資材詳細:\n\n` +
+                      `資材ID: ${material.id}\n` +
+                      `資材名: ${material.name}\n` +
+                      `商品名: ${material.product}\n` +
+                      `型番: ${material.modelNo}\n` +
+                      `重量: ${material.weight}\n` +
+                      `サプライヤー: ${material.supplier}\n` +
+                      `発注点: ${material.reorderPoint}\n` +
+                      `購買担当者: ${material.purchaser}\n` +
+                      `資材区分: ${material.categoryName}`);
+            }
+        }
+
+        // View material name detail
+        function viewMaterialDetail(id) {
+            const material = materials.find(m => m.id === id);
+            if (material) {
+                alert(`資材マスタ詳細:\n\n` +
+                      `資材ID: ${material.id}\n` +
+                      `資材名: ${material.name}\n` +
+                      `資材区分: ${material.categoryName}\n\n` +
+                      `※ 資材マスタ詳細画面を開きます`);
+            }
+        }
+
+        // View product details
+        function viewProduct(productName) {
+            alert(`商品詳細:\n\n` +
+                  `商品名: ${productName}\n\n` +
+                  `※ 商品マスタ詳細画面を開きます`);
+        }
+
+        // View supplier details
+        function viewSupplier(supplierName) {
+            const relatedMaterials = materials.filter(m => m.supplier === supplierName);
+            alert(`サプライヤー詳細:\n\n` +
+                  `サプライヤー名: ${supplierName}\n` +
+                  `取扱資材数: ${relatedMaterials.length}件\n\n` +
+                  `※ サプライヤーマスタ詳細画面を開きます`);
+        }
+
+        // View purchaser details
+        function viewPurchaser(purchaserName) {
+            const relatedMaterials = materials.filter(m => m.purchaser === purchaserName);
+            alert(`購買担当者詳細:\n\n` +
+                  `担当者名: ${purchaserName}\n` +
+                  `担当資材数: ${relatedMaterials.length}件\n\n` +
+                  `※ 担当者詳細画面を開きます`);
+        }
+
+        // Edit material
+        function editMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (material) {
+                alert(`資材を編集:\n\n` +
+                      `資材ID: ${material.id}\n` +
+                      `資材名: ${material.name}\n\n` +
+                      `※ 実際の編集画面を開きます`);
+            }
+        }
+
+        // Delete material
+        function deleteMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (material) {
+                if (confirm(`この資材を削除してもよろしいですか？\n\n` +
+                           `資材ID: ${material.id}\n` +
+                           `資材名: ${material.name}`)) {
+                    const index = materials.findIndex(m => m.id === id);
+                    if (index > -1) {
+                        materials.splice(index, 1);
+                        renderTable();
+                        alert('資材を削除しました。');
+                    }
+                }
+            }
+        }
+
+        // Add new material
+        function addMaterial() {
+            alert('新規資材追加画面を開きます。\n\n' +
+                  '※ 実装時は資材登録フォームを表示します。');
+        }
+
+        // Initial render
+        renderTable();
+
+        // Log info
+        console.log('資材マスタアプリ - ロード完了');
+        console.log(`資材数: ${materials.length}件`);
+    </script>
+</body>
+</html>
