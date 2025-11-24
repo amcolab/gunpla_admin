@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文履歴 - 代理店ポータル - Kintone</title>
+    <link rel="stylesheet" href="kintone-common-styles.css">
+    <style>
+        /* Page-specific styles */
+        .guest-info-banner {
+            background: var(--bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .order-row {
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .order-row:hover {
+            background-color: var(--bg-secondary) !important;
+            transform: translateX(2px);
+        }
+
+        .order-details {
+            display: none;
+            padding: var(--spacing-md);
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .order-details.show {
+            display: block;
+        }
+
+        .product-list {
+            margin: var(--spacing-md) 0;
+        }
+
+        .product-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .guest-info-banner {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .guest-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .guest-code {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .product-item {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <header class="kintone-header">
+        <div class="app-title">CREDIE Order Portal</div>
+        <div style="margin-left: auto; font-size: 14px; opacity: 0.95;">
+            🏪 サクラ商事株式会社
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="#">ホーム</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <span>注文履歴</span>
+    </nav>
+
+    <!-- Form Actions -->
+    <div class="form-actions form-actions-end">
+        <button type="button" class="btn btn-secondary" onclick="goToDeliveryHistory()">
+            📦 配送履歴
+        </button>
+        <button type="button" class="btn btn-success" onclick="goToCreateOrder()">
+            <span>+</span>
+            <span>新規注文</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="form-container">
+        <div class="form-content">
+            <h1 class="form-title">注文履歴</h1>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <h3 class="section-subtitle mb-md">🔍 検索・フィルター</h3>
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label class="form-label">期間</label>
+                        <select class="form-select" id="periodFilter" onchange="applyFilters()">
+                            <option value="all">すべて</option>
+                            <option value="this-month" selected>今月</option>
+                            <option value="last-month">先月</option>
+                            <option value="3-months">過去3ヶ月</option>
+                            <option value="6-months">過去6ヶ月</option>
+                            <option value="custom">期間指定</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ステータス</label>
+                        <select class="form-select" id="statusFilter" onchange="applyFilters()">
+                            <option value="all">すべて</option>
+                            <option value="pending">確認中</option>
+                            <option value="confirmed">確定</option>
+                            <option value="processing">処理中</option>
+                            <option value="shipped">配送中</option>
+                            <option value="delivered">配送完了</option>
+                            <option value="cancelled">キャンセル</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">注文番号</label>
+                        <input type="text" class="form-input" id="orderIdSearch" 
+                               placeholder="ORD-" onkeyup="applyFilters()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">製品名</label>
+                        <input type="text" class="form-input" id="productSearch" 
+                               placeholder="製品を検索" onkeyup="applyFilters()">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-end gap-sm">
+                    <button class="btn btn-secondary btn-sm" onclick="resetFilters()">
+                        リセット
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="applyFilters()">
+                        適用
+                    </button>
+                </div>
+            </section>
+
+            <!-- Orders Table -->
+            <section class="table-container">
+                <div class="d-flex justify-between align-center mb-md">
+                    <h2 class="section-title m-0">📋 注文一覧</h2>
+                    <span class="text-muted fs-sm">12件の注文</span>
+                </div>
+
+                <table class="table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>注文番号</th>
+                            <th>注文日</th>
+                            <th>合計金額</th>
+                            <th>ステータス</th>
+                            <th>配送予定日</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Order 1 -->
+                        <tr class="order-row" onclick="toggleOrderDetails('order1')">
+                            <td><strong>ORD-2025-001</strong></td>
+                            <td>2025/10/15</td>
+                            <td><strong>¥98,560</strong></td>
+                            <td><span class="badge badge-warning">配送中</span></td>
+                            <td>2025/10/28</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order1')">
+                                    再注文
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="order1-details" class="order-details">
+                            <td colspan="6">
+                                <div>
+                                    <h4 class="fw-semibold mb-sm">📦 注文詳細</h4>
+                                    <div class="form-grid form-grid-2 mb-md">
+                                        <div>
+                                            <p class="text-muted fs-sm mb-xs">担当者</p>
+                                            <p class="fw-medium">山田 太郎</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-muted fs-sm mb-xs">配送先</p>
+                                            <p class="fw-medium">東京都渋谷区代々木1-2-3</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-muted fs-sm mb-xs">支払方法</p>
+                                            <p class="fw-medium">請求書払い（月末締め）</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-muted fs-sm mb-xs">追跡番号</p>
+                                            <p class="fw-medium text-primary">1234-5678-9012</p>
+                                        </div>
+                                    </div>
+
+                                    <h5 class="fw-semibold mb-sm">📋 注文製品</h5>
+                                    <div class="product-list">
+                                        <div class="product-item fw-semibold text-muted fs-sm">
+                                            <div>製品名</div>
+                                            <div>数量</div>
+                                            <div>単価</div>
+                                            <div>小計</div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div>ライスシリカプレミアム500ml</div>
+                                            <div>50本</div>
+                                            <div>¥1,500</div>
+                                            <div><strong>¥75,000</strong></div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div>ライスシリカ200ml</div>
+                                            <div>30本</div>
+                                            <div>¥780</div>
+                                            <div><strong>¥23,400</strong></div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div class="text-muted">配送料</div>
+                                            <div></div>
+                                            <div></div>
+                                            <div><strong>¥160</strong></div>
+                                        </div>
+                                        <div class="product-item fw-bold">
+                                            <div>合計</div>
+                                            <div></div>
+                                            <div></div>
+                                            <div class="text-primary">¥98,560</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="quick-actions">
+                                        <button class="btn btn-sm btn-success" onclick="reorderFromHistory('order1')">
+                                            🔄 この注文を再注文
+                                        </button>
+                                        <button class="btn btn-sm btn-primary" onclick="downloadInvoice('order1')">
+                                            📄 請求書ダウンロード
+                                        </button>
+                                        <button class="btn btn-sm btn-ghost" onclick="trackShipment('order1')">
+                                            📍 配送を追跡
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 2 -->
+                        <tr class="order-row" onclick="toggleOrderDetails('order2')">
+                            <td><strong>ORD-2025-002</strong></td>
+                            <td>2025/09/20</td>
+                            <td><strong>¥125,340</strong></td>
+                            <td><span class="badge badge-success">配送完了</span></td>
+                            <td>2025/09/25</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order2')">
+                                    再注文
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="order2-details" class="order-details">
+                            <td colspan="6">
+                                <div>
+                                    <h4 class="fw-semibold mb-sm">📦 注文詳細</h4>
+                                    <div class="product-list">
+                                        <div class="product-item fw-semibold text-muted fs-sm">
+                                            <div>製品名</div>
+                                            <div>数量</div>
+                                            <div>単価</div>
+                                            <div>小計</div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div>ライスシリカプレミアム500ml</div>
+                                            <div>60本</div>
+                                            <div>¥1,500</div>
+                                            <div><strong>¥90,000</strong></div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div>Si+ 250ml</div>
+                                            <div>36本</div>
+                                            <div>¥980</div>
+                                            <div><strong>¥35,280</strong></div>
+                                        </div>
+                                        <div class="product-item fw-bold">
+                                            <div>合計</div>
+                                            <div></div>
+                                            <div></div>
+                                            <div class="text-primary">¥125,340</div>
+                                        </div>
+                                    </div>
+                                    <div class="quick-actions">
+                                        <button class="btn btn-sm btn-success" onclick="reorderFromHistory('order2')">
+                                            🔄 この注文を再注文
+                                        </button>
+                                        <button class="btn btn-sm btn-primary" onclick="downloadInvoice('order2')">
+                                            📄 請求書ダウンロード
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 3 -->
+                        <tr class="order-row" onclick="toggleOrderDetails('order3')">
+                            <td><strong>ORD-2025-003</strong></td>
+                            <td>2025/08/18</td>
+                            <td><strong>¥89,750</strong></td>
+                            <td><span class="badge badge-success">配送完了</span></td>
+                            <td>2025/08/23</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order3')">
+                                    再注文
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="order3-details" class="order-details">
+                            <td colspan="6">
+                                <div>
+                                    <p class="text-muted">注文の詳細を表示...</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- More orders... -->
+                        <tr class="order-row">
+                            <td><strong>ORD-2025-004</strong></td>
+                            <td>2025/07/15</td>
+                            <td><strong>¥112,890</strong></td>
+                            <td><span class="badge badge-success">配送完了</span></td>
+                            <td>2025/07/20</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="reorderFromHistory('order4')">
+                                    再注文
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="order-row">
+                            <td><strong>ORD-2025-005</strong></td>
+                            <td>2025/06/22</td>
+                            <td><strong>¥95,600</strong></td>
+                            <td><span class="badge badge-success">配送完了</span></td>
+                            <td>2025/06/27</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="reorderFromHistory('order5')">
+                                    再注文
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination mt-lg">
+                    <button class="pagination-item" disabled>«</button>
+                    <button class="pagination-item active">1</button>
+                    <button class="pagination-item">2</button>
+                    <button class="pagination-item">3</button>
+                    <button class="pagination-item">»</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Toggle order details - redirect to detail page
+        function toggleOrderDetails(orderId) {
+            window.location.href = 'guest_order_detail.html?orderId=' + orderId;
+        }
+
+        // Navigate to create order page
+        function goToCreateOrder() {
+            window.location.href = 'guest_create_order.html';
+        }
+
+        // Navigate to delivery history page
+        function goToDeliveryHistory() {
+            window.location.href = 'guest_delivery_history.html';
+        }
+
+        // Reorder from history
+        function reorderFromHistory(orderId) {
+            if (confirm('この注文をもとに新しい注文を作成しますか？\n数量や製品は編集できます。')) {
+                // Store order data in sessionStorage and redirect
+                const orderData = {
+                    orderId: orderId,
+                    reorder: true
+                };
+                sessionStorage.setItem('reorderData', JSON.stringify(orderData));
+                window.location.href = 'guest_create_order.html?reorder=' + orderId;
+            }
+        }
+
+        // Download invoice
+        function downloadInvoice(orderId) {
+            alert('請求書をダウンロード中: ' + orderId);
+            // In real implementation, trigger PDF download
+        }
+
+        // Track shipment
+        function trackShipment(orderId) {
+            alert('配送追跡ページを開きます: ' + orderId);
+            // In real implementation, open tracking page or modal
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const period = document.getElementById('periodFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const orderId = document.getElementById('orderIdSearch').value;
+            const product = document.getElementById('productSearch').value;
+
+            console.log('Applying filters:', { period, status, orderId, product });
+            
+            // In real implementation, filter table rows
+            alert('フィルターを適用中...\n期間: ' + period + '\nステータス: ' + status);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('periodFilter').value = 'this-month';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('orderIdSearch').value = '';
+            document.getElementById('productSearch').value = '';
+            applyFilters();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Order History page loaded for guest');
+        });
+    </script>
+</body>
+</html>

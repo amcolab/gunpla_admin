@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文詳細 - CREDIE Order Portal</title>
+    <link rel="stylesheet" href="kintone-common-styles.css">
+    <style>
+        /* Order Info Grid */
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-dark);
+        }
+
+        /* Product Table */
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .product-table thead {
+            background: var(--bg-secondary);
+        }
+
+        .product-table th {
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-dark);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .product-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .product-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Column */
+        .delivery-status-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .status-text {
+            font-weight: 600;
+        }
+
+        .delivery-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Delivery Address */
+        .address-box {
+            padding: var(--spacing-lg);
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .address-box h3 {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .address-box p {
+            margin: 4px 0;
+            line-height: 1.6;
+        }
+
+        /* Payment Status */
+        .payment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .payment-badge.paid {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--color-success);
+        }
+
+        .payment-badge.pending {
+            background: rgba(52, 73, 94, 0.1);
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .product-table {
+                font-size: 14px;
+            }
+
+            .product-table th,
+            .product-table td {
+                padding: var(--spacing-sm);
+            }
+
+            /* Stack table on mobile */
+            .product-table thead {
+                display: none;
+            }
+
+            .product-table tr {
+                display: block;
+                margin-bottom: var(--spacing-md);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+            }
+
+            .product-table td {
+                display: block;
+                text-align: right;
+                padding: var(--spacing-sm) var(--spacing-md);
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .product-table td:last-child {
+                border-bottom: none;
+            }
+
+            .product-table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                color: var(--text-muted);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <header class="kintone-header">
+        <div class="app-title">CREDIE Order Portal</div>
+        <div style="margin-left: auto; font-size: 14px; opacity: 0.95;">
+            🏪 サクラ商事株式会社
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="guest_order_history.html">ホーム</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <a href="guest_order_history.html">注文履歴</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <span>注文詳細</span>
+    </nav>
+
+    <!-- Form Actions -->
+    <div class="form-actions form-actions-end">
+        <button type="button" class="btn btn-secondary" onclick="goBack()">戻る</button>
+        <button type="button" class="btn btn-ghost" onclick="printOrder()">🖨️ 印刷</button>
+        <button type="button" class="btn btn-primary" onclick="downloadInvoice()">📄 請求書</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="form-container">
+        <div class="form-content">
+            <h1 class="form-title">注文詳細</h1>
+
+            <!-- Order Info -->
+            <div class="order-info-grid">
+                <div class="info-box">
+                    <span class="info-label">注文番号</span>
+                    <span class="info-value" id="orderNumber">ORD-2025-010</span>
+                </div>
+                <div class="info-box">
+                    <span class="info-label">注文日</span>
+                    <span class="info-value" id="orderDate">2025/10/15</span>
+                </div>
+                <div class="info-box">
+                    <span class="info-label">注文金額</span>
+                    <span class="info-value" id="orderTotal">¥156,780</span>
+                </div>
+                <div class="info-box">
+                    <span class="info-label">支払いステータス</span>
+                    <span class="info-value">
+                        <span class="payment-badge paid" id="paymentStatus">
+                            ✓ 支払済
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="address-box">
+                <h3 class="section-subtitle">📍 配送先住所</h3>
+                <p class="fw-semibold">サクラ商事株式会社</p>
+                <p>〒150-0001</p>
+                <p>東京都渋谷区代々木1-2-3</p>
+                <p>代々木ビル 5F</p>
+                <p class="text-muted mt-sm">担当: 山田 太郎 (TEL: 03-1234-5678)</p>
+            </div>
+
+            <!-- Products Section -->
+            <section class="form-section">
+                <h2 class="section-title">📦 注文内容</h2>
+
+                <div style="overflow-x: auto;">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%;">製品名</th>
+                                <th style="width: 12%;">注文数</th>
+                                <th style="width: 12%;">配送済</th>
+                                <th style="width: 18%;">ステータス</th>
+                                <th style="width: 18%;">配送予定日</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            <!-- Row 1: Fully Delivered -->
+                            <tr>
+                                <td data-label="製品名">
+                                    <div>
+                                        <div class="fw-semibold">ライスシリカプレミアム 500ml</div>
+                                        <div class="text-muted fs-sm">SKU: RS-500</div>
+                                    </div>
+                                </td>
+                                <td data-label="注文数">50本</td>
+                                <td data-label="配送済">
+                                    <strong style="color: var(--color-success);">50本</strong>
+                                </td>
+                                <td data-label="ステータス">
+                                    <div class="delivery-status-cell">
+                                        <span style="color: var(--color-success); font-weight: 600;">✓ 配送完了</span>
+                                    </div>
+                                </td>
+                                <td data-label="配送予定日">
+                                    <div class="delivery-date">2025/10/18<br>(配送済)</div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 2: Pending Delivery -->
+                            <tr>
+                                <td data-label="製品名">
+                                    <div>
+                                        <div class="fw-semibold">ライスシリカ 200ml</div>
+                                        <div class="text-muted fs-sm">SKU: RS-STD-200</div>
+                                    </div>
+                                </td>
+                                <td data-label="注文数">100本</td>
+                                <td data-label="配送済">
+                                    <strong style="color: var(--text-muted);">0本</strong>
+                                </td>
+                                <td data-label="ステータス">
+                                    <div class="delivery-status-cell">
+                                        <span style="color: var(--color-warning); font-weight: 600;">⏳ 入荷待ち</span>
+                                    </div>
+                                </td>
+                                <td data-label="配送予定日">
+                                    <div class="delivery-date">2025/11/05<br>(予定)</div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 3: Fully Delivered -->
+                            <tr>
+                                <td data-label="製品名">
+                                    <div>
+                                        <div class="fw-semibold">Si+ 250ml</div>
+                                        <div class="text-muted fs-sm">SKU: SI-250</div>
+                                    </div>
+                                </td>
+                                <td data-label="注文数">30本</td>
+                                <td data-label="配送済">
+                                    <strong style="color: var(--color-success);">30本</strong>
+                                </td>
+                                <td data-label="ステータス">
+                                    <div class="delivery-status-cell">
+                                        <span style="color: var(--color-success); font-weight: 600;">✓ 配送完了</span>
+                                    </div>
+                                </td>
+                                <td data-label="配送予定日">
+                                    <div class="delivery-date">2025/10/18<br>(配送済)</div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 4: Partial Delivery -->
+                            <tr>
+                                <td data-label="製品名">
+                                    <div>
+                                        <div class="fw-semibold">Dr's POWER</div>
+                                        <div class="text-muted fs-sm">SKU: DP-001</div>
+                                    </div>
+                                </td>
+                                <td data-label="注文数">40本</td>
+                                <td data-label="配送済">
+                                    <strong style="color: var(--color-warning);">20本</strong>
+                                </td>
+                                <td data-label="ステータス">
+                                    <div class="delivery-status-cell">
+                                        <span style="color: var(--color-warning); font-weight: 600;">◐ 一部配送済</span>
+                                    </div>
+                                </td>
+                                <td data-label="配送予定日">
+                                    <div class="delivery-date">2025/10/30<br>(残り20本)</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Notes -->
+            <div class="form-section mt-lg">
+                <h3 class="section-subtitle">📝 備考</h3>
+                <div class="form-group">
+                    <textarea class="form-textarea" rows="3" readonly>配送時間: 午前中希望
+入荷次第、順次配送予定</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Go back to order history
+        function goBack() {
+            window.location.href = 'guest_order_history.html';
+        }
+
+        // Print order
+        function printOrder() {
+            window.print();
+        }
+
+        // Download invoice
+        function downloadInvoice() {
+            alert('請求書をダウンロードします。');
+            // In real implementation, trigger PDF download
+            console.log('Downloading invoice for order:', document.getElementById('orderNumber').textContent);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Order detail page loaded');
+            
+            // Check if order ID is passed in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            if (orderId) {
+                console.log('Loading order:', orderId);
+                // In real implementation, fetch order data from API
+            }
+        });
+
+        // Print styles
+        window.addEventListener('beforeprint', function() {
+            document.querySelector('.kintone-header').style.display = 'none';
+            document.querySelector('.breadcrumb').style.display = 'none';
+            document.querySelector('.form-actions').style.display = 'none';
+        });
+
+        window.addEventListener('afterprint', function() {
+            document.querySelector('.kintone-header').style.display = 'flex';
+            document.querySelector('.breadcrumb').style.display = 'flex';
+            document.querySelector('.form-actions').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

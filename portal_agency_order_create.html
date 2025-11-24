@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規注文 - CREDIE Order Portal</title>
+    <link rel="stylesheet" href="kintone-common-styles.css">
+    <style>
+        /* Simple page-specific styles */
+        .input-section {
+            background: var(--bg-card);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-input {
+            flex: 1;
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        .add-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .product-list-simple {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .product-list-simple.show {
+            display: block;
+        }
+
+        .product-option {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-option:last-child {
+            border-bottom: none;
+        }
+
+        .product-option:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .product-option.selected {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-md) 0;
+        }
+
+        .order-items-table th {
+            background-color: var(--bg-secondary);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .order-items-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .qty-input {
+            width: 80px;
+            padding: 6px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+        }
+
+        .remove-btn {
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+        }
+
+        .remove-btn:hover {
+            opacity: 0.7;
+        }
+
+        .summary-box {
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            font-size: 16px;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--border-color);
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-md);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--color-primary) !important;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <header class="kintone-header">
+        <div class="app-title">CREDIE Order Portal</div>
+        <div style="margin-left: auto; font-size: 14px; opacity: 0.95;">
+            🏪 サクラ商事株式会社
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="guest_order_history.html">ホーム</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <a href="guest_order_history.html">注文履歴</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <span>新規注文</span>
+    </nav>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <button type="button" class="btn btn-cancel" onclick="goBack()">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="submitOrder()">注文を確定</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="form-container">
+        <div class="form-content">
+            <h1 class="form-title">新規注文</h1>
+
+            <!-- Product Input Section -->
+            <section class="input-section">
+                <h3 class="section-subtitle mb-md">🔍 製品を追加</h3>
+                
+                <div class="search-box">
+                    <input type="text" 
+                           class="form-input search-input" 
+                           id="productSearch" 
+                           placeholder="SKU または JAN コードを入力してください（例: RS-500, 4901234567890）"
+                           onkeyup="searchProduct(event)"
+                           autocomplete="off">
+                    <button class="btn btn-success add-btn" onclick="addSelectedProduct()">
+                        追加
+                    </button>
+                </div>
+
+                <!-- Product suggestions dropdown -->
+                <div id="productSuggestions" class="product-list-simple"></div>
+
+                <p class="text-muted fs-sm">💡 ヒント: SKUまたはJANコードを入力すると候補が表示されます</p>
+            </section>
+
+            <!-- Order Items Section -->
+            <section class="form-section">
+                <h2 class="section-title">📦 注文内容</h2>
+
+                <div id="orderItemsContainer">
+                    <div class="empty-state">
+                        <p class="fs-lg">📋</p>
+                        <p>製品が追加されていません</p>
+                        <p class="fs-sm text-muted">上記の検索ボックスからSKUまたはJANコードを入力して製品を追加してください</p>
+                    </div>
+                </div>
+
+                <div id="orderItemsTable" style="display: none;">
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">SKU</th>
+                                <th style="width: 35%;">製品名</th>
+                                <th style="width: 15%;">単価</th>
+                                <th style="width: 15%;">数量</th>
+                                <th style="width: 15%;">小計</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderItemsBody">
+                        </tbody>
+                    </table>
+
+                    <!-- Summary Box -->
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span>小計</span>
+                            <span id="subtotal">¥0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>消費税（10%）</span>
+                            <span id="tax">¥0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>配送料</span>
+                            <span id="shipping">¥0</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>合計金額</span>
+                            <span id="totalAmount">¥0</span>
+                        </div>
+                        <div class="alert alert-info mt-sm fs-sm">
+                            💡 10,000円以上のご注文で送料無料
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Delivery Address Section -->
+            <section class="form-section">
+                <h2 class="section-title">📍 配送先情報</h2>
+                
+                <div class="form-grid form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">会社名 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="companyName" 
+                               value="サクラ商事株式会社" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">担当者名 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="contactName" 
+                               value="山田 太郎" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">郵便番号 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="postalCode" 
+                               value="150-0001" placeholder="000-0000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">電話番号 <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="phoneNumber" 
+                               value="03-1234-5678" placeholder="00-0000-0000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">住所 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="address1" 
+                           value="東京都渋谷区代々木1-2-3" 
+                           placeholder="都道府県市区町村番地" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">建物名・部屋番号</label>
+                    <input type="text" class="form-input" id="address2" 
+                           value="代々木ビル 5F" 
+                           placeholder="マンション名・ビル名など">
+                </div>
+
+                <div class="form-group mt-md">
+                    <label class="form-label">配送に関する特記事項</label>
+                    <textarea class="form-textarea" 
+                              id="deliveryNote" 
+                              rows="3" 
+                              placeholder="配送時間の指定や、その他の要望があればご記入ください"></textarea>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Product master data (SKU/JAN mapping)
+        const productMaster = {
+            'RS-500': {
+                sku: 'RS-500',
+                jan: '4901234567890',
+                name: 'ライスシリカプレミアム 500ml',
+                price: 1500
+            },
+            '4901234567890': {
+                sku: 'RS-500',
+                jan: '4901234567890',
+                name: 'ライスシリカプレミアム 500ml',
+                price: 1500
+            },
+            'RS-100': {
+                sku: 'RS-100',
+                jan: '4901234567891',
+                name: 'ライスシリカプレミアム 100ml',
+                price: 380
+            },
+            '4901234567891': {
+                sku: 'RS-100',
+                jan: '4901234567891',
+                name: 'ライスシリカプレミアム 100ml',
+                price: 380
+            },
+            'RS-50': {
+                sku: 'RS-50',
+                jan: '4901234567899',
+                name: 'ライスシリカプレミアム 50ml',
+                price: 280
+            },
+            '4901234567899': {
+                sku: 'RS-50',
+                jan: '4901234567899',
+                name: 'ライスシリカプレミアム 50ml',
+                price: 280
+            },
+            'RS-STD-500': {
+                sku: 'RS-STD-500',
+                jan: '4901234567892',
+                name: 'ライスシリカ 500ml',
+                price: 1200
+            },
+            '4901234567892': {
+                sku: 'RS-STD-500',
+                jan: '4901234567892',
+                name: 'ライスシリカ 500ml',
+                price: 1200
+            },
+            'RS-STD-200': {
+                sku: 'RS-STD-200',
+                jan: '4901234567893',
+                name: 'ライスシリカ 200ml',
+                price: 780
+            },
+            '4901234567893': {
+                sku: 'RS-STD-200',
+                jan: '4901234567893',
+                name: 'ライスシリカ 200ml',
+                price: 780
+            },
+            'RS-STD-75': {
+                sku: 'RS-STD-75',
+                jan: '4901234567898',
+                name: 'ライスシリカ 75ml',
+                price: 450
+            },
+            '4901234567898': {
+                sku: 'RS-STD-75',
+                jan: '4901234567898',
+                name: 'ライスシリカ 75ml',
+                price: 450
+            },
+            'RS-STD-50': {
+                sku: 'RS-STD-50',
+                jan: '4901234567897',
+                name: 'ライスシリカ 50ml',
+                price: 350
+            },
+            '4901234567897': {
+                sku: 'RS-STD-50',
+                jan: '4901234567897',
+                name: 'ライスシリカ 50ml',
+                price: 350
+            },
+            'SI-250': {
+                sku: 'SI-250',
+                jan: '4901234567894',
+                name: 'Si+ 250ml',
+                price: 980
+            },
+            '4901234567894': {
+                sku: 'SI-250',
+                jan: '4901234567894',
+                name: 'Si+ 250ml',
+                price: 980
+            },
+            'SI-100': {
+                sku: 'SI-100',
+                jan: '4901234567896',
+                name: 'Si+ 100ml',
+                price: 450
+            },
+            '4901234567896': {
+                sku: 'SI-100',
+                jan: '4901234567896',
+                name: 'Si+ 100ml',
+                price: 450
+            },
+            'DP-001': {
+                sku: 'DP-001',
+                jan: '4901234567895',
+                name: "Dr's POWER",
+                price: 2800
+            },
+            '4901234567895': {
+                sku: 'DP-001',
+                jan: '4901234567895',
+                name: "Dr's POWER",
+                price: 2800
+            },
+            'DP-MINI': {
+                sku: 'DP-MINI',
+                jan: '4901234567900',
+                name: "Dr's POWER Mini",
+                price: 1500
+            },
+            '4901234567900': {
+                sku: 'DP-MINI',
+                jan: '4901234567900',
+                name: "Dr's POWER Mini",
+                price: 1500
+            }
+        };
+
+        // Order items array
+        let orderItems = [];
+        let selectedProduct = null;
+
+        // Search product by SKU or JAN
+        function searchProduct(event) {
+            const searchTerm = document.getElementById('productSearch').value.trim().toLowerCase();
+            const suggestionsDiv = document.getElementById('productSuggestions');
+
+            if (searchTerm.length < 2) {
+                suggestionsDiv.classList.remove('show');
+                suggestionsDiv.innerHTML = '';
+                return;
+            }
+
+            // Find matching products
+            const matches = [];
+            const seen = new Set();
+
+            for (const [code, product] of Object.entries(productMaster)) {
+                const identifier = product.sku + product.jan; // Create unique identifier
+                
+                if (seen.has(identifier)) continue; // Skip duplicates
+                
+                if (code.toLowerCase().includes(searchTerm) || 
+                    product.name.toLowerCase().includes(searchTerm)) {
+                    matches.push(product);
+                    seen.add(identifier);
+                }
+            }
+
+            // Display suggestions
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = matches.map(product => `
+                    <div class="product-option" onclick="selectProduct('${product.sku}')">
+                        <div>
+                            <div class="fw-semibold">${product.name}</div>
+                            <div class="fs-sm text-muted">SKU: ${product.sku} | JAN: ${product.jan}</div>
+                        </div>
+                        <div class="fw-semibold text-primary">¥${product.price.toLocaleString()}</div>
+                    </div>
+                `).join('');
+                suggestionsDiv.classList.add('show');
+            } else {
+                suggestionsDiv.innerHTML = '<div class="product-option" style="cursor: default;"><div class="text-muted">該当する製品が見つかりません</div></div>';
+                suggestionsDiv.classList.add('show');
+            }
+
+            // Add to cart on Enter
+            if (event.key === 'Enter' && matches.length === 1) {
+                selectProduct(matches[0].sku);
+                addSelectedProduct();
+            }
+        }
+
+        // Select product from suggestions
+        function selectProduct(sku) {
+            selectedProduct = productMaster[sku];
+            document.getElementById('productSearch').value = `${selectedProduct.name} (${selectedProduct.sku})`;
+            
+            // Highlight selected
+            document.querySelectorAll('.product-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.closest('.product-option').classList.add('selected');
+        }
+
+        // Add selected product to order
+        function addSelectedProduct() {
+            if (!selectedProduct) {
+                // Try to find product by exact SKU/JAN input
+                const input = document.getElementById('productSearch').value.trim().toUpperCase();
+                selectedProduct = productMaster[input];
+            }
+
+            if (!selectedProduct) {
+                alert('製品を選択してください');
+                return;
+            }
+
+            // Check if already in order
+            const existing = orderItems.find(item => item.sku === selectedProduct.sku);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                orderItems.push({
+                    sku: selectedProduct.sku,
+                    jan: selectedProduct.jan,
+                    name: selectedProduct.name,
+                    price: selectedProduct.price,
+                    quantity: 1
+                });
+            }
+
+            // Clear selection
+            document.getElementById('productSearch').value = '';
+            document.getElementById('productSuggestions').classList.remove('show');
+            document.getElementById('productSuggestions').innerHTML = '';
+            selectedProduct = null;
+
+            // Update display
+            updateOrderDisplay();
+        }
+
+        // Update order display
+        function updateOrderDisplay() {
+            const emptyState = document.getElementById('orderItemsContainer');
+            const tableContainer = document.getElementById('orderItemsTable');
+            const tbody = document.getElementById('orderItemsBody');
+
+            if (orderItems.length === 0) {
+                emptyState.style.display = 'block';
+                tableContainer.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableContainer.style.display = 'block';
+
+            // Build table rows
+            tbody.innerHTML = orderItems.map((item, index) => `
+                <tr>
+                    <td>${item.sku}</td>
+                    <td>${item.name}</td>
+                    <td>¥${item.price.toLocaleString()}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <button class="quantity-btn" onclick="decreaseQty(${index})" style="width: 28px; height: 28px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 4px;">−</button>
+                            <input type="number" 
+                                   class="qty-input" 
+                                   value="${item.quantity}" 
+                                   min="1" 
+                                   onchange="updateQuantity(${index}, this.value)"
+                                   style="width: 60px;">
+                            <button class="quantity-btn" onclick="increaseQty(${index})" style="width: 28px; height: 28px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 4px;">+</button>
+                        </div>
+                    </td>
+                    <td><strong>¥${(item.price * item.quantity).toLocaleString()}</strong></td>
+                    <td>
+                        <span class="remove-btn" onclick="removeItem(${index})" title="削除">✕</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update summary
+            calculateTotal();
+        }
+
+        // Update quantity
+        function updateQuantity(index, newQty) {
+            const qty = parseInt(newQty);
+            if (qty < 1) {
+                if (confirm('数量を0にすると製品が削除されます。よろしいですか？')) {
+                    removeItem(index);
+                }
+                return;
+            }
+            orderItems[index].quantity = qty;
+            updateOrderDisplay();
+        }
+
+        // Increase quantity
+        function increaseQty(index) {
+            orderItems[index].quantity++;
+            updateOrderDisplay();
+        }
+
+        // Decrease quantity
+        function decreaseQty(index) {
+            if (orderItems[index].quantity > 1) {
+                orderItems[index].quantity--;
+                updateOrderDisplay();
+            } else {
+                if (confirm('数量を0にすると製品が削除されます。よろしいですか？')) {
+                    removeItem(index);
+                }
+            }
+        }
+
+        // Remove item
+        function removeItem(index) {
+            if (confirm('この製品を削除しますか？')) {
+                orderItems.splice(index, 1);
+                updateOrderDisplay();
+            }
+        }
+
+        // Calculate total
+        function calculateTotal() {
+            let subtotal = 0;
+            orderItems.forEach(item => {
+                subtotal += item.price * item.quantity;
+            });
+
+            const tax = Math.floor(subtotal * 0.1);
+            const shipping = subtotal >= 10000 ? 0 : 500;
+            const total = subtotal + tax + shipping;
+
+            document.getElementById('subtotal').textContent = '¥' + subtotal.toLocaleString();
+            document.getElementById('tax').textContent = '¥' + tax.toLocaleString();
+            document.getElementById('shipping').textContent = shipping === 0 ? '無料' : '¥' + shipping.toLocaleString();
+            document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString();
+        }
+
+        // Submit order
+        function submitOrder() {
+            // Validation
+            if (orderItems.length === 0) {
+                alert('製品を追加してください');
+                return;
+            }
+
+            // Validate delivery address
+            const companyName = document.getElementById('companyName').value.trim();
+            const contactName = document.getElementById('contactName').value.trim();
+            const postalCode = document.getElementById('postalCode').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const address1 = document.getElementById('address1').value.trim();
+
+            if (!companyName || !contactName || !postalCode || !phoneNumber || !address1) {
+                alert('配送先情報の必須項目をすべて入力してください');
+                return;
+            }
+
+            // Show confirmation
+            const total = document.getElementById('totalAmount').textContent;
+            const itemCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (confirm(`注文内容を確認してください：\n\n製品数: ${orderItems.length}種類\n総数量: ${itemCount}点\n合計金額: ${total}\n\nこの内容で注文を確定しますか？`)) {
+                // Show loading
+                const btn = event.target;
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div><span>注文処理中...</span>';
+
+                // Simulate API call
+                setTimeout(() => {
+                    const orderId = 'ORD-2025-' + String(Math.floor(Math.random() * 900) + 100);
+                    alert('✅ 注文が確定しました！\n\n注文番号: ' + orderId + '\n\n注文履歴ページで確認できます。');
+                    window.location.href = 'guest_order_history.html';
+                }, 1500);
+            }
+        }
+
+        // Go back
+        function goBack() {
+            if (orderItems.length > 0) {
+                if (confirm('注文内容が保存されていません。本当に戻りますか？')) {
+                    window.location.href = 'guest_order_history.html';
+                }
+            } else {
+                window.location.href = 'guest_order_history.html';
+            }
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchBox = document.getElementById('productSearch');
+            const suggestions = document.getElementById('productSuggestions');
+            
+            if (!searchBox.contains(event.target) && !suggestions.contains(event.target)) {
+                suggestions.classList.remove('show');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Create Order page loaded');
+            
+            // Focus on search input
+            document.getElementById('productSearch').focus();
+        });
+    </script>
+</body>
+</html>
