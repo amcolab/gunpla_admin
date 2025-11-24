@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>発注詳細 - PO Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .app-title-header {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: #f8f8f8;
+            padding: 12px 20px;
+            border-bottom: 1px solid #d0d0d0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid #d0d0d0;
+            background: white;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f8f8f8;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Info Alert */
+        .info-alert {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-alert-icon {
+            font-size: 20px;
+            color: #0c5460;
+        }
+
+        .info-alert-text {
+            flex: 1;
+            color: #0c5460;
+            line-height: 1.6;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .form-value {
+            padding: 8px 12px;
+            background: #f8f8f8;
+            border-radius: 3px;
+            border: 1px solid #e0e0e0;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-partial {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-received {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            border-right: 1px solid #e8e8e8;
+            white-space: nowrap;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        .table-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .table-link:hover {
+            text-decoration: underline;
+        }
+
+        .text-orange {
+            color: #e67e22;
+            font-weight: 600;
+        }
+
+        .text-green {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-value.large {
+            font-size: 24px;
+            color: #e67e22;
+        }
+
+        /* History Timeline */
+        .history-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px;
+            background: #f8f8f8;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .history-date {
+            min-width: 100px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .history-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .history-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .history-field-label {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .history-field-value {
+            font-size: 13px;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">📦</div>
+        <div class="app-title-header">発注管理</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">発注管理</a> > PO002
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title">発注詳細: PO002</div>
+        <div class="header-actions">
+            <button class="btn btn-success">✓ 発注確定</button>
+            <button class="btn btn-primary">✏ 編集</button>
+            <button class="btn">📋 コピーを作成</button>
+            <button class="btn btn-danger">× キャンセル</button>
+            <button class="btn">🗑️ 削除</button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-container">
+        <!-- Info Alert -->
+        <div class="info-alert">
+            <div class="info-alert-icon">ℹ️</div>
+            <div class="info-alert-text">
+                この発注は仕様入力が可能です。合計金額が予算超過していないか、各品目に入力欄を埋めたか、ボタンで一斉入力可能な数量があります。
+                <br>編集モードで次は比較内の変更が可能です。
+            </div>
+        </div>
+
+        <!-- A. 基本情報 -->
+        <div class="section">
+            <div class="section-header">基本情報</div>
+            <div class="section-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <div class="form-label">発注番号</div>
+                        <div class="form-value">PO002</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">発注日</div>
+                        <div class="form-value">2025-05-24</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">入庫予定日</div>
+                        <div class="form-value">2025-07-04</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">仕入先</div>
+                        <div class="form-value">竹本容器株式会社</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">発注担当者</div>
+                        <div class="form-value">竹本容器株式会社</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">検品担当者</div>
+                        <div class="form-value">中村</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">ステータス</div>
+                        <div class="form-value">
+                            <span class="status-badge status-draft">一般入荷済</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 仕入先情報 -->
+        <div class="section">
+            <div class="section-header">仕入先情報</div>
+            <div class="section-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <div class="form-label">仕入先名</div>
+                        <div class="form-value">竹本容器株式会社</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">電話番号</div>
+                        <div class="form-value">06-6768-2231</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">メールアドレス</div>
+                        <div class="form-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c332e38392e1c283d373931332833723f3372362c">abc@gmail.com</a></div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">郵便番号</div>
+                        <div class="form-value">543-0001</div>
+                    </div>
+                    <div class="form-field" style="grid-column: span 2;">
+                        <div class="form-label">住所</div>
+                        <div class="form-value">大阪府大阪市天王寺区上本町2-3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 発注サマリー -->
+        <div class="section">
+            <div class="section-header">📊 発注サマリー</div>
+            <div class="section-body">
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">発注総数量</div>
+                        <div class="summary-value">12,500 個</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">入庫済数量</div>
+                        <div class="summary-value text-green">8,000 個</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">未入庫数量</div>
+                        <div class="summary-value text-orange">4,500 個</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">合計金額</div>
+                        <div class="summary-value large">¥3,750,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- D. 発注情報 -->
+        <div class="section">
+            <div class="section-header">💰 発注情報</div>
+            <div class="section-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <div class="form-label">小計（税抜）</div>
+                        <div class="form-value">¥7,400,000</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">消費税 (10%)</div>
+                        <div class="form-value">¥740,000</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">発注金額合計</div>
+                        <div class="form-value" style="font-weight: 600; color: #e67e22; font-size: 16px;">¥8,140,000</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">通貨</div>
+                        <div class="form-value">JPY（日本円）</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">支払条件</div>
+                        <div class="form-value">納品後30日以内</div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">支払方法</div>
+                        <div class="form-value">銀行振込</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- B. 発注明細 (Subtable) -->
+        <div class="section">
+            <div class="section-header">📋 発注明細（商品別詳細）</div>
+            <div class="section-body" style="padding: 0; overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>商品名 (SKU)</th>
+                            <th>発注数量</th>
+                            <th>入庫済数量</th>
+                            <th>未入庫数量</th>
+                            <th class="text-right">単価</th>
+                            <th class="text-right">金額（小計）</th>
+                            <th>入庫状況</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="#" class="table-link">ジェイゼンキャップ(白) #17-20</a>
+                                <div style="font-size: 11px; color: #888;">SKU: SHZ17 / SKU ID: #3217</div>
+                            </td>
+                            <td><span class="text-orange">12,500</span></td>
+                            <td><span class="text-green">8,000</span></td>
+                            <td><span class="text-orange">4,500</span></td>
+                            <td class="text-right">¥300</td>
+                            <td class="text-right">¥3,750,000</td>
+                            <td class="text-center">
+                                <span class="status-badge status-partial">一部入庫済 (8,000/12,500)</span>
+                            </td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="table-link">RSシリーズ500mL ボトル-乳白</a>
+                                <div style="font-size: 11px; color: #888;">SKU: RS001 / SKU ID: #1245</div>
+                            </td>
+                            <td><span class="text-orange">5,000</span></td>
+                            <td><span class="text-green">5,000</span></td>
+                            <td>0</td>
+                            <td class="text-right">¥450</td>
+                            <td class="text-right">¥2,250,000</td>
+                            <td class="text-center">
+                                <span class="status-badge status-received">入庫済</span>
+                            </td>
+                            <td>早期納品完了</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="table-link">AL300mL ボトル</a>
+                                <div style="font-size: 11px; color: #888;">SKU: AL001 / SKU ID: #2301</div>
+                            </td>
+                            <td><span class="text-orange">3,000</span></td>
+                            <td>0</td>
+                            <td><span class="text-orange">3,000</span></td>
+                            <td class="text-right">¥520</td>
+                            <td class="text-right">¥1,560,000</td>
+                            <td class="text-center">
+                                <span class="status-badge status-draft">未入庫</span>
+                            </td>
+                            <td>7月上旬入荷予定</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- C. 入庫情報 (Read-only) -->
+        <div class="section">
+            <div class="section-header">📦 入庫情報（Read-only）</div>
+            <div class="section-body">
+                <div class="form-grid" style="margin-bottom: 20px;">
+                    <div class="form-field">
+                        <div class="form-label">入庫ステータス</div>
+                        <div class="form-value">
+                            <span class="status-badge status-partial">一部入庫</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-label">最終入庫日</div>
+                        <div class="form-value">2025-06-15</div>
+                    </div>
+                </div>
+
+                <div class="form-label" style="margin-bottom: 12px; font-size: 13px;">入庫履歴（複数回の入庫を表示）</div>
+                <div class="history-timeline">
+                    <div class="history-item">
+                        <div class="history-date">2025-06-15</div>
+                        <div class="history-details">
+                            <div class="history-field">
+                                <div class="history-field-label">SKU</div>
+                                <div class="history-field-value">SHZ17 - ジェイゼンキャップ(白)</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">入庫数量</div>
+                                <div class="history-field-value" style="color: #27ae60; font-weight: 600;">5,000 個</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">担当者</div>
+                                <div class="history-field-value">中村</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-date">2025-06-10</div>
+                        <div class="history-details">
+                            <div class="history-field">
+                                <div class="history-field-label">SKU</div>
+                                <div class="history-field-value">RS001 - RSシリーズ500mL</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">入庫数量</div>
+                                <div class="history-field-value" style="color: #27ae60; font-weight: 600;">5,000 本</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">担当者</div>
+                                <div class="history-field-value">竹本</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-date">2025-06-05</div>
+                        <div class="history-details">
+                            <div class="history-field">
+                                <div class="history-field-label">SKU</div>
+                                <div class="history-field-value">SHZ17 - ジェイゼンキャップ(白)</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">入庫数量</div>
+                                <div class="history-field-value" style="color: #27ae60; font-weight: 600;">3,000 個</div>
+                            </div>
+                            <div class="history-field">
+                                <div class="history-field-label">担当者</div>
+                                <div class="history-field-value">社長</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- E. メモ / 添付ファイル -->
+        <div class="section">
+            <div class="section-header">📝 メモ / 添付ファイル</div>
+            <div class="section-body">
+                <div class="form-field">
+                    <div class="form-label">内部メモ</div>
+                    <div class="form-value" style="min-height: 80px; align-items: flex-start;">
+                        7月上旬の入庫予定。AL300mLボトルについては在庫切れの可能性があるため、事前確認済み。
+                    </div>
+                </div>
+                <div class="form-field" style="margin-top: 16px;">
+                    <div class="form-label">添付ファイル</div>
+                    <div class="form-value">
+                        <a href="#" class="table-link">📎 PO002_見積書.pdf</a>
+                        <span style="margin: 0 12px;">|</span>
+                        <a href="#" class="table-link">📎 仕様書_SHZ17.xlsx</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons Footer -->
+        <div class="section" style="background: #f8f8f8;">
+            <div class="section-body">
+                <div style="display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-success">✓ 発注確定</button>
+                    <button class="btn btn-primary">✏ 編集</button>
+                    <button class="btn">📋 コピーを作成</button>
+                    <button class="btn btn-danger">× キャンセル</button>
+                    <button class="btn">🗑️ 削除</button>
+                </div>
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; color: #888; font-size: 12px;">
+                    <strong>ボタン説明：</strong><br>
+                    • <strong>発注確定</strong>：下書き → 発注確定へ。入庫タスクを自動生成<br>
+                    • <strong>編集</strong>：PO内容を編集可能にする<br>
+                    • <strong>キャンセル</strong>：発注を無効化（入庫前のみ）<br>
+                    • <strong>コピーを作成</strong>：同じ発注内容で新しいPOを作成<br>
+                    • <strong>削除</strong>：下書き状態のみ削除可能
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Mock functions for demo
+        function confirmPO() {
+            alert('発注を確定しました。入庫タスクを自動生成します。');
+        }
+
+        function editPO() {
+            alert('編集モードに切り替えました。');
+        }
+
+        function copyPO() {
+            alert('新しいPOを作成しました: PO003');
+        }
+
+        function cancelPO() {
+            if (confirm('この発注をキャンセルしますか？\n\n※ 入庫前のみキャンセル可能です。')) {
+                alert('発注をキャンセルしました。');
+            }
+        }
+
+        function deletePO() {
+            if (confirm('この発注を??
