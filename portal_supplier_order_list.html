@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受注管理 - CREDIE Supplier Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* Header */
+        .supplier-header {
+            background: #4a5568;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .portal-logo {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .supplier-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .supplier-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .company-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Page Title */
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #2d3748;
+        }
+
+        /* Filter Card */
+        .filter-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3748;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #cbd5e0;
+            background: white;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f7fafc;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        /* Order List Card */
+        .order-list-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .list-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Table */
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table thead {
+            background: #f7fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .order-table th {
+            padding: 12px 24px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        .order-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .order-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .order-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .order-number {
+            color: #3498db;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .order-number:hover {
+            text-decoration: underline;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-payment-waiting {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-shipping {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Action Buttons */
+        .btn-detail {
+            padding: 6px 16px;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #3498db;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-detail:hover {
+            background: #ebf8ff;
+            border-color: #3498db;
+        }
+
+        .btn-invoice {
+            padding: 6px 16px;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #718096;
+            transition: all 0.2s;
+        }
+
+        .btn-invoice:hover {
+            background: #f7fafc;
+            border-color: #718096;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(.active):not(:disabled) {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .pagination-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Update Button */
+        .update-btn {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #3498db;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .update-btn:hover {
+            background: #ebf8ff;
+            border-color: #3498db;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .supplier-header {
+                padding: 12px 16px;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-table {
+                font-size: 12px;
+            }
+
+            .order-table th,
+            .order-table td {
+                padding: 10px 12px;
+            }
+
+            .update-btn {
+                position: static;
+                margin-bottom: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="supplier-header">
+        <div class="portal-logo">CREDIE Supplier Portal</div>
+        <div class="supplier-info">
+            <div class="supplier-badge">サプライヤー</div>
+            <div class="company-name">
+                <span>🏭</span>
+                <span>山田製造株式会社</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">ホーム</a> > 受注管理
+    </div>
+
+    <!-- Update Button -->
+    <button class="update-btn" onclick="refreshOrders()">
+        <span>🔄</span>
+        <span>更新</span>
+    </button>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="page-title">受注管理</h1>
+
+        <!-- Filter Card -->
+        <div class="filter-card">
+            <div class="filter-title">
+                🔍 検索・フィルター
+            </div>
+            <div class="filter-grid">
+                <div class="filter-field">
+                    <label class="filter-label">期間</label>
+                    <select class="filter-select" id="periodFilter">
+                        <option value="current">今月</option>
+                        <option value="last">先月</option>
+                        <option value="3months">過去3ヶ月</option>
+                        <option value="6months">過去6ヶ月</option>
+                        <option value="all">全期間</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label">注文ステータス</label>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">すべて</option>
+                        <option value="pending">確認待ち</option>
+                        <option value="payment">支払待ち</option>
+                        <option value="shipping">配送中</option>
+                        <option value="complete">完了</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label">支払いステータス</label>
+                    <select class="filter-select" id="paymentFilter">
+                        <option value="">すべて</option>
+                        <option value="unpaid">未払い</option>
+                        <option value="paid">支払済</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label">注文番号</label>
+                    <input type="text" class="filter-input" id="orderNumberFilter" placeholder="PO-">
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn" onclick="resetFilters()">リセット</button>
+                <button class="btn btn-primary" onclick="applyFilters()">適用</button>
+            </div>
+        </div>
+
+        <!-- Order List -->
+        <div class="order-list-card">
+            <div class="list-header">
+                📋 受注一覧
+            </div>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>注文番号</th>
+                        <th>注文日</th>
+                        <th>金額</th>
+                        <th>ステータス</th>
+                        <th>配送予定日</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <!-- Row 1 - 確認待ち -->
+                    <tr>
+                        <td>
+                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-015'); return false;">PO-2025-015</a>
+                        </td>
+                        <td>2025/10/25</td>
+                        <td class="amount">¥234,560</td>
+                        <td>
+                            <span class="status-badge status-pending">確認待ち</span>
+                        </td>
+                        <td>未設定</td>
+                        <td>
+                            <button class="btn-detail" onclick="viewOrder('PO-2025-015')">詳細</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2 - 支払待ち -->
+                    <tr>
+                        <td>
+                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-014'); return false;">PO-2025-014</a>
+                        </td>
+                        <td>2025/10/18</td>
+                        <td class="amount">¥156,780</td>
+                        <td>
+                            <span class="status-badge status-payment-waiting">支払待ち</span>
+                        </td>
+                        <td>未設定</td>
+                        <td>
+                            <button class="btn-detail" onclick="viewOrder('PO-2025-014')">詳細</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3 - 配送中 -->
+                    <tr>
+                        <td>
+                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-013'); return false;">PO-2025-013</a>
+                        </td>
+                        <td>2025/10/12</td>
+                        <td class="amount">¥125,340</td>
+                        <td>
+                            <span class="status-badge status-shipping">配送中</span>
+                        </td>
+                        <td>2025/10/18</td>
+                        <td>
+                            <button class="btn-detail" onclick="viewOrder('PO-2025-013')">詳細</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 4 - 完了 -->
+                    <tr>
+                        <td>
+                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-012'); return false;">PO-2025-012</a>
+                        </td>
+                        <td>2025/09/28</td>
+                        <td class="amount">¥203,560</td>
+                        <td>
+                            <span class="status-badge status-complete">✓ 完了</span>
+                        </td>
+                        <td>2025/10/05</td>
+                        <td>
+                            <button class="btn-invoice" onclick="viewInvoice('PO-2025-012')">請求書</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 5 - 完了 -->
+                    <tr>
+                        <td>
+                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-011'); return false;">PO-2025-011</a>
+                        </td>
+                        <td>2025/09/15</td>
+                        <td class="amount">¥189,900</td>
+                        <td>
+                            <span class="status-badge status-complete">✓ 完了</span>
+                        </td>
+                        <td>2025/09/22</td>
+                        <td>
+                            <button class="btn-invoice" onclick="viewInvoice('PO-2025-011')">請求書</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <button class="pagination-btn" disabled>«</button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">»</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // View order details
+        function viewOrder(orderId) {
+            alert('注文詳細を表示: ' + orderId);
+            // window.location.href = `/supplier/order-detail.html?id=${orderId}`;
+        }
+
+        // View invoice
+        function viewInvoice(orderId) {
+            alert('請求書を表示: ' + orderId);
+            // Open invoice PDF in new window
+        }
+
+        // Refresh orders
+        function refreshOrders() {
+            alert('注文リストを更新しています...');
+            // Reload data
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const period = document.getElementById('periodFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const payment = document.getElementById('paymentFilter').value;
+            const orderNumber = document.getElementById('orderNumberFilter').value;
+            
+            console.log('Applying filters:', { period, status, payment, orderNumber });
+            alert('フィルターを適用しました');
+            // Apply filter logic
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('periodFilter').value = 'current';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('paymentFilter').value = '';
+            document.getElementById('orderNumberFilter').value = '';
+            
+            alert('フィルターをリセットしました');
+        }
+    </script>
+</body>
+</html>

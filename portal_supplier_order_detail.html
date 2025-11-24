@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受注詳細 - CREDIE Supplier Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* Header */
+        .supplier-header {
+            background: #4a5568;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .portal-logo {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .supplier-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .supplier-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .company-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Page Title */
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #2d3748;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Product Section */
+        .product-section {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3748;
+        }
+
+        /* Product Table */
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .product-table thead {
+            background: #f7fafc;
+        }
+
+        .product-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .product-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .btn-confirm {
+            padding: 6px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-confirm:hover {
+            background: #2980b9;
+        }
+
+        /* Delivery Schedule Panel */
+        .delivery-panel {
+            border-left: 3px solid #3498db;
+            background: #f7fafc;
+            padding: 20px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .panel-header {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #2d3748;
+        }
+
+        .btn-add-delivery {
+            padding: 8px 16px;
+            background: white;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-add-delivery:hover {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* Shipment Card */
+        .shipment-card {
+            background: white;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .shipment-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #2d3748;
+        }
+
+        .btn-delete-shipment {
+            padding: 4px 12px;
+            background: white;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-delete-shipment:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #e53e3e;
+        }
+
+        .form-input,
+        .form-date {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-date:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Panel Actions */
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-cancel {
+            padding: 8px 20px;
+            background: #718096;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #4a5568;
+        }
+
+        .btn-submit {
+            padding: 8px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #2980b9;
+        }
+
+        /* Total */
+        .total-row {
+            text-align: right;
+            padding: 16px;
+            border-top: 2px solid #e2e8f0;
+            margin-top: 16px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #718096;
+            margin-right: 16px;
+        }
+
+        .total-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Hidden by default */
+        .delivery-panel {
+            display: none;
+        }
+
+        .delivery-panel.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-table {
+                font-size: 12px;
+            }
+
+            .product-table th,
+            .product-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="supplier-header">
+        <div class="portal-logo">CREDIE Supplier Portal</div>
+        <div class="supplier-info">
+            <div class="supplier-badge">サプライヤー</div>
+            <div class="company-name">
+                <span>🏭</span>
+                <span>山田製造株式会社</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">ホーム</a> > <a href="#">受注管理</a> > 受注詳細
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="page-title">受注詳細</h1>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">注文番号</div>
+                <div class="summary-value">PO-2025-015</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">注文日</div>
+                <div class="summary-value">2025/10/25</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">注文金額</div>
+                <div class="summary-value">¥256,000</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">ステータス</div>
+                <div class="summary-value">
+                    <span class="status-badge status-pending">⏳ 確認待ち</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Section -->
+        <div class="product-section">
+            <div class="section-title">
+                📦 注文内容
+            </div>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th style="text-align: center;">数量</th>
+                        <th style="text-align: right;">単価</th>
+                        <th style="text-align: right;">小計</th>
+                        <th style="text-align: center;">ステータス</th>
+                        <th style="text-align: center;">アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Product 1 - With Delivery Panel -->
+                    <tr>
+                        <td colspan="6" style="padding: 0;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 35%; padding: 16px 12px;">
+                                        <div class="product-name">オリジナルTシャツ</div>
+                                        <div class="product-sku">SKU: TS-001-BLK-L</div>
+                                    </td>
+                                    <td style="width: 12%; text-align: center; padding: 16px 12px;"><strong>150本</strong></td>
+                                    <td style="width: 12%; text-align: right; padding: 16px 12px;">¥850</td>
+                                    <td style="width: 15%; text-align: right; padding: 16px 12px;"><strong>¥127,500</strong></td>
+                                    <td style="width: 13%; text-align: center; padding: 16px 12px;">
+                                        <span class="status-badge status-pending">⏳ 未確定</span>
+                                    </td>
+                                    <td style="width: 13%; text-align: center; padding: 16px 12px;">
+                                        <button class="btn-confirm" onclick="toggleDeliveryPanel('panel1')">確認</button>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Delivery Schedule Panel -->
+                            <div class="delivery-panel active" id="panel1">
+                                <div class="panel-header">
+                                    <span>📦 配送スケジュール - オリジナルTシャツ (150本)</span>
+                                    <button class="btn-add-delivery" onclick="addShipment('panel1')">
+                                        <span>+</span>
+                                        <span>配送回を追加</span>
+                                    </button>
+                                </div>
+
+                                <!-- Shipment 1 -->
+                                <div class="shipment-card">
+                                    <div class="shipment-header">
+                                        第1回配送
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-field">
+                                            <label class="form-label required">数量</label>
+                                            <input type="number" class="form-input" placeholder="例: 50" value="50">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label required">配送予定日</label>
+                                            <input type="date" class="form-date" value="2025-11-02">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label">備考</label>
+                                            <input type="text" class="form-input" placeholder="特記事項">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Shipment 2 -->
+                                <div class="shipment-card">
+                                    <div class="shipment-header">
+                                        第2回配送
+                                        <button class="btn-delete-shipment" onclick="deleteShipment(this)">削除</button>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-field">
+                                            <label class="form-label required">数量</label>
+                                            <input type="number" class="form-input" placeholder="例: 50" value="50">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label required">配送予定日</label>
+                                            <input type="date" class="form-date" value="2025-11-02">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label">備考</label>
+                                            <input type="text" class="form-input" placeholder="特記事項">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Panel Actions -->
+                                <div class="panel-actions">
+                                    <button class="btn-cancel" onclick="toggleDeliveryPanel('panel1')">キャンセル</button>
+                                    <button class="btn-submit" onclick="confirmProduct('panel1')">
+                                        <span>✓</span>
+                                        <span>この商品を確定</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Product 2 -->
+                    <tr>
+                        <td>
+                            <div class="product-name">ポロシャツ</div>
+                            <div class="product-sku">SKU: PS-002-WHT-M</div>
+                        </td>
+                        <td style="text-align: center;"><strong>80本</strong></td>
+                        <td style="text-align: right;">¥1,200</td>
+                        <td style="text-align: right;"><strong>¥96,000</strong></td>
+                        <td style="text-align: center;">
+                            <span class="status-badge status-pending">⏳ 未確定</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="btn-confirm" onclick="toggleDeliveryPanel('panel2')">確認</button>
+                        </td>
+                    </tr>
+
+                    <!-- Product 3 -->
+                    <tr>
+                        <td>
+                            <div class="product-name">キャップ</div>
+                            <div class="product-sku">SKU: CP-003-BLK</div>
+                        </td>
+                        <td style="text-align: center;"><strong>50本</strong></td>
+                        <td style="text-align: right;">¥650</td>
+                        <td style="text-align: right;"><strong>¥32,500</strong></td>
+                        <td style="text-align: center;">
+                            <span class="status-badge status-pending">⏳ 未確定</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="btn-confirm" onclick="toggleDeliveryPanel('panel3')">確認</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Total -->
+            <div class="total-row">
+                <span class="total-label">合計:</span>
+                <span class="total-value">¥256,000</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle delivery panel
+        function toggleDeliveryPanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('active');
+            }
+        }
+
+        // Add new shipment
+        let shipmentCount = 2;
+        function addShipment(panelId) {
+            shipmentCount++;
+            const panel = document.getElementById(panelId);
+            const shipmentCards = panel.querySelectorAll('.shipment-card');
+            const lastCard = shipmentCards[shipmentCards.length - 1];
+
+            const newShipment = document.createElement('div');
+            newShipment.className = 'shipment-card';
+            newShipment.innerHTML = `
+                <div class="shipment-header">
+                    第${shipmentCount}回配送
+                    <button class="btn-delete-shipment" onclick="deleteShipment(this)">削除</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label required">数量</label>
+                        <input type="number" class="form-input" placeholder="例: 50">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label required">配送予定日</label>
+                        <input type="date" class="form-date">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">備考</label>
+                        <input type="text" class="form-input" placeholder="特記事項">
+                    </div>
+                </div>
+            `;
+
+            const actionsDiv = panel.querySelector('.panel-actions');
+            panel.insertBefore(newShipment, actionsDiv);
+        }
+
+        // Delete shipment
+        function deleteShipment(button) {
+            if (confirm('この配送回を削除しますか？')) {
+                button.closest('.shipment-card').remove();
+            }
+        }
+
+        // Confirm product
+        function confirmProduct(panelId) {
+            if (confirm('この商品の配送スケジュールを確定しますか？')) {
+                alert('配送スケジュールを確定しました');
+                toggleDeliveryPanel(panelId);
+            }
+        }
+    </script>
+</body>
+</html>
