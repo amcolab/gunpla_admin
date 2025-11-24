@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理倉庫マスタ - Physical Warehouse Master</title>
+
+    <!-- Link to Common Kintone Stylesheet -->
+    <link rel="stylesheet" href="kintone-common-v2.css">
+
+    <style>
+        /* Page-specific styles (optional) */
+        .form-help {
+            display: block;
+            font-size: 11px;
+            color: #777;
+            margin-top: 2px;
+        }
+        .field-inline-hint {
+            font-size: 11px;
+            color: #999;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">🏭</div>
+        <div class="app-title-header">物理倉庫マスタ</div>
+    </div>
+
+    <!-- Secondary Navigation -->
+    <div class="secondary-nav">
+        <div class="nav-icon">🏠</div>
+        <span class="breadcrumb-text">アプリ: 物理倉庫マスタ</span>
+        <div class="nav-right">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-icon">❓</div>
+        </div>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        物理倉庫（自社倉庫および3PL委託倉庫）の基本情報を管理するアプリです。<br>
+        入出庫や在庫管理で使用する倉庫ID・所在地・担当者・業者連絡先などを一元管理します。
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <!-- View selector -->
+        <button class="view-button">
+            <span class="view-icon">📋</span>
+            <span class="view-text">全件一覧</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+
+        <!-- Search / Filter buttons -->
+        <button class="control-btn">
+            <span class="control-btn-icon">🔍</span>
+            <span>検索</span>
+        </button>
+
+        <button class="control-btn">
+            <span class="control-btn-icon">✅</span>
+            <span>有効のみ</span>
+        </button>
+
+        <button class="control-btn">
+            <span class="control-btn-icon">⤵</span>
+            <span>CSVエクスポート</span>
+        </button>
+
+        <!-- Right side icons (New, Settings, etc.) -->
+        <div class="controls-right">
+            <button class="icon-only-btn" title="新規倉庫追加">➕</button>
+            <button class="icon-only-btn" title="設定">⚙️</button>
+            <button class="icon-only-btn" title="その他">⋯</button>
+        </div>
+    </div>
+
+    <!-- Record Count Top -->
+    <div class="record-count">1 - 3（3件中）</div>
+
+    <!-- Data Table: Physical Warehouses -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>倉庫ID<br><span class="field-inline-hint">ID Kho (Unique)</span></th>
+                    <th>倉庫名<br><span class="field-inline-hint">Tên Kho</span></th>
+                    <th>倉庫種別<br><span class="field-inline-hint">Loại Kho</span></th>
+                    <th>ステータス<br><span class="field-inline-hint">Trạng thái</span></th>
+                    <th>所在地（郵便番号）</th>
+                    <th>所在地（住所）</th>
+                    <th>担当者名</th>
+                    <th>業者連絡先<br><span class="field-inline-hint">Liên hệ NCC (3PL)</span></th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 - In-house warehouse -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link">GIFU</a>
+                    </td>
+                    <td>甲陽園オフィス倉庫（Gifu）</td>
+                    <td>自社倉庫</td>
+                    <td><span class="status-badge status-active">有効</span></td>
+                    <td>500-8001</td>
+                    <td>岐阜県岐阜市〇〇町1-2-3</td>
+                    <td>山田 太郎</td>
+                    <td></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon view" title="表示"></button>
+                            <button class="action-icon edit" title="編集"></button>
+                            <button class="action-icon delete" title="削除"></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 2 - 3PL warehouse -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link">MARUSHO</a>
+                    </td>
+                    <td>丸正物流センター</td>
+                    <td>委託倉庫 (3PL)</td>
+                    <td><span class="status-badge status-active">有効</span></td>
+                    <td>123-4567</td>
+                    <td>東京都江東区△△1-10-20</td>
+                    <td>佐藤 花子</td>
+                    <td>Tel: 03-1234-5678 / logi@marusho.co.jp</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon view" title="表示"></button>
+                            <button class="action-icon edit" title="編集"></button>
+                            <button class="action-icon copy" title="コピー"></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 3 - Inactive warehouse -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link">AMAZAKI</a>
+                    </td>
+                    <td>甘崎サテライト倉庫</td>
+                    <td>自社倉庫</td>
+                    <td><span class="status-badge status-inactive">無効</span></td>
+                    <td>987-6543</td>
+                    <td>大阪府大阪市中央区□□5-6-7</td>
+                    <td>Nguyễn Văn An</td>
+                    <td>※利用停止中</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon view" title="表示"></button>
+                            <button class="action-icon edit" title="再開設定"></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Record Count Bottom -->
+    <div class="record-count" style="margin-bottom: 24px;">1 - 3（3件中）</div>
+
+    <script>
+        console.log('Physical Warehouse Master List UI Spec loaded');
+    </script>
+</body>
+</html>
