@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倉庫作業タスクアプリ - Warehouse Task App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: #4a5568;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon {
+            width: 28px;
+            height: 28px;
+            background: #1890d1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: normal;
+            color: white;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown {
+            min-width: 160px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .dropdown:focus {
+            outline: none;
+            border-color: #1890d1;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            margin-left: auto;
+            background: #1890d1;
+            color: white;
+            border-color: #1890d1;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #1678b6;
+        }
+
+        /* Record Count */
+        .record-count {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* Link */
+        .record-link {
+            color: #1890d1;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-waiting {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .toolbar {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+
+            .toolbar {
+                padding: 10px 12px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary {
+                margin-left: 0;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon">W</div>
+        <div class="app-title">倉庫作業タスクアプリ (Warehouse Task App)</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <select class="dropdown" id="filterTaskType">
+            <option value="">すべてのタスク</option>
+            <option value="picking">出庫 (Picking)</option>
+            <option value="putaway">入庫 (Putaway)</option>
+            <option value="sample">出庫 (Sample)</option>
+            <option value="return">返品処理</option>
+        </select>
+
+        <button class="icon-btn" title="設定">⚙️</button>
+
+        <button class="btn btn-primary">作業開始</button>
+        <button class="btn">リフレッシュ</button>
+    </div>
+
+    <!-- Record Count -->
+    <div class="record-count">
+        <span id="recordCount">全 4 件</span>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>タスクID</th>
+                    <th>タスク種別</th>
+                    <th>依頼元レコード</th>
+                    <th>倉庫</th>
+                    <th>行数/品目数</th>
+                    <th>作成日時</th>
+                    <th>ステータス</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Row 1 - 待機中 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-1001'); return false;">WMS-OUT-1001</a>
+                    </td>
+                    <td>出庫 (Picking)</td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewSource('ORD-B2C-1001'); return false;">ORD-B2C-1001</a>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>3 行</td>
+                    <td>2025/11/05 10:35</td>
+                    <td>
+                        <span class="status-badge status-waiting">待機中</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2 - 処理中 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewTask('WMS-IN-2005'); return false;">WMS-IN-2005</a>
+                    </td>
+                    <td>入庫 (Putaway)</td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewSource('PO-Meka-303'); return false;">PO-Meka-303</a>
+                    </td>
+                    <td>岐阜倉庫</td>
+                    <td>5 行</td>
+                    <td>2025/11/05 10:00</td>
+                    <td>
+                        <span class="status-badge status-processing">処理中</span>
+                    </td>
+                </tr>
+
+                <!-- Row 3 - 待機中 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-1002'); return false;">WMS-OUT-1002</a>
+                    </td>
+                    <td>出庫 (Sample)</td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewSource('SM-20251105'); return false;">SM-20251105</a>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>2 行</td>
+                    <td>2025/11/05 10:20</td>
+                    <td>
+                        <span class="status-badge status-waiting">待機中</span>
+                    </td>
+                </tr>
+
+                <!-- Row 4 - 完了 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-0999'); return false;">WMS-OUT-0999</a>
+                    </td>
+                    <td>出庫 (Picking)</td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewSource('ORD-B2C-0999'); return false;">ORD-B2C-0999</a>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>1 行</td>
+                    <td>2025/11/05 09:00</td>
+                    <td>
+                        <span class="status-badge status-complete">完了</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // View task detail
+        function viewTask(taskId) {
+            alert('タスク詳細を表示: ' + taskId);
+            // window.location.href = `/task-detail.html?id=${taskId}`;
+        }
+
+        // View source record
+        function viewSource(sourceId) {
+            alert('依頼元レコードを表示: ' + sourceId);
+        }
+
+        // Filter functionality
+        document.getElementById('filterTaskType').addEventListener('change', function() {
+            const taskType = this.value;
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const typeCell = row.cells[1].textContent.trim();
+                let showRow = true;
+
+                if (taskType) {
+                    const typeMap = {
+                        'picking': '出庫 (Picking)',
+                        'putaway': '入庫 (Putaway)',
+                        'sample': '出庫 (Sample)',
+                        'return': '返品処理'
+                    };
+                    
+                    if (typeCell !== typeMap[taskType]) {
+                        showRow = false;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+
+            document.getElementById('recordCount').textContent = `全 ${visibleCount} 件`;
+        });
+    </script>
+</body>
+</html>
