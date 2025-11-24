@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在庫実績管理 - Inventory Stock Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        /* Header */
+        .app-header {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        /* Sub Header */
+        .sub-header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .app-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-dropdown::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .record-count {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f5f5f5;
+            border-bottom: 2px solid #e6e6e6;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e6e6e6;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e6e6e6;
+            border-right: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        /* Clickable text - hyperlink style */
+        .clickable {
+            cursor: pointer;
+            color: #3498db;
+            font-weight: normal;
+        }
+
+        .clickable:hover {
+            text-decoration: underline;
+        }
+
+        /* Edit Icon */
+        .edit-icon {
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .edit-icon:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .record-count {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 10px 16px;
+            }
+
+            .sub-header {
+                padding: 12px 16px;
+            }
+
+            .toolbar {
+                padding: 12px 16px;
+            }
+
+            .table-container {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="app-icon">📊</div>
+        <div class="app-title">在庫実績管理</div>
+    </div>
+
+    <!-- Sub Header -->
+    <div class="sub-header">
+        <div class="breadcrumb">
+            アプリ: <a href="#">在庫実績管理</a>
+        </div>
+        <div class="app-description">
+            倉庫内の実際の在庫状況を管理します。商品の保管場所（倉庫・棚）、LOT番号、使用期限を記録します。
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button class="btn btn-primary btn-dropdown">
+            📋 在庫一覧
+        </button>
+        <button class="btn">
+            🔗
+        </button>
+        <button class="btn">
+            💾
+        </button>
+        <button class="btn">
+            📊
+        </button>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="商品コード、商品名、LOTで検索...">
+        </div>
+        <button class="btn btn-primary">
+            ➕
+        </button>
+        <button class="btn">
+            ⚙️
+        </button>
+        <button class="btn">
+            ⋯
+        </button>
+        <div class="record-count">1 - 15 (15件中)</div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>商品コード</th>
+                    <th>商品名</th>
+                    <th>倉庫</th>
+                    <th>棚コード</th>
+                    <th>LOT番号</th>
+                    <th>在庫数量</th>
+                    <th>単位</th>
+                    <th>使用期限</th>
+                    <th>入庫日</th>
+                    <th>最終更新</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RS001')">RS001</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RS001')">RSシリーズ500mL ボトル-乳白</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A01-001')">A01-001</span>
+                    </td>
+                    <td>MW2509</td>
+                    <td>131</td>
+                    <td>本</td>
+                    <td>2026-10-28</td>
+                    <td>2025-10-25</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('RS001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RS003')">RS003</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RS003')">RSシリーズ500mL 中栓</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A01-002')">A01-002</span>
+                    </td>
+                    <td>STP2505</td>
+                    <td>1466</td>
+                    <td>個</td>
+                    <td>2027-01-15</td>
+                    <td>2025-10-25</td>
+                    <td>2025-10-27</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('RS003')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RAW01')">RAW01</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('RAW01')">天然保湿成分‐Ｇ（原液）</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A10-CHE')">A10-CHE</span>
+                    </td>
+                    <td>GHY2514</td>
+                    <td>750</td>
+                    <td>kg</td>
+                    <td>2027-05-30</td>
+                    <td>2025-09-30</td>
+                    <td>2025-10-26</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('RAW01')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('OEM01')">OEM01</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('OEM01')">OEM製品A - 本体（充填済み）</span>
+                    </td>
+                    <td>岐阜倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('G10-OEM')">G10-OEM</span>
+                    </td>
+                    <td>OEM2510</td>
+                    <td>532</td>
+                    <td>個</td>
+                    <td>2026-10-15</td>
+                    <td>2025-10-15</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('OEM01')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('AL001')">AL001</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('AL001')">AL300mL ボトル</span>
+                    </td>
+                    <td>岐阜倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('G01-001')">G01-001</span>
+                    </td>
+                    <td>AL2510</td>
+                    <td>104</td>
+                    <td>本</td>
+                    <td>2026-10-20</td>
+                    <td>2025-10-20</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('AL001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('CAP100')">CAP100</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('CAP100')">計量カップ10mLPPP透明</span>
+                    </td>
+                    <td>混合倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('M01-001')">M01-001</span>
+                    </td>
+                    <td>CAP2502</td>
+                    <td>2000</td>
+                    <td>個</td>
+                    <td>2025-12-31</td>
+                    <td>2025-07-31</td>
+                    <td>2025-10-27</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('CAP100')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS100')">JAS100</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS100')">JAS-100 No1 ボトル(N) 本体</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A02-001')">A02-001</span>
+                    </td>
+                    <td>JAS2507</td>
+                    <td>8500</td>
+                    <td>本</td>
+                    <td>2028-07-15</td>
+                    <td>2025-07-15</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('JAS100')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 8 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS100')">JAS100</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS100')">JAS-100 No1 ボトル(N) 本体</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A02-002')">A02-002</span>
+                    </td>
+                    <td>JAS2509</td>
+                    <td>3600</td>
+                    <td>本</td>
+                    <td>2028-09-20</td>
+                    <td>2025-09-20</td>
+                    <td>2025-10-27</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('JAS100-2')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 9 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PEPI250')">PEPI250</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PEPI250')">PEPI-250(乳白)</span>
+                    </td>
+                    <td>岐阜倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('G02-001')">G02-001</span>
+                    </td>
+                    <td>PEPI2501</td>
+                    <td>15800</td>
+                    <td>個</td>
+                    <td>2025-11-30</td>
+                    <td>2025-08-07</td>
+                    <td>2025-10-26</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('PEPI250')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 10 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PEPI250')">PEPI250</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PEPI250')">PEPI-250(乳白)</span>
+                    </td>
+                    <td>岐阜倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('G02-002')">G02-002</span>
+                    </td>
+                    <td>PEPI2509</td>
+                    <td>4360</td>
+                    <td>個</td>
+                    <td>2027-09-14</td>
+                    <td>2025-09-14</td>
+                    <td>2025-10-25</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('PEPI250-2')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 11 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PR27')">PR27</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('PR27')">PRワンタッチキャップ27No1</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A01-003')">A01-003</span>
+                    </td>
+                    <td>PR2508</td>
+                    <td>19800</td>
+                    <td>個</td>
+                    <td>2028-08-07</td>
+                    <td>2025-08-07</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('PR27')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 12 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('SF500')">SF500</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('SF500')">シリコンフィルム 業務用500mL</span>
+                    </td>
+                    <td>混合倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('M01-002')">M01-002</span>
+                    </td>
+                    <td>SF2507</td>
+                    <td>1000</td>
+                    <td>枚</td>
+                    <td>2027-07-07</td>
+                    <td>2025-07-07</td>
+                    <td>2025-10-27</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('SF500')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 13 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('OLD001')">OLD001</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('OLD001')">旧ボトル在庫</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('A12-RET')">A12-RET</span>
+                    </td>
+                    <td>OLD2401</td>
+                    <td>250</td>
+                    <td>本</td>
+                    <td>2025-10-01</td>
+                    <td>2024-10-01</td>
+                    <td>2025-10-05</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('OLD001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 14 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS50')">JAS50</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('JAS50')">JAS-50N*1(N)</span>
+                    </td>
+                    <td>尼崎倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('B01-001')">B01-001</span>
+                    </td>
+                    <td>JAS50-08</td>
+                    <td>900</td>
+                    <td>本</td>
+                    <td>2027-08-04</td>
+                    <td>2025-08-04</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('JAS50')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 15 -->
+                <tr>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('SHZ17')">SHZ17</span>
+                    </td>
+                    <td>
+                        <span class="clickable" onclick="viewProduct('SHZ17')">シェイゼンキャップ(白) #17-20</span>
+                    </td>
+                    <td>混合倉庫</td>
+                    <td>
+                        <span class="clickable" onclick="viewShelf('TEMP-01')">TEMP-01</span>
+                    </td>
+                    <td>SHZ2507</td>
+                    <td>12500</td>
+                    <td>個</td>
+                    <td>2028-07-04</td>
+                    <td>2025-07-04</td>
+                    <td>2025-10-28</td>
+                    <td>
+                        <span class="edit-icon" onclick="editStock('SHZ17')">✏️</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // View product details
+        function viewProduct(productCode) {
+            alert('商品詳細を表示: ' + productCode);
+        }
+
+        // View shelf details
+        function viewShelf(shelfCode) {
+            alert('棚詳細を表示: ' + shelfCode);
+        }
+
+        // Edit stock
+        function editStock(id) {
+            alert('在庫編集: ' + id);
+        }
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update record count
+            document.querySelector('.record-count').textContent = `1 - ${visibleCount} (${visibleCount}件中)`;
+        });
+    </script>
+</body>
+</html>
