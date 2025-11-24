@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>例外管理 - Error Log Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: #1890d1;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #1890d1;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Description */
+        .app-description {
+            background: #f8f8f8;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            background: #1890d1;
+            color: white;
+            border-color: #1890d1;
+        }
+
+        .btn-primary:hover {
+            background: #1678b6;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .record-count {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .data-table th:first-child {
+            width: 40px;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 12px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* Checkbox */
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Link */
+        .record-link {
+            color: #1890d1;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-fixed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-investigating {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-new {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        /* Summary text */
+        .summary-text {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            padding: 4px 12px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-fix {
+            padding: 4px 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-fix:hover {
+            background: #218838;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .record-count {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+
+            .app-description {
+                padding: 10px 12px;
+            }
+
+            .toolbar {
+                padding: 10px 12px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon">⚠️</div>
+        <div class="app-title">例外管理</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        アプリ: <a href="#">例外管理</a>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        システム例外・エラーログを一元管理します。API障害、同期エラー、タイムアウトなどを記録・追跡します。
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button class="btn btn-primary">
+            <span>➕</span>
+            <span>新規作成</span>
+        </button>
+        <button class="btn">
+            <span>✏️</span>
+            <span>編集</span>
+        </button>
+        <button class="btn">
+            <span>🗑️</span>
+            <span>削除</span>
+        </button>
+        <button class="btn">
+            <span>📊</span>
+            <span>CSV出力</span>
+        </button>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Exception ID、実約、APIで検索...">
+        </div>
+
+        <div class="record-count">1 - 3 (3件中)</div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th>Exception ID</th>
+                    <th>ステータス</th>
+                    <th>例外タイプ</th>
+                    <th>Source</th>
+                    <th>関連アプリ</th>
+                    <th>関連レコードID</th>
+                    <th>要約</th>
+                    <th>API/URL</th>
+                    <th>Retry</th>
+                    <th>発生日時</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 - Fixed -->
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0003'); return false;">EX-20251107-0003</a>
+                    </td>
+                    <td>
+                        <span class="status-badge status-fixed">Fixed</span>
+                    </td>
+                    <td>Validation Error</td>
+                    <td>Kintone_App</td>
+                    <td>Payment_Request</td>
+                    <td>305</td>
+                    <td>
+                        <span class="summary-text" title="支払依頼 金額フォーマット不正">支払依頼 金額フォーマット不正</span>
+                    </td>
+                    <td>-</td>
+                    <td>0</td>
+                    <td>2025/11/7<br>10:40:00</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="editError('EX-20251107-0003')">編集</button>
+                            <button class="btn-fix" onclick="markFixed('EX-20251107-0003')">Fix</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 2 - Investigating -->
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0002'); return false;">EX-20251107-0002</a>
+                    </td>
+                    <td>
+                        <span class="status-badge status-investigating">Investigating</span>
+                    </td>
+                    <td>Sync Mismatch</td>
+                    <td>Ruby_Server</td>
+                    <td>Orders_App</td>
+                    <td>12009</td>
+                    <td>
+                        <span class="summary-text" title="Ship&Co 追跡番号が未登録">Ship&Co 追跡番号が未登録</span>
+                    </td>
+                    <td>/labels</td>
+                    <td>0</td>
+                    <td>2025/11/7<br>10:05:00</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="editError('EX-20251107-0002')">編集</button>
+                            <button class="btn-fix" onclick="markFixed('EX-20251107-0002')">Fix</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 3 - New -->
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0001'); return false;">EX-20251107-0001</a>
+                    </td>
+                    <td>
+                        <span class="status-badge status-new">New</span>
+                    </td>
+                    <td>API Error</td>
+                    <td>GMO_API</td>
+                    <td>Invoice_App</td>
+                    <td>8821</td>
+                    <td>
+                        <span class="summary-text" title="GMO /payments タイムアウト">GMO /payments タイムアウト</span>
+                    </td>
+                    <td>/payments</td>
+                    <td>1</td>
+                    <td>2025/11/7<br>9:35:00</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="editError('EX-20251107-0001')">編集</button>
+                            <button class="btn-fix" onclick="markFixed('EX-20251107-0001')">Fix</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Select all checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.data-table tbody input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        // View error detail
+        function viewError(errorId) {
+            alert('エラー詳細を表示: ' + errorId);
+            // window.location.href = `/error-detail.html?id=${errorId}`;
+        }
+
+        // Edit error
+        function editError(errorId) {
+            alert('エラーを編集: ' + errorId);
+        }
+
+        // Mark as fixed
+        function markFixed(errorId) {
+            if (confirm('このエラーを「Fixed」としてマークしますか？')) {
+                alert('ステータスを「Fixed」に更新しました: ' + errorId);
+                // Update status logic here
+            }
+        }
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update record count
+            document.querySelector('.record-count').textContent = `1 - ${visibleCount} (${visibleCount}件中)`;
+        });
+    </script>
+</body>
+</html>
