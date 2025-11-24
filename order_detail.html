@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文詳細 - Order Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .app-title-header {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Secondary Nav */
+        .secondary-nav {
+            background: #e8e8e8;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #d0d0d0;
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-right: 12px;
+            color: #666;
+        }
+
+        .nav-icon:hover {
+            background: #d8d8d8;
+        }
+
+        .breadcrumb-text {
+            font-size: 12px;
+            color: #666;
+            flex: 1;
+        }
+
+        .breadcrumb-text a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        /* Detail Header */
+        .detail-header {
+            background: white;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        .status-partial {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-shipped {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Detail Body */
+        .detail-body {
+            padding: 20px 24px;
+        }
+
+        .detail-section {
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f8f8;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        /* Field Row */
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .field-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .field-value {
+            font-size: 13px;
+            color: #333;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+
+        /* Form Input */
+        .form-input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Products Table */
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .products-table th {
+            background: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        .products-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .products-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .qty-input {
+            width: 70px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .qty-display {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Status Tag */
+        .delivery-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-part {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-wait {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        /* Shipping Info List */
+        .shipping-list {
+            list-style: none;
+        }
+
+        .shipping-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            border-left: 4px solid #3498db;
+        }
+
+        .shipping-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .shipping-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .tracking-number {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        /* Return Form */
+        .return-form {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-select, .form-textarea {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border-left: 4px solid #3498db;
+            color: #1976d2;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .field-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shipping-details {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .products-table {
+                font-size: 12px;
+            }
+
+            .products-table th,
+            .products-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">🛒</div>
+        <div class="app-title-header">注文管理</div>
+    </div>
+
+    <!-- Secondary Nav -->
+    <div class="secondary-nav">
+        <div class="nav-icon" onclick="goBack()">←</div>
+        <span class="breadcrumb-text">
+            <a href="#" onclick="goBack(); return false;">注文管理</a> > ORD-2025-1101
+        </span>
+    </div>
+
+    <!-- Detail Header -->
+    <div class="detail-header">
+        <div>
+            <span class="detail-title">注文詳細: ORD-2025-1101</span>
+            <span class="status-badge status-partial">一部出荷済</span>
+        </div>
+        <button class="btn" onclick="editOrder()">✏️ 編集</button>
+    </div>
+
+    <!-- Detail Body -->
+    <div class="detail-body">
+        
+        <!-- Alert -->
+        <div class="alert alert-info">
+            <strong>ℹ️ この画面でできること:</strong>
+            注文内容の確認 | 出荷処理（部分出荷対応） | 返品登録 | 配送状況確認
+        </div>
+
+        <!-- 1. 基本情報 -->
+        <div class="detail-section">
+            <div class="section-header">📋 基本情報</div>
+            <div class="section-content">
+                <div class="field-grid">
+                    <div class="field-item">
+                        <div class="field-label">注文番号</div>
+                        <div class="field-value">ORD-2025-1101</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">注文日</div>
+                        <div class="field-value">2025-11-01</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">販売チャネル</div>
+                        <div class="field-value">Shopify Credie</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">顧客区分</div>
+                        <div class="field-value">B2C</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">出荷倉庫</div>
+                        <div class="field-value">岐阜倉庫</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">合計金額</div>
+                        <div class="field-value" style="font-weight: 600; font-size: 16px;">¥90,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. お届け先情報 -->
+        <div class="detail-section">
+            <div class="section-header">📍 お届け先情報</div>
+            <div class="section-content">
+                <div class="field-grid">
+                    <div class="field-item">
+                        <div class="field-label">氏名</div>
+                        <input type="text" class="form-input" value="佐藤 健">
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">電話番号</div>
+                        <input type="text" class="form-input" value="090-1234-5678">
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">メール</div>
+                        <input type="text" class="form-input" value="sato.ken@example.com">
+                    </div>
+                </div>
+                <div class="field-grid" style="grid-template-columns: 1fr 2fr;">
+                    <div class="field-item">
+                        <div class="field-label">郵便番号</div>
+                        <input type="text" class="form-input" value="163-8001">
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">住所</div>
+                        <input type="text" class="form-input" value="東京都新宿区西新宿1-1-1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 商品リスト（部分出荷対応） -->
+        <div class="detail-section">
+            <div class="section-header">📦 商品リスト - 出荷処理</div>
+            <div class="section-content">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>商品名</th>
+                            <th style="text-align: center;">注文数量</th>
+                            <th style="text-align: center;">出荷済数量</th>
+                            <th style="text-align: center;">返品数量</th>
+                            <th style="text-align: center;">未出荷数量</th>
+                            <th style="text-align: center;">今回出荷数</th>
+                            <th style="text-align: center;">ステータス</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Product 1 - Partially Shipped with Return -->
+                        <tr>
+                            <td><strong>RS001</strong></td>
+                            <td>RSシリーズ500mL ボトル-乳白</td>
+                            <td class="qty-display">100</td>
+                            <td class="qty-display" style="color: #27ae60;">40</td>
+                            <td class="qty-display" style="color: #e67e22;">10</td>
+                            <td class="qty-display" style="color: #e74c3c;">60</td>
+                            <td style="text-align: center;">
+                                <input type="number" class="qty-input" value="0" min="0" max="60" id="ship-rs001">
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="delivery-status status-part">一部出荷済</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="shipProduct('RS001', 60)">
+                                    📤 出荷依頼
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Product 2 - Fully Shipped -->
+                        <tr>
+                            <td><strong>RS003</strong></td>
+                            <td>RSシリーズ500mL 中栓</td>
+                            <td class="qty-display">50</td>
+                            <td class="qty-display" style="color: #27ae60;">50</td>
+                            <td class="qty-display" style="color: #999;">0</td>
+                            <td class="qty-display" style="color: #999;">0</td>
+                            <td style="text-align: center;">
+                                <input type="number" class="qty-input" value="0" min="0" max="0" disabled>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="delivery-status status-complete">出荷完了</span>
+                            </td>
+                            <td>
+                                <span style="color: #999; font-size: 12px;">完了済み</span>
+                            </td>
+                        </tr>
+
+                        <!-- Product 3 - Pending -->
+                        <tr>
+                            <td><strong>AL001</strong></td>
+                            <td>AL300mL ボトル</td>
+                            <td class="qty-display">30</td>
+                            <td class="qty-display" style="color: #999;">0</td>
+                            <td class="qty-display" style="color: #999;">0</td>
+                            <td class="qty-display" style="color: #e74c3c;">30</td>
+                            <td style="text-align: center;">
+                                <input type="number" class="qty-input" value="0" min="0" max="30" id="ship-al001">
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="delivery-status status-wait">未出荷</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="shipProduct('AL001', 30)">
+                                    📤 出荷依頼
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. 出荷情報（Shipping Info） -->
+        <div class="detail-section">
+            <div class="section-header">🚚 出荷情報 - Ship&Co連携</div>
+            <div class="section-content">
+                <ul class="shipping-list">
+                    <!-- Shipment 1 -->
+                    <li class="shipping-item">
+                        <div class="shipping-item-header">
+                            <strong>出荷バッチ #1</strong>
+                            <span class="delivery-status status-complete">配送済み</span>
+                        </div>
+                        <div style="margin-bottom: 8px; color: #666; font-size: 12px;">
+                            <strong>商品:</strong> RS001 (20個), RS003 (50個)
+                        </div>
+                        <div class="shipping-details">
+                            <div>
+                                <div class="detail-label">出荷日</div>
+                                <div>2025-11-05</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">配送会社</div>
+                                <div>ヤマト運輸</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">追跡番号</div>
+                                <div class="tracking-number">3982-1234-5678</div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Shipment 2 -->
+                    <li class="shipping-item">
+                        <div class="shipping-item-header">
+                            <strong>出荷バッチ #2</strong>
+                            <span class="delivery-status status-complete">配送済み</span>
+                        </div>
+                        <div style="margin-bottom: 8px; color: #666; font-size: 12px;">
+                            <strong>商品:</strong> RS001 (20個)
+                        </div>
+                        <div class="shipping-details">
+                            <div>
+                                <div class="detail-label">出荷日</div>
+                                <div>2025-11-12</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">配送会社</div>
+                                <div>ヤマト運輸</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">追跡番号</div>
+                                <div class="tracking-number">3982-1234-5680</div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Shipment 3 - Pending -->
+                    <li class="shipping-item" style="border-left-color: #ffc107; background: #fff3cd;">
+                        <div class="shipping-item-header">
+                            <strong>出荷バッチ #3</strong>
+                            <span class="delivery-status status-wait">出荷待ち</span>
+                        </div>
+                        <div style="margin-bottom: 8px; color: #856404; font-size: 12px;">
+                            <strong>未出荷:</strong> RS001 (60個), AL001 (30個)
+                        </div>
+                        <div style="font-size: 12px; color: #856404;">
+                            ⚠️ 出荷タスク作成後、配送情報が自動的に表示されます
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 5. 返品登録セクション -->
+        <div class="detail-section">
+            <div class="section-header">↩️ 返品登録</div>
+            <div class="section-content">
+                <div style="margin-bottom: 12px; color: #666; font-size: 13px;">
+                    出荷済み商品の返品を登録します。登録後、自動で入庫タスクが作成されます。
+                </div>
+
+                <div class="return-form">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label class="field-label">返品SKU</label>
+                            <select class="form-select" id="return-sku">
+                                <option value="">-- 選択してください --</option>
+                                <option value="RS001">RS001 - RSシリーズ500mL ボトル-乳白 (出荷済: 40)</option>
+                                <option value="RS003">RS003 - RSシリーズ500mL 中栓 (出荷済: 50)</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">返品数量</label>
+                            <input type="number" class="form-input" id="return-qty" placeholder="例: 5" min="1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label class="field-label">返品理由</label>
+                            <select class="form-select" id="return-reason">
+                                <option value="">-- 選択してください --</option>
+                                <option value="defect">商品不良</option>
+                                <option value="wrong">誤配送</option>
+                                <option value="customer">顧客都合</option>
+                                <option value="damage">配送時破損</option>
+                                <option value="exchange">交換</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">返品日</label>
+                            <input type="date" class="form-input" id="return-date" value="2025-11-18">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label">メモ（任意）</label>
+                        <textarea class="form-textarea" id="return-note" placeholder="返品に関する詳細情報を入力してください"></textarea>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 12px;">
+                        <button class="btn btn-success" onclick="registerReturn()">
+                            ✅ 返品を登録
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Existing Returns History -->
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 12px; color: #333; font-size: 14px;">
+                        📋 返品履歴
+                    </div>
+
+                    <!-- Return Record 1 -->
+                    <div style="padding: 12px; background: #fff3cd; border-left: 4px solid #e67e22; border-radius: 4px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div>
+                                <strong>返品ID: RET-2025-001</strong>
+                                <span class="delivery-status status-complete" style="margin-left: 8px;">入庫完了</span>
+                            </div>
+                            <div style="font-size: 12px; color: #666;">2025-11-10</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px; color: #666;">
+                            <div>
+                                <div style="font-weight: 600; color: #333;">SKU</div>
+                                <div>RS001</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">数量</div>
+                                <div style="color: #e67e22; font-weight: 600;">10個</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">理由</div>
+                                <div>商品不良</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                            <strong>メモ:</strong> 外装に傷があったため返品。在庫復元済み。
+                        </div>
+                    </div>
+
+                    <!-- Return Record 2 - Exchange (交換) -->
+                    <div style="padding: 12px; background: #e3f2fd; border-left: 4px solid #3498db; border-radius: 4px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <strong>返品ID: RET-2025-002（交換）</strong>
+                                <span class="delivery-status status-complete" style="margin-left: 4px;">入庫完了</span>
+                                <span class="delivery-status status-complete">出庫完了</span>
+                            </div>
+                            <div style="font-size: 12px; color: #666;">2025-11-12</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px; color: #666;">
+                            <div>
+                                <div style="font-weight: 600; color: #333;">SKU</div>
+                                <div>RS003</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">数量</div>
+                                <div style="color: #3498db; font-weight: 600;">8個</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">理由</div>
+                                <div style="color: #3498db; font-weight: 600;">交換</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                            <strong>メモ:</strong> サイズ違いのため交換対応。不良品8個を入庫し、新品8個を出庫完了。
+                        </div>
+                        <div style="margin-top: 8px; padding: 8px; background: white; border-radius: 3px; font-size: 12px;">
+                            <div style="display: flex; gap: 20px;">
+                                <div>
+                                    <span style="color: #666;">入庫:</span> 
+                                    <span style="font-weight: 600;">2025-11-12 完了</span>
+                                </div>
+                                <div>
+                                    <span style="color: #666;">出庫:</span> 
+                                    <span style="font-weight: 600;">2025-11-13 完了</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Return Record 3 -->
+                    <div style="padding: 12px; background: #fff3cd; border-left: 4px solid #e67e22; border-radius: 4px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div>
+                                <strong>返品ID: RET-2025-003</strong>
+                                <span class="delivery-status status-wait" style="margin-left: 8px;">入庫待ち</span>
+                            </div>
+                            <div style="font-size: 12px; color: #666;">2025-11-15</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px; color: #666;">
+                            <div>
+                                <div style="font-weight: 600; color: #333;">SKU</div>
+                                <div>RS003</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">数量</div>
+                                <div style="color: #e67e22; font-weight: 600;">5個</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333;">理由</div>
+                                <div>顧客都合</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                            <strong>メモ:</strong> サイズ違いのため返品依頼。入庫タスク作成済み。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Go back
+        function goBack() {
+            alert('注文一覧に戻ります');
+        }
+
+        // Edit order
+        function editOrder() {
+            alert('注文を編集モードに切り替えます');
+        }
+
+        // Ship product
+        function shipProduct(sku, maxQty) {
+            const input = document.getElementById('ship-' + sku.toLowerCase());
+            const qty = parseInt(input.value);
+
+            if (!qty || qty <= 0) {
+                alert('⚠️ 出荷数量を入力してください');
+                return;
+            }
+
+            if (qty > maxQty) {
+                alert(`⚠️ 出荷数量は未出荷数量 (${maxQty}) を超えることはできません`);
+                return;
+            }
+
+            if (confirm(`出荷依頼を作成しますか?\n\nSKU: ${sku}\n出荷数量: ${qty}\n\n` +
+                       `※ 出荷タスクが作成され、倉庫スタッフに通知されます`)) {
+                alert(`✅ 出荷依頼を作成しました\n\nSKU: ${sku}\n数量: ${qty}\n\n` +
+                      `出荷タスクが作成されました。\n倉庫スタッフが処理を開始します。`);
+                
+                // Reload in real implementation
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        }
+
+        // Register return
+        function registerReturn() {
+            const sku = document.getElementById('return-sku').value;
+            const qty = document.getElementById('return-qty').value;
+            const reason = document.getElementById('return-reason').value;
+            const date = document.getElementById('return-date').value;
+            const note = document.getElementById('return-note').value;
+
+            // Validation
+            if (!sku) {
+                alert('⚠️ 返品SKUを選択してください');
+                return;
+            }
+            if (!qty || qty <= 0) {
+                alert('⚠️ 返品数量を入力してください');
+                return;
+            }
+            if (!reason) {
+                alert('⚠️ 返品理由を選択してください');
+                return;
+            }
+
+            const reasonText = {
+                'defect': '商品不良',
+                'wrong': '誤配送',
+                'customer': '顧客都合',
+                'damage': '配送時破損',
+                'exchange': '交換',
+                'other': 'その他'
+            }[reason];
+
+            const isExchange = reason === 'exchange';
+            const taskText = isExchange 
+                ? '入庫タスクと出庫タスクが自動作成されます。\n交換品の出荷は入庫完了後に行われます。'
+                : '入庫タスクが自動作成されます';
+
+            if (confirm(`返品を登録しますか?\n\n` +
+                       `SKU: ${sku}\n` +
+                       `数量: ${qty}\n` +
+                       `理由: ${reasonText}${isExchange ? ' ※交換対応' : ''}\n` +
+                       `返品日: ${date}\n` +
+                       `メモ: ${note || '(なし)'}\n\n` +
+                       `※ ${taskText}`)) {
+                
+                const successMsg = isExchange
+                    ? `✅ 交換返品を登録しました\n\n` +
+                      `返品ID: RET-${Date.now()}\n` +
+                      `SKU: ${sku}\n` +
+                      `数量: ${qty}\n\n` +
+                      `入庫タスクと出庫タスクが作成されました。\n` +
+                      `1. 不良品の入庫完了後\n` +
+                      `2. 新品の出庫が自動的に処理されます`
+                    : `✅ 返品を登録しました\n\n` +
+                      `返品ID: RET-${Date.now()}\n` +
+                      `SKU: ${sku}\n` +
+                      `数量: ${qty}\n\n` +
+                      `入庫タスクが作成されました。\n完了後、在庫が自動的に戻ります。`;
+                
+                alert(successMsg);
+                
+                // Clear form and reload
+                document.getElementById('return-sku').value = '';
+                document.getElementById('return-qty').value = '';
+                document.getElementById('return-reason').value = '';
+                document.getElementById('return-note').value = '';
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

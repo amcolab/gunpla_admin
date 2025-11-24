@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>システム設定 – 業務ルール（税率）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+
+    .k-app-wrap {
+      max-width: 1100px;
+      margin: 24px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 10px 24px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .k-app-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid #e5e5ea;
+      background: #fafafa;
+    }
+
+    .k-app-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .k-app-body {
+      padding: 20px 24px 28px;
+    }
+
+    .k-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .k-form-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .k-form-table th,
+    .k-form-table td {
+      border-bottom: 1px solid #eee;
+      padding: 10px 10px;
+      vertical-align: top;
+    }
+
+    .k-form-table th {
+      width: 220px;
+      background: #fafafa;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .k-input-number,
+    .k-input-date,
+    .k-textarea {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #d0d0d7;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .k-input-number {
+      width: 120px;
+    }
+
+    .k-textarea {
+      width: 100%;
+      height: 72px;
+      resize: vertical;
+    }
+
+    .k-radio-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .k-field-note {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .k-inline-suffix {
+      margin-left: 4px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .k-toolbar-footer {
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 1px solid #e5e5ea;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .k-btn {
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .k-btn-primary {
+      background: #3067f0;
+      color: #fff;
+      border-color: #2855c0;
+    }
+
+    .k-btn-secondary {
+      background: #fff;
+      color: #333;
+      border-color: #c8c8d0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="k-app-wrap">
+    <!-- Header -->
+    <div class="k-app-header">
+      <div class="k-app-title">システム設定 – 業務ルール（税率）</div>
+    </div>
+
+    <!-- Body -->
+    <div class="k-app-body">
+
+      <div class="k-section-title">消費税ルール</div>
+
+      <table class="k-form-table">
+
+        <tr>
+          <th>消費税率（％）</th>
+          <td>
+            <input type="number" class="k-input-number" min="0" max="50" step="0.1" value="10" />
+            <span class="k-inline-suffix">％</span>
+          </td>
+        </tr>
+
+        <tr>
+          <th>価格の扱い方式</th>
+          <td>
+            <div class="k-radio-group">
+              <label><input type="radio" name="price_mode" value="tax_included" checked /> 税込価格として扱う</label>
+              <label><input type="radio" name="price_mode" value="tax_excluded" /> 税抜価格として扱う</label>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th>適用開始日</th>
+          <td>
+            <input type="date" class="k-input-date" />
+          </td>
+        </tr>
+
+        <tr>
+          <th>備考</th>
+          <td>
+            <textarea class="k-textarea" placeholder="必要に応じて社内メモを記入"></textarea>
+          </td>
+        </tr>
+
+      </table>
+
+      <div class="k-toolbar-footer">
+        <button class="k-btn k-btn-secondary">キャンセル</button>
+        <button class="k-btn k-btn-primary">保存</button>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

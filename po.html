@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>発注管理 - Purchase Order Management</title>
+    
+    <style>
+        /* ========================================
+           KINTONE COMMON STYLESHEET v2.0
+           共通スタイルシート
+           ========================================
+           Kintone Standard Blue: #3498db
+           Use this stylesheet for all Kintone apps
+           ======================================== */
+
+        /* ===== BASE RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* ===== CSS VARIABLES (Kintone Colors) ===== */
+        :root {
+            --kintone-blue: #3498db;
+            --kintone-blue-hover: #2980b9;
+            --kintone-blue-light: #e8f4f8;
+            --kintone-purple: #9b59b6;
+            --kintone-purple-dark: #8e44ad;
+            --kintone-gray: #e8e8e8;
+            --kintone-gray-dark: #d0d0d0;
+            --kintone-border: #e0e0e0;
+        }
+
+        /* ===== KINTONE HEADER (Purple Gradient) ===== */
+        .kintone-header {
+            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon-circle {
+            width: 32px;
+            height: 32px;
+            background-color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .app-title-header {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* ===== SECONDARY NAVIGATION (Gray Bar) ===== */
+        .secondary-nav {
+            background-color: #e8e8e8;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #d0d0d0;
+        }
+
+        .breadcrumb-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ===== APP DESCRIPTION SECTION ===== */
+        .app-description {
+            background-color: #f8f8f8;
+            padding: 16px 20px;
+            border-bottom: 1px solid #d0d0d0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ===== VIEW CONTROLS BAR ===== */
+        .view-controls {
+            background-color: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .view-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            min-width: 160px;
+            transition: background-color 0.2s;
+        }
+
+        .view-button:hover {
+            background-color: #2980b9;
+        }
+
+        .view-icon {
+            font-size: 16px;
+        }
+
+        .view-text {
+            flex: 1;
+        }
+
+        .dropdown-arrow {
+            font-size: 10px;
+        }
+
+        /* ===== CONTROL BUTTONS ===== */
+        .control-btn {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 7px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+
+        .control-btn:hover {
+            background-color: #f8f8f8;
+        }
+
+        .control-btn-icon {
+            font-size: 16px;
+            color: #888;
+        }
+
+        .controls-right {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-only-btn {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        .icon-only-btn:hover {
+            background-color: #f8f8f8;
+        }
+
+        /* ===== SEARCH BOX ===== */
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        /* ===== RECORD COUNT ===== */
+        .record-count {
+            background-color: #fff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .bottom-count {
+            background-color: #fff;
+            padding: 12px 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ===== DATA TABLE ===== */
+        .table-container {
+            background-color: #fff;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        .data-table thead {
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            border-right: 1px solid #e8e8e8;
+            white-space: nowrap;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* ===== LINKS ===== */
+        .record-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Unprocessed - Draft */
+        .status-unprocessed {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        /* Ordered - Warning */
+        .status-ordered {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Partially Received - Info (NEW) */
+        .status-partial {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Fully Received - Success */
+        .status-received {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Cancelled - Danger */
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== KINTONE ROW ACTION ICONS ===== */
+        .row-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-icon {
+            width: 22px;
+            height: 22px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .action-icon:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .view-controls {
+                flex-wrap: wrap;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+            
+            .secondary-nav {
+                padding: 0 12px;
+            }
+            
+            .app-description {
+                padding: 12px 16px;
+            }
+            
+            .view-controls {
+                padding: 12px;
+            }
+            
+            .record-count,
+            .bottom-count {
+                padding: 10px 16px;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">📋</div>
+        <div class="app-title-header">発注管理</div>
+    </div>
+
+    <!-- Secondary Navigation -->
+    <div class="secondary-nav">
+        <span class="breadcrumb-text">
+            アプリ: <a href="#">発注管理</a>
+        </span>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        仕入先への発注を管理し、商品の納品から検査まで一貫して追跡するアプリです。入荷予定、入荷実績、検収状況を確認できます。
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <button class="view-button">
+            <span class="view-icon">📋</span>
+            <span class="view-text">発注一覧</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+        <button class="control-btn">
+            <span class="control-btn-icon">🔗</span>
+        </button>
+        <button class="control-btn">
+            <span class="control-btn-icon">💾</span>
+        </button>
+        <button class="control-btn">
+            <span class="control-btn-icon">📊</span>
+        </button>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="発注番号で検索..." id="searchInput">
+        </div>
+        <div class="controls-right">
+            <button class="icon-only-btn" title="追加">➕</button>
+            <button class="icon-only-btn" title="設定">⚙️</button>
+            <button class="icon-only-btn" title="その他">⋯</button>
+        </div>
+    </div>
+
+    <!-- Record Count -->
+    <div class="record-count">
+        <span id="recordCount">1 - 12 (12件中)</span>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>発注ID</th>
+                    <th>発注日</th>
+                    <th>入荷予定日</th>
+                    <th>入荷日</th>
+                    <th>検収日</th>
+                    <th>商品名</th>
+                    <th>発注数</th>
+                    <th>入荷数</th>
+                    <th>仕入先</th>
+                    <th>発注担当者</th>
+                    <th>検品担当者</th>
+                    <th>ステータス</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Row 1 - Fully Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO001'); return false;">PO001</a>
+                    </td>
+                    <td>5/24</td>
+                    <td>7/4</td>
+                    <td>7/4</td>
+                    <td>7/4</td>
+                    <td>
+                        <a href="#" class="record-link">JAS-100 No1 ボトル(N) 本体</a>
+                    </td>
+                    <td>12,100</td>
+                    <td><strong>12,100</strong></td>
+                    <td>マレーシア</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-received">検収済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO001')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 2 - Partially Received (NEW) -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO002'); return false;">PO002</a>
+                    </td>
+                    <td>5/24</td>
+                    <td>7/4</td>
+                    <td>7/2</td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">シェイゼンキャップ(白) #17-20</a>
+                    </td>
+                    <td>12,500</td>
+                    <td><strong style="color: #e67e22;">8,000</strong></td>
+                    <td>竹本容器株式会社</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-partial">一部入荷済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO002')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 3 - Ordered -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO003'); return false;">PO003</a>
+                    </td>
+                    <td>6/20</td>
+                    <td>7/7</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">シリコンフィルム 業務用ケイソ500mL用</a>
+                    </td>
+                    <td>1,000</td>
+                    <td>0</td>
+                    <td>PROE BOTASILICA</td>
+                    <td><a href="#" class="record-link">三雲産業株式会社</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-ordered">発注済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO003')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 4 - Fully Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO004'); return false;">PO004</a>
+                    </td>
+                    <td>6/22</td>
+                    <td>8/7</td>
+                    <td>8/7</td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">PEPI-250(乳白)</a>
+                    </td>
+                    <td>20,160</td>
+                    <td><strong>20,160</strong></td>
+                    <td>KOYO運輸</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-received">納品済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO004')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 5 - Partially Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO005'); return false;">PO005</a>
+                    </td>
+                    <td>6/22</td>
+                    <td>8/7</td>
+                    <td>8/5</td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">PRワンタッチキャップ27No1 #25-36</a>
+                    </td>
+                    <td>19,800</td>
+                    <td><strong style="color: #e67e22;">15,000</strong></td>
+                    <td>KOYO運輸</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-partial">一部入荷済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO005')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 6 - Ordered -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO006'); return false;">PO006</a>
+                    </td>
+                    <td>7/18</td>
+                    <td>9/14</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">PEPI-250(乳白)</a>
+                    </td>
+                    <td>10,080</td>
+                    <td>0</td>
+                    <td>マレーシア</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-ordered">発注済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO006')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 7 - Fully Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO007'); return false;">PO007</a>
+                    </td>
+                    <td>7/18</td>
+                    <td>8/7</td>
+                    <td>8/7</td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">P用栓せ2.4φ穴 #13-20</a>
+                    </td>
+                    <td>10,080</td>
+                    <td><strong>10,080</strong></td>
+                    <td>マレーシア</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-received">納品済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO007')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 8 - Unprocessed -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO008'); return false;">PO008</a>
+                    </td>
+                    <td>7/26</td>
+                    <td>7/31</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">計量カップ10mLPPP透明</a>
+                    </td>
+                    <td>2,000</td>
+                    <td>0</td>
+                    <td>タナカ・OEM商事</td>
+                    <td><a href="#" class="record-link">合同製作所</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-unprocessed">未処理</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO008')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 9 - Fully Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO009'); return false;">PO009</a>
+                    </td>
+                    <td>8/1</td>
+                    <td>8/4</td>
+                    <td>8/4</td>
+                    <td>8/4</td>
+                    <td>
+                        <a href="#" class="record-link">JAS-50N*1(N)</a>
+                    </td>
+                    <td>900</td>
+                    <td><strong>900</strong></td>
+                    <td>アチシン</td>
+                    <td><a href="#" class="record-link">竹本容器株式会社</a></td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-received">検収済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO009')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 10 - Partially Received -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO010'); return false;">PO010</a>
+                    </td>
+                    <td>8/5</td>
+                    <td>8/20</td>
+                    <td>8/18</td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">RSシリーズ500mL ボトル-乳白</a>
+                    </td>
+                    <td>5,000</td>
+                    <td><strong style="color: #e67e22;">3,200</strong></td>
+                    <td>KOYO運輸</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-partial">一部入荷済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO010')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 11 - Cancelled -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO011'); return false;">PO011</a>
+                    </td>
+                    <td>8/10</td>
+                    <td>8/25</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">AL300mL ボトル</a>
+                    </td>
+                    <td>800</td>
+                    <td>0</td>
+                    <td>マレーシア</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-cancelled">キャンセル</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO011')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 12 - Ordered -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('PO012'); return false;">PO012</a>
+                    </td>
+                    <td>8/15</td>
+                    <td>9/1</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" class="record-link">天然保湿成分"Ｇ（原液）</a>
+                    </td>
+                    <td>1,500</td>
+                    <td>0</td>
+                    <td>三雲産業株式会社</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td></td>
+                    <td><span class="status-badge status-ordered">発注済</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-icon" title="編集" onclick="editOrder('PO012')">✏</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bottom Count -->
+    <div class="bottom-count">
+        <span id="bottomCount">1 - 12 (12件中)</span>
+    </div>
+
+    <script>
+        // View order details
+        function viewOrder(orderId) {
+            alert('発注詳細を表示: ' + orderId);
+        }
+
+        // Edit order
+        function editOrder(orderId) {
+            alert('発注を編集: ' + orderId);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update record count
+            const countText = `1 - ${visibleCount} (${visibleCount}件中)`;
+            document.getElementById('recordCount').textContent = countText;
+            document.getElementById('bottomCount').textContent = countText;
+        });
+    </script>
+</body>
+</html>

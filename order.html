@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文管理 - Order Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .app-title-header {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Secondary Nav */
+        .secondary-nav {
+            background: #e8e8e8;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #d0d0d0;
+        }
+
+        .breadcrumb-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* App Description */
+        .app-description {
+            background: #f8f8f8;
+            padding: 16px 20px;
+            border-bottom: 1px solid #d0d0d0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* View Controls */
+        .view-controls {
+            background: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .view-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            min-width: 160px;
+        }
+
+        .view-button:hover {
+            background: #2980b9;
+        }
+
+        .control-btn {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 7px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .control-btn:hover {
+            background: #f8f8f8;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .controls-right {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-only-btn {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .icon-only-btn:hover {
+            background: #f8f8f8;
+        }
+
+        /* Record Count */
+        .record-count {
+            background: #fff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Table */
+        .table-container {
+            background: #fff;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            border-right: 1px solid #e8e8e8;
+            white-space: nowrap;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* Links */
+        .record-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .status-payment {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-ready {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-shipping {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-partial-ship {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-delivery {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-partial-return {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-returned {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-cancelled {
+            background: #d6d8db;
+            color: #1b1e21;
+        }
+
+        /* Edit Icon */
+        .edit-icon {
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .edit-icon:hover {
+            opacity: 1;
+        }
+
+        /* Delete Icon */
+        .delete-icon {
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            color: #dc3545;
+            margin-left: 8px;
+        }
+
+        .delete-icon:hover {
+            opacity: 1;
+        }
+
+        /* Bottom Count */
+        .bottom-count {
+            background: #fff;
+            padding: 12px 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .view-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .controls-right {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+
+            .app-description {
+                padding: 12px 16px;
+            }
+
+            .view-controls {
+                padding: 10px 12px;
+            }
+
+            .record-count,
+            .bottom-count {
+                padding: 10px 16px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon-circle">📦</div>
+        <div class="app-title-header">注文管理</div>
+    </div>
+
+    <!-- Secondary Navigation -->
+    <div class="secondary-nav">
+        <div class="breadcrumb-text">アプリ: 注文管理</div>
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        顧客からの注文を一元管理します。取引先、注文日、配送予定日、金額、ステータスなどを記録・追跡できます。
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <button class="view-button">📋 全ての注文</button>
+        <button class="control-btn">💾</button>
+        <button class="control-btn">📊</button>
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="注文番号、取引先で検索...">
+        </div>
+        <div class="controls-right">
+            <button class="icon-only-btn" title="新規">➕</button>
+            <button class="icon-only-btn" title="設定">⚙️</button>
+            <button class="icon-only-btn" title="その他">⋯</button>
+        </div>
+    </div>
+
+    <!-- Record Count -->
+    <div class="record-count">
+        <span id="recordCount">1 - 15 (15件中)</span>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>注文番号</th>
+                    <th>注文日</th>
+                    <th>配送予定日</th>
+                    <th>取引先</th>
+                    <th>合計金額</th>
+                    <th>注文元</th>
+                    <th>担当者</th>
+                    <th>ステータス</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Row 1 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD001'); return false;">ORD001</a>
+                    </td>
+                    <td>2025-11-01</td>
+                    <td>2025-11-11</td>
+                    <td>田中商事</td>
+                    <td>¥150,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-processing">処理中</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD002'); return false;">ORD002</a>
+                    </td>
+                    <td>2025-11-02</td>
+                    <td>2025-11-12</td>
+                    <td>佐藤株式会社</td>
+                    <td>¥320,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">竹本</a></td>
+                    <td><span class="status-badge status-ready">出荷準備</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD002')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD003'); return false;">ORD003</a>
+                    </td>
+                    <td>2025-11-03</td>
+                    <td>2025-11-13</td>
+                    <td>鈴木グループ</td>
+                    <td>¥85,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-shipping">出荷中</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD003')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD004'); return false;">ORD004</a>
+                    </td>
+                    <td>2025-11-04</td>
+                    <td>2025-11-14</td>
+                    <td>高橋産業</td>
+                    <td>¥275,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">竹本</a></td>
+                    <td><span class="status-badge status-delivery">配送中</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD004')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD005'); return false;">ORD005</a>
+                    </td>
+                    <td>2025-11-05</td>
+                    <td>2025-11-15</td>
+                    <td>伊藤工業</td>
+                    <td>¥560,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-partial-ship">一部出荷</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD005')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD006'); return false;">ORD006</a>
+                    </td>
+                    <td>2025-11-06</td>
+                    <td>2025-11-16</td>
+                    <td>山田企業</td>
+                    <td>¥125,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-complete">配送完了</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD006')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD007'); return false;">ORD007</a>
+                    </td>
+                    <td>2025-11-07</td>
+                    <td>2025-11-17</td>
+                    <td>渡辺産業</td>
+                    <td>¥90,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">竹本</a></td>
+                    <td><span class="status-badge status-partial-return">一部返品</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD007')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 8 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD008'); return false;">ORD008</a>
+                    </td>
+                    <td>2025-11-08</td>
+                    <td>2025-11-18</td>
+                    <td>中村建設</td>
+                    <td>¥50,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-returned">返品済</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD008')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 9 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD009'); return false;">ORD009</a>
+                    </td>
+                    <td>2025-11-09</td>
+                    <td>2025-11-19</td>
+                    <td>小林貿易</td>
+                    <td>¥36,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-cancelled">キャンセル</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD009')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 10 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD010'); return false;">ORD010</a>
+                    </td>
+                    <td>2025-11-10</td>
+                    <td>2025-11-20</td>
+                    <td>加藤物産</td>
+                    <td>¥125,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">竹本</a></td>
+                    <td><span class="status-badge status-complete">配送完了</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD010')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 11 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD011'); return false;">ORD011</a>
+                    </td>
+                    <td>2025-11-11</td>
+                    <td>2025-11-21</td>
+                    <td>松本商会</td>
+                    <td>¥200,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-partial-ship">一部出荷</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD011')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 12 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD012'); return false;">ORD012</a>
+                    </td>
+                    <td>2025-11-12</td>
+                    <td>2025-11-22</td>
+                    <td>吉田薬品</td>
+                    <td>¥450,000</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-shipping">出荷中</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD012')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 13 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD013'); return false;">ORD013</a>
+                    </td>
+                    <td>2025-11-13</td>
+                    <td>2025-11-23</td>
+                    <td>森田ビューティー</td>
+                    <td>¥36,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">竹本</a></td>
+                    <td><span class="status-badge status-delivery">配送中</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD013')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 14 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD014'); return false;">ORD014</a>
+                    </td>
+                    <td>2025-11-14</td>
+                    <td>2025-11-24</td>
+                    <td>石井商店</td>
+                    <td>¥52,500</td>
+                    <td>Shopify Credie</td>
+                    <td><a href="#" class="record-link">社長</a></td>
+                    <td><span class="status-badge status-payment">入金待ち</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD014')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 15 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewOrder('ORD015'); return false;">ORD015</a>
+                    </td>
+                    <td>2025-11-15</td>
+                    <td>2025-11-25</td>
+                    <td>西村物流</td>
+                    <td>¥108,000</td>
+                    <td>Agency Portal</td>
+                    <td><a href="#" class="record-link">中村</a></td>
+                    <td><span class="status-badge status-draft">下書き</span></td>
+                    <td>
+                        <span class="edit-icon" onclick="editOrder('ORD015')">✏️</span>
+                        <span class="delete-icon" onclick="deleteOrder('ORD015')">×</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bottom Count -->
+    <div class="bottom-count">
+        <span id="bottomCount">1 - 15 (15件中)</span>
+    </div>
+
+    <script>
+        // View order
+        function viewOrder(orderId) {
+            alert('注文詳細を表示: ' + orderId);
+        }
+
+        // Edit order
+        function editOrder(orderId) {
+            alert('注文を編集: ' + orderId);
+        }
+
+        // Delete order
+        function deleteOrder(orderId) {
+            if (confirm(`この注文を削除しますか?\n\n注文ID: ${orderId}\n\n※ この操作は取り消せません`)) {
+                alert(`注文を削除しました: ${orderId}`);
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update record count
+            const countText = `1 - ${visibleCount} (${visibleCount}件中)`;
+            document.getElementById('recordCount').textContent = countText;
+            document.getElementById('bottomCount').textContent = countText;
+        });
+    </script>
+</body>
+</html>
