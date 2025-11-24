@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>請求管理（AR）- Invoice Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: normal;
+            color: white;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Description */
+        .app-description {
+            background: #f8f8f8;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dropdown {
+            min-width: 160px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .dropdown:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        /* Record Count */
+        .record-count {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 12px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* Link */
+        .record-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Amount */
+        .amount {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-unpaid {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-partial {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+
+            .app-description {
+                padding: 10px 12px;
+            }
+
+            .toolbar {
+                padding: 10px 12px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon">📄</div>
+        <div class="app-title">請求管理（AR）</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">ホーム</a> > <a href="#">アプリ</a> > 請求管理（AR）
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        代理店・直販顧客への請求書発行・入金管理。GMO決済連携による自動銀行振込実行、承認ワークフロー、リトライ機能、実行ステータス管理に対応。VA ID（仮想口座）による入金照合を自動化。
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <select class="dropdown" id="filterPaymentStatus">
+            <option value="">全入金ステータス</option>
+            <option value="unpaid">未入金</option>
+            <option value="partial">一部入金</option>
+            <option value="paid">入金済</option>
+            <option value="overdue">支払期限超過</option>
+        </select>
+
+        <button class="icon-btn" title="検索">🔍</button>
+        <button class="icon-btn" title="印刷">🖨️</button>
+        <button class="icon-btn" title="エクスポート">💾</button>
+
+        <button class="btn-primary">
+            <span>+</span>
+            <span>請求書発行</span>
+        </button>
+    </div>
+
+    <!-- Record Count -->
+    <div class="record-count">
+        <span id="recordCount">142件のレコード</span>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>請求書ID</th>
+                    <th>関連注文番号</th>
+                    <th>VA ID</th>
+                    <th>請求金額</th>
+                    <th>請求日</th>
+                    <th>支払期日</th>
+                    <th>取引先</th>
+                    <th>入金ステータス</th>
+                    <th>入金日</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Row 1 - 未入金 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0156'); return false;">INV-2025-0156</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0892</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240928001</a>
+                    </td>
+                    <td class="amount">¥1,250,000</td>
+                    <td>2025/09/01</td>
+                    <td>2025/09/30</td>
+                    <td>山田商事</td>
+                    <td>
+                        <span class="status-badge status-unpaid">未入金</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+
+                <!-- Row 2 - 一部入金 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0155'); return false;">INV-2025-0155</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0890</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240927002</a>
+                    </td>
+                    <td class="amount">¥680,400</td>
+                    <td>2025/08/29</td>
+                    <td>2025/09/28</td>
+                    <td>東京流通センター</td>
+                    <td>
+                        <span class="status-badge status-partial">一部入金</span>
+                    </td>
+                    <td>2025/09/15</td>
+                </tr>
+
+                <!-- Row 3 - 入金済 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0154'); return false;">INV-2025-0154</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0888</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240926003</a>
+                    </td>
+                    <td class="amount">¥1,580,000</td>
+                    <td>2025/08/28</td>
+                    <td>2025/09/27</td>
+                    <td>佐藤OEM</td>
+                    <td>
+                        <span class="status-badge status-paid">入金済</span>
+                    </td>
+                    <td>2025/09/25</td>
+                </tr>
+
+                <!-- Row 4 - 支払期限超過 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0153'); return false;">INV-2025-0153</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0885</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240825004</a>
+                    </td>
+                    <td class="amount">¥920,500</td>
+                    <td>2025/07/27</td>
+                    <td>2025/08/26</td>
+                    <td>関西ウォーター販売</td>
+                    <td>
+                        <span class="status-badge status-overdue">支払期限超過</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+
+                <!-- Row 5 - 入金済 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0152'); return false;">INV-2025-0152</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0880</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240924005</a>
+                    </td>
+                    <td class="amount">¥458,200</td>
+                    <td>2025/08/26</td>
+                    <td>2025/09/25</td>
+                    <td>Marushi運送</td>
+                    <td>
+                        <span class="status-badge status-paid">入金済</span>
+                    </td>
+                    <td>2025/09/24</td>
+                </tr>
+
+                <!-- Row 6 - 未入金 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0151'); return false;">INV-2025-0151</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0875</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240929006</a>
+                    </td>
+                    <td class="amount">¥1,890,000</td>
+                    <td>2025/09/01</td>
+                    <td>2025/09/30</td>
+                    <td>雑賀アフィリエイト</td>
+                    <td>
+                        <span class="status-badge status-unpaid">未入金</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+
+                <!-- Row 7 - 入金済 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0150'); return false;">INV-2025-0150</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0870</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240918007</a>
+                    </td>
+                    <td class="amount">¥345,600</td>
+                    <td>2025/08/20</td>
+                    <td>2025/09/19</td>
+                    <td>田中商事</td>
+                    <td>
+                        <span class="status-badge status-paid">入金済</span>
+                    </td>
+                    <td>2025/09/18</td>
+                </tr>
+
+                <!-- Row 8 - 一部入金 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0149'); return false;">INV-2025-0149</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0865</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240913008</a>
+                    </td>
+                    <td class="amount">¥1,250,000</td>
+                    <td>2025/08/15</td>
+                    <td>2025/09/14</td>
+                    <td>サクラ商事株式会社</td>
+                    <td>
+                        <span class="status-badge status-partial">一部入金</span>
+                    </td>
+                    <td>2025/09/10</td>
+                </tr>
+
+                <!-- Row 9 - 入金済 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0148'); return false;">INV-2025-0148</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0860</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA240908009</a>
+                    </td>
+                    <td class="amount">¥567,800</td>
+                    <td>2025/08/10</td>
+                    <td>2025/09/09</td>
+                    <td>大阪流通</td>
+                    <td>
+                        <span class="status-badge status-paid">入金済</span>
+                    </td>
+                    <td>2025/09/08</td>
+                </tr>
+
+                <!-- Row 10 - 未入金 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0147'); return false;">INV-2025-0147</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">ORD-2025-0855</a>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">VA241003010</a>
+                    </td>
+                    <td class="amount">¥890,000</td>
+                    <td>2025/09/05</td>
+                    <td>2025/10/04</td>
+                    <td>北海道販売</td>
+                    <td>
+                        <span class="status-badge status-unpaid">未入金</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // View invoice detail
+        function viewInvoice(invoiceId) {
+            alert('請求書詳細を表示: ' + invoiceId);
+            // window.location.href = `/invoice-detail.html?id=${invoiceId}`;
+        }
+
+        // Filter functionality
+        document.getElementById('filterPaymentStatus').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const paymentStatus = document.getElementById('filterPaymentStatus').value;
+
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                let showRow = true;
+
+                // Filter by payment status
+                if (paymentStatus) {
+                    const statusText = row.querySelector('.status-badge').textContent.trim();
+                    const statusMap = {
+                        'unpaid': '未入金',
+                        'partial': '一部入金',
+                        'paid': '入金済',
+                        'overdue': '支払期限超過'
+                    };
+                    if (statusText !== statusMap[paymentStatus]) {
+                        showRow = false;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+
+            document.getElementById('recordCount').textContent = `${visibleCount}件のレコード`;
+        }
+    </script>
+</body>
+</html>
