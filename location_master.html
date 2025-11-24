@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棚・ロケーション管理 - Shelf Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        /* Header */
+        .app-header {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        /* Sub Header */
+        .sub-header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .app-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-dropdown::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .record-count {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f5f5f5;
+            border-bottom: 2px solid #e6e6e6;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e6e6e6;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e6e6e6;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        /* Shelf Code */
+        .shelf-code {
+            color: #f39c12;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .shelf-code:hover {
+            text-decoration: underline;
+        }
+
+        /* Warehouse Badge */
+        .warehouse-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .warehouse-amagasaki {
+            background: #e8f4f8;
+            color: #3498db;
+        }
+
+        .warehouse-gifu {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .warehouse-mixed {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Description */
+        .description {
+            color: #666;
+            line-height: 1.4;
+            max-width: 400px;
+        }
+
+        /* Edit Icon */
+        .edit-icon {
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .edit-icon:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .record-count {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 10px 16px;
+            }
+
+            .sub-header {
+                padding: 12px 16px;
+            }
+
+            .toolbar {
+                padding: 12px 16px;
+            }
+
+            .table-container {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="app-icon">🗄️</div>
+        <div class="app-title">棚・ロケーション管理</div>
+    </div>
+
+    <!-- Sub Header -->
+    <div class="sub-header">
+        <div class="breadcrumb">
+            アプリ: <a href="#">棚・ロケーション管理</a>
+        </div>
+        <div class="app-description">
+            倉庫内の棚（ロケーション）の位置情報を管理するマスタアプリです。棚コードと位置の説明を登録します。
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button class="btn btn-primary btn-dropdown">
+            📋 棚一覧
+        </button>
+        <button class="btn">
+            🔗
+        </button>
+        <button class="btn">
+            💾
+        </button>
+        <button class="btn">
+            📊
+        </button>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="棚コードまたは位置で検索...">
+        </div>
+        <button class="btn btn-primary">
+            ➕
+        </button>
+        <button class="btn">
+            ⚙️
+        </button>
+        <button class="btn">
+            ⋯
+        </button>
+        <div class="record-count">1 - 15 (15件中)</div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>棚コード</th>
+                    <th>倉庫</th>
+                    <th>位置・説明</th>
+                    <th>ステータス</th>
+                    <th>最終更新日</th>
+                    <th>備考</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A01-001')">A01-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 入口右側 1列目 下段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-25</td>
+                    <td>小型商品用</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A01-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A01-002')">A01-002</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 入口右側 1列目 中段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-25</td>
+                    <td>小型商品用</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A01-002')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A01-003')">A01-003</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 入口右側 1列目 上段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-25</td>
+                    <td>軽量商品用</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A01-003')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A02-001')">A02-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 入口右側 2列目 下段</td>
+                    <td>
+                        <span class="status-badge status-full">満杯</span>
+                    </td>
+                    <td>2025-10-24</td>
+                    <td>ボトル類</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A02-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A02-002')">A02-002</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 入口右側 2列目 中段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-23</td>
+                    <td>キャップ類</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A02-002')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('B01-001')">B01-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">B棟 1階 奥側 1列目 下段 冷蔵エリア</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-20</td>
+                    <td>要冷蔵商品</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('B01-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('G01-001')">G01-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-gifu">岐阜倉庫</span>
+                    </td>
+                    <td class="description">G棟 1階 入口正面 1列目 下段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-18</td>
+                    <td>大型商品</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('G01-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 8 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('G01-002')">G01-002</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-gifu">岐阜倉庫</span>
+                    </td>
+                    <td class="description">G棟 1階 入口正面 1列目 中段</td>
+                    <td>
+                        <span class="status-badge status-maintenance">メンテナンス中</span>
+                    </td>
+                    <td>2025-10-15</td>
+                    <td>棚修理中</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('G01-002')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 9 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('G02-001')">G02-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-gifu">岐阜倉庫</span>
+                    </td>
+                    <td class="description">G棟 1階 入口正面 2列目 下段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-12</td>
+                    <td>包材類</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('G02-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 10 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('G02-002')">G02-002</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-gifu">岐阜倉庫</span>
+                    </td>
+                    <td class="description">G棟 1階 入口正面 2列目 中段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-12</td>
+                    <td>中型包材</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('G02-002')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 11 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('M01-001')">M01-001</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-mixed">混合倉庫</span>
+                    </td>
+                    <td class="description">混合棟 1階 左側 1列目 下段</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-10</td>
+                    <td>混合保管商品</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('M01-001')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 12 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A10-CHE')">A10-CHE</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 化学品エリア 特殊保管棚</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-08</td>
+                    <td>危険物・化学品専用</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A10-CHE')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 13 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('A12-RET')">A12-RET</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-amagasaki">尼崎倉庫</span>
+                    </td>
+                    <td class="description">A棟 1階 返品エリア 検品待ち棚</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-05</td>
+                    <td>返品・不良品一時保管</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('A12-RET')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 14 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('G10-OEM')">G10-OEM</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-gifu">岐阜倉庫</span>
+                    </td>
+                    <td class="description">G棟 2階 OEM専用エリア 大型棚</td>
+                    <td>
+                        <span class="status-badge status-full">満杯</span>
+                    </td>
+                    <td>2025-10-03</td>
+                    <td>OEM完成品</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('G10-OEM')">✏️</span>
+                    </td>
+                </tr>
+
+                <!-- Row 15 -->
+                <tr>
+                    <td>
+                        <span class="shelf-code" onclick="viewShelf('TEMP-01')">TEMP-01</span>
+                    </td>
+                    <td>
+                        <span class="warehouse-badge warehouse-mixed">混合倉庫</span>
+                    </td>
+                    <td class="description">混合棟 入口近く 一時保管エリア</td>
+                    <td>
+                        <span class="status-badge status-active">使用中</span>
+                    </td>
+                    <td>2025-10-01</td>
+                    <td>入荷待ち商品</td>
+                    <td>
+                        <span class="edit-icon" onclick="editShelf('TEMP-01')">✏️</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // View shelf details
+        function viewShelf(shelfCode) {
+            alert('棚詳細を表示: ' + shelfCode);
+            // Here you would redirect to the shelf detail page
+            // window.location.href = '/shelf-detail?code=' + shelfCode;
+        }
+
+        // Edit shelf
+        function editShelf(shelfCode) {
+            alert('編集モード: ' + shelfCode);
+            // Here you would redirect to the edit page
+            // window.location.href = '/shelf-edit?code=' + shelfCode;
+        }
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const shelfCode = row.querySelector('.shelf-code').textContent.toLowerCase();
+                const description = row.querySelector('.description').textContent.toLowerCase();
+                
+                if (shelfCode.includes(searchTerm) || description.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update record count
+            document.querySelector('.record-count').textContent = `1 - ${visibleCount} (${visibleCount}件中)`;
+        });
+    </script>
+</body>
+</html>

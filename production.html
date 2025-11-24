@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>製造実績アプリ</title>
+    <style>
+        /* ====================================
+           KINTONE STYLESHEET
+           ==================================== */
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        /* Top Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #4a4a4a 0%, #2d2d2d 100%);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-icon {
+            width: 24px;
+            height: 24px;
+            background-color: #27ae60;
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: #e8e8e8;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #666;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        /* View Controls */
+        .view-controls {
+            background-color: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-dropdown {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            font-family: inherit;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid #ccc;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+        }
+
+        .icon-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .right-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .add-btn:hover {
+            background-color: #229954;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 16px;
+        }
+
+        .record-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* Table Styles */
+        .kintone-table {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table-header th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #eee;
+            white-space: nowrap;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-cell {
+            padding: 8px;
+            border-right: 1px solid #f0f0f0;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .status-completed {
+            color: #27ae60;
+        }
+
+        .status-pending {
+            color: #e67e22;
+        }
+
+        .status-error {
+            color: #e74c3c;
+        }
+
+        /* Link */
+        .record-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Action Button */
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: #95a5a6;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #7f8c8d;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .view-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .content-area {
+                padding: 12px;
+            }
+            
+            .table-header th,
+            .table-cell {
+                padding: 6px 4px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon">🏭</div>
+        <div class="app-title">製造実績アプリ</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">ホーム</a> &gt; 製造実績アプリ
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <div class="left-controls">
+            <select class="view-dropdown">
+                <option>すべてのレコード</option>
+                <option>処理済み</option>
+                <option>未処理</option>
+                <option>エラーあり</option>
+            </select>
+            <button class="icon-btn" title="検索">🔍</button>
+            <button class="icon-btn" title="フィルタ">⚙️</button>
+        </div>
+        <div class="right-controls">
+            <button class="add-btn" onclick="createNewRecord()">+ 製造実績を記録</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area">
+        <div class="record-count">15件のレコード</div>
+        
+        <table class="kintone-table">
+            <thead class="table-header">
+                <tr>
+                    <th>製造実績ID</th>
+                    <th>Lot番号</th>
+                    <th>製品SKU</th>
+                    <th>製品名</th>
+                    <th>完成数量</th>
+                    <th>不良数量</th>
+                    <th>不良率</th>
+                    <th>完成日</th>
+                    <th>在庫処理</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251026-001')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251026-001'); return false;">
+                            PRD-20251026-001
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1026</td>
+                    <td class="table-cell">RS-500ML-PRM</td>
+                    <td class="table-cell">ライスシリカプレミアム 500ml</td>
+                    <td class="table-cell">995本</td>
+                    <td class="table-cell">5本</td>
+                    <td class="table-cell">0.5%</td>
+                    <td class="table-cell">2025/10/26</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251026-001')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251025-002')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251025-002'); return false;">
+                            PRD-20251025-002
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1025</td>
+                    <td class="table-cell">RS-STICK-080</td>
+                    <td class="table-cell">ライスシリカ スティック 60包</td>
+                    <td class="table-cell">1485包</td>
+                    <td class="table-cell">15包</td>
+                    <td class="table-cell">1.0%</td>
+                    <td class="table-cell">2025/10/25</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251025-002')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251024-003')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251024-003'); return false;">
+                            PRD-20251024-003
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1024</td>
+                    <td class="table-cell">RS-200ML-STD</td>
+                    <td class="table-cell">ライスシリカ 200ml</td>
+                    <td class="table-cell">1980本</td>
+                    <td class="table-cell">20本</td>
+                    <td class="table-cell">1.0%</td>
+                    <td class="table-cell">2025/10/24</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251024-003')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251023-004')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251023-004'); return false;">
+                            PRD-20251023-004
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1023</td>
+                    <td class="table-cell">SI-250ML-PLUS</td>
+                    <td class="table-cell">Si+ 250ml</td>
+                    <td class="table-cell">1492本</td>
+                    <td class="table-cell">8本</td>
+                    <td class="table-cell">0.5%</td>
+                    <td class="table-cell">2025/10/23</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251023-004')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251022-005')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251022-005'); return false;">
+                            PRD-20251022-005
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1022</td>
+                    <td class="table-cell">RS-500ML-PRM</td>
+                    <td class="table-cell">ライスシリカプレミアム 500ml</td>
+                    <td class="table-cell">994本</td>
+                    <td class="table-cell">6本</td>
+                    <td class="table-cell">0.6%</td>
+                    <td class="table-cell">2025/10/22</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251022-005')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251021-006')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251021-006'); return false;">
+                            PRD-20251021-006
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1021</td>
+                    <td class="table-cell">RS-STICK-080</td>
+                    <td class="table-cell">ライスシリカ スティック 60包</td>
+                    <td class="table-cell">1470包</td>
+                    <td class="table-cell">30包</td>
+                    <td class="table-cell">2.0%</td>
+                    <td class="table-cell">2025/10/21</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251021-006')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr class="table-row" onclick="viewDetails('PRD-20251020-007')">
+                    <td class="table-cell">
+                        <a href="#" class="record-link" onclick="event.stopPropagation(); viewDetails('PRD-20251020-007'); return false;">
+                            PRD-20251020-007
+                        </a>
+                    </td>
+                    <td class="table-cell">LOT-2025-1020</td>
+                    <td class="table-cell">RS-200ML-STD</td>
+                    <td class="table-cell">ライスシリカ 200ml</td>
+                    <td class="table-cell">1990本</td>
+                    <td class="table-cell">10本</td>
+                    <td class="table-cell">0.5%</td>
+                    <td class="table-cell">2025/10/20</td>
+                    <td class="table-cell">
+                        <span class="status-badge status-completed">処理済み</span>
+                    </td>
+                    <td class="table-cell">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251020-007')">
+                            詳細
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function createNewRecord() {
+            window.location.href = 'production_record_form.html';
+        }
+
+        function viewDetails(id) {
+            alert('詳細画面: ' + id);
+            // In real app, navigate to detail page
+            // window.location.href = 'production_record_detail.html?id=' + id;
+        }
+
+        console.log('製造実績アプリ loaded');
+    </script>
+</body>
+</html>
