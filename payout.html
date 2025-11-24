@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支払実行リクエスト管理 - Payment Management (AP)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "メイリオ", Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif;
+            background: #e8e8e8;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Kintone Header */
+        .kintone-header {
+            background: linear-gradient(to bottom, #4a5568 0%, #2d3748 100%);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .app-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: normal;
+            color: white;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Description */
+        .app-description {
+            background: #f8f8f8;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dropdown {
+            min-width: 160px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .dropdown:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-primary {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        /* Record Count */
+        .record-count {
+            background: white;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            padding: 12px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .data-table th:last-child {
+            border-right: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table td {
+            padding: 12px 12px;
+            font-size: 13px;
+            color: #333;
+            border-right: 1px solid #f8f8f8;
+        }
+
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        /* Link */
+        .record-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .record-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Amount */
+        .amount {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Payment Type Badge */
+        .type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .type-badge.dividend {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kintone-header {
+                padding: 0 12px;
+            }
+
+            .app-description {
+                padding: 10px 12px;
+            }
+
+            .toolbar {
+                padding: 10px 12px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kintone Header -->
+    <div class="kintone-header">
+        <div class="app-icon">💳</div>
+        <div class="app-title">支払実行リクエスト管理</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">ホーム</a> > <a href="#">アプリ</a> > 支払実行リクエスト管理
+    </div>
+
+    <!-- App Description -->
+    <div class="app-description">
+        銀行振込支払の実行リクエスト管理。GMO決済連携による自動振込実行、承認ワークフロー、リトライ機能、実行ステータス管理に対応。仕入先・報酬・配当への支払処理を一元管理。
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <select class="dropdown" id="filterPaymentType">
+            <option value="">一金支払</option>
+            <option value="purchase">仕入支払</option>
+            <option value="dividend">配当支払</option>
+            <option value="reward">報酬支払</option>
+        </select>
+
+        <select class="dropdown" id="filterStatus">
+            <option value="">全ステータス</option>
+            <option value="pending">承認待ち</option>
+            <option value="processing">実行中</option>
+            <option value="complete">完了</option>
+            <option value="failed">失敗</option>
+        </select>
+
+        <button class="icon-btn" title="検索">🔍</button>
+        <button class="icon-btn" title="リスト表示">📋</button>
+        <button class="icon-btn" title="エクスポート">💾</button>
+
+        <button class="btn-primary">
+            <span>+</span>
+            <span>支払リクエスト</span>
+        </button>
+    </div>
+
+    <!-- Record Count -->
+    <div class="record-count">
+        <span id="recordCount">156件のレコード</span>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>支払ID</th>
+                    <th>支払種別</th>
+                    <th>関連PO番号</th>
+                    <th>支払金額</th>
+                    <th>支払予定日</th>
+                    <th>振込先</th>
+                    <th>承認者</th>
+                    <th>ステータス</th>
+                    <th>GMO取引ID</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Row 1 - 承認待ち -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001156'); return false;">PAY-2025-001156</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0892</a>
+                    </td>
+                    <td class="amount">¥1,250,000</td>
+                    <td>2025/09/30</td>
+                    <td>山田商事</td>
+                    <td>吉村</td>
+                    <td>
+                        <span class="status-badge status-pending">承認待ち</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+
+                <!-- Row 2 - 実行中 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001155'); return false;">PAY-2025-001155</a>
+                    </td>
+                    <td>
+                        <span class="type-badge dividend">配当支払</span>
+                    </td>
+                    <td>-</td>
+                    <td class="amount">¥680,400</td>
+                    <td>2025/09/28</td>
+                    <td>東京流通センター</td>
+                    <td>今野</td>
+                    <td>
+                        <span class="status-badge status-processing">実行中</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240928001</a>
+                    </td>
+                </tr>
+
+                <!-- Row 3 - 完了 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001154'); return false;">PAY-2025-001154</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0890</a>
+                    </td>
+                    <td class="amount">¥1,580,000</td>
+                    <td>2025/09/27</td>
+                    <td>佐藤OEM</td>
+                    <td>中村</td>
+                    <td>
+                        <span class="status-badge status-complete">完了</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240927002</a>
+                    </td>
+                </tr>
+
+                <!-- Row 4 - 失敗 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001153'); return false;">PAY-2025-001153</a>
+                    </td>
+                    <td>
+                        <span class="type-badge dividend">配当支払</span>
+                    </td>
+                    <td>-</td>
+                    <td class="amount">¥920,500</td>
+                    <td>2025/09/26</td>
+                    <td>関西ウォーター販売</td>
+                    <td>柴田</td>
+                    <td>
+                        <span class="status-badge status-failed">失敗</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240926001</a>
+                    </td>
+                </tr>
+
+                <!-- Row 5 - 完了 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001152'); return false;">PAY-2025-001152</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0888</a>
+                    </td>
+                    <td class="amount">¥458,200</td>
+                    <td>2025/09/25</td>
+                    <td>Marushi運送</td>
+                    <td>吉村</td>
+                    <td>
+                        <span class="status-badge status-complete">完了</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240925003</a>
+                    </td>
+                </tr>
+
+                <!-- Row 6 - 承認待ち -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001151'); return false;">PAY-2025-001151</a>
+                    </td>
+                    <td>
+                        <span class="type-badge dividend">配当支払</span>
+                    </td>
+                    <td>-</td>
+                    <td class="amount">¥1,890,000</td>
+                    <td>2025/09/30</td>
+                    <td>雑賀アフィリエイト</td>
+                    <td>-</td>
+                    <td>
+                        <span class="status-badge status-pending">承認待ち</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+
+                <!-- Row 7 - 完了 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001150'); return false;">PAY-2025-001150</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0875</a>
+                    </td>
+                    <td class="amount">¥345,600</td>
+                    <td>2025/09/20</td>
+                    <td>田中商事</td>
+                    <td>今野</td>
+                    <td>
+                        <span class="status-badge status-complete">完了</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240920001</a>
+                    </td>
+                </tr>
+
+                <!-- Row 8 - 実行中 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001149'); return false;">PAY-2025-001149</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0870</a>
+                    </td>
+                    <td class="amount">¥1,250,000</td>
+                    <td>2025/09/28</td>
+                    <td>サクラ商事株式会社</td>
+                    <td>中村</td>
+                    <td>
+                        <span class="status-badge status-processing">実行中</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240928002</a>
+                    </td>
+                </tr>
+
+                <!-- Row 9 - 完了 -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001148'); return false;">PAY-2025-001148</a>
+                    </td>
+                    <td>
+                        <span class="type-badge dividend">配当支払</span>
+                    </td>
+                    <td>-</td>
+                    <td class="amount">¥567,800</td>
+                    <td>2025/09/15</td>
+                    <td>大阪流通</td>
+                    <td>柴田</td>
+                    <td>
+                        <span class="status-badge status-complete">完了</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">GMO240915001</a>
+                    </td>
+                </tr>
+
+                <!-- Row 10 - 承認待ち -->
+                <tr>
+                    <td>
+                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001147'); return false;">PAY-2025-001147</a>
+                    </td>
+                    <td>
+                        <span class="type-badge">仕入支払</span>
+                    </td>
+                    <td>
+                        <a href="#" class="record-link">PO-2025-0865</a>
+                    </td>
+                    <td class="amount">¥890,000</td>
+                    <td>2025/10/05</td>
+                    <td>北海道販売</td>
+                    <td>吉村</td>
+                    <td>
+                        <span class="status-badge status-pending">承認待ち</span>
+                    </td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // View payment detail
+        function viewPayment(paymentId) {
+            alert('支払詳細を表示: ' + paymentId);
+            // window.location.href = `/payment-detail.html?id=${paymentId}`;
+        }
+
+        // Filter functionality
+        document.getElementById('filterPaymentType').addEventListener('change', applyFilters);
+        document.getElementById('filterStatus').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const paymentType = document.getElementById('filterPaymentType').value;
+            const status = document.getElementById('filterStatus').value;
+
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                let showRow = true;
+
+                // Filter by payment type
+                if (paymentType) {
+                    const typeText = row.querySelector('.type-badge').textContent.trim();
+                    const typeMap = {
+                        'purchase': '仕入支払',
+                        'dividend': '配当支払',
+                        'reward': '報酬支払'
+                    };
+                    if (typeText !== typeMap[paymentType]) {
+                        showRow = false;
+                    }
+                }
+
+                // Filter by status
+                if (status && showRow) {
+                    const statusText = row.querySelector('.status-badge').textContent.trim();
+                    const statusMap = {
+                        'pending': '承認待ち',
+                        'processing': '実行中',
+                        'complete': '完了',
+                        'failed': '失敗'
+                    };
+                    if (statusText !== statusMap[status]) {
+                        showRow = false;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+
+            document.getElementById('recordCount').textContent = `${visibleCount}件のレコード`;
+        }
+    </script>
+</body>
+</html>
