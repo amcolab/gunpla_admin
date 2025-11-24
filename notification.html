@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Screen Specification - 通知センター（ヘッダー通知ベル）</title>
+  <link rel="stylesheet" href="kintone-common-v2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+    }
+    .spec-container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+    .spec-header {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .spec-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .spec-meta span {
+      white-space: nowrap;
+    }
+    .spec-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background-color: #eef2ff;
+      color: #4338ca;
+      margin-right: 8px;
+    }
+    h1 {
+      font-size: 20px;
+      margin: 8px 0 0;
+      color: #111827;
+    }
+    h2 {
+      font-size: 16px;
+      margin-top: 24px;
+      border-left: 4px solid #2563eb;
+      padding-left: 8px;
+      color: #111827;
+    }
+    h3 {
+      font-size: 14px;
+      margin-top: 18px;
+      color: #111827;
+    }
+    p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #374151;
+    }
+    ul, ol {
+      font-size: 13px;
+      color: #374151;
+      padding-left: 1.4rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    code, .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      background: #f3f4f6;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+    .badge-mvp {
+      background-color: #ecfdf3;
+      color: #166534;
+    }
+    .badge-phase2 {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+    }
+    .badge-low {
+      background-color: #f9fafb;
+      color: #6b7280;
+    }
+    .note {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .layout-box {
+      border: 1px dashed #d1d5db;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 8px;
+      background-color: #f9fafb;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="spec-container">
+    <header class="spec-header">
+      <div class="spec-meta">
+        <span>画面ID: SYS-NOTI-001</span>
+        <span>最終更新日: 2025-11-24</span>
+        <span>作成: AMCOLAB</span>
+      </div>
+      <div>
+        <span class="spec-tag">共通コンポーネント</span>
+        <h1>通知センター（ヘッダー通知ベル） UI仕様</h1>
+      </div>
+    </header>
+
+    <!-- 1. 目的 -->
+    <section id="purpose">
+      <h2>1. 目的</h2>
+      <p>
+        本仕様は、Credie システムの共通ヘッダーに配置される
+        <span class="kbd">通知ベルアイコン</span>および通知センター機能の仕様を定義する。
+      </p>
+      <ul>
+        <li>社内ユーザー（Admin / Payment Approver / Staff）が、自分宛ての重要なお知らせ・未処理のものを一覧で確認できること。</li>
+        <li>受注、支払承認、倉庫タスク、在庫、外部API連携エラーなど、システム全体の重要イベントを一元的に把握できること。</li>
+        <li>通知の既読管理（既読／未読）と、必要に応じて詳細画面への遷移を提供すること。</li>
+      </ul>
+    </section>
+
+    <!-- 2. ユーザーストーリー -->
+    <section id="user-stories">
+      <h2>2. ユーザーストーリー</h2>
+      <h3>2.1 Payment Approver（支払承認権限ユーザー）</h3>
+      <ul>
+        <li>自分が承認すべき支払依頼（振込・決済）が発生したら、すぐに気づきたい。</li>
+        <li>支払承認待ち・入金エラー・EC連携エラーなど、決済関連の重要イベントをリストで確認したい。</li>
+      </ul>
+
+      <h3>2.2 Admin（システム管理・運用担当）</h3>
+      <ul>
+        <li>全体のエラー（外部API連携エラーなど）と、在庫に関する重要なお知らせを把握したい。</li>
+        <li>どのユーザーにどのような通知が飛んでいるか、一覧で確認したい。</li>
+      </ul>
+
+      <h3>2.3 Staff 共通（営業・倉庫担当・オペレーション担当）</h3>
+      <ul>
+        <li>自分が担当する受注・倉庫タスクに関連する通知のみを簡単に確認したい。</li>
+        <li>未処理の出荷タスクや、在庫不足に関する通知を見逃さないようにしたい。</li>
+      </ul>
+    </section>
+
+    <!-- 3. 機能仕様 -->
+    <section id="functional">
+      <h2>3. 機能仕様</h2>
+
+      <h3>3.1 通知種別一覧</h3>
+      <p>本MVPで扱う通知種別は以下とする。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>名称</th>
+            <th>概要</th>
+            <th>代表的なトリガー</th>
+            <th>対象ロール</th>
+            <th>Priority</th>
+            <th>Phase</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NOTI-ORD-NEW</code></td>
+            <td>新規受注</td>
+            <td>新しい受注が確定したことを知らせる。</td>
+            <td>注文アプリで受注ステータスが「承認済み」に更新された時。</td>
+            <td>Admin, Staff</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-ORD-STATUS</code></td>
+            <td>受注ステータス変更</td>
+            <td>自分が担当する受注のステータスが変更されたことを知らせる。</td>
+            <td>出荷完了、キャンセルなど、主要ステータスへの遷移時。</td>
+            <td>Admin, Staff</td>
+            <td><span class="badge badge-mvp">中</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-REQ</code></td>
+            <td>支払承認依頼</td>
+            <td>社内で確認済みの支払（AP）が、最終承認者に回ってきたことを通知。</td>
+            <td>支払依頼レコードのステータスが「承認待ち（最終）」になった時。</td>
+            <td>Payment Approver</td>
+            <td><span class="badge badge-mvp">最重要</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-DONE</code></td>
+            <td>支払完了</td>
+            <td>支払・振込が完了したことを通知。</td>
+            <td>銀行API／仕訳登録などにより支払ステータスが「支払済み」になった時。</td>
+            <td>Admin, Payment Approver</td>
+            <td><span class="badge badge-mvp">中</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-ERROR</code></td>
+            <td>支払処理エラー</td>
+            <td>支払処理に失敗したことを通知。</td>
+            <td>銀行API 連携エラー、金額不整合などにより支払処理が失敗した時。</td>
+            <td>Admin, Payment Approver</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PO-DONE</code></td>
+            <td>発注（PO）承認済み</td>
+            <td>購買発注が社内承認され、仕入先に送付可能な状態になったことを通知。</td>
+            <td>POアプリでステータスが「承認済み」になった時。</td>
+            <td>Admin, Staff（購買担当）</td>
+            <td><span class="badge badge-mvp">中</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-TASK-NEW</code></td>
+            <td>倉庫タスク新規</td>
+            <td>出荷・入庫・移動などの倉庫タスクが新しく作成されたことを通知。</td>
+            <td>タスク管理アプリで Picking / Putaway / Transfer などのタスクが作成された時。</td>
+            <td>Staff（倉庫担当）, Admin</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-TASK-DONE</code></td>
+            <td>倉庫タスク完了</td>
+            <td>倉庫タスクが完了し、在庫・注文ステータスが更新されたことを通知。</td>
+            <td>Scan barcode 画面から完了し、タスク管理アプリのステータスが「完了」になった時。</td>
+            <td>Admin, Staff（関連注文の担当者）</td>
+            <td><span class="badge badge-mvp">中</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-STOCK-LOW</code></td>
+            <td>在庫残少</td>
+            <td>在庫が閾値を下回ったことを通知。</td>
+            <td>在庫管理バッチが SKU 別在庫をチェックし、警戒レベルに達した時。</td>
+            <td>Admin, Staff（在庫担当）</td>
+            <td><span class="badge badge-mvp">中</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-STOCK-OUT</code></td>
+            <td>在庫切れ</td>
+            <td>在庫が 0 またはマイナスになったことを通知。</td>
+            <td>在庫更新処理後に在庫数量が 0 未満になった時。</td>
+            <td>Admin, Staff</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-EC-ERROR</code></td>
+            <td>EC連携エラー</td>
+            <td>Shopify / 楽天 など ECチャネル連携でエラーが発生したことを通知。</td>
+            <td>受注取得・在庫同期・ステータス更新 API でエラー発生時。</td>
+            <td>Admin</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-API-ERROR</code></td>
+            <td>外部APIエラー</td>
+            <td>Ship&amp;Co / GMO など外部サービスとの連携に失敗したことを通知。</td>
+            <td>外部API呼び出しでエラーが返却された時。</td>
+            <td>Admin</td>
+            <td><span class="badge badge-mvp">高</span></td>
+            <td><span class="badge badge-mvp">MVP</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 権限別の受信ルール</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>通知Code</th>
+            <th>Admin</th>
+            <th>Payment Approver</th>
+            <th>Staff 共通</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NOTI-ORD-NEW</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（担当注文のみ）</td>
+            <td>Staff は自分が担当する注文に紐づくもののみ。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-ORD-STATUS</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（担当注文のみ）</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-REQ</code></td>
+            <td>△（任意）</td>
+            <td>◯（必須）</td>
+            <td>−</td>
+            <td>主に Payment Approver 宛。必要であれば Admin にも送信。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-DONE</code></td>
+            <td>◯</td>
+            <td>◯</td>
+            <td>−</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PAY-ERROR</code></td>
+            <td>◯</td>
+            <td>◯</td>
+            <td>−</td>
+            <td>決済関連の重大なため、Admin と Payment Approver の両方に通知。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-PO-DONE</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（購買担当）</td>
+            <td>Staff のうち購買担当にのみ紐づける想定。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-TASK-NEW</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（倉庫担当）</td>
+            <td>倉庫担当グループ全員に通知。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-TASK-DONE</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（関連注文担当）</td>
+            <td>Staff 側は、タスクに紐づく注文の担当者。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-STOCK-LOW</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（在庫担当）</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-STOCK-OUT</code></td>
+            <td>◯</td>
+            <td>−</td>
+            <td>◯（在庫担当）</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>NOTI-EC-ERROR</code></td>
+            <td>◯（必須）</td>
+            <td>−</td>
+            <td>−</td>
+            <td>EC連携エラーは Admin のみ。</td>
+          </tr>
+          <tr>
+            <td><code>NOTI-API-ERROR</code></td>
+            <td>◯（必須）</td>
+            <td>−</td>
+            <td>−</td>
+            <td>Ship&amp;Co / GMO など外部APIエラー。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.3 通知ライフサイクル</h3>
+      <ul>
+        <li>通知は各アプリ／Ruby_Server のビジネスロジックから発行され、<code>notifications</code> テーブル（サーバーDB）に保存する。</li>
+        <li>各レコードは以下のフィールドを最低限保持する：
+          <ul>
+            <li><code>notification_id</code>, <code>user_id</code>, <code>type_code</code>, <code>title</code>, <code>summary</code>, <code>link_url</code>, <code>created_at</code>, <code>is_read</code></li>
+          </ul>
+        </li>
+        <li>既読状態：
+          <ul>
+            <li>通知ドロップダウン内の項目をクリックした時に <code>is_read = true</code> に更新。</li>
+            <li>「すべて既読にする」ボタンで自分宛ての未読通知を一括既読。</li>
+          </ul>
+        </li>
+        <li>通知の保管期間：
+          <ul>
+            <li>オンラインで 3 ヶ月分を表示対象とする（DB的には longer retention でも可）。</li>
+            <li>ドロップダウンの「さらに表示」で、過去 3 ヶ月分まで順次読み込む。</li>
+          </ul>
+        </li>
+        <li>リマインド通知（未処理タスクの再通知等）は本MVPでは実装しない。</li>
+      </ul>
+    </section>
+
+    <!-- 4. 画面レイアウト -->
+    <section id="layout">
+      <h2>4. 画面レイアウト / UI仕様</h2>
+
+      <h3>4.1 ヘッダー通知ベル</h3>
+      <div class="layout-box">
+        <ul>
+          <li>画面右上のグローバルヘッダーに、ベルアイコンを表示する。</li>
+          <li>未読通知が 1 件以上ある場合、アイコン右上に赤いバッジで件数を表示する（最大 99、100 以上は「99+」）。</li>
+          <li>ベルアイコンをクリックすると、最近の通知のドロップダウンリストを表示する。</li>
+        </ul>
+      </div>
+
+      <h3>4.2 通知ドロップダウンリスト</h3>
+      <div class="layout-box">
+        <ul>
+          <li>デフォルト表示件数は最新 10 件とする。</li>
+          <li>ドロップダウンの下部に「さらに表示」リンクを表示し、クリック毎に次の 10 件を追加読み込みする。</li>
+          <li>各行は、以下の要素で構成する：
+            <ul>
+              <li>種別ラベル（例：<span class="kbd">注文</span> / <span class="kbd">支払</span> / <span class="kbd">倉庫タスク</span> / <span class="kbd">在庫</span> / <span class="kbd">エラー</span>）</li>
+              <li>概要テキスト（例：<code>出荷タスク (Picking) が作成されました。Order ID: ORD-000123</code>）</li>
+              <li>日時（相対表示「5分前」「昨日」などでも可）</li>
+            </ul>
+          </li>
+          <li>未読行は背景色を淡くハイライトし、太字で表示する。</li>
+          <li>行クリック時の挙動：
+            <ul>
+              <li><code>is_read</code> を <code>true</code> に更新。</li>
+              <li><code>link_url</code> が設定されている場合、その画面（注文詳細・支払詳細・タスク詳細など）へ遷移。</li>
+            </ul>
+          </li>
+          <li>通知が 1 件もない場合は「現在表示できる通知はありません。」と表示する。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. 確認事項 -->
+    <section id="confirmation">
+      <h2>5. 確認事項（前提条件）</h2>
+
+      <h3>5.1 対象外とする通知の考え方</h3>
+      <p>
+        運用ルール変更や社内アナウンスなど、一般的な告知・お知らせ用途の通知は、
+        本MVPの対象外とする。必要になった場合は、将来フェーズで別途検討する。
+      </p>
+
+      <h3>5.2 リマインド通知について</h3>
+      <p>
+        未処理タスク／未処理注文に対するリマインド通知
+        （例：<code>NOTI-TASK-NEW</code> や <code>NOTI-ORD-NEW</code> 発行から一定時間経過しても対応されていない場合の再通知）は、
+        本MVPでは実装しない。
+      </p>
+      <p>
+        実運用を観察したうえで、本当に必要となった場合のみ、将来フェーズで追加実装する方針とする。
+      </p>
+
+      <h3>5.3 エラー通知の詳細度（NOTI-EC-ERROR / NOTI-API-ERROR）</h3>
+      <ul>
+        <li>ユーザー向けの通知内容には、「どの外部APIでエラーが発生したか」と「エラーコード」を表示する。</li>
+        <li>外部APIから返却された詳細なエラーメッセージやレスポンスボディは、サーバーログ／ログ管理アプリにのみ保存し、通知ポップアップには表示しない。</li>
+        <li>Admin ユーザーは必要に応じてログ画面から詳細を参照し、原因調査やベンダーへの問い合わせに利用する。</li>
+      </ul>
+    </section>
+
+    <!-- 6. ビジネス影響 -->
+    <section id="business-impact">
+      <h2>6. ビジネス影響</h2>
+      <ul>
+        <li>支払承認・倉庫タスクなどの重要イベントが見える化され、対応漏れリスクを低減できる。</li>
+        <li>EC連携・外部APIエラーの検知が早まり、障害対応までのリードタイムを短縮できる。</li>
+        <li>Admin / Payment Approver / Staff の役割に応じて適切な通知のみが届くため、ノイズを最小限に抑えられる。</li>
+      </ul>
+    </section>
+
+    <!-- 7. Scope / Out of Scope -->
+    <section id="scope">
+      <h2>7. Scope / Out of Scope</h2>
+      <h3>7.1 Scope（MVPで実装）</h3>
+      <ul>
+        <li>ヘッダー通知ベルアイコンと未読バッジ表示。</li>
+        <li>通知ドロップダウン（最新 10 件＋「さらに表示」で追加読み込み）。</li>
+        <li>通知クリックによる既読化と対象画面への遷移。</li>
+        <li><code>NOTI-ORD-NEW</code>, <code>NOTI-ORD-STATUS</code>, <code>NOTI-PAY-REQ</code>, <code>NOTI-PAY-DONE</code>, <code>NOTI-PAY-ERROR</code>, <code>NOTI-PO-DONE</code>, <code>NOTI-TASK-NEW</code>, <code>NOTI-TASK-DONE</code>, <code>NOTI-STOCK-LOW</code>, <code>NOTI-STOCK-OUT</code>, <code>NOTI-EC-ERROR</code>, <code>NOTI-API-ERROR</code> の発行・表示。</li>
+      </ul>
+
+      <h3>7.2 Out of Scope（将来検討）</h3>
+      <ul>
+        <li>運用・告知系のお知らせ全般（社内アナウンスなど）。</li>
+        <li>リマインド通知（未処理タスク／注文に対する再通知）。</li>
+        <li>メール送信や外部チャットツール（Slack, LINE 等）への通知連携。</li>
+      </ul>
+    </section>
+
+    <!-- 8. 開発メモ -->
+    <section id="dev-memo">
+      <h2>8. 開発メモ</h2>
+      <ul>
+        <li>通知データは Ruby_Server 側の DB に <code>notifications</code> テーブルとして管理し、必要に応じて Kintone レコードIDと紐づける。</li>
+        <li>フロントエンドからは REST API（例：<code>GET /api/notifications?unread_only=1</code>）で取得する。</li>
+        <li>MVPでは WebSocket は使用せず、一定間隔のポーリングまたは画面ロード時の取得で対応する。</li>
+        <li>レスポンスは「最新 n 件」と「未読件数の合計」を返却し、ベルアイコンのバッジ表示とドロップダウンに使用する。</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
