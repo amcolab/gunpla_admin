@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>受注アプリ（Orders App）UI画面仕様書</title>
@@ -18,10 +19,12 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
     }
@@ -40,7 +43,10 @@
       font-size: 16px;
     }
 
-    p, ul, ol, table {
+    p,
+    ul,
+    ol,
+    table {
       font-size: 14px;
       line-height: 1.6;
     }
@@ -51,7 +57,8 @@
       margin: 0.5em 0 1.2em;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -79,199 +86,304 @@
     }
 
     @media print {
-      body { background: #fff; padding: 0; }
-      .spec-container { box-shadow: none; border-radius: 0; }
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .spec-container {
+        box-shadow: none;
+        border-radius: 0;
+      }
     }
   </style>
 </head>
 
 <body>
-<div class="spec-container">
+  <div class="spec-container">
 
-  <p style="font-size:12px;color:#666;">
-    <span style="background:#eef2ff;padding:2px 8px;border-radius:8px;color:#3949ab;">UI Spec</span>
-    受注アプリ（Orders App）
-  </p>
+    <p style="font-size:12px;color:#666;">
+      <span style="background:#eef2ff;padding:2px 8px;border-radius:8px;color:#3949ab;">UI Spec</span>
+      受注アプリ（Orders App）
+    </p>
 
-  <h1>受注アプリ（Orders App）UI画面仕様書</h1>
-  <p><strong>対象画面:</strong> 受注一覧（List）＋ 受注詳細（Detail）</p>
-
-
-  <!-- 1. PURPOSE -->
-  <h2>1. 画面の目的（ビジネス上の役割）</h2>
-  <p>
-    このアプリは、Shopify（B2C）および Agency Portal（B2B）の注文を一元管理し、
-    出荷・請求・返品・在庫減算の全体プロセスをつなぐコア画面です。
-  </p>
-  <ul>
-    <li>Shopify注文の自動取込と処理管理</li>
-    <li>Agency注文の承認・請求・入金後出荷フロー管理</li>
-    <li><strong>出荷タスクは自動生成</strong>（ユーザーが作成ボタンを押す必要はない）</li>
-    <li>部分出荷、キャンセルの管理</li>
-    <li>出荷後の返品（Return）レコードの生成と親子リンク管理</li>
-  </ul>
+    <h1>受注アプリ（Orders App）UI画面仕様書</h1>
+    <p><strong>対象画面:</strong> 受注一覧（List）＋ 受注詳細（Detail）</p>
 
 
-  <!-- 2. USER SCENARIOS -->
-  <h2>2. 利用者ストーリー（User Scenario）</h2>
-
-  <h3>2.1 Shopify注文の場合</h3>
-  <ol>
-    <li>Shopify webhook → 受注アプリへ自動作成</li>
-    <li>オペレーターが内容確認</li>
-    <li><strong>システムが自動で出荷タスクを作成し、倉庫へ通知</strong></li>
-    <li>倉庫が出荷 → Ship&Co連携 → 送り状番号が自動登録</li>
-    <li>ステータス = 出荷済 へ更新</li>
-  </ol>
-
-  <h3>2.2 Agency注文の場合（B2B）</h3>
-  <ol>
-    <li>代理店が Portal で注文 → 受注作成</li>
-    <li>ステータス＝「要確認」</li>
-    <li>社内スタッフが承認</li>
-    <li>請求書を送付、代理店が支払う</li>
-    <li>入金確認後、<strong>自動で出荷タスク生成</strong></li>
-    <li>倉庫が出荷 → 出荷済</li>
-  </ol>
-
-  <h3>2.3 返品（Return）の流れ</h3>
-  <ol>
-    <li>注文詳細画面から行単位で「返品」操作</li>
-    <li><strong>同一アプリ内に返品子レコードが自動作成</strong></li>
-    <li>子レコードに基づき返品入庫タスクを自動生成</li>
-    <li>倉庫が入庫 → 在庫が戻る</li>
-  </ol>
+    <!-- 1. PURPOSE -->
+    <h2>1. 画面の目的（ビジネス上の役割）</h2>
+    <p>
+      このアプリは、Shopify（B2C）および Agency Portal（B2B）の注文を一元管理し、
+      出荷・請求・返品・在庫減算の全体プロセスをつなぐコア画面です。
+    </p>
+    <ul>
+      <li>Shopify注文の自動取込と処理管理</li>
+      <li>Agency注文の承認・請求・入金後出荷フロー管理</li>
+      <li><strong>出荷タスクは自動生成</strong>（ユーザーが作成ボタンを押す必要はない）</li>
+      <li>部分出荷、キャンセルの管理</li>
+      <li>出荷後の返品（Return）レコードの生成と親子リンク管理</li>
+    </ul>
 
 
-  <!-- 3. FUNCTIONS -->
-  <h2>3. 主要機能</h2>
-  <ul>
-    <li>Shopify / Agency 全注文の一覧管理</li>
-    <li>注文ステータス・注文番号・代理店で検索</li>
-    <li>注文詳細画面で数量調整 / 部分出荷 / 返品操作</li>
-    <li>返品は子レコードとして管理（ORD001-R01）</li>
-    <li>在庫引当・出荷タスクはすべて自動処理</li>
-  </ul>
+    <!-- 2. USER SCENARIOS -->
+    <h2>2. 利用者ストーリー（User Scenario）</h2>
+
+    <h3>2.1 Shopify注文の場合</h3>
+    <ol>
+      <li>Shopify webhook → 受注アプリへ自動作成</li>
+      <li>オペレーターが内容確認</li>
+      <li><strong>システムが自動で出荷タスクを作成し、倉庫へ通知</strong></li>
+      <li>倉庫が出荷 → Ship&Co連携 → 送り状番号が自動登録</li>
+      <li>ステータス = 出荷済 へ更新</li>
+    </ol>
+
+    <h3>2.2 Agency注文の場合（B2B）</h3>
+    <ol>
+      <li>代理店が Portal で注文 → 受注作成</li>
+      <li>ステータス＝「要確認」</li>
+      <li>社内スタッフが承認</li>
+      <li>請求書を送付、代理店が支払う</li>
+      <li>入金確認後、<strong>自動で出荷タスク生成</strong></li>
+      <li>倉庫が出荷 → 出荷済</li>
+    </ol>
+
+    <h3>2.3 返品（Return）の流れ</h3>
+    <ol>
+      <li>注文詳細画面から行単位で「返品」操作</li>
+      <li><strong>同一アプリ内に返品子レコードが自動作成</strong></li>
+      <li>子レコードに基づき返品入庫タスクを自動生成</li>
+      <li>倉庫が入庫 → 在庫が戻る</li>
+    </ol>
 
 
-  <!-- 4. LIST VIEW -->
-  <h2>4. 受注一覧画面</h2>
+    <!-- 3. FUNCTIONS -->
+    <h2>3. 主要機能</h2>
+    <ul>
+      <li>Shopify / Agency 全注文の一覧管理</li>
+      <li>注文ステータス・注文番号・代理店で検索</li>
+      <li>注文詳細画面で数量調整 / 部分出荷 / 返品操作</li>
+      <li>返品は子レコードとして管理（ORD001-R01）</li>
+      <li>在庫引当・出荷タスクはすべて自動処理</li>
+    </ul>
 
-  <h3>4.1 表示項目</h3>
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>注文ID</td><td>レコード番号。クリックすると詳細へ。</td></tr>
-    <tr><td>親注文</td><td>返品レコードの場合、親ID（ORD001 等）へリンク。</td></tr>
-    <tr><td>注文番号</td><td>外部チャネルのID（例: ORD-2025-1101）。</td></tr>
-    <tr><td>販売チャネル</td><td>Shopify / Agency。</td></tr>
-    <tr><td>顧客区分</td><td>B2C / B2B。</td></tr>
-    <tr><td>総数量</td><td>注文商品の数量合計（返品時はマイナス）。</td></tr>
-    <tr><td>合計金額</td><td>請求総額（返品時はマイナス）。</td></tr>
-    <tr><td>ステータス</td><td>新規 / 要確認 / 承認済 / 出荷済 / 一部出荷 / 返品処理中 / 完了など</td></tr>
-    <tr><td>操作</td><td>詳細ボタン。</td></tr>
-  </table>
 
-  <h3>4.2 画面イメージ</h3>
-  <div class="spec-screenshot">
-    <img src="order_screen.png" />
+    <!-- 4. LIST VIEW -->
+    <h2>4. 受注一覧画面</h2>
+
+    <h3>4.1 表示項目</h3>
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>注文ID</td>
+        <td>レコード番号。クリックすると詳細へ。</td>
+      </tr>
+      <tr>
+        <td>親注文</td>
+        <td>返品レコードの場合、親ID（ORD001 等）へリンク。</td>
+      </tr>
+      <tr>
+        <td>注文番号</td>
+        <td>外部チャネルのID（例: ORD-2025-1101）。</td>
+      </tr>
+      <tr>
+        <td>販売チャネル</td>
+        <td>Shopify / Agency。</td>
+      </tr>
+      <tr>
+        <td>顧客区分</td>
+        <td>B2C / B2B。</td>
+      </tr>
+      <tr>
+        <td>総数量</td>
+        <td>注文商品の数量合計（返品時はマイナス）。</td>
+      </tr>
+      <tr>
+        <td>合計金額</td>
+        <td>請求総額（返品時はマイナス）。</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>新規 / 要確認 / 承認済 / 出荷済 / 一部出荷 / 返品処理中 / 完了など</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>詳細ボタン。</td>
+      </tr>
+    </table>
+
+    <h3>4.2 画面イメージ</h3>
+    <div class="spec-screenshot">
+      <img src="order_screen.png" />
+    </div>
+
+
+    <!-- DETAIL -->
+    <h2>5. 受注詳細画面</h2>
+
+    <div class="spec-screenshot">
+      <img src="order_detail_screen.png" />
+    </div>
+
+
+    <!-- 5.1 HEADER -->
+    <h3>5.1 基本情報</h3>
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>注文番号</td>
+        <td>外部チャネルの注文ID</td>
+      </tr>
+      <tr>
+        <td>注文日時</td>
+        <td>注文確定日時</td>
+      </tr>
+      <tr>
+        <td>販売チャネル</td>
+        <td>Shopify / Agency</td>
+      </tr>
+      <tr>
+        <td>顧客区分</td>
+        <td>B2C / B2B</td>
+      </tr>
+      <tr>
+        <td>出荷倉庫</td>
+        <td>固定（Credie倉庫）</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>注文全体の処理状況</td>
+      </tr>
+    </table>
+
+
+    <!-- 5.2 SHIPPING INFO -->
+    <h3>5.2 お届け先情報</h3>
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>氏名</td>
+        <td>受取人</td>
+      </tr>
+      <tr>
+        <td>電話番号</td>
+        <td>受取人の電話番号</td>
+      </tr>
+      <tr>
+        <td>メールアドレス</td>
+        <td>顧客メール</td>
+      </tr>
+      <tr>
+        <td>郵便番号</td>
+        <td>配送先郵便番号</td>
+      </tr>
+      <tr>
+        <td>住所</td>
+        <td>都道府県・市区町村・番地など</td>
+      </tr>
+    </table>
+
+
+    <!-- 5.3 SUMMARY -->
+    <h3>5.3 注文サマリー</h3>
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>数量合計</td>
+        <td>全明細の総数</td>
+      </tr>
+      <tr>
+        <td>合計金額</td>
+        <td>最終請求額</td>
+      </tr>
+    </table>
+
+
+    <!-- 5.4 ITEMS -->
+    <h3>5.4 商品リストと数量調整</h3>
+    <p>このセクションでは、部分出荷、キャンセル、返品操作を行う。</p>
+
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>商品SKU</td>
+        <td>商品マスタのSKU</td>
+      </tr>
+      <tr>
+        <td>商品名</td>
+        <td>商品名称</td>
+      </tr>
+      <tr>
+        <td>注文数量</td>
+        <td>元の注文数量</td>
+      </tr>
+      <tr>
+        <td>変更後数量</td>
+        <td>出荷・返品等を反映した数量</td>
+      </tr>
+      <tr>
+        <td>履歴状況</td>
+        <td>「出荷済」「返品済」「キャンセル済」など</td>
+      </tr>
+      <tr>
+        <td>アクション</td>
+        <td>
+          <ul>
+            <li><strong>分割</strong>：部分出荷用</li>
+            <li><strong>返品</strong>：返品子レコードを生成</li>
+            <li><strong>キャンセル</strong>：未出荷分のキャンセル</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+
+    <!-- 5.5 RETURN -->
+    <h3>5.5 返品（子レコード）</h3>
+    <p>返品は同じアプリ内のサブレコードとして管理される。</p>
+    <ul>
+      <li>ID形式：ORD001-R01</li>
+      <li>親IDとリンク保持</li>
+      <li>返品数量・理由・日付を保存</li>
+      <li><strong>返品入庫タスクは自動作成</strong></li>
+    </ul>
+
+
+    <!-- 5.6 ACTIONS -->
+    <h3>5.6 操作ボタン</h3>
+    <ul>
+      <li><strong>編集</strong></li>
+      <li><strong>キャンセル（注文キャンセル）</strong></li>
+      <li><strong>コメント追加</strong></li>
+    </ul>
+
+
+    <!-- 6. CONFIRMATION -->
+    <h2>6. 確認ポイント</h2>
+    <ul>
+      <li>Shopify・Agencyの業務フローと整合しているか</li>
+      <li>部分出荷仕様は問題ないか</li>
+      <li>返品を子レコードとして扱う仕様で問題ないか</li>
+      <li>出荷タスクが自動作成で問題ないか（手動生成は不要）</li>
+    </ul>
+
   </div>
-
-
-  <!-- DETAIL -->
-  <h2>5. 受注詳細画面</h2>
-
-  <div class="spec-screenshot">
-    <img src="order_detail_screen.png" />
-  </div>
-
-
-  <!-- 5.1 HEADER -->
-  <h3>5.1 基本情報</h3>
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>注文番号</td><td>外部チャネルの注文ID</td></tr>
-    <tr><td>注文日時</td><td>注文確定日時</td></tr>
-    <tr><td>販売チャネル</td><td>Shopify / Agency</td></tr>
-    <tr><td>顧客区分</td><td>B2C / B2B</td></tr>
-    <tr><td>出荷倉庫</td><td>固定（Credie倉庫）</td></tr>
-    <tr><td>ステータス</td><td>注文全体の処理状況</td></tr>
-  </table>
-
-
-  <!-- 5.2 SHIPPING INFO -->
-  <h3>5.2 お届け先情報</h3>
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>氏名</td><td>受取人</td></tr>
-    <tr><td>電話番号</td><td>受取人の電話番号</td></tr>
-    <tr><td>メールアドレス</td><td>顧客メール</td></tr>
-    <tr><td>郵便番号</td><td>配送先郵便番号</td></tr>
-    <tr><td>住所</td><td>都道府県・市区町村・番地など</td></tr>
-  </table>
-
-
-  <!-- 5.3 SUMMARY -->
-  <h3>5.3 注文サマリー</h3>
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>数量合計</td><td>全明細の総数</td></tr>
-    <tr><td>合計金額</td><td>最終請求額</td></tr>
-  </table>
-
-
-  <!-- 5.4 ITEMS -->
-  <h3>5.4 商品リストと数量調整</h3>
-  <p>このセクションでは、部分出荷、キャンセル、返品操作を行う。</p>
-
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>商品SKU</td><td>商品マスタのSKU</td></tr>
-    <tr><td>商品名</td><td>商品名称</td></tr>
-    <tr><td>注文数量</td><td>元の注文数量</td></tr>
-    <tr><td>変更後数量</td><td>出荷・返品等を反映した数量</td></tr>
-    <tr><td>履歴状況</td><td>「出荷済」「返品済」「キャンセル済」など</td></tr>
-    <tr>
-      <td>アクション</td>
-      <td>
-        <ul>
-          <li><strong>分割</strong>：部分出荷用</li>
-          <li><strong>返品</strong>：返品子レコードを生成</li>
-          <li><strong>キャンセル</strong>：未出荷分のキャンセル</li>
-        </ul>
-      </td>
-    </tr>
-  </table>
-
-
-  <!-- 5.5 RETURN -->
-  <h3>5.5 返品（子レコード）</h3>
-  <p>返品は同じアプリ内のサブレコードとして管理される。</p>
-  <ul>
-    <li>ID形式：ORD001-R01</li>
-    <li>親IDとリンク保持</li>
-    <li>返品数量・理由・日付を保存</li>
-    <li><strong>返品入庫タスクは自動作成</strong></li>
-  </ul>
-
-
-  <!-- 5.6 ACTIONS -->
-  <h3>5.6 操作ボタン</h3>
-  <ul>
-    <li><strong>編集</strong></li>
-    <li><strong>キャンセル（注文キャンセル）</strong></li>
-    <li><strong>コメント追加</strong></li>
-  </ul>
-
-
-  <!-- 6. CONFIRMATION -->
-  <h2>6. 確認ポイント</h2>
-  <ul>
-    <li>Shopify・Agencyの業務フローと整合しているか</li>
-    <li>部分出荷仕様は問題ないか</li>
-    <li>返品を子レコードとして扱う仕様で問題ないか</li>
-    <li>出荷タスクが自動作成で問題ないか（手動生成は不要）</li>
-  </ul>
-
-</div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

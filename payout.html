@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon {
@@ -298,6 +299,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -367,7 +369,8 @@
                 <!-- Row 1 - 承認待ち -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001156'); return false;">PAY-2025-001156</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001156'); return false;">PAY-2025-001156</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -388,7 +391,8 @@
                 <!-- Row 2 - 実行中 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001155'); return false;">PAY-2025-001155</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001155'); return false;">PAY-2025-001155</a>
                     </td>
                     <td>
                         <span class="type-badge dividend">配当支払</span>
@@ -409,7 +413,8 @@
                 <!-- Row 3 - 完了 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001154'); return false;">PAY-2025-001154</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001154'); return false;">PAY-2025-001154</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -432,7 +437,8 @@
                 <!-- Row 4 - 失敗 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001153'); return false;">PAY-2025-001153</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001153'); return false;">PAY-2025-001153</a>
                     </td>
                     <td>
                         <span class="type-badge dividend">配当支払</span>
@@ -453,7 +459,8 @@
                 <!-- Row 5 - 完了 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001152'); return false;">PAY-2025-001152</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001152'); return false;">PAY-2025-001152</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -476,7 +483,8 @@
                 <!-- Row 6 - 承認待ち -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001151'); return false;">PAY-2025-001151</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001151'); return false;">PAY-2025-001151</a>
                     </td>
                     <td>
                         <span class="type-badge dividend">配当支払</span>
@@ -495,7 +503,8 @@
                 <!-- Row 7 - 完了 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001150'); return false;">PAY-2025-001150</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001150'); return false;">PAY-2025-001150</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -518,7 +527,8 @@
                 <!-- Row 8 - 実行中 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001149'); return false;">PAY-2025-001149</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001149'); return false;">PAY-2025-001149</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -541,7 +551,8 @@
                 <!-- Row 9 - 完了 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001148'); return false;">PAY-2025-001148</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001148'); return false;">PAY-2025-001148</a>
                     </td>
                     <td>
                         <span class="type-badge dividend">配当支払</span>
@@ -562,7 +573,8 @@
                 <!-- Row 10 - 承認待ち -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewPayment('PAY-2025-001147'); return false;">PAY-2025-001147</a>
+                        <a href="#" class="record-link"
+                            onclick="viewPayment('PAY-2025-001147'); return false;">PAY-2025-001147</a>
                     </td>
                     <td>
                         <span class="type-badge">仕入支払</span>
@@ -582,7 +594,7 @@
             </tbody>
         </table>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // View payment detail
         function viewPayment(paymentId) {
@@ -639,4 +651,5 @@
         }
     </script>
 </body>
+
 </html>

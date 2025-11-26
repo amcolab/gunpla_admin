@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>論理在庫管理アプリ（Logical Stock App）UI画面仕様書</title>
@@ -19,7 +20,7 @@
             background: #ffffff;
             border-radius: 8px;
             padding: 24px 32px 32px;
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
         }
 
         .spec-meta {
@@ -38,7 +39,9 @@
             margin-right: 6px;
         }
 
-        h1, h2, h3 {
+        h1,
+        h2,
+        h3 {
             margin-top: 1.4em;
             margin-bottom: 0.6em;
         }
@@ -62,7 +65,8 @@
             margin: 0.4em 0;
         }
 
-        ul, ol {
+        ul,
+        ol {
             font-size: 13px;
             margin: 0.4em 0 0.8em 1.5em;
             padding-left: 0;
@@ -79,7 +83,8 @@
             font-size: 13px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
@@ -108,6 +113,7 @@
                 background: #ffffff;
                 padding: 0;
             }
+
             .spec-container {
                 box-shadow: none;
                 border-radius: 0;
@@ -116,169 +122,168 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="spec-container">
-    <div class="spec-meta">
-        <span class="spec-tag">UI Spec</span>
-        <span class="spec-tag">Logical Stock</span>
-        Version 1.0 / 作成日: ________
+    <div class="spec-container">
+        <div class="spec-meta">
+            <span class="spec-tag">UI Spec</span>
+            <span class="spec-tag">Logical Stock</span>
+            Version 1.0 / 作成日: ________
+        </div>
+
+        <h1>論理在庫管理アプリ（Logical Stock App）UI画面仕様書</h1>
+        <p><strong>対象画面:</strong> 論理在庫一覧</p>
+        <p><strong>別名:</strong> 在庫引当管理 App</p>
+
+        <h2>画面の目的（ビジネス上の役割）</h2>
+        <p>
+            本画面は、Credieシステム全体の論理在庫（システム内での利用可能な在庫数）をリアルタイムで管理し、注文に対する出荷の可否を判定するための意思決定エンジンです。
+        </p>
+        <ul>
+            <li><strong>作業指示の核:</strong>
+                Orders Appからの出荷タスク生成リクエストに対し、<code>引当可能数</code>が十分にあるかを判断する唯一のソースとなります。
+            </li>
+            <li><strong>在庫警報（アラート）:</strong>
+                <code>発注点</code>を下回った場合、または<code>引当可能数</code>がゼロになった場合にアラートを発し、購買発注（PO）の自動生成をトリガーします。
+            </li>
+            <li><strong>在庫管理の可視化:</strong>
+                在庫の総数、既に予約されている数、発注中の数を一目で把握できるようにします。
+            </li>
+        </ul>
+
+        <h2>利用者ストーリー（User Scenario）</h2>
+        <ol>
+            <li>オペレーター:
+                Orders Appで新規注文が作成された際、システムがこのアプリを参照し、<code>引当可能数</code>が注文数量を満たしているか確認する。
+            </li>
+            <li>購買担当者:
+                在庫を俯瞰し、<code>在庫数量</code>が<code>発注点</code>を下回っている製品をすぐに特定し、PO自動生成の対象となっているかを確認する。
+            </li>
+            <li>管理者:
+                <code>発注残</code>（POが未納品のもの）がいくらあるかをチェックし、今後の在庫の増加予定を把握する。
+            </li>
+            <li>システム（バッチ）:
+                定期的にこのアプリを参照し、<code>在庫数量</code>が<code>発注点</code>を下回ったレコードに対して、PO Appに新規レコードを自動生成する。
+            </li>
+        </ol>
+
+        <h2>主要機能</h2>
+        <ul>
+            <li>商品ごとの論理在庫数量、予約数量、引当可能数量のリアルタイム表示。</li>
+            <li>発注点（PO生成トリガー）に基づいた在庫アラート管理。</li>
+            <li>Orders Appからの引当要求（デクリメント）、出荷完了による引当解除、PO納品による在庫増加（インクリメント）などのAPI連携。</li>
+            <li>在庫数量・商品名による一覧の検索・フィルタリング。</li>
+        </ul>
+
+        <h2>画面レイアウト</h2>
+
+        <h3>4.1 表示項目（List）</h3>
+        <p>本一覧は、製品/資材ごとに 1 レコードとして、在庫のステータスを表示する。</p>
+        <table class="list-table">
+            <thead>
+                <tr>
+                    <th>項目名</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>商品ID</strong></td>
+                    <td>製品/資材を識別するためのマスターID。（Product Master Appからのルックアップ）</td>
+                </tr>
+                <tr>
+                    <td><strong>商品名</strong></td>
+                    <td>製品の正式名称。</td>
+                </tr>
+                <tr>
+                    <td><strong>在庫数量</strong></td>
+                    <td>総論理在庫数。実在庫に発注残や調整を加味したシステム上の総有効在庫数。</td>
+                </tr>
+                <tr>
+                    <td><strong>引当可能数</strong></td>
+                    <td>
+                        現在、新規の注文に対し出荷予約（引当）が可能な数量。<br>
+                        （計算ロジック：<code>在庫数量</code> − <code>引当済数</code>）
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>引当済数</strong></td>
+                    <td>既に確定した注文によって予約されている数量（未出荷の注文合計数）。</td>
+                </tr>
+                <tr>
+                    <td><strong>発注点</strong></td>
+                    <td>PO自動生成のトリガーとなる基準数量。（この値を下回るとシステムがPOを生成する）。</td>
+                </tr>
+                <tr>
+                    <td><strong>発注残</strong></td>
+                    <td>現在発注中で、未納品のPO（購買発注）の数量合計。</td>
+                </tr>
+                <tr>
+                    <td><strong>ステータス</strong></td>
+                    <td>
+                        在庫の警戒状態を示すラベル。<br>
+                        例：<code>正常</code> (引当可能数 > 0)、<code>欠品</code> (引当可能数 = 0)、
+                        <code>緊急発注要</code> (在庫数量 <= 発注点)。 </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>UI要素・操作</h4>
+        <ul>
+            <li>画面タイトル: 論理在庫 App (仮称)</li>
+            <li>検索: 商品ID、商品名による検索フィールド。</li>
+            <li>ボタン:
+                <ul>
+                    <li>レコード追加 (Add Record) - 手動在庫調整時などに使用。</li>
+                    <li>エクスポート (Export CSV)</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>4.2 スクリーンショット</h3>
+        <div class="spec-screenshot-caption">
+            <img src="inventory_screen.png" alt=" Screen" class="spec-image" />
+        </div>
+
+        <h2>お客様に確認いただきたい点</h2>
+        <p>論理在庫の計算ロジックと運用に関する重要な確認点です。</p>
+        <ol>
+            <li>
+                在庫数量のソース:
+                <code>在庫数量</code>（総論理在庫数）の計算は、
+                <code>実在庫（Physical_DB）の合計</code> + <code>発注残</code>（未納品PO）
+                というロジックでよろしいでしょうか？（はい/いいえ）
+            </li>
+            <li>
+                発注点の設定場所:
+                <code>発注点</code>の数値は、この論理在庫アプリで直接編集・管理しますか、
+                それともProduct Master App（商品マスタ）から参照しますか？（論理在庫アプリ / Product Master アプリ）
+            </li>
+            <li>
+                在庫移動:
+                在庫の増減（PO納品、注文キャンセル、返品入庫など）はすべてTask App経由でのみ行われ、
+                このアプリで手動で<code>在庫数量</code>を直接編集することは禁止でよろしいでしょうか？（はい/いいえ）
+            </li>
+        </ol>
+
+        <h2>開発向けメモ（Dev Notes）</h2>
+        <ul>
+            <li>ユニークキー:
+                <code>商品ID</code>をユニークキーとし、全レコードが商品マスタの全製品/資材を網羅すること。
+            </li>
+            <li>計算フィールド:
+                <code>引当可能数</code>は、<code>在庫数量</code> − <code>引当済数</code>の計算フィールドとして実装する。
+            </li>
+            <li>API連携:
+                Orders Appからの引当要求（デクリメント）および、Task Appからの在庫増減（インクリメント）処理は、
+                Ruby Serverを介したAPI連携で行う。
+            </li>
+            <li>PO生成ロジック:
+                バッチ処理は、<code>ステータス</code>が「緊急発注要」（在庫数量 <= 発注点）のレコードを抽出し、 PO Appに新規レコードを自動作成する。 </li>
+        </ul>
     </div>
-
-    <h1>論理在庫管理アプリ（Logical Stock App）UI画面仕様書</h1>
-    <p><strong>対象画面:</strong> 論理在庫一覧</p>
-    <p><strong>別名:</strong> 在庫引当管理 App</p>
-
-    <h2>画面の目的（ビジネス上の役割）</h2>
-    <p>
-        本画面は、Credieシステム全体の論理在庫（システム内での利用可能な在庫数）をリアルタイムで管理し、注文に対する出荷の可否を判定するための意思決定エンジンです。
-    </p>
-    <ul>
-        <li><strong>作業指示の核:</strong>
-            Orders Appからの出荷タスク生成リクエストに対し、<code>引当可能数</code>が十分にあるかを判断する唯一のソースとなります。
-        </li>
-        <li><strong>在庫警報（アラート）:</strong>
-            <code>発注点</code>を下回った場合、または<code>引当可能数</code>がゼロになった場合にアラートを発し、購買発注（PO）の自動生成をトリガーします。
-        </li>
-        <li><strong>在庫管理の可視化:</strong>
-            在庫の総数、既に予約されている数、発注中の数を一目で把握できるようにします。
-        </li>
-    </ul>
-
-    <h2>利用者ストーリー（User Scenario）</h2>
-    <ol>
-        <li>オペレーター:
-            Orders Appで新規注文が作成された際、システムがこのアプリを参照し、<code>引当可能数</code>が注文数量を満たしているか確認する。
-        </li>
-        <li>購買担当者:
-            在庫を俯瞰し、<code>在庫数量</code>が<code>発注点</code>を下回っている製品をすぐに特定し、PO自動生成の対象となっているかを確認する。
-        </li>
-        <li>管理者:
-            <code>発注残</code>（POが未納品のもの）がいくらあるかをチェックし、今後の在庫の増加予定を把握する。
-        </li>
-        <li>システム（バッチ）:
-            定期的にこのアプリを参照し、<code>在庫数量</code>が<code>発注点</code>を下回ったレコードに対して、PO Appに新規レコードを自動生成する。
-        </li>
-    </ol>
-
-    <h2>主要機能</h2>
-    <ul>
-        <li>商品ごとの論理在庫数量、予約数量、引当可能数量のリアルタイム表示。</li>
-        <li>発注点（PO生成トリガー）に基づいた在庫アラート管理。</li>
-        <li>Orders Appからの引当要求（デクリメント）、出荷完了による引当解除、PO納品による在庫増加（インクリメント）などのAPI連携。</li>
-        <li>在庫数量・商品名による一覧の検索・フィルタリング。</li>
-    </ul>
-
-    <h2>画面レイアウト</h2>
-
-    <h3>4.1 表示項目（List）</h3>
-    <p>本一覧は、製品/資材ごとに 1 レコードとして、在庫のステータスを表示する。</p>
-    <table class="list-table">
-        <thead>
-            <tr>
-                <th>項目名</th>
-                <th>説明</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>商品ID</strong></td>
-                <td>製品/資材を識別するためのマスターID。（Product Master Appからのルックアップ）</td>
-            </tr>
-            <tr>
-                <td><strong>商品名</strong></td>
-                <td>製品の正式名称。</td>
-            </tr>
-            <tr>
-                <td><strong>在庫数量</strong></td>
-                <td>総論理在庫数。実在庫に発注残や調整を加味したシステム上の総有効在庫数。</td>
-            </tr>
-            <tr>
-                <td><strong>引当可能数</strong></td>
-                <td>
-                    現在、新規の注文に対し出荷予約（引当）が可能な数量。<br>
-                    （計算ロジック：<code>在庫数量</code> − <code>引当済数</code>）
-                </td>
-            </tr>
-            <tr>
-                <td><strong>引当済数</strong></td>
-                <td>既に確定した注文によって予約されている数量（未出荷の注文合計数）。</td>
-            </tr>
-            <tr>
-                <td><strong>発注点</strong></td>
-                <td>PO自動生成のトリガーとなる基準数量。（この値を下回るとシステムがPOを生成する）。</td>
-            </tr>
-            <tr>
-                <td><strong>発注残</strong></td>
-                <td>現在発注中で、未納品のPO（購買発注）の数量合計。</td>
-            </tr>
-            <tr>
-                <td><strong>ステータス</strong></td>
-                <td>
-                    在庫の警戒状態を示すラベル。<br>
-                    例：<code>正常</code> (引当可能数 > 0)、<code>欠品</code> (引当可能数 = 0)、
-                    <code>緊急発注要</code> (在庫数量 <= 発注点)。
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h4>UI要素・操作</h4>
-    <ul>
-        <li>画面タイトル: 論理在庫 App (仮称)</li>
-        <li>検索: 商品ID、商品名による検索フィールド。</li>
-        <li>ボタン:
-            <ul>
-                <li>レコード追加 (Add Record) - 手動在庫調整時などに使用。</li>
-                <li>エクスポート (Export CSV)</li>
-            </ul>
-        </li>
-    </ul>
-
-    <h3>4.2 スクリーンショット</h3>
-    <div class="spec-screenshot-caption">
-        <img src="inventory_screen.png" alt=" Screen" class="spec-image" />
-    </div>
-
-    <h2>お客様に確認いただきたい点</h2>
-    <p>論理在庫の計算ロジックと運用に関する重要な確認点です。</p>
-    <ol>
-        <li>
-            在庫数量のソース:
-            <code>在庫数量</code>（総論理在庫数）の計算は、
-            <code>実在庫（Physical_DB）の合計</code> + <code>発注残</code>（未納品PO）
-            というロジックでよろしいでしょうか？（はい/いいえ）
-        </li>
-        <li>
-            発注点の設定場所:
-            <code>発注点</code>の数値は、この論理在庫アプリで直接編集・管理しますか、
-            それともProduct Master App（商品マスタ）から参照しますか？（論理在庫アプリ / Product Master アプリ）
-        </li>
-        <li>
-            在庫移動:
-            在庫の増減（PO納品、注文キャンセル、返品入庫など）はすべてTask App経由でのみ行われ、
-            このアプリで手動で<code>在庫数量</code>を直接編集することは禁止でよろしいでしょうか？（はい/いいえ）
-        </li>
-    </ol>
-
-    <h2>開発向けメモ（Dev Notes）</h2>
-    <ul>
-        <li>ユニークキー:
-            <code>商品ID</code>をユニークキーとし、全レコードが商品マスタの全製品/資材を網羅すること。
-        </li>
-        <li>計算フィールド:
-            <code>引当可能数</code>は、<code>在庫数量</code> − <code>引当済数</code>の計算フィールドとして実装する。
-        </li>
-        <li>API連携:
-            Orders Appからの引当要求（デクリメント）および、Task Appからの在庫増減（インクリメント）処理は、
-            Ruby Serverを介したAPI連携で行う。
-        </li>
-        <li>PO生成ロジック:
-            バッチ処理は、<code>ステータス</code>が「緊急発注要」（在庫数量 <= 発注点）のレコードを抽出し、
-            PO Appに新規レコードを自動作成する。
-        </li>
-    </ul>
-</div>
-
+    <script src="auth.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification – 発注管理（PO App）</title>
@@ -18,10 +19,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
     }
@@ -56,7 +60,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -119,6 +124,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -127,6 +133,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -309,60 +316,159 @@
     <!-- A. 基本情報 -->
     <h4>A. 基本情報</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>発注番号</td><td>POの管理番号（例: P0002）。</td></tr>
-      <tr><td>発注日</td><td>発注書を作成した日付。</td></tr>
-      <tr><td>入荷予定日</td><td>仕入先からの入荷予定日。</td></tr>
-      <tr><td>入荷日</td><td>実際に入荷した日付。</td></tr>
-      <tr><td>検品日</td><td>検品を行った日付。</td></tr>
-      <tr><td>仕入先</td><td>発注先の企業名。</td></tr>
-      <tr><td>検品担当者</td><td>検品を担当したユーザー名。</td></tr>
-      <tr><td>ステータス</td><td>発注の現在ステータス（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル など）。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>発注番号</td>
+        <td>POの管理番号（例: P0002）。</td>
+      </tr>
+      <tr>
+        <td>発注日</td>
+        <td>発注書を作成した日付。</td>
+      </tr>
+      <tr>
+        <td>入荷予定日</td>
+        <td>仕入先からの入荷予定日。</td>
+      </tr>
+      <tr>
+        <td>入荷日</td>
+        <td>実際に入荷した日付。</td>
+      </tr>
+      <tr>
+        <td>検品日</td>
+        <td>検品を行った日付。</td>
+      </tr>
+      <tr>
+        <td>仕入先</td>
+        <td>発注先の企業名。</td>
+      </tr>
+      <tr>
+        <td>検品担当者</td>
+        <td>検品を担当したユーザー名。</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>発注の現在ステータス（未処理 / 発注済 / 一部入荷済 / 入荷済 / 検収済 / キャンセル など）。</td>
+      </tr>
     </table>
 
     <!-- B. 仕入先情報 -->
     <h4>B. 仕入先情報</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>仕入先名</td><td>取引先企業名。</td></tr>
-      <tr><td>電話番号</td><td>仕入先の電話番号。</td></tr>
-      <tr><td>メールアドレス</td><td>注文連絡用のメールアドレス。</td></tr>
-      <tr><td>郵便番号</td><td>仕入先の郵便番号。</td></tr>
-      <tr><td>住所</td><td>仕入先の住所。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>仕入先名</td>
+        <td>取引先企業名。</td>
+      </tr>
+      <tr>
+        <td>電話番号</td>
+        <td>仕入先の電話番号。</td>
+      </tr>
+      <tr>
+        <td>メールアドレス</td>
+        <td>注文連絡用のメールアドレス。</td>
+      </tr>
+      <tr>
+        <td>郵便番号</td>
+        <td>仕入先の郵便番号。</td>
+      </tr>
+      <tr>
+        <td>住所</td>
+        <td>仕入先の住所。</td>
+      </tr>
     </table>
 
     <!-- C. 発注サマリー -->
     <h4>C. 発注サマリー</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>発注数量</td><td>発注した数量の合計。</td></tr>
-      <tr><td>入荷数量</td><td>これまでに入荷された数量の合計。</td></tr>
-      <tr><td>入荷未了数量</td><td>発注数量 − 入荷数量 など、未入荷分の参考値（UI 表示に合わせて定義）。</td></tr>
-      <tr><td>合計金額</td><td>全ての明細行の小計の合計額。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>発注数量</td>
+        <td>発注した数量の合計。</td>
+      </tr>
+      <tr>
+        <td>入荷数量</td>
+        <td>これまでに入荷された数量の合計。</td>
+      </tr>
+      <tr>
+        <td>入荷未了数量</td>
+        <td>発注数量 − 入荷数量 など、未入荷分の参考値（UI 表示に合わせて定義）。</td>
+      </tr>
+      <tr>
+        <td>合計金額</td>
+        <td>全ての明細行の小計の合計額。</td>
+      </tr>
     </table>
 
     <!-- D. 商品リスト（入荷登録用） -->
     <h4>D. 商品リスト（入荷登録用）</h4>
     <p>倉庫担当が入荷登録を行うためのエリア。各商品ごとに「今回入荷数」を入力します。</p>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>商品（SKU）</td><td>SKUコードと商品名。</td></tr>
-      <tr><td>発注数</td><td>その商品に対する発注数量。</td></tr>
-      <tr><td>入荷数（累計）</td><td>これまでに入荷した数量。</td></tr>
-      <tr><td>今回入荷数</td><td>今回入荷した数量を入力するテキストボックス。</td></tr>
-      <tr><td>入荷状況</td><td>未入荷 / 一部入荷 / 入荷済 などの状態表示。</td></tr>
-      <tr><td>アクション</td><td>「入荷登録」「キャンセル」ボタン。入荷登録により在庫へ反映される。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>商品（SKU）</td>
+        <td>SKUコードと商品名。</td>
+      </tr>
+      <tr>
+        <td>発注数</td>
+        <td>その商品に対する発注数量。</td>
+      </tr>
+      <tr>
+        <td>入荷数（累計）</td>
+        <td>これまでに入荷した数量。</td>
+      </tr>
+      <tr>
+        <td>今回入荷数</td>
+        <td>今回入荷した数量を入力するテキストボックス。</td>
+      </tr>
+      <tr>
+        <td>入荷状況</td>
+        <td>未入荷 / 一部入荷 / 入荷済 などの状態表示。</td>
+      </tr>
+      <tr>
+        <td>アクション</td>
+        <td>「入荷登録」「キャンセル」ボタン。入荷登録により在庫へ反映される。</td>
+      </tr>
     </table>
 
     <!-- E. 発注明細（確認用） -->
     <h4>E. 発注明細（確認用）</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>商品コード</td><td>商品に紐づくコード。</td></tr>
-      <tr><td>商品名</td><td>表示名。</td></tr>
-      <tr><td>数量</td><td>発注数量。</td></tr>
-      <tr><td>単価</td><td>仕入単価。</td></tr>
-      <tr><td>小計</td><td>数量 × 単価。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>商品コード</td>
+        <td>商品に紐づくコード。</td>
+      </tr>
+      <tr>
+        <td>商品名</td>
+        <td>表示名。</td>
+      </tr>
+      <tr>
+        <td>数量</td>
+        <td>発注数量。</td>
+      </tr>
+      <tr>
+        <td>単価</td>
+        <td>仕入単価。</td>
+      </tr>
+      <tr>
+        <td>小計</td>
+        <td>数量 × 単価。</td>
+      </tr>
     </table>
 
 
@@ -399,5 +505,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

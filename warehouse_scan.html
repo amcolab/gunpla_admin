@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -15,7 +16,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "メイリオ", Meiryo, sans-serif;
             background: #f5f5f5;
             color: #333;
-            padding-bottom: 160px; /* Space for sticky buttons */
+            padding-bottom: 160px;
+            /* Space for sticky buttons */
         }
 
         /* Sticky Header */
@@ -24,7 +26,7 @@
             top: 0;
             z-index: 100;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .header-main {
@@ -80,7 +82,8 @@
         .progress-bar-fill {
             background: linear-gradient(90deg, #e67e22 0%, #f39c12 100%);
             height: 100%;
-            width: 40%; /* 4/10 = 40% */
+            width: 40%;
+            /* 4/10 = 40% */
             transition: width 0.3s ease;
         }
 
@@ -96,7 +99,7 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .product-name {
@@ -146,7 +149,7 @@
             border-radius: 12px;
             margin-bottom: 16px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             border: 2px solid transparent;
             transition: all 0.3s ease;
         }
@@ -335,7 +338,7 @@
             right: 0;
             background: white;
             padding: 16px;
-            box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
             z-index: 90;
         }
 
@@ -407,9 +410,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
         }
 
         /* Loading Overlay */
@@ -419,7 +432,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             display: none;
             align-items: center;
             justify-content: center;
@@ -448,7 +461,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive */
@@ -456,11 +471,12 @@
             body {
                 max-width: 480px;
                 margin: 0 auto;
-                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Sticky Header -->
     <div class="header-sticky">
@@ -470,7 +486,8 @@
         </div>
         <div class="task-info">
             <div class="task-id">Task ID: <span id="taskId">WMS-OUT-0010</span></div>
-            <div class="progress-info">進捗: <span id="currentProgress">4</span> / <span id="totalProgress">10</span> 行</div>
+            <div class="progress-info">進捗: <span id="currentProgress">4</span> / <span id="totalProgress">10</span> 行
+            </div>
         </div>
         <div class="progress-bar-container">
             <div class="progress-bar-fill" id="progressBar"></div>
@@ -491,7 +508,8 @@
             <div class="location-info">
                 <div class="location-shelf">
                     指定位置: 棚 <span class="shelf-code" id="shelfCode">A-01-B2</span>
-                    <span style="color: #7f8c8d; font-size: 13px; margin-left: 8px;">(LOT: <span id="lotCode">L0032</span>)</span>
+                    <span style="color: #7f8c8d; font-size: 13px; margin-left: 8px;">(LOT: <span
+                            id="lotCode">L0032</span>)</span>
                 </div>
                 <div class="location-note">
                     ※ 指定されたLOTから先入れ先出し (FIFO) でピッキングしてください。
@@ -508,14 +526,8 @@
                 <div class="input-group">
                     <div class="input-wrapper">
                         <div class="input-placeholder">棚コード</div>
-                        <input 
-                            type="text" 
-                            class="input-field" 
-                            id="shelfInput"
-                            placeholder="A-01-B2"
-                            autocomplete="off"
-                            autofocus
-                        >
+                        <input type="text" class="input-field" id="shelfInput" placeholder="A-01-B2" autocomplete="off"
+                            autofocus>
                     </div>
                     <button class="scan-button" onclick="scanBarcode('shelf')">
                         📷
@@ -535,14 +547,8 @@
                 <div class="input-group">
                     <div class="input-wrapper">
                         <div class="input-placeholder">商品コード</div>
-                        <input 
-                            type="text" 
-                            class="input-field" 
-                            id="productInput"
-                            placeholder="RS-500ML-PRM"
-                            autocomplete="off"
-                            disabled
-                        >
+                        <input type="text" class="input-field" id="productInput" placeholder="RS-500ML-PRM"
+                            autocomplete="off" disabled>
                     </div>
                     <button class="scan-button" onclick="scanBarcode('product')" disabled>
                         📷
@@ -562,14 +568,8 @@
                 <div class="input-group">
                     <div class="input-wrapper">
                         <div class="input-placeholder">LOT番号</div>
-                        <input 
-                            type="text" 
-                            class="input-field" 
-                            id="lotInput"
-                            placeholder="L0032"
-                            autocomplete="off"
-                            disabled
-                        >
+                        <input type="text" class="input-field" id="lotInput" placeholder="L0032" autocomplete="off"
+                            disabled>
                     </div>
                     <button class="scan-button" onclick="scanBarcode('lot')" disabled>
                         📷
@@ -624,6 +624,7 @@
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script>
         // State
         let currentStep = 1;
@@ -634,18 +635,18 @@
         const expectedLot = 'L0032';
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             updateProgress();
         });
 
         // Scan Barcode (Simulated)
         function scanBarcode(type) {
             showLoading();
-            
+
             setTimeout(() => {
                 hideLoading();
                 let value = '';
-                
+
                 if (type === 'shelf') {
                     value = expectedShelf;
                     document.getElementById('shelfInput').value = value;
@@ -659,7 +660,7 @@
                     document.getElementById('lotInput').value = value;
                     validateLot();
                 }
-                
+
                 playBeep();
             }, 800);
         }
@@ -668,29 +669,29 @@
         function validateShelf() {
             const input = document.getElementById('shelfInput').value.trim();
             const validation = document.getElementById('shelfValidation');
-            
+
             if (input === '') {
                 validation.textContent = '棚コードを入力してください';
                 validation.classList.add('show');
                 return false;
             }
-            
+
             if (input !== expectedShelf) {
                 validation.textContent = `⚠️ 棚コードが違います。期待値: ${expectedShelf}`;
                 validation.classList.add('show');
                 return false;
             }
-            
+
             validation.classList.remove('show');
             document.getElementById('shelfInput').classList.add('filled');
             document.getElementById('step1').classList.remove('active');
             document.getElementById('step1').classList.add('completed');
-            
+
             // Move to step 2
             currentStep = 2;
             activateStep(2);
             playSuccess();
-            
+
             return true;
         }
 
@@ -698,29 +699,29 @@
         function validateProduct() {
             const input = document.getElementById('productInput').value.trim();
             const validation = document.getElementById('productValidation');
-            
+
             if (input === '') {
                 validation.textContent = '商品コードを入力してください';
                 validation.classList.add('show');
                 return false;
             }
-            
+
             if (input !== expectedProduct) {
                 validation.textContent = `⚠️ 商品コードが違います。期待値: ${expectedProduct}`;
                 validation.classList.add('show');
                 return false;
             }
-            
+
             validation.classList.remove('show');
             document.getElementById('productInput').classList.add('filled');
             document.getElementById('step2').classList.remove('active');
             document.getElementById('step2').classList.add('completed');
-            
+
             // Move to step 3
             currentStep = 3;
             activateStep(3);
             playSuccess();
-            
+
             return true;
         }
 
@@ -728,29 +729,29 @@
         function validateLot() {
             const input = document.getElementById('lotInput').value.trim();
             const validation = document.getElementById('lotValidation');
-            
+
             if (input === '') {
                 validation.textContent = 'LOT番号を入力してください';
                 validation.classList.add('show');
                 return false;
             }
-            
+
             if (input !== expectedLot) {
                 validation.textContent = `⚠️ LOT番号が違います。期待値: ${expectedLot}`;
                 validation.classList.add('show');
                 return false;
             }
-            
+
             validation.classList.remove('show');
             document.getElementById('lotInput').classList.add('filled');
             document.getElementById('step3').classList.remove('active');
             document.getElementById('step3').classList.add('completed');
-            
+
             // Move to step 4
             currentStep = 4;
             activateStep(4);
             playSuccess();
-            
+
             return true;
         }
 
@@ -758,7 +759,7 @@
         function activateStep(step) {
             const stepCard = document.getElementById(`step${step}`);
             stepCard.classList.add('active');
-            
+
             if (step === 2) {
                 document.getElementById('productInput').disabled = false;
                 document.querySelector('#step2 .scan-button').disabled = false;
@@ -772,7 +773,7 @@
                 document.getElementById('qtyPlus').disabled = false;
                 document.querySelectorAll('.quick-num-btn').forEach(btn => btn.disabled = false);
             }
-            
+
             // Scroll to step
             stepCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -794,7 +795,7 @@
         function updateQuantityDisplay() {
             document.getElementById('qtyDisplay').textContent = pickedQuantity;
             document.getElementById('confirmQty').textContent = pickedQuantity;
-            
+
             // Enable/disable confirm button
             const confirmBtn = document.getElementById('confirmBtn');
             if (pickedQuantity > 0 && currentStep === 4) {
@@ -810,18 +811,18 @@
                 showValidation('qty', '数量を入力してください');
                 return;
             }
-            
+
             showLoading();
-            
+
             setTimeout(() => {
                 hideLoading();
                 alert(`✅ ピッキング完了！\n\n` +
-                      `商品: ${expectedProduct}\n` +
-                      `棚: ${expectedShelf}\n` +
-                      `LOT: ${expectedLot}\n` +
-                      `数量: ${pickedQuantity} 本\n\n` +
-                      `次のタスクに進みます...`);
-                
+                    `商品: ${expectedProduct}\n` +
+                    `棚: ${expectedShelf}\n` +
+                    `LOT: ${expectedLot}\n` +
+                    `数量: ${pickedQuantity} 本\n\n` +
+                    `次のタスクに進みます...`);
+
                 // Reset for next task
                 resetForm();
             }, 1000);
@@ -832,10 +833,10 @@
             const reason = prompt('誤差の理由を入力してください:', '');
             if (reason) {
                 alert(`誤差報告を送信しました:\n\n` +
-                      `Task ID: WMS-OUT-0010\n` +
-                      `商品: ${expectedProduct}\n` +
-                      `理由: ${reason}\n\n` +
-                      `管理者に通知されます。`);
+                    `Task ID: WMS-OUT-0010\n` +
+                    `商品: ${expectedProduct}\n` +
+                    `理由: ${reason}\n\n` +
+                    `管理者に通知されます。`);
             }
         }
 
@@ -884,42 +885,43 @@
         }
 
         // Auto-validate on input
-        document.getElementById('shelfInput').addEventListener('input', function(e) {
+        document.getElementById('shelfInput').addEventListener('input', function (e) {
             if (e.target.value.length >= 7) {
                 validateShelf();
             }
         });
 
-        document.getElementById('productInput').addEventListener('input', function(e) {
+        document.getElementById('productInput').addEventListener('input', function (e) {
             if (e.target.value.length >= 5) {
                 validateProduct();
             }
         });
 
-        document.getElementById('lotInput').addEventListener('input', function(e) {
+        document.getElementById('lotInput').addEventListener('input', function (e) {
             if (e.target.value.length >= 5) {
                 validateLot();
             }
         });
 
         // Enter key support
-        document.getElementById('shelfInput').addEventListener('keypress', function(e) {
+        document.getElementById('shelfInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 validateShelf();
             }
         });
 
-        document.getElementById('productInput').addEventListener('keypress', function(e) {
+        document.getElementById('productInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 validateProduct();
             }
         });
 
-        document.getElementById('lotInput').addEventListener('keypress', function(e) {
+        document.getElementById('lotInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 validateLot();
             }
         });
     </script>
 </body>
+
 </html>

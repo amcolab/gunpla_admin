@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon {
@@ -283,6 +284,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -345,7 +347,8 @@
                 <!-- Row 1 - 未入金 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0156'); return false;">INV-2025-0156</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0156'); return false;">INV-2025-0156</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0892</a>
@@ -366,7 +369,8 @@
                 <!-- Row 2 - 一部入金 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0155'); return false;">INV-2025-0155</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0155'); return false;">INV-2025-0155</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0890</a>
@@ -387,7 +391,8 @@
                 <!-- Row 3 - 入金済 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0154'); return false;">INV-2025-0154</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0154'); return false;">INV-2025-0154</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0888</a>
@@ -408,7 +413,8 @@
                 <!-- Row 4 - 支払期限超過 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0153'); return false;">INV-2025-0153</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0153'); return false;">INV-2025-0153</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0885</a>
@@ -429,7 +435,8 @@
                 <!-- Row 5 - 入金済 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0152'); return false;">INV-2025-0152</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0152'); return false;">INV-2025-0152</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0880</a>
@@ -450,7 +457,8 @@
                 <!-- Row 6 - 未入金 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0151'); return false;">INV-2025-0151</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0151'); return false;">INV-2025-0151</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0875</a>
@@ -471,7 +479,8 @@
                 <!-- Row 7 - 入金済 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0150'); return false;">INV-2025-0150</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0150'); return false;">INV-2025-0150</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0870</a>
@@ -492,7 +501,8 @@
                 <!-- Row 8 - 一部入金 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0149'); return false;">INV-2025-0149</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0149'); return false;">INV-2025-0149</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0865</a>
@@ -513,7 +523,8 @@
                 <!-- Row 9 - 入金済 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0148'); return false;">INV-2025-0148</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0148'); return false;">INV-2025-0148</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0860</a>
@@ -534,7 +545,8 @@
                 <!-- Row 10 - 未入金 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewInvoice('INV-2025-0147'); return false;">INV-2025-0147</a>
+                        <a href="#" class="record-link"
+                            onclick="viewInvoice('INV-2025-0147'); return false;">INV-2025-0147</a>
                     </td>
                     <td>
                         <a href="#" class="record-link">ORD-2025-0855</a>
@@ -554,7 +566,7 @@
             </tbody>
         </table>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // View invoice detail
         function viewInvoice(invoiceId) {
@@ -596,4 +608,5 @@
         }
     </script>
 </body>
+
 </html>

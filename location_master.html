@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -301,6 +302,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- App Header -->
     <div class="app-header">
@@ -649,7 +651,7 @@
             </tbody>
         </table>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // View shelf details
         function viewShelf(shelfCode) {
@@ -666,15 +668,15 @@
         }
 
         // Search functionality
-        document.querySelector('.search-input').addEventListener('input', function(e) {
+        document.querySelector('.search-input').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.data-table tbody tr');
-            
+
             let visibleCount = 0;
             rows.forEach(row => {
                 const shelfCode = row.querySelector('.shelf-code').textContent.toLowerCase();
                 const description = row.querySelector('.description').textContent.toLowerCase();
-                
+
                 if (shelfCode.includes(searchTerm) || description.includes(searchTerm)) {
                     row.style.display = '';
                     visibleCount++;
@@ -682,10 +684,11 @@
                     row.style.display = 'none';
                 }
             });
-            
+
             // Update record count
             document.querySelector('.record-count').textContent = `1 - ${visibleCount} (${visibleCount}件中)`;
         });
     </script>
 </body>
+
 </html>

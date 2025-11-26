@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .portal-logo {
@@ -95,7 +96,7 @@
             border-radius: 8px;
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .filter-title {
@@ -180,7 +181,7 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .list-header {
@@ -355,7 +356,7 @@
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -405,6 +406,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <div class="supplier-header">
@@ -498,7 +500,8 @@
                     <!-- Row 1 - 確認待ち -->
                     <tr>
                         <td>
-                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-015'); return false;">PO-2025-015</a>
+                            <a href="#" class="order-number"
+                                onclick="viewOrder('PO-2025-015'); return false;">PO-2025-015</a>
                         </td>
                         <td>2025/10/25</td>
                         <td class="amount">¥234,560</td>
@@ -514,7 +517,8 @@
                     <!-- Row 2 - 支払待ち -->
                     <tr>
                         <td>
-                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-014'); return false;">PO-2025-014</a>
+                            <a href="#" class="order-number"
+                                onclick="viewOrder('PO-2025-014'); return false;">PO-2025-014</a>
                         </td>
                         <td>2025/10/18</td>
                         <td class="amount">¥156,780</td>
@@ -530,7 +534,8 @@
                     <!-- Row 3 - 配送中 -->
                     <tr>
                         <td>
-                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-013'); return false;">PO-2025-013</a>
+                            <a href="#" class="order-number"
+                                onclick="viewOrder('PO-2025-013'); return false;">PO-2025-013</a>
                         </td>
                         <td>2025/10/12</td>
                         <td class="amount">¥125,340</td>
@@ -546,7 +551,8 @@
                     <!-- Row 4 - 完了 -->
                     <tr>
                         <td>
-                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-012'); return false;">PO-2025-012</a>
+                            <a href="#" class="order-number"
+                                onclick="viewOrder('PO-2025-012'); return false;">PO-2025-012</a>
                         </td>
                         <td>2025/09/28</td>
                         <td class="amount">¥203,560</td>
@@ -562,7 +568,8 @@
                     <!-- Row 5 - 完了 -->
                     <tr>
                         <td>
-                            <a href="#" class="order-number" onclick="viewOrder('PO-2025-011'); return false;">PO-2025-011</a>
+                            <a href="#" class="order-number"
+                                onclick="viewOrder('PO-2025-011'); return false;">PO-2025-011</a>
                         </td>
                         <td>2025/09/15</td>
                         <td class="amount">¥189,900</td>
@@ -587,7 +594,7 @@
             </div>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // View order details
         function viewOrder(orderId) {
@@ -613,7 +620,7 @@
             const status = document.getElementById('statusFilter').value;
             const payment = document.getElementById('paymentFilter').value;
             const orderNumber = document.getElementById('orderNumberFilter').value;
-            
+
             console.log('Applying filters:', { period, status, payment, orderNumber });
             alert('フィルターを適用しました');
             // Apply filter logic
@@ -625,9 +632,10 @@
             document.getElementById('statusFilter').value = '';
             document.getElementById('paymentFilter').value = '';
             document.getElementById('orderNumberFilter').value = '';
-            
+
             alert('フィルターをリセットしました');
         }
     </script>
 </body>
+
 </html>

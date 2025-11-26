@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         .header-left {
@@ -44,7 +45,7 @@
             justify-content: center;
             font-size: 20px;
             color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .page-title {
@@ -65,12 +66,12 @@
             font-family: inherit;
             font-weight: 500;
             transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn-back:hover {
             background: #1678b6;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         /* Form Container */
@@ -80,7 +81,7 @@
             background: #ffffff;
             border-radius: 6px;
             padding: 28px 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         /* Section */
@@ -274,6 +275,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <div class="form-header">
@@ -287,11 +289,11 @@
     <!-- Form Container -->
     <div class="form-container">
         <form id="stockMovementForm">
-            
+
             <!-- 基本情報 Section -->
             <div class="form-section">
                 <div class="section-title">基本情報</div>
-                
+
                 <div class="form-field">
                     <label class="field-label">Movement ID</label>
                     <input type="text" class="field-input field-readonly" value="自動採番" readonly>
@@ -332,7 +334,7 @@
             <!-- 対象情報 Section -->
             <div class="form-section">
                 <div class="section-title">対象情報</div>
-                
+
                 <div class="form-field">
                     <label class="field-label">製品・資材 SKU</label>
                     <input type="text" class="field-input" placeholder="SKUを入力またはスキャン">
@@ -360,7 +362,7 @@
             <!-- ロケーション情報 Section -->
             <div class="form-section">
                 <div class="section-title">ロケーション情報</div>
-                
+
                 <div class="form-field">
                     <label class="field-label">倉庫</label>
                     <select class="field-select">
@@ -390,7 +392,7 @@
             <!-- LOT・品質管理 Section -->
             <div class="form-section">
                 <div class="section-title">LOT・品質管理</div>
-                
+
                 <div class="form-field">
                     <label class="field-label">LOT番号</label>
                     <input type="text" class="field-input" placeholder="例：MW25092A">
@@ -415,7 +417,7 @@
             <!-- システム情報 Section -->
             <div class="form-section">
                 <div class="section-title">システム情報</div>
-                
+
                 <div class="form-field">
                     <label class="field-label">ステータス</label>
                     <select class="field-select">
@@ -434,7 +436,7 @@
 
         </form>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // Go back to list
         function goBack() {
@@ -445,14 +447,14 @@
         }
 
         // Form submission
-        document.getElementById('stockMovementForm').addEventListener('submit', function(e) {
+        document.getElementById('stockMovementForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             // Validate required fields
             const movementType = this.querySelector('select[name="movement_type"]');
             const movementDate = this.querySelector('input[type="date"]');
             const quantity = this.querySelector('input[type="number"]');
-            
+
             if (confirm('この内容で登録しますか？')) {
                 alert('在庫移動を登録しました');
                 // Submit form logic here
@@ -461,14 +463,14 @@
         });
 
         // Auto-populate product name and unit based on SKU
-        document.querySelector('input[placeholder="SKUを入力またはスキャン"]').addEventListener('change', function() {
+        document.querySelector('input[placeholder="SKUを入力またはスキャン"]').addEventListener('change', function () {
             const sku = this.value;
             if (sku) {
                 // Simulate API call to get product info
                 setTimeout(() => {
                     const productName = document.querySelectorAll('.field-readonly')[1];
                     const unit = document.querySelectorAll('.field-readonly')[2];
-                    
+
                     productName.value = 'RSシリーズ500mL ボトル-乳白';
                     unit.value = '本';
                 }, 500);
@@ -476,16 +478,16 @@
         });
 
         // Enable/disable location fields based on movement type
-        document.getElementById('movementType').addEventListener('change', function() {
+        document.getElementById('movementType').addEventListener('change', function () {
             const movementType = this.value;
             const fromLocation = document.querySelectorAll('.field-readonly')[3];
             const toLocation = document.querySelectorAll('.field-readonly')[4];
-            
+
             if (movementType === 'transfer') {
                 fromLocation.removeAttribute('readonly');
                 fromLocation.classList.remove('field-readonly');
                 fromLocation.placeholder = '例：A-01-B2';
-                
+
                 toLocation.removeAttribute('readonly');
                 toLocation.classList.remove('field-readonly');
                 toLocation.placeholder = '例：C-03-A1';
@@ -494,7 +496,7 @@
                 fromLocation.classList.add('field-readonly');
                 fromLocation.placeholder = '移動の場合のみ';
                 fromLocation.value = '';
-                
+
                 toLocation.setAttribute('readonly', true);
                 toLocation.classList.add('field-readonly');
                 toLocation.placeholder = '移動の場合のみ';
@@ -503,4 +505,5 @@
         });
     </script>
 </body>
+
 </html>

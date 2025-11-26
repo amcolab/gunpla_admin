@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -140,6 +141,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <header class="kintone-header">
@@ -172,14 +174,11 @@
             <!-- Product Input Section -->
             <section class="input-section">
                 <h3 class="section-subtitle mb-md">🔍 製品を追加</h3>
-                
+
                 <div class="search-box">
-                    <input type="text" 
-                           class="form-input search-input" 
-                           id="productSearch" 
-                           placeholder="SKU または JAN コードを入力してください（例: RS-500, 4901234567890）"
-                           onkeyup="searchProduct(event)"
-                           autocomplete="off">
+                    <input type="text" class="form-input search-input" id="productSearch"
+                        placeholder="SKU または JAN コードを入力してください（例: RS-500, 4901234567890）" onkeyup="searchProduct(event)"
+                        autocomplete="off">
                     <button class="btn btn-success add-btn" onclick="addSelectedProduct()">
                         追加
                     </button>
@@ -247,58 +246,51 @@
             <!-- Delivery Address Section -->
             <section class="form-section">
                 <h2 class="section-title">📍 配送先情報</h2>
-                
+
                 <div class="form-grid form-grid-2">
                     <div class="form-group">
                         <label class="form-label">会社名 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="companyName" 
-                               value="サクラ商事株式会社" required>
+                        <input type="text" class="form-input" id="companyName" value="サクラ商事株式会社" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">担当者名 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="contactName" 
-                               value="山田 太郎" required>
+                        <input type="text" class="form-input" id="contactName" value="山田 太郎" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">郵便番号 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="postalCode" 
-                               value="150-0001" placeholder="000-0000" required>
+                        <input type="text" class="form-input" id="postalCode" value="150-0001" placeholder="000-0000"
+                            required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">電話番号 <span class="required">*</span></label>
-                        <input type="tel" class="form-input" id="phoneNumber" 
-                               value="03-1234-5678" placeholder="00-0000-0000" required>
+                        <input type="tel" class="form-input" id="phoneNumber" value="03-1234-5678"
+                            placeholder="00-0000-0000" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">住所 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="address1" 
-                           value="東京都渋谷区代々木1-2-3" 
-                           placeholder="都道府県市区町村番地" required>
+                    <input type="text" class="form-input" id="address1" value="東京都渋谷区代々木1-2-3" placeholder="都道府県市区町村番地"
+                        required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">建物名・部屋番号</label>
-                    <input type="text" class="form-input" id="address2" 
-                           value="代々木ビル 5F" 
-                           placeholder="マンション名・ビル名など">
+                    <input type="text" class="form-input" id="address2" value="代々木ビル 5F" placeholder="マンション名・ビル名など">
                 </div>
 
                 <div class="form-group mt-md">
                     <label class="form-label">配送に関する特記事項</label>
-                    <textarea class="form-textarea" 
-                              id="deliveryNote" 
-                              rows="3" 
-                              placeholder="配送時間の指定や、その他の要望があればご記入ください"></textarea>
+                    <textarea class="form-textarea" id="deliveryNote" rows="3"
+                        placeholder="配送時間の指定や、その他の要望があればご記入ください"></textarea>
                 </div>
             </section>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // Product master data (SKU/JAN mapping)
         const productMaster = {
@@ -457,10 +449,10 @@
 
             for (const [code, product] of Object.entries(productMaster)) {
                 const identifier = product.sku + product.jan; // Create unique identifier
-                
+
                 if (seen.has(identifier)) continue; // Skip duplicates
-                
-                if (code.toLowerCase().includes(searchTerm) || 
+
+                if (code.toLowerCase().includes(searchTerm) ||
                     product.name.toLowerCase().includes(searchTerm)) {
                     matches.push(product);
                     seen.add(identifier);
@@ -495,7 +487,7 @@
         function selectProduct(sku) {
             selectedProduct = productMaster[sku];
             document.getElementById('productSearch').value = `${selectedProduct.name} (${selectedProduct.sku})`;
-            
+
             // Highlight selected
             document.querySelectorAll('.product-option').forEach(opt => opt.classList.remove('selected'));
             event.target.closest('.product-option').classList.add('selected');
@@ -661,7 +653,7 @@
             // Show confirmation
             const total = document.getElementById('totalAmount').textContent;
             const itemCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
-            
+
             if (confirm(`注文内容を確認してください：\n\n製品数: ${orderItems.length}種類\n総数量: ${itemCount}点\n合計金額: ${total}\n\nこの内容で注文を確定しますか？`)) {
                 // Show loading
                 const btn = event.target;
@@ -689,22 +681,23 @@
         }
 
         // Close suggestions when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const searchBox = document.getElementById('productSearch');
             const suggestions = document.getElementById('productSuggestions');
-            
+
             if (!searchBox.contains(event.target) && !suggestions.contains(event.target)) {
                 suggestions.classList.remove('show');
             }
         });
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Create Order page loaded');
-            
+
             // Focus on search input
             document.getElementById('productSearch').focus();
         });
     </script>
 </body>
+
 </html>

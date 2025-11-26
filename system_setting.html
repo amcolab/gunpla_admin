@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>システム設定 - Kintone</title>
-    
+
     <!-- Kintone Common Stylesheet -->
     <link rel="stylesheet" href="kintone-common-v2.css">
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -37,7 +39,7 @@
             <span class="view-text">システム設定一覧</span>
             <span class="dropdown-arrow">▼</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">🔍</span>
         </button>
@@ -69,7 +71,7 @@
 
     <!-- Record Count Bottom -->
     <div class="bottom-count" id="bottomCount">1 - 5（5件中）</div>
-
+    <script src="auth.js"></script>
     <script>
         // Settings data
         const settings = [
@@ -108,7 +110,7 @@
         // Render table
         function renderTable() {
             const tbody = document.getElementById('settingsTableBody');
-            
+
             tbody.innerHTML = settings.map(setting => {
                 return `
                     <tr>
@@ -147,10 +149,10 @@
             const setting = settings.find(s => s.id === id);
             if (setting) {
                 alert(`設定詳細:\n\n` +
-                      `カテゴリ: ${setting.category}\n` +
-                      `説明: ${setting.description}\n` +
-                      `最終更新: ${setting.lastUpdated}\n\n` +
-                      `※ 設定詳細画面を開きます`);
+                    `カテゴリ: ${setting.category}\n` +
+                    `説明: ${setting.description}\n` +
+                    `最終更新: ${setting.lastUpdated}\n\n` +
+                    `※ 設定詳細画面を開きます`);
             }
         }
 
@@ -159,8 +161,8 @@
             const setting = settings.find(s => s.id === id);
             if (setting) {
                 alert(`設定を編集:\n\n` +
-                      `カテゴリ: ${setting.category}\n\n` +
-                      `※ 編集画面を開きます`);
+                    `カテゴリ: ${setting.category}\n\n` +
+                    `※ 編集画面を開きます`);
             }
         }
 
@@ -172,4 +174,5 @@
         console.log(`設定項目数: ${settings.length}件`);
     </script>
 </body>
+
 </html>

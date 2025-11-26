@@ -1,162 +1,212 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
   <meta charset="utf-8" />
   <title>Credie 権限モデル仕様書（Staff & Permission）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --fg:#111827;
-      --bg:#f5f5f7;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#0b63f6;
-      --accent-soft:#eef2ff;
+    :root {
+      --fg: #111827;
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #0b63f6;
+      --accent-soft: #eef2ff;
     }
-    html,body{
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      color:var(--fg);
-      font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
-           "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",
-           Helvetica,Arial,sans-serif;
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 14px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
+        Helvetica, Arial, sans-serif;
     }
-    .container{
-      max-width:1024px;
-      margin:0 auto;
-      padding:28px 20px 60px;
+
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
     }
-    header{
-      border-bottom:1px solid var(--border);
-      padding-bottom:14px;
-      margin-bottom:22px;
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 22px;
     }
-    header h1{
-      margin:0 0 6px;
-      font-size:24px;
-      letter-spacing:.03em;
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: .03em;
     }
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:18px;
-      font-size:12px;
-      color:var(--muted);
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 12px;
+      color: var(--muted);
     }
-    .meta div{display:flex;gap:6px;}
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:11px;
-      background:#e0f2fe;
-      color:#0369a1;
-      font-weight:500;
-      margin-left:8px;
+
+    .meta div {
+      display: flex;
+      gap: 6px;
     }
-    h2{
-      margin:28px 0 10px;
-      font-size:18px;
-      border-left:3px solid var(--accent);
-      padding-left:8px;
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 500;
+      margin-left: 8px;
     }
-    h3{
-      margin:20px 0 8px;
-      font-size:16px;
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 18px;
+      border-left: 3px solid var(--accent);
+      padding-left: 8px;
     }
-    p{margin:8px 0;}
-    ul,ol{margin:6px 0 10px 20px;}
-    .note{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:4px;
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 16px;
     }
-    .callout{
-      border-left:3px solid #f59e0b;
-      background:#fffbeb;
-      padding:10px 12px;
-      border-radius:6px;
-      margin:14px 0;
-      color:#7c5a00;
-      font-size:13px;
+
+    p {
+      margin: 8px 0;
     }
-    .card{
-      background:var(--card);
-      border-radius:10px;
-      border:1px solid var(--border);
-      padding:18px 20px;
-      margin:12px 0 18px;
-      box-shadow:0 6px 18px rgba(15,23,42,0.04);
+
+    ul,
+    ol {
+      margin: 6px 0 10px 20px;
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin:10px 0 18px;
-      background:var(--card);
-      border-radius:10px;
-      overflow:hidden;
-      box-shadow:0 4px 14px rgba(15,23,42,0.03);
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
     }
-    th,td{
-      border:1px solid var(--border);
-      padding:8px 10px;
-      vertical-align:top;
-      font-size:13px;
+
+    .callout {
+      border-left: 3px solid #f59e0b;
+      background: #fffbeb;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin: 14px 0;
+      color: #7c5a00;
+      font-size: 13px;
     }
-    th{
-      background:#f9fafb;
-      text-align:left;
-      white-space:nowrap;
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 18px 20px;
+      margin: 12px 0 18px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
     }
-    tr:nth-child(even) td{
-      background:#fcfcff;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
     }
-    .role-chip{
-      display:inline-flex;
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:11px;
-      background:var(--accent-soft);
-      color:#1d4ed8;
-      margin-right:6px;
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      vertical-align: top;
+      font-size: 13px;
     }
-    .tagline{
-      font-size:13px;
-      color:var(--muted);
+
+    th {
+      background: #f9fafb;
+      text-align: left;
+      white-space: nowrap;
     }
-    .check{
-      text-align:center;
-      font-size:14px;
+
+    tr:nth-child(even) td {
+      background: #fcfcff;
     }
-    .role-col{
-      background:#eff6ff;
-      font-weight:600;
+
+    .role-chip {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--accent-soft);
+      color: #1d4ed8;
+      margin-right: 6px;
     }
-    code{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-      font-size:12px;
-      background:#f3f4f6;
-      padding:1px 4px;
-      border-radius:4px;
+
+    .tagline {
+      font-size: 13px;
+      color: var(--muted);
     }
-    .section-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--muted);
-      margin-bottom:4px;
+
+    .check {
+      text-align: center;
+      font-size: 14px;
     }
-    @media print{
-      body{background:#ffffff;}
-      .container{padding:0 8mm 8mm;}
-      header{box-shadow:none;border-color:#d1d5db;}
-      .card,table{box-shadow:none;}
+
+    .role-col {
+      background: #eff6ff;
+      font-weight: 600;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .container {
+        padding: 0 8mm 8mm;
+      }
+
+      header {
+        box-shadow: none;
+        border-color: #d1d5db;
+      }
+
+      .card,
+      table {
+        box-shadow: none;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -181,7 +231,8 @@
         <ul>
           <li>アカウントに対して <strong>3 種類のロール</strong> を定義する。</li>
           <li>ロールは「誰が何をできるか」をシンプルなマトリクスで管理する。</li>
-          <li>MVP 時点では <strong>CEO が System Admin + Payment Approver を兼任</strong> し、その他社員は共通の Business Staff ロールとする。</li>
+          <li>MVP 時点では <strong>CEO が System Admin + Payment Approver を兼任</strong> し、その他社員は共通の Business Staff ロールとする。
+          </li>
         </ul>
         <p class="tagline">
           設計上は 3 ロール構成だが、運用上は「CEO vs Staff」という分かりやすい形でスタートする。
@@ -441,5 +492,7 @@
       </p>
     </section>
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

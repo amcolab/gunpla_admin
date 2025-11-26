@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon-circle {
@@ -166,7 +167,7 @@
             background: white;
             border-radius: 4px;
             margin-bottom: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .section-header {
@@ -415,6 +416,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -504,7 +506,8 @@
                     </div>
                     <div class="form-field">
                         <div class="form-label">メールアドレス</div>
-                        <div class="form-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c332e38392e1c283d373931332833723f3372362c">abc@gmail.com</a></div>
+                        <div class="form-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                data-cfemail="5c332e38392e1c283d373931332833723f3372362c">abc@gmail.com</a></div>
                     </div>
                     <div class="form-field">
                         <div class="form-label">郵便番号</div>
@@ -558,7 +561,8 @@
                     </div>
                     <div class="form-field">
                         <div class="form-label">発注金額合計</div>
-                        <div class="form-value" style="font-weight: 600; color: #e67e22; font-size: 16px;">¥8,140,000</div>
+                        <div class="form-value" style="font-weight: 600; color: #e67e22; font-size: 16px;">¥8,140,000
+                        </div>
                     </div>
                     <div class="form-field">
                         <div class="form-label">通貨</div>
@@ -751,7 +755,8 @@
                     <button class="btn btn-danger">× キャンセル</button>
                     <button class="btn">🗑️ 削除</button>
                 </div>
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; color: #888; font-size: 12px;">
+                <div
+                    style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; color: #888; font-size: 12px;">
                     <strong>ボタン説明：</strong><br>
                     • <strong>発注確定</strong>：下書き → 発注確定へ。入庫タスクを自動生成<br>
                     • <strong>編集</strong>：PO内容を編集可能にする<br>
@@ -762,8 +767,9 @@
             </div>
         </div>
     </div>
-
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script src="auth.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
         // Mock functions for demo
         function confirmPO() {
             alert('発注を確定しました。入庫タスクを自動生成します。');
@@ -784,4 +790,11 @@
         }
 
         function deletePO() {
-            if (confirm('この発注を??
+            if (confirm('この発注を削除しますか？')) {
+                alert('発注を削除しました。');
+            }
+        }
+    </script>
+</body>
+
+</html>

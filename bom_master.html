@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>部品表管理 (BOM) - Kintone</title>
-    
+
     <!-- Kintone Common Stylesheet -->
     <link rel="stylesheet" href="kintone-common-v2.css">
-    
+
     <style>
         /* BOM-specific styles */
         .expand-btn {
@@ -20,38 +21,38 @@
             padding: 0;
             transition: transform 0.2s;
         }
-        
+
         .expand-btn.expanded {
             transform: rotate(90deg);
         }
-        
+
         .sub-row {
             background-color: #f9f9f9;
             padding-left: 40px !important;
             font-size: 12px;
         }
-        
+
         .sub-components {
             display: none;
         }
-        
+
         .sub-components.show {
             display: table-row;
         }
-        
+
         .total-cost {
             font-weight: 600;
             color: #e67e22;
         }
-        
+
         .cost-value {
             color: #666;
         }
-        
+
         .quantity-value {
             font-weight: 500;
         }
-        
+
         .component-type {
             display: inline-block;
             padding: 2px 8px;
@@ -62,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -92,11 +94,11 @@
             <span class="view-text">全BOM一覧</span>
             <span class="dropdown-arrow">▼</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">🔍</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">📊</span>
         </button>
@@ -136,7 +138,7 @@
 
     <!-- Record Count Bottom -->
     <div class="bottom-count" id="bottomCount">1 - 8（8件中）</div>
-
+    <script src="auth.js"></script>
     <script>
         // BOM data structure
         const bomData = [
@@ -240,7 +242,7 @@
 
             bomData.forEach(bom => {
                 const isExpanded = expandedRows.has(bom.id);
-                
+
                 // Main BOM row
                 html += `
                     <tr>
@@ -340,26 +342,26 @@
             const bom = bomData.find(b => b.id === id);
             if (bom) {
                 alert(`BOM詳細:\n\n` +
-                      `BOM ID: ${bom.id}\n` +
-                      `製品名: ${bom.product}\n` +
-                      `構成品数: ${bom.components.length}点\n` +
-                      `合計原価: ¥${bom.totalCost.toFixed(2)}\n\n` +
-                      `※ BOM詳細画面を開きます`);
+                    `BOM ID: ${bom.id}\n` +
+                    `製品名: ${bom.product}\n` +
+                    `構成品数: ${bom.components.length}点\n` +
+                    `合計原価: ¥${bom.totalCost.toFixed(2)}\n\n` +
+                    `※ BOM詳細画面を開きます`);
             }
         }
 
         // View product
         function viewProduct(productName) {
             alert(`製品詳細:\n\n` +
-                  `製品名: ${productName}\n\n` +
-                  `※ 製品マスタ詳細画面を開きます`);
+                `製品名: ${productName}\n\n` +
+                `※ 製品マスタ詳細画面を開きます`);
         }
 
         // View component
         function viewComponent(componentName) {
             alert(`構成品詳細:\n\n` +
-                  `構成品名: ${componentName}\n\n` +
-                  `※ 資材マスタ詳細画面を開きます`);
+                `構成品名: ${componentName}\n\n` +
+                `※ 資材マスタ詳細画面を開きます`);
         }
 
         // Edit BOM
@@ -367,9 +369,9 @@
             const bom = bomData.find(b => b.id === id);
             if (bom) {
                 alert(`BOMを編集:\n\n` +
-                      `BOM ID: ${bom.id}\n` +
-                      `製品名: ${bom.product}\n\n` +
-                      `※ 編集画面を開きます`);
+                    `BOM ID: ${bom.id}\n` +
+                    `製品名: ${bom.product}\n\n` +
+                    `※ 編集画面を開きます`);
             }
         }
 
@@ -378,8 +380,8 @@
             const bom = bomData.find(b => b.id === id);
             if (bom) {
                 if (confirm(`このBOMを削除してもよろしいですか？\n\n` +
-                           `BOM ID: ${bom.id}\n` +
-                           `製品名: ${bom.product}`)) {
+                    `BOM ID: ${bom.id}\n` +
+                    `製品名: ${bom.product}`)) {
                     const index = bomData.findIndex(b => b.id === id);
                     if (index > -1) {
                         bomData.splice(index, 1);
@@ -394,7 +396,7 @@
         // Add new BOM
         function addBOM() {
             alert('新規BOM追加画面を開きます。\n\n' +
-                  '※ 実装時はBOM登録フォームを表示します。');
+                '※ 実装時はBOM登録フォームを表示します。');
         }
 
         // Initial render
@@ -405,4 +407,5 @@
         console.log(`BOM数: ${bomData.length}件`);
     </script>
 </body>
+
 </html>

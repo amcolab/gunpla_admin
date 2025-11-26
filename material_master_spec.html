@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification - 資材マスタ（Material Master）</title>
@@ -18,10 +19,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
     }
@@ -56,7 +60,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -119,6 +124,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -226,17 +232,50 @@
 
     <h3>4.1 一覧画面（項目）</h3>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>資材ID</td><td>内部一意ID</td></tr>
-      <tr><td>資材名</td><td>資材の名称</td></tr>
-      <tr><td>商品名</td><td>関連する商品名 / 用途名</td></tr>
-      <tr><td>型番</td><td>メーカー/仕入先の型番</td></tr>
-      <tr><td>重量・容量</td><td>物流・在庫計算に使用</td></tr>
-      <tr><td>サプライヤー</td><td>仕入先名称</td></tr>
-      <tr><td>発注点</td><td>再補充を行う最小在庫ライン</td></tr>
-      <tr><td>購買担当者</td><td>内部の担当者</td></tr>
-      <tr><td>資材区分</td><td>原料/包材/OEM/中栓/ボトルなど</td></tr>
-      <tr><td>操作</td><td>詳細/編集/削除</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>資材ID</td>
+        <td>内部一意ID</td>
+      </tr>
+      <tr>
+        <td>資材名</td>
+        <td>資材の名称</td>
+      </tr>
+      <tr>
+        <td>商品名</td>
+        <td>関連する商品名 / 用途名</td>
+      </tr>
+      <tr>
+        <td>型番</td>
+        <td>メーカー/仕入先の型番</td>
+      </tr>
+      <tr>
+        <td>重量・容量</td>
+        <td>物流・在庫計算に使用</td>
+      </tr>
+      <tr>
+        <td>サプライヤー</td>
+        <td>仕入先名称</td>
+      </tr>
+      <tr>
+        <td>発注点</td>
+        <td>再補充を行う最小在庫ライン</td>
+      </tr>
+      <tr>
+        <td>購買担当者</td>
+        <td>内部の担当者</td>
+      </tr>
+      <tr>
+        <td>資材区分</td>
+        <td>原料/包材/OEM/中栓/ボトルなど</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>詳細/編集/削除</td>
+      </tr>
     </table>
 
     <h3>4.2 画面イメージ（スクリーンショット）</h3>
@@ -291,5 +330,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

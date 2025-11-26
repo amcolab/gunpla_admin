@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification – 支払実行リクエスト管理</title>
@@ -19,10 +20,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
       color: #222;
@@ -61,7 +65,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -124,6 +129,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -132,6 +138,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -212,7 +219,10 @@
     </div>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
 
       <tr>
         <td>支払ID</td>
@@ -382,7 +392,11 @@
     <!-- 4.3 編集可否 -->
     <h3>4.3 フィールド編集可否ポリシー</h3>
     <table>
-      <tr><th>フィールド</th><th>編集可否</th><th>備考</th></tr>
+      <tr>
+        <th>フィールド</th>
+        <th>編集可否</th>
+        <th>備考</th>
+      </tr>
       <tr>
         <td>支払種別</td>
         <td>画面上：編集不可</td>
@@ -427,7 +441,10 @@
     <p>画面上部は 2 カラム構成で、一覧と同じ項目をより詳細に表示する。</p>
 
     <table>
-      <tr><th>項目名</th><th>説明 / 編集可否</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明 / 編集可否</th>
+      </tr>
       <tr>
         <td>支払ID</td>
         <td>
@@ -518,7 +535,10 @@ Date: 2025-09-30T10:45:32Z
     </p>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>ステータス変更</td>
         <td>
@@ -578,7 +598,10 @@ Date: 2025-09-30T10:45:32Z
 
     <h4>4.5.1 入力項目</h4>
     <table>
-      <tr><th>項目名</th><th>説明 / バリデーション</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明 / バリデーション</th>
+      </tr>
 
       <tr>
         <td>関連PO番号<span style="color:#d00;">＊</span></td>
@@ -586,7 +609,7 @@ Date: 2025-09-30T10:45:32Z
           手動作成する支払が特定の PO に紐づく場合の PO 番号。<br>
           ・入力方式：テキスト＋サジェスト、または PO 選択ダイアログからの選択。<br>
           ・必須。PO に紐づかない支払（例：雑費、特別ボーナス等）は、別運用とするか
-            「その他」モジュール側から生成する想定。<br>
+          「その他」モジュール側から生成する想定。<br>
           ・存在しない PO 番号を入力した場合はエラー。
         </td>
       </tr>
@@ -714,5 +737,7 @@ Date: 2025-09-30T10:45:32Z
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

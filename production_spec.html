@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification – 製造実績アプリ（Production App）</title>
@@ -19,10 +20,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
       color: #222;
@@ -61,7 +65,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -124,6 +129,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -132,6 +138,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -224,7 +231,10 @@
     </div>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>製造実績ID</td>
         <td>Kintone 自動採番の一意 ID。クリックで製造実績詳細画面へ遷移する。</td>
@@ -300,7 +310,10 @@
     <!-- A. 製造ロット情報 -->
     <h4>A. 製造ロット情報</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>製造実績ID</td>
         <td>自動採番レコード ID。</td>
@@ -342,7 +355,10 @@
     <!-- B. 在庫処理ステータス -->
     <h4>B. 在庫処理ステータス</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>原材料引落ステータス</td>
         <td>未処理 / 処理中 / 処理完了 / エラー など。原材料引落ボタン実行結果で自動更新。</td>
@@ -364,7 +380,10 @@
       原材料ロットの選択により、トレーサビリティ情報を保持します。
     </p>
     <table>
-      <tr><th>項目</th><th>説明</th></tr>
+      <tr>
+        <th>項目</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>資材コード / 名称</td>
         <td>BOM マスタから自動抽出される原材料の SKU / 名称。</td>
@@ -390,7 +409,10 @@
     <!-- D. メモ・品質情報 -->
     <h4>D. メモ・品質情報</h4>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>品質メモ / 備考</td>
         <td>ライン停止、設備トラブル、不良発生要因など品質管理に関する自由記述欄。</td>
@@ -449,5 +471,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,7 +73,7 @@
         .section-card {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 24px;
             overflow: hidden;
         }
@@ -139,15 +140,19 @@
         /* Product Lookup Styles (Kintone-like Multi-select) */
         .product-lookup {
             display: flex;
-            gap: 4px; /* Reduced gap for a tighter look */
+            gap: 4px;
+            /* Reduced gap for a tighter look */
         }
+
         .product-lookup .form-input {
             flex-grow: 1;
             padding: 8px 10px;
-            cursor: pointer; /* Suggests clicking will open a modal */
+            cursor: pointer;
+            /* Suggests clicking will open a modal */
             background: #fafafa;
             border-radius: 4px 0 0 4px;
         }
+
         .btn-lookup {
             background: #f0f0f0;
             color: #666;
@@ -157,29 +162,35 @@
             font-weight: normal;
             border-radius: 0 4px 4px 0;
             cursor: pointer;
-            height: 36px; /* Match input height */
+            height: 36px;
+            /* Match input height */
             line-height: 1;
             margin-top: 0;
             flex-shrink: 0;
             box-shadow: none;
             transition: background 0.2s;
         }
+
         .btn-lookup:hover {
             background: #e0e0e0;
         }
+
         .reward-table .product-lookup {
-            gap: 0; /* Adjust for table cell padding */
+            gap: 0;
+            /* Adjust for table cell padding */
         }
+
         .reward-table .product-lookup .form-input {
             width: 100%;
             height: 36px;
             border-right: none;
         }
+
         .reward-table .product-lookup .btn-lookup {
             border-left: none;
             height: 36px;
         }
-        
+
         /* Table */
         .reward-table {
             width: 100%;
@@ -201,7 +212,8 @@
         }
 
         .reward-table td {
-            padding: 8px 16px; /* Reduced vertical padding */
+            padding: 8px 16px;
+            /* Reduced vertical padding */
             border: 1px solid #e0e0e0;
             vertical-align: middle;
         }
@@ -323,7 +335,7 @@
             display: block;
             margin-bottom: 8px;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-row {
@@ -344,6 +356,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="app-header">
         <div class="app-icon">⚙️</div>
@@ -622,11 +635,11 @@
                 <span class="section-title">III. 配当者報酬ルール（レート・ソース別設定）</span>
             </div>
             <div class="section-body">
-                 <div class="form-row">
+                <div class="form-row">
                     <div class="form-field">
                         <label class="form-label">支払サイクル</label>
                         <select class="form-select">
-                             <option selected>四半期 (月末締め翌月末払い)</option>
+                            <option selected>四半期 (月末締め翌月末払い)</option>
                             <option disabled>月次 (Monthly)</option>
                         </select>
                     </div>
@@ -673,7 +686,8 @@
                             </td>
                             <td>
                                 <div class="product-lookup">
-                                    <input type="text" class="form-input" value="[RS-500ML] ライスシリカ, [RS-STICK] スティック" readonly placeholder="クリックして商品を選択...">
+                                    <input type="text" class="form-input" value="[RS-500ML] ライスシリカ, [RS-STICK] スティック"
+                                        readonly placeholder="クリックして商品を選択...">
                                     <button class="btn btn-lookup">...</button>
                                 </div>
                             </td>
@@ -708,7 +722,8 @@
                             </td>
                             <td>
                                 <div class="product-lookup">
-                                    <input type="text" class="form-input" value="全商品" readonly placeholder="クリックして商品を選択...">
+                                    <input type="text" class="form-input" value="全商品" readonly
+                                        placeholder="クリックして商品を選択...">
                                     <button class="btn btn-lookup">...</button>
                                 </div>
                             </td>
@@ -741,7 +756,7 @@
             <button class="btn btn-save" onclick="saveSettings()">保存して適用</button>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         function deleteRow(btn) {
             if (confirm('この行を削除してもよろしいですか？')) {
@@ -843,4 +858,5 @@
         }
     </script>
 </body>
+
 </html>

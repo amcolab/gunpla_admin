@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,6 +99,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <header class="kintone-header">
@@ -161,14 +163,14 @@
 
                     <div class="form-group">
                         <label class="form-label">注文番号</label>
-                        <input type="text" class="form-input" id="orderIdSearch" 
-                               placeholder="ORD-" onkeyup="applyFilters()">
+                        <input type="text" class="form-input" id="orderIdSearch" placeholder="ORD-"
+                            onkeyup="applyFilters()">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">製品名</label>
-                        <input type="text" class="form-input" id="productSearch" 
-                               placeholder="製品を検索" onkeyup="applyFilters()">
+                        <input type="text" class="form-input" id="productSearch" placeholder="製品を検索"
+                            onkeyup="applyFilters()">
                     </div>
                 </div>
 
@@ -209,7 +211,8 @@
                             <td><span class="badge badge-warning">配送中</span></td>
                             <td>2025/10/28</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order1')">
+                                <button class="btn btn-sm btn-primary"
+                                    onclick="event.stopPropagation(); reorderFromHistory('order1')">
                                     再注文
                                 </button>
                             </td>
@@ -294,7 +297,8 @@
                             <td><span class="badge badge-success">配送完了</span></td>
                             <td>2025/09/25</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order2')">
+                                <button class="btn btn-sm btn-primary"
+                                    onclick="event.stopPropagation(); reorderFromHistory('order2')">
                                     再注文
                                 </button>
                             </td>
@@ -349,7 +353,8 @@
                             <td><span class="badge badge-success">配送完了</span></td>
                             <td>2025/08/23</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); reorderFromHistory('order3')">
+                                <button class="btn btn-sm btn-primary"
+                                    onclick="event.stopPropagation(); reorderFromHistory('order3')">
                                     再注文
                                 </button>
                             </td>
@@ -402,7 +407,7 @@
             </section>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // Toggle order details - redirect to detail page
         function toggleOrderDetails(orderId) {
@@ -452,7 +457,7 @@
             const product = document.getElementById('productSearch').value;
 
             console.log('Applying filters:', { period, status, orderId, product });
-            
+
             // In real implementation, filter table rows
             alert('フィルターを適用中...\n期間: ' + period + '\nステータス: ' + status);
         }
@@ -467,9 +472,10 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Order History page loaded for guest');
         });
     </script>
 </body>
+
 </html>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
   <link rel="stylesheet" href="kintone-common-v2.css" />
   <style>
     body {
@@ -18,10 +19,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
       color: #222;
@@ -60,7 +64,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -123,6 +128,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -131,6 +137,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -198,12 +205,16 @@
     </div>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>店舗名</td>
         <td>
           チャネルを識別しやすい名称。<br>
-          例: <code>Shopify Official</code>, <code>Amazon JP</code>, <code>Rakuten Official</code>, <code>B2B Agency Portal</code> など。<br>
+          例: <code>Shopify Official</code>, <code>Amazon JP</code>, <code>Rakuten Official</code>,
+          <code>B2B Agency Portal</code> など。<br>
           クリックで店舗（チャネル）詳細画面へ遷移。
         </td>
       </tr>
@@ -219,7 +230,8 @@
         <td>ECサイトURL / ドメイン</td>
         <td>
           対象チャネルの EC サイトURL またはドメイン。<br>
-          例: <code>credie-store.myshopify.com</code>, <code>rakuten.co.jp/credie-store</code>, <code>agency.credie.jp</code>。<br>
+          例: <code>credie-store.myshopify.com</code>, <code>rakuten.co.jp/credie-store</code>,
+          <code>agency.credie.jp</code>。<br>
           ブラウザでの動作確認やリンク共有に使用。
         </td>
       </tr>
@@ -251,7 +263,8 @@
         <td>API バージョン</td>
         <td>
           連携に使用している API のバージョン情報。<br>
-          例: <code>2025-07</code>（Shopify API バージョン）, <code>SP-API v0</code>, <code>RMS API v1</code>, <code>v2.1</code>, <code>-</code>（API 連携なし）。<br>
+          例: <code>2025-07</code>（Shopify API バージョン）, <code>SP-API v0</code>, <code>RMS API v1</code>,
+          <code>v2.1</code>, <code>-</code>（API 連携なし）。<br>
           API 更新時の影響範囲確認や技術的なトラブルシュートに利用。
         </td>
       </tr>
@@ -284,17 +297,50 @@
       Phase 1 では以下のフィールド構成を想定しています。
     </p>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>店舗ID</td><td>内部管理用の一意 ID（自動採番またはコード）。他システム連携で使用。</td></tr>
-      <tr><td>店舗名</td><td>チャネルの表示名。</td></tr>
-      <tr><td>チャネル種別</td><td>Shopify / Amazon / Rakuten / Yahoo / BASE / B2B / 卸売 など。</td></tr>
-      <tr><td>ECサイトURL / ドメイン</td><td>フル URL またはドメイン。</td></tr>
-      <tr><td>連携ステータス</td><td>有効 / 無効。新規チャネル追加時のデフォルトは「有効」。</td></tr>
-      <tr><td>手数料率</td><td>% 表記。小数点第一位までを想定。</td></tr>
-      <tr><td>通貨</td><td>Phase 1: JPY 固定。プルダウンで選択可能な設計にしておく。</td></tr>
-      <tr><td>API バージョン</td><td>接続中の API バージョン文字列。</td></tr>
-      <tr><td>API 連携メモ</td><td>Webhook URL、認証方式、制限事項などのメモ（内部用）。</td></tr>
-      <tr><td>備考</td><td>キャンペーン専用チャネルなど、運用上の注意点を記載。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>店舗ID</td>
+        <td>内部管理用の一意 ID（自動採番またはコード）。他システム連携で使用。</td>
+      </tr>
+      <tr>
+        <td>店舗名</td>
+        <td>チャネルの表示名。</td>
+      </tr>
+      <tr>
+        <td>チャネル種別</td>
+        <td>Shopify / Amazon / Rakuten / Yahoo / BASE / B2B / 卸売 など。</td>
+      </tr>
+      <tr>
+        <td>ECサイトURL / ドメイン</td>
+        <td>フル URL またはドメイン。</td>
+      </tr>
+      <tr>
+        <td>連携ステータス</td>
+        <td>有効 / 無効。新規チャネル追加時のデフォルトは「有効」。</td>
+      </tr>
+      <tr>
+        <td>手数料率</td>
+        <td>% 表記。小数点第一位までを想定。</td>
+      </tr>
+      <tr>
+        <td>通貨</td>
+        <td>Phase 1: JPY 固定。プルダウンで選択可能な設計にしておく。</td>
+      </tr>
+      <tr>
+        <td>API バージョン</td>
+        <td>接続中の API バージョン文字列。</td>
+      </tr>
+      <tr>
+        <td>API 連携メモ</td>
+        <td>Webhook URL、認証方式、制限事項などのメモ（内部用）。</td>
+      </tr>
+      <tr>
+        <td>備考</td>
+        <td>キャンペーン専用チャネルなど、運用上の注意点を記載。</td>
+      </tr>
     </table>
 
     <!-- 5. 確認事項 -->
@@ -342,5 +388,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

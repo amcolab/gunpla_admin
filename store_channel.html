@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon-circle {
@@ -316,6 +317,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -372,13 +374,15 @@
                 <!-- Row 1 - Shopify Official -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewStore('STORE001'); return false;">Shopify Official</a>
+                        <a href="#" class="record-link" onclick="viewStore('STORE001'); return false;">Shopify
+                            Official</a>
                     </td>
                     <td>
                         <span class="channel-badge">Shopify</span>
                     </td>
                     <td>
-                        <a href="https://credie-store.myshopify.com" target="_blank" class="record-link">credie-store.myshopify.com</a>
+                        <a href="https://credie-store.myshopify.com" target="_blank"
+                            class="record-link">credie-store.myshopify.com</a>
                     </td>
                     <td>
                         <span class="status-badge status-active">有効</span>
@@ -400,7 +404,8 @@
                         <span class="channel-badge" style="background: #fff3e0; color: #e65100;">Amazon</span>
                     </td>
                     <td>
-                        <a href="https://www.amazon.co.jp/sp?seller=A2XAMPLE123" target="_blank" class="record-link">amazon.co.jp/sp?seller=A2X...</a>
+                        <a href="https://www.amazon.co.jp/sp?seller=A2XAMPLE123" target="_blank"
+                            class="record-link">amazon.co.jp/sp?seller=A2X...</a>
                     </td>
                     <td>
                         <span class="status-badge status-active">有効</span>
@@ -416,13 +421,15 @@
                 <!-- Row 3 - Rakuten -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewStore('STORE003'); return false;">Rakuten Official</a>
+                        <a href="#" class="record-link" onclick="viewStore('STORE003'); return false;">Rakuten
+                            Official</a>
                     </td>
                     <td>
                         <span class="channel-badge" style="background: #ffebee; color: #c62828;">Rakuten</span>
                     </td>
                     <td>
-                        <a href="https://www.rakuten.co.jp/credie-store" target="_blank" class="record-link">rakuten.co.jp/credie-store</a>
+                        <a href="https://www.rakuten.co.jp/credie-store" target="_blank"
+                            class="record-link">rakuten.co.jp/credie-store</a>
                     </td>
                     <td>
                         <span class="status-badge status-active">有効</span>
@@ -438,13 +445,15 @@
                 <!-- Row 4 - Yahoo! Shopping -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewStore('STORE004'); return false;">Yahoo! Shopping</a>
+                        <a href="#" class="record-link" onclick="viewStore('STORE004'); return false;">Yahoo!
+                            Shopping</a>
                     </td>
                     <td>
                         <span class="channel-badge" style="background: #f3e5f5; color: #6a1b9a;">Yahoo</span>
                     </td>
                     <td>
-                        <a href="https://shopping.yahoo.co.jp/store/credie" target="_blank" class="record-link">shopping.yahoo.co.jp/store/credie</a>
+                        <a href="https://shopping.yahoo.co.jp/store/credie" target="_blank"
+                            class="record-link">shopping.yahoo.co.jp/store/credie</a>
                     </td>
                     <td>
                         <span class="status-badge status-active">有効</span>
@@ -460,7 +469,8 @@
                 <!-- Row 5 - B2B Agency Portal -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewStore('STORE005'); return false;">B2B Agency Portal</a>
+                        <a href="#" class="record-link" onclick="viewStore('STORE005'); return false;">B2B Agency
+                            Portal</a>
                     </td>
                     <td>
                         <span class="channel-badge" style="background: #e0f2f1; color: #00695c;">B2B</span>
@@ -502,13 +512,15 @@
                 <!-- Row 7 - Shopify Agent Portal -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewStore('STORE007'); return false;">Shopify Agent Portal</a>
+                        <a href="#" class="record-link" onclick="viewStore('STORE007'); return false;">Shopify Agent
+                            Portal</a>
                     </td>
                     <td>
                         <span class="channel-badge">Shopify</span>
                     </td>
                     <td>
-                        <a href="https://agent-shop.credie.jp" target="_blank" class="record-link">agent-shop.credie.jp</a>
+                        <a href="https://agent-shop.credie.jp" target="_blank"
+                            class="record-link">agent-shop.credie.jp</a>
                     </td>
                     <td>
                         <span class="status-badge status-active">有効</span>
@@ -571,6 +583,7 @@
         <span id="bottomCount">1 - 9 (9件中)</span>
     </div>
 
+    <script src="auth.js"></script>
     <script>
         // View store details
         function viewStore(storeId) {
@@ -583,14 +596,14 @@
         }
 
         // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
+        document.getElementById('searchInput').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('#tableBody tr');
-            
+
             let visibleCount = 0;
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                
+
                 if (text.includes(searchTerm)) {
                     row.style.display = '';
                     visibleCount++;
@@ -598,7 +611,7 @@
                     row.style.display = 'none';
                 }
             });
-            
+
             // Update record count
             const countText = `1 - ${visibleCount} (${visibleCount}件中)`;
             document.getElementById('recordCount').textContent = countText;
@@ -606,4 +619,5 @@
         });
     </script>
 </body>
+
 </html>

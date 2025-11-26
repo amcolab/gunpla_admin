@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パートナーマスタアプリ - Kintone</title>
-    
+
     <!-- Kintone Common Stylesheet -->
     <link rel="stylesheet" href="kintone-common-v2.css">
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -32,11 +34,11 @@
             <span class="view-text">すべてのパートナー</span>
             <span class="dropdown-arrow">▼</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">🔍</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">⚙️</span>
         </button>
@@ -75,7 +77,7 @@
 
     <!-- Record Count Bottom -->
     <div class="record-count" id="bottomCount">12件のレコード</div>
-
+    <script src="auth.js"></script>
     <script>
         // Partner data
         const partners = [
@@ -221,7 +223,7 @@
                 'small_agent': 'status-active',
                 'investor': 'status-pending'
             };
-            
+
             return {
                 class: typeMap[type] || 'status-draft',
                 text: typeName
@@ -241,13 +243,13 @@
         // Get rank badge
         function getRankBadge(rank) {
             if (!rank) return '—';
-            
+
             const rankMap = {
                 'gold': { class: 'status-completed', text: 'GOLD' },
                 'silver': { class: 'status-new', text: 'SILVER' },
                 'bronze': { class: 'status-completed', text: 'BRONZE' }
             };
-            
+
             const rankInfo = rankMap[rank];
             return `<span class="status-badge ${rankInfo.class}">${rankInfo.text}</span>`;
         }
@@ -255,12 +257,12 @@
         // Render table
         function renderTable() {
             const tbody = document.getElementById('partnerTableBody');
-            
+
             tbody.innerHTML = partners.map(partner => {
                 const typeInfo = getTypeBadge(partner.type, partner.typeName);
                 const statusInfo = getStatusBadge(partner.status);
                 const rankDisplay = getRankBadge(partner.rank);
-                
+
                 return `
                     <tr>
                         <td>
@@ -319,14 +321,14 @@
             const partner = partners.find(p => p.id === id);
             if (partner) {
                 alert(`パートナー詳細:\n\n` +
-                      `ID: ${partner.id}\n` +
-                      `種別: ${partner.typeName}\n` +
-                      `名前: ${partner.name}\n` +
-                      `ステータス: ${partner.status === 'active' ? '有効' : '停止中'}\n` +
-                      `ランク: ${partner.rank || 'なし'}\n` +
-                      `担当者: ${partner.manager}\n` +
-                      `連絡先: ${partner.contact}\n` +
-                      `登録日: ${partner.registeredDate}`);
+                    `ID: ${partner.id}\n` +
+                    `種別: ${partner.typeName}\n` +
+                    `名前: ${partner.name}\n` +
+                    `ステータス: ${partner.status === 'active' ? '有効' : '停止中'}\n` +
+                    `ランク: ${partner.rank || 'なし'}\n` +
+                    `担当者: ${partner.manager}\n` +
+                    `連絡先: ${partner.contact}\n` +
+                    `登録日: ${partner.registeredDate}`);
             }
         }
 
@@ -335,10 +337,10 @@
             const partner = partners.find(p => p.id === id);
             if (partner) {
                 alert(`パートナーマスタ詳細:\n\n` +
-                      `ID: ${partner.id}\n` +
-                      `名前: ${partner.name}\n` +
-                      `種別: ${partner.typeName}\n\n` +
-                      `※ 詳細画面を開きます`);
+                    `ID: ${partner.id}\n` +
+                    `名前: ${partner.name}\n` +
+                    `種別: ${partner.typeName}\n\n` +
+                    `※ 詳細画面を開きます`);
             }
         }
 
@@ -346,9 +348,9 @@
         function viewManager(managerName) {
             const partnersByManager = partners.filter(p => p.manager === managerName);
             alert(`担当者詳細:\n\n` +
-                  `担当者名: ${managerName}\n` +
-                  `担当パートナー数: ${partnersByManager.length}件\n\n` +
-                  `※ 担当者詳細画面を開きます`);
+                `担当者名: ${managerName}\n` +
+                `担当パートナー数: ${partnersByManager.length}件\n\n` +
+                `※ 担当者詳細画面を開きます`);
         }
 
         // Edit partner
@@ -356,16 +358,16 @@
             const partner = partners.find(p => p.id === id);
             if (partner) {
                 alert(`パートナーを更新:\n\n` +
-                      `ID: ${partner.id}\n` +
-                      `名前: ${partner.name}\n\n` +
-                      `※ 編集画面を開きます`);
+                    `ID: ${partner.id}\n` +
+                    `名前: ${partner.name}\n\n` +
+                    `※ 編集画面を開きます`);
             }
         }
 
         // Add partner
         function addPartner() {
             alert('新規パートナー追加画面を開きます。\n\n' +
-                  '※ 実装時はパートナー登録フォームを表示します。');
+                '※ 実装時はパートナー登録フォームを表示します。');
         }
 
         // Initial render
@@ -376,4 +378,5 @@
         console.log(`パートナー数: ${partners.length}件`);
     </script>
 </body>
+
 </html>

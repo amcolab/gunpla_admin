@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon-circle {
@@ -364,6 +365,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -681,7 +683,7 @@
     <div class="bottom-count">
         <span id="bottomCount">1 - 15 (15件中)</span>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // View order
         function viewOrder(orderId) {
@@ -701,14 +703,14 @@
         }
 
         // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
+        document.getElementById('searchInput').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('#tableBody tr');
-            
+
             let visibleCount = 0;
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                
+
                 if (text.includes(searchTerm)) {
                     row.style.display = '';
                     visibleCount++;
@@ -716,7 +718,7 @@
                     row.style.display = 'none';
                 }
             });
-            
+
             // Update record count
             const countText = `1 - ${visibleCount} (${visibleCount}件中)`;
             document.getElementById('recordCount').textContent = countText;
@@ -724,4 +726,5 @@
         });
     </script>
 </body>
+
 </html>

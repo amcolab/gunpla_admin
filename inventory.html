@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,7 +72,7 @@
 
         /* App Description */
         .app-description {
-            display: none; 
+            display: none;
         }
 
         /* View Controls */
@@ -323,7 +324,9 @@
             color: #333;
         }
 
-        .form-input, .form-select, .form-textarea {
+        .form-input,
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: 8px 12px;
             border: 1px solid #ccc;
@@ -371,23 +374,24 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .content-area {
                 padding: 12px;
             }
-            
+
             .table-header th,
             .table-cell {
                 padding: 4px 3px;
                 font-size: 11px;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="kintone-header">
         <div class="app-icon">📦</div>
@@ -420,7 +424,7 @@
 
     <div class="content-area">
         <div class="record-count">6件のレコード</div>
-        
+
         <table class="kintone-table">
             <thead class="table-header">
                 <tr>
@@ -615,7 +619,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">在庫評価額 (自動計算)</label>
-                            <input type="text" class="form-input" readonly style="background-color: #eee;" placeholder="現在庫 x 単価">
+                            <input type="text" class="form-input" readonly style="background-color: #eee;"
+                                placeholder="現在庫 x 単価">
                         </div>
                         <div class="form-group">
                             <label class="form-label">発注点</label>
@@ -661,7 +666,7 @@
             </div>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         function openNewStockModal() {
             document.getElementById('newStockModal').classList.add('show');
@@ -676,14 +681,15 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('newStockModal').addEventListener('click', function(e) {
+        document.getElementById('newStockModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeNewStockModal();
             }
         });
 
         // Warehouse filter (Removed since it's no longer used)
-        
+
     </script>
 </body>
+
 </html>

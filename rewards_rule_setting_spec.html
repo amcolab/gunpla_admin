@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification - 報酬ルール設定（Rewards Rule Settings）</title>
@@ -19,7 +20,7 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
     h1 {
@@ -29,10 +30,21 @@
       margin-bottom: 16px;
     }
 
-    h2 { font-size: 18px; margin-top: 28px; }
-    h3 { font-size: 16px; margin-top: 16px; }
+    h2 {
+      font-size: 18px;
+      margin-top: 28px;
+    }
 
-    p, ul, li { line-height: 1.6; }
+    h3 {
+      font-size: 16px;
+      margin-top: 16px;
+    }
+
+    p,
+    ul,
+    li {
+      line-height: 1.6;
+    }
 
     table {
       width: 100%;
@@ -40,11 +52,17 @@
       margin: 10px 0 20px;
       font-size: 13px;
     }
-    th, td {
+
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
     }
-    th { background: #f2f2f7; font-weight: 600; }
+
+    th {
+      background: #f2f2f7;
+      font-weight: 600;
+    }
 
     .spec-screenshot {
       border: 1px solid #ddd;
@@ -70,136 +88,164 @@
       color: #3949ab;
       margin-right: 6px;
     }
-
   </style>
 </head>
 
 <body>
-<div class="spec-container">
+  <div class="spec-container">
 
-  <div class="spec-meta">
-    <span class="tag">UI Spec</span>
-    <span class="tag">Rewards Rule Master</span>
-    Version 1.0 / 作成日：________
+    <div class="spec-meta">
+      <span class="tag">UI Spec</span>
+      <span class="tag">Rewards Rule Master</span>
+      Version 1.0 / 作成日：________
+    </div>
+
+    <h1>UI Screen Specification – 報酬ルール設定（Rewards Rule Settings）</h1>
+    <p><strong>対象画面:</strong> 報酬ルール設定（Affiliate / Partner / Investor 配当ルール）</p>
+    <p><strong>想定利用者:</strong> 管理者、運用担当、財務担当（Credie 内部ユーザー）</p>
+
+    <!-- 1. 目的 -->
+    <h2>1. 画面の目的（ビジネス上の役割）</h2>
+    <p>
+      本画面は、Affiliate・Partner・Investor への報酬計算に使用される
+      <strong>配当ルール / 手数料レート / 発注金額レンジ</strong> を設定するための管理画面です。
+    </p>
+    <ul>
+      <li>代理店（Agency）向けの発注額に応じたレート設定</li>
+      <li>取次店（Affiliate）向けのランク別パーセンテージ設定</li>
+      <li>パートナー×商品別の個別配当率設定</li>
+    </ul>
+
+    <div class="spec-screenshot">
+      <img src="rewards_rule_master_screen.png" alt="Rewards Rule Settings Screenshot" />
+      <div class="spec-screenshot-caption">図1. 報酬ルール設定画面（メイン）</div>
+    </div>
+
+    <!-- 2. User Scenarios -->
+    <h2>2. ユーザーストーリー（利用シナリオ）</h2>
+    <ul>
+      <li>運用担当が「代理店向けの報酬レート」を月次で更新する</li>
+      <li>Investor 向けに、四半期ごとの配当率を設定する</li>
+      <li>特定のパートナーに対し、特定商品だけ別レートを適用する</li>
+      <li>Finance チームが締め日ごとに配当ルールを確認する</li>
+    </ul>
+
+    <!-- 3. 機能 -->
+    <h2>3. 主要機能</h2>
+
+    <h3>3.1 代理店報酬ルール（発注金額ベース）</h3>
+    <ul>
+      <li>発注金額レンジ（下限/上限）の追加・編集・削除</li>
+      <li>各レンジの「掛け率（%）」を設定</li>
+      <li>ルールの有効/無効切り替え</li>
+    </ul>
+
+    <h3>3.2 取次店報酬ルール（ランク/注文金額ベース）</h3>
+    <ul>
+      <li>ランク（Bronze, Silver 等）の追加</li>
+      <li>注文金額レンジに応じた手数料率の設定</li>
+      <li>支払サイクル（月次/四半期）の設定</li>
+    </ul>
+
+    <h3>3.3 配当者報酬ルール（パートナー別・商品別レート）</h3>
+    <ul>
+      <li>対象パートナーの選択（モーダル画面）</li>
+      <li>対象商品の選択（モーダル画面）</li>
+      <li>有効期間（Start / End）の設定</li>
+      <li>レート（%）の設定</li>
+    </ul>
+
+    <div class="spec-screenshot">
+      <img src="rewards_rule_modal_partners.png" />
+      <div class="spec-screenshot-caption">図2. 対象取引先選択モーダル</div>
+    </div>
+
+    <div class="spec-screenshot">
+      <img src="rewards_rule_modal_products.png" />
+      <div class="spec-screenshot-caption">図3. 対象商品選択モーダル</div>
+    </div>
+
+    <!-- 4. Layout / Fields -->
+    <h2>4. 画面レイアウトと項目</h2>
+
+    <h3>4.1 主な入力項目</h3>
+    <table>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>ルール状態</td>
+        <td>Active / Inactive 切り替え</td>
+      </tr>
+      <tr>
+        <td>発注金額レンジ</td>
+        <td>下限/上限/手数料率の設定</td>
+      </tr>
+      <tr>
+        <td>ランク</td>
+        <td>Bronze/Silver などの分類</td>
+      </tr>
+      <tr>
+        <td>ランク金額レンジ</td>
+        <td>各ランクの手数料率設定</td>
+      </tr>
+      <tr>
+        <td>対象パートナー</td>
+        <td>チェックボックスで複数選択</td>
+      </tr>
+      <tr>
+        <td>対象商品</td>
+        <td>チェックボックスで複数選択</td>
+      </tr>
+      <tr>
+        <td>適用期間</td>
+        <td>Start/End 日付の設定</td>
+      </tr>
+      <tr>
+        <td>配当率 (%)</td>
+        <td>適用レート</td>
+      </tr>
+    </table>
+
+    <!-- 5. Business Impact -->
+    <h2>5. Business Impact（業務への影響）</h2>
+    <ul>
+      <li>報酬計算ロジック（毎月・毎四半期）に直接反映される</li>
+      <li>パートナー/Investor への支払額に影響 → Finance の確定作業に直結</li>
+      <li>ルール設定ミス → 支払金額の誤計算・トラブルリスク</li>
+      <li>商品別配当ルールは、販売促進キャンペーン運用に活用可能</li>
+    </ul>
+
+    <!-- 6. Scope -->
+    <h2>6. Scope / Out of Scope</h2>
+
+    <h3>6.1 In Scope</h3>
+    <ul>
+      <li>ルール設定画面の UI / 入力フォーム / モーダル表示</li>
+      <li>ルールの保存・更新・削除</li>
+      <li>Kintone レコードでのデータ保持</li>
+    </ul>
+
+    <h3>6.2 Out of Scope</h3>
+    <ul>
+      <li>配当計算ロジック（バックエンド）</li>
+      <li>入金/出金情報との照合（Invoice/Payment App が担当）</li>
+      <li>GoAffPro 側の設定管理</li>
+      <li>実際の支払実行（GMO API）</li>
+    </ul>
+
+    <!-- 7. Confirmation -->
+    <h2>7. お客様に確認いただきたい点</h2>
+    <ul>
+      <li>レートの管理方法（Partner × 商品別）が業務要件と一致しているか</li>
+      <li>支払サイクル（月次/四半期）は現在のビジネス運用に合っているか</li>
+      <li>報酬ルールの種類（代理店 / Affiliate / パートナー）が十分か</li>
+      <li>対象選択の UI（モーダル）は使いやすいか</li>
+    </ul>
+
   </div>
-
-  <h1>UI Screen Specification – 報酬ルール設定（Rewards Rule Settings）</h1>
-  <p><strong>対象画面:</strong> 報酬ルール設定（Affiliate / Partner / Investor 配当ルール）</p>
-  <p><strong>想定利用者:</strong> 管理者、運用担当、財務担当（Credie 内部ユーザー）</p>
-
-  <!-- 1. 目的 -->
-  <h2>1. 画面の目的（ビジネス上の役割）</h2>
-  <p>
-    本画面は、Affiliate・Partner・Investor への報酬計算に使用される
-    <strong>配当ルール / 手数料レート / 発注金額レンジ</strong> を設定するための管理画面です。
-  </p>
-  <ul>
-    <li>代理店（Agency）向けの発注額に応じたレート設定</li>
-    <li>取次店（Affiliate）向けのランク別パーセンテージ設定</li>
-    <li>パートナー×商品別の個別配当率設定</li>
-  </ul>
-
-  <div class="spec-screenshot">
-    <img src="rewards_rule_master_screen.png" alt="Rewards Rule Settings Screenshot" />
-    <div class="spec-screenshot-caption">図1. 報酬ルール設定画面（メイン）</div>
-  </div>
-
-  <!-- 2. User Scenarios -->
-  <h2>2. ユーザーストーリー（利用シナリオ）</h2>
-  <ul>
-    <li>運用担当が「代理店向けの報酬レート」を月次で更新する</li>
-    <li>Investor 向けに、四半期ごとの配当率を設定する</li>
-    <li>特定のパートナーに対し、特定商品だけ別レートを適用する</li>
-    <li>Finance チームが締め日ごとに配当ルールを確認する</li>
-  </ul>
-
-  <!-- 3. 機能 -->
-  <h2>3. 主要機能</h2>
-
-  <h3>3.1 代理店報酬ルール（発注金額ベース）</h3>
-  <ul>
-    <li>発注金額レンジ（下限/上限）の追加・編集・削除</li>
-    <li>各レンジの「掛け率（%）」を設定</li>
-    <li>ルールの有効/無効切り替え</li>
-  </ul>
-
-  <h3>3.2 取次店報酬ルール（ランク/注文金額ベース）</h3>
-  <ul>
-    <li>ランク（Bronze, Silver 等）の追加</li>
-    <li>注文金額レンジに応じた手数料率の設定</li>
-    <li>支払サイクル（月次/四半期）の設定</li>
-  </ul>
-
-  <h3>3.3 配当者報酬ルール（パートナー別・商品別レート）</h3>
-  <ul>
-    <li>対象パートナーの選択（モーダル画面）</li>
-    <li>対象商品の選択（モーダル画面）</li>
-    <li>有効期間（Start / End）の設定</li>
-    <li>レート（%）の設定</li>
-  </ul>
-
-  <div class="spec-screenshot">
-    <img src="rewards_rule_modal_partners.png" />
-    <div class="spec-screenshot-caption">図2. 対象取引先選択モーダル</div>
-  </div>
-
-  <div class="spec-screenshot">
-    <img src="rewards_rule_modal_products.png" />
-    <div class="spec-screenshot-caption">図3. 対象商品選択モーダル</div>
-  </div>
-
-  <!-- 4. Layout / Fields -->
-  <h2>4. 画面レイアウトと項目</h2>
-
-  <h3>4.1 主な入力項目</h3>
-  <table>
-    <tr><th>項目名</th><th>説明</th></tr>
-    <tr><td>ルール状態</td><td>Active / Inactive 切り替え</td></tr>
-    <tr><td>発注金額レンジ</td><td>下限/上限/手数料率の設定</td></tr>
-    <tr><td>ランク</td><td>Bronze/Silver などの分類</td></tr>
-    <tr><td>ランク金額レンジ</td><td>各ランクの手数料率設定</td></tr>
-    <tr><td>対象パートナー</td><td>チェックボックスで複数選択</td></tr>
-    <tr><td>対象商品</td><td>チェックボックスで複数選択</td></tr>
-    <tr><td>適用期間</td><td>Start/End 日付の設定</td></tr>
-    <tr><td>配当率 (%)</td><td>適用レート</td></tr>
-  </table>
-
-  <!-- 5. Business Impact -->
-  <h2>5. Business Impact（業務への影響）</h2>
-  <ul>
-    <li>報酬計算ロジック（毎月・毎四半期）に直接反映される</li>
-    <li>パートナー/Investor への支払額に影響 → Finance の確定作業に直結</li>
-    <li>ルール設定ミス → 支払金額の誤計算・トラブルリスク</li>
-    <li>商品別配当ルールは、販売促進キャンペーン運用に活用可能</li>
-  </ul>
-
-  <!-- 6. Scope -->
-  <h2>6. Scope / Out of Scope</h2>
-
-  <h3>6.1 In Scope</h3>
-  <ul>
-    <li>ルール設定画面の UI / 入力フォーム / モーダル表示</li>
-    <li>ルールの保存・更新・削除</li>
-    <li>Kintone レコードでのデータ保持</li>
-  </ul>
-
-  <h3>6.2 Out of Scope</h3>
-  <ul>
-    <li>配当計算ロジック（バックエンド）</li>
-    <li>入金/出金情報との照合（Invoice/Payment App が担当）</li>
-    <li>GoAffPro 側の設定管理</li>
-    <li>実際の支払実行（GMO API）</li>
-  </ul>
-
-  <!-- 7. Confirmation -->
-  <h2>7. お客様に確認いただきたい点</h2>
-  <ul>
-    <li>レートの管理方法（Partner × 商品別）が業務要件と一致しているか</li>
-    <li>支払サイクル（月次/四半期）は現在のビジネス運用に合っているか</li>
-    <li>報酬ルールの種類（代理店 / Affiliate / パートナー）が十分か</li>
-    <li>対象選択の UI（モーダル）は使いやすいか</li>
-  </ul>
-
-</div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

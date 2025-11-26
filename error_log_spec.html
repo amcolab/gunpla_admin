@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification – 例外管理アプリ（Error / Exception Management）</title>
@@ -12,50 +13,77 @@
       background-color: #f5f5f7;
       line-height: 1.7;
     }
+
     .spec-container {
       max-width: 980px;
       margin: 0 auto;
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
-    h1, h2, h3, h4 {
+
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
       color: #222;
     }
+
     h1 {
       font-size: 22px;
       border-bottom: 2px solid #e5e5ea;
       padding-bottom: 8px;
     }
-    h2 { font-size: 18px; }
-    h3 { font-size: 16px; }
-    p { margin: 0.4em 0; }
-    ul { margin: 0.4em 0 0.8em 1.4em; }
-    ol { margin: 0.4em 0 0.8em 1.6em; }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      margin: 0.4em 0 0.8em 1.4em;
+    }
+
+    ol {
+      margin: 0.4em 0 0.8em 1.6em;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
       margin: 0.5em 0 1.2em;
       font-size: 13px;
     }
-    th, td {
+
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
     }
+
     th {
       background-color: #f2f2f7;
       font-weight: 600;
       white-space: nowrap;
     }
+
     .spec-meta {
       font-size: 12px;
       color: #666;
       margin-bottom: 12px;
     }
+
     .spec-tag {
       display: inline-block;
       font-size: 11px;
@@ -65,6 +93,7 @@
       color: #3949ab;
       margin-right: 6px;
     }
+
     .spec-callout {
       border-left: 4px solid #3f51b5;
       background: #f5f7ff;
@@ -72,6 +101,7 @@
       margin: 10px 0 16px;
       font-size: 13px;
     }
+
     .spec-screenshot {
       border: 1px solid #ddd;
       border-radius: 6px;
@@ -80,12 +110,14 @@
       text-align: center;
       margin: 8px 0 16px;
     }
+
     .spec-screenshot img {
       max-width: 100%;
       height: auto;
       border-radius: 4px;
       border: 1px solid #e0e0e0;
     }
+
     .spec-screenshot-caption {
       font-size: 12px;
       color: #666;
@@ -93,6 +125,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -155,12 +188,15 @@
       <li><strong>編集 / 削除:</strong> 選択した複数レコードの一括編集・削除。削除は原則開発チームのみ許可。</li>
       <li><strong>CSV出力:</strong> 検索結果を CSV でエクスポートし、障害分析や監査用に保管。</li>
       <li><strong>検索ボックス:</strong> Exception ID、要約、API パスなどで全文検索。<br>
-          プレースホルダ: 「Exception ID、要約、APIで検索…」。</li>
+        プレースホルダ: 「Exception ID、要約、APIで検索…」。</li>
     </ul>
 
     <h3>4.2 一覧カラム仕様</h3>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
 
       <tr>
         <td>チェックボックス</td>
@@ -307,7 +343,7 @@
       <li>
         <strong>① 例外発生</strong><br>
         ・Payment Request / Invoice / Orders / Stock などで API エラーや同期失敗が発生した場合、<br>
-          それぞれの処理が本アプリに例外レコードを自動作成する。<br>
+        それぞれの処理が本アプリに例外レコードを自動作成する。<br>
         ・ステータス = <code>New</code>、Retry=0 で登録。
       </li>
       <li>
@@ -343,5 +379,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

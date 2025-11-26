@@ -1,51 +1,194 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
-<meta charset="utf-8" />
-<title>Business Flow Spec - Shopify / BtoB 出荷フロー</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  :root{
-    --fg:#1b1f24; --bg:#ffffff; --muted:#6b7280; --border:#e5e7eb; --accent:#0b63f6;
-  }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
-    font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",Helvetica,Arial,sans-serif;}
-  .container{max-width:1024px;margin:0 auto;padding:28px 20px 60px;}
-  header{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:22px;}
-  header h1{margin:0 0 6px;font-size:24px;letter-spacing:.01em;}
-  .meta{display:flex;gap:24px;flex-wrap:wrap;color:var(--muted);font-size:12px}
-  .meta div{display:flex;gap:8px}
-  .toc{border:1px solid var(--border);border-radius:8px;padding:14px;margin:18px 0 28px;background:#fafafa}
-  .toc h2{margin:0 0 8px;font-size:14px}
-  .toc ol{margin:0 0 0 18px;padding:0}
-  .toc li{margin:4px 0}
-  h1.flow-title{font-size:20px;margin-top:50px;border-bottom:2px solid var(--border);padding-bottom:4px;}
-  h2{font-size:18px;margin:28px 0 8px;border-left:3px solid var(--accent);padding-left:8px}
-  h3{font-size:16px;margin:18px 0 6px}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0 12px 20px}
-  .note{font-size:12px;color:var(--muted)}
-  table{width:100%;border-collapse:collapse;margin:10px 0 18px}
-  th,td{border:1px solid var(--border);padding:8px;vertical-align:top}
-  th{background:#f8fafc;text-align:left}
-  figure{margin:12px 0;text-align:center}
-  figure img{max-width:100%;border:1px solid var(--border);border-radius:6px}
-  figure figcaption{font-size:12px;color:var(--muted);margin-top:6px}
-  .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;padding:0 4px}
-  .callout{border-left:3px solid #f59e0b;background:#fffbeb;padding:10px 12px;border-radius:6px;margin:12px 0;color:#7c5a00}
-  @media print{
-    a[href]:after{content:""}
-    .toc{page-break-inside:avoid}
-    h2{page-break-after:avoid}
-    figure{page-break-inside:avoid}
-    .container{padding:0 10mm 10mm}
-  }
-</style>
+  <meta charset="utf-8" />
+  <title>Business Flow Spec - Shopify / BtoB 出荷フロー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --fg: #1b1f24;
+      --bg: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #0b63f6;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 14px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Helvetica, Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: .01em;
+    }
+
+    .meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .meta div {
+      display: flex;
+      gap: 8px
+    }
+
+    .toc {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 18px 0 28px;
+      background: #fafafa
+    }
+
+    .toc h2 {
+      margin: 0 0 8px;
+      font-size: 14px
+    }
+
+    .toc ol {
+      margin: 0 0 0 18px;
+      padding: 0
+    }
+
+    .toc li {
+      margin: 4px 0
+    }
+
+    h1.flow-title {
+      font-size: 20px;
+      margin-top: 50px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 4px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 28px 0 8px;
+      border-left: 3px solid var(--accent);
+      padding-left: 8px
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 18px 0 6px
+    }
+
+    p {
+      margin: 10px 0
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 12px 20px
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top
+    }
+
+    th {
+      background: #f8fafc;
+      text-align: left
+    }
+
+    figure {
+      margin: 12px 0;
+      text-align: center
+    }
+
+    figure img {
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px
+    }
+
+    figure figcaption {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 4px
+    }
+
+    .callout {
+      border-left: 3px solid #f59e0b;
+      background: #fffbeb;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin: 12px 0;
+      color: #7c5a00
+    }
+
+    @media print {
+      a[href]:after {
+        content: ""
+      }
+
+      .toc {
+        page-break-inside: avoid
+      }
+
+      h2 {
+        page-break-after: avoid
+      }
+
+      figure {
+        page-break-inside: avoid
+      }
+
+      .container {
+        padding: 0 10mm 10mm
+      }
+    }
+  </style>
   <script type="module">
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-  mermaid.initialize({ startOnLoad: true });
-</script>
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </head>
+
 <body>
   <div class="container">
 
@@ -80,130 +223,180 @@
       </section>
 
       <section id="sec-2">
-      <h2>2. システム構成</h2>
-      <table>
-        <thead>
-          <tr><th>コンポーネント</th><th>役割</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Shopify（EC_Channel）</td><td>BtoC 受注の発生源。</td></tr>
-          <tr><td>Yoom</td><td>Webhook／バッチにより Shopify → サーバーへデータ連携。</td></tr>
-          <tr><td>Ruby_Server（Middleware）</td><td>業務ロジックの集約、レコード作成、各種 API のハブ。</td></tr>
-          <tr><td>注文アプリ（Kintone）</td><td>受注／ステータス／トラッキングを保持。</td></tr>
-          <tr><td>在庫管理アプリ（Kintone）</td><td>論理在庫（システム内引当）を管理。</td></tr>
-          <tr><td>実在庫管理アプリ</td><td>実在庫（実棚・ロット単位）の管理。</td></tr>
-          <tr><td>タスク管理アプリ（Kintone）</td><td>出荷／入荷タスク管理。</td></tr>
-          <tr><td>Scan barcode画面（ReactJS 倉庫UI）</td><td>倉庫作業者のスキャン UI（バーコード、棚コード）。</td></tr>
-          <tr><td>Ship&amp;Co</td><td>送り状発行、ラベル出力、トラッキング連携。</td></tr>
-          <tr><td>S3_Storage</td><td>配送ラベル（PDF）保管。</td></tr>
-          <tr><td>Op_Staff</td><td>キャンセル／返品の例外対応（手動介入）。</td></tr>
-        </tbody>
-      </table>
-    </section>
+        <h2>2. システム構成</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>コンポーネント</th>
+              <th>役割</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Shopify（EC_Channel）</td>
+              <td>BtoC 受注の発生源。</td>
+            </tr>
+            <tr>
+              <td>Yoom</td>
+              <td>Webhook／バッチにより Shopify → サーバーへデータ連携。</td>
+            </tr>
+            <tr>
+              <td>Ruby_Server（Middleware）</td>
+              <td>業務ロジックの集約、レコード作成、各種 API のハブ。</td>
+            </tr>
+            <tr>
+              <td>注文アプリ（Kintone）</td>
+              <td>受注／ステータス／トラッキングを保持。</td>
+            </tr>
+            <tr>
+              <td>在庫管理アプリ（Kintone）</td>
+              <td>論理在庫（システム内引当）を管理。</td>
+            </tr>
+            <tr>
+              <td>実在庫管理アプリ</td>
+              <td>実在庫（実棚・ロット単位）の管理。</td>
+            </tr>
+            <tr>
+              <td>タスク管理アプリ（Kintone）</td>
+              <td>出荷／入荷タスク管理。</td>
+            </tr>
+            <tr>
+              <td>Scan barcode画面（ReactJS 倉庫UI）</td>
+              <td>倉庫作業者のスキャン UI（バーコード、棚コード）。</td>
+            </tr>
+            <tr>
+              <td>Ship&amp;Co</td>
+              <td>送り状発行、ラベル出力、トラッキング連携。</td>
+            </tr>
+            <tr>
+              <td>S3_Storage</td>
+              <td>配送ラベル（PDF）保管。</td>
+            </tr>
+            <tr>
+              <td>Op_Staff</td>
+              <td>キャンセル／返品の例外対応（手動介入）。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <!-- 3. プロセス詳細 -->
-    <section id="sec-3">
-      <h2>3. プロセス詳細</h2>
+      <!-- 3. プロセス詳細 -->
+      <section id="sec-3">
+        <h2>3. プロセス詳細</h2>
 
-      <h3>3.1 受注・論理在庫引当</h3>
-      <ol>
-        <li>Shopify で新規注文が発生すると、Yoom が Webhook を介して Ruby_Server にデータ送信。</li>
-        <li>Ruby_Server はデータ正規化後、<span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
-        <li>Ruby_Server は <span class="kbd">在庫管理アプリ</span> に SKU ごとの在庫照会を実施。</li>
-        <li>不足時：ステータスを <span class="kbd">要在庫確認</span> に更新。</li>
-        <li>充足時：ステータスを <span class="kbd">受注確定</span> に更新し、対応数量を論理在庫から引当。</li>
-      </ol>
-      <div class="callout">目的：当該受注分を確実に確保し、オーバーセルを防止する。</div>
-      <!-- Mermaid の代わりに画像を配置する場合（任意） -->
-      <!--
+        <h3>3.1 受注・論理在庫引当</h3>
+        <ol>
+          <li>Shopify で新規注文が発生すると、Yoom が Webhook を介して Ruby_Server にデータ送信。</li>
+          <li>Ruby_Server はデータ正規化後、<span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
+          <li>Ruby_Server は <span class="kbd">在庫管理アプリ</span> に SKU ごとの在庫照会を実施。</li>
+          <li>不足時：ステータスを <span class="kbd">要在庫確認</span> に更新。</li>
+          <li>充足時：ステータスを <span class="kbd">受注確定</span> に更新し、対応数量を論理在庫から引当。</li>
+        </ol>
+        <div class="callout">目的：当該受注分を確実に確保し、オーバーセルを防止する。</div>
+        <!-- Mermaid の代わりに画像を配置する場合（任意） -->
+        <!--
       <figure>
         <img src="sequence_1.png" alt="受注・引当のシーケンス図（置換用）">
         <figcaption>図 3-1：受注〜論理在庫引当（シーケンス図）</figcaption>
       </figure>
       -->
 
-      <h3>3.2 出荷タスク作成・倉庫実作業</h3>
-      <ol>
-        <li>受注確定後、Ruby_Server は <span class="kbd">タスク管理アプリ</span> に <span class="kbd">出荷タスク</span> を作成（OrderID／SKU／数量／棚位置／注意事項）。</li>
-        <li>タスクは <span class="kbd">Scan barcode画面</span> に一覧表示され、作業者が選択。</li>
-        <li>作業者は商品バーコードおよび棚コードをスキャンし、出荷確定。</li>
-        <li>確定時、<span class="kbd">実在庫管理アプリ</span> の実在庫（SKU／Location／LOT）を減算。</li>
-        <li><span class="kbd">タスク管理アプリ</span> は結果を受け取り、タスク状態を <span class="kbd">完了済み</span> に更新。</li>
-      </ol>
-      <!--
+        <h3>3.2 出荷タスク作成・倉庫実作業</h3>
+        <ol>
+          <li>受注確定後、Ruby_Server は <span class="kbd">タスク管理アプリ</span> に <span class="kbd">出荷タスク</span>
+            を作成（OrderID／SKU／数量／棚位置／注意事項）。</li>
+          <li>タスクは <span class="kbd">Scan barcode画面</span> に一覧表示され、作業者が選択。</li>
+          <li>作業者は商品バーコードおよび棚コードをスキャンし、出荷確定。</li>
+          <li>確定時、<span class="kbd">実在庫管理アプリ</span> の実在庫（SKU／Location／LOT）を減算。</li>
+          <li><span class="kbd">タスク管理アプリ</span> は結果を受け取り、タスク状態を <span class="kbd">完了済み</span> に更新。</li>
+        </ol>
+        <!--
       <figure>
         <img src="sequence_2.png" alt="出荷タスク〜倉庫作業シーケンス図（置換用）">
         <figcaption>図 3-2：出荷タスク〜倉庫実作業（シーケンス図）</figcaption>
       </figure>
       -->
 
-      <h3>3.3 送り状発行・連携</h3>
-      <ol>
-        <li>タスク完了時、<span class="kbd">タスク管理アプリ</span> は Webhook で Ruby_Server に通知。</li>
-        <li>Ruby_Server は <span class="kbd">Ship&amp;Co</span> API を呼び出し、送り状を発行。</li>
-        <li>Ship&amp;Co は <span class="kbd">トラッキング番号</span> と <span class="kbd">PDF ラベル</span> を返却。</li>
-        <li>Ruby_Server は PDF を <span class="kbd">S3_Storage</span> に保存。</li>
-        <li>トラッキング情報とラベルのリンクを <span class="kbd">注文アプリ</span> に反映。</li>
-      </ol>
-      <!--
+        <h3>3.3 送り状発行・連携</h3>
+        <ol>
+          <li>タスク完了時、<span class="kbd">タスク管理アプリ</span> は Webhook で Ruby_Server に通知。</li>
+          <li>Ruby_Server は <span class="kbd">Ship&amp;Co</span> API を呼び出し、送り状を発行。</li>
+          <li>Ship&amp;Co は <span class="kbd">トラッキング番号</span> と <span class="kbd">PDF ラベル</span> を返却。</li>
+          <li>Ruby_Server は PDF を <span class="kbd">S3_Storage</span> に保存。</li>
+          <li>トラッキング情報とラベルのリンクを <span class="kbd">注文アプリ</span> に反映。</li>
+        </ol>
+        <!--
       <figure>
         <img src="sequence_3.png" alt="送り状発行・連携シーケンス図（置換用）">
         <figcaption>図 3-3：送り状発行〜反映（シーケンス図）</figcaption>
       </figure>
       -->
 
-      <h3>3.4 Shopify 同期</h3>
-      <ol>
-        <li><span class="kbd">Ship&amp;Co</span> は Shopify に配送（Fulfilled／Tracking）を反映。</li>
-        <li>Shopify からの Webhook により、<span class="kbd">注文アプリ</span> の最終状態（Delivered 等）を更新。</li>
-      </ol>
+        <h3>3.4 Shopify 同期</h3>
+        <ol>
+          <li><span class="kbd">Ship&amp;Co</span> は Shopify に配送（Fulfilled／Tracking）を反映。</li>
+          <li>Shopify からの Webhook により、<span class="kbd">注文アプリ</span> の最終状態（Delivered 等）を更新。</li>
+        </ol>
 
-      <h3>3.5 キャンセル／返品（Flow 9）</h3>
-      <table>
-        <thead>
-          <tr><th>ケース</th><th>処理概要</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>キャンセル</td><td>Flow 9 参照（論理在庫引当の戻し／実在庫未減算時のハンドリング）。</td></tr>
-          <tr><td>返品</td><td>Flow 9 参照（受領・検品後の実在庫戻し、注文・課金状態の調整）。</td></tr>
-        </tbody>
-      </table>
-  
-    </section>
+        <h3>3.5 キャンセル／返品（Flow 9）</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ケース</th>
+              <th>処理概要</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>キャンセル</td>
+              <td>Flow 9 参照（論理在庫引当の戻し／実在庫未減算時のハンドリング）。</td>
+            </tr>
+            <tr>
+              <td>返品</td>
+              <td>Flow 9 参照（受領・検品後の実在庫戻し、注文・課金状態の調整）。</td>
+            </tr>
+          </tbody>
+        </table>
 
-    <!-- 4. 在庫ロジック -->
-    <section id="sec-4">
-      <h2>4. 在庫ロジック</h2>
-      <table>
-        <thead>
-          <tr><th>在庫種別</th><th>更新トリガー</th><th>目的</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>論理在庫</td>
-            <td>受注確定／キャンセル／返品（再引当）／入荷</td>
-            <td>システム内での在庫確保により、オーバーセル防止。</td>
-          </tr>
-          <tr>
-            <td>実在庫</td>
-            <td>倉庫作業（出荷・入荷・検品）</td>
-            <td>実棚・ロット単位での現物管理。</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      </section>
 
-    <!-- 5. 期待される結果 -->
-    <section id="sec-5">
-      <h2>5. 期待される結果</h2>
-      <ul>
-        <li>Shopify → Kintone → 倉庫 → Ship&amp;Co → Shopify の一貫処理が確立される。</li>
-        <li>論理在庫と実在庫の役割分担が明確になり、在庫不整合を低減。</li>
-        <li>倉庫現場は <span class="kbd">Scan barcode画面</span> により、スキャンベースで正確に処理可能。</li>
-        <li>キャンセル／返品などの例外系も、定義済みフロー（Flow 9）で処理可能。</li>
-        <li>注文・在庫・タスク・トラッキングの双方向同期により、人手の更新作業を最小化。</li>
-      </ul>
-    </section>
+      <!-- 4. 在庫ロジック -->
+      <section id="sec-4">
+        <h2>4. 在庫ロジック</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>在庫種別</th>
+              <th>更新トリガー</th>
+              <th>目的</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>論理在庫</td>
+              <td>受注確定／キャンセル／返品（再引当）／入荷</td>
+              <td>システム内での在庫確保により、オーバーセル防止。</td>
+            </tr>
+            <tr>
+              <td>実在庫</td>
+              <td>倉庫作業（出荷・入荷・検品）</td>
+              <td>実棚・ロット単位での現物管理。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 5. 期待される結果 -->
+      <section id="sec-5">
+        <h2>5. 期待される結果</h2>
+        <ul>
+          <li>Shopify → Kintone → 倉庫 → Ship&amp;Co → Shopify の一貫処理が確立される。</li>
+          <li>論理在庫と実在庫の役割分担が明確になり、在庫不整合を低減。</li>
+          <li>倉庫現場は <span class="kbd">Scan barcode画面</span> により、スキャンベースで正確に処理可能。</li>
+          <li>キャンセル／返品などの例外系も、定義済みフロー（Flow 9）で処理可能。</li>
+          <li>注文・在庫・タスク・トラッキングの双方向同期により、人手の更新作業を最小化。</li>
+        </ul>
+      </section>
 
       <section id="flow1-sequence">
         <h2>6. シーケンス図</h2>
@@ -216,130 +409,195 @@
         </figure>
       </section>
     </section>
-   <div style="page-break-before: always;"></div>
+    <div style="page-break-before: always;"></div>
     <!-- ========== FLOW 2 ========== -->
     <section id="flow2">
       <h1 class="flow-title">Flow2: BtoB分割出荷フロー</h1>
 
-  <section id="flow2-sec1">
-  <h2>1. 目的</h2>
-  <p>BtoB受注で複数回出荷（分割出荷）を可能にし、以下を目的とする。</p>
-  <ul>
-    <li>受注確定時に論理在庫を引き当て、在庫を確保。</li>
-    <li>棚・LOT単位の実在庫を正確に管理。</li>
-    <li>手動再出荷に対応。</li>
-    <li>請求・出荷・在庫の状態をシステム間で同期。</li>
-  </ul>
-</section>
+      <section id="flow2-sec1">
+        <h2>1. 目的</h2>
+        <p>BtoB受注で複数回出荷（分割出荷）を可能にし、以下を目的とする。</p>
+        <ul>
+          <li>受注確定時に論理在庫を引き当て、在庫を確保。</li>
+          <li>棚・LOT単位の実在庫を正確に管理。</li>
+          <li>手動再出荷に対応。</li>
+          <li>請求・出荷・在庫の状態をシステム間で同期。</li>
+        </ul>
+      </section>
 
-<section id="sec2">
-  <h2>2. システム構成</h2>
-  <table>
-    <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
-    <tbody>
-      <tr><td>Sales_Staff</td><td>代理店登録・受注承認を担当。</td></tr>
-      <tr><td>パートナーマスタ</td><td>代理店情報（区分、割引率、口座情報など）の管理。</td></tr>
-      <tr><td>注文アプリ</td><td>受注データの管理。</td></tr>
-      <tr><td>Agent（代理店）</td><td>受発注ポータルで注文を行うユーザー。</td></tr>
-      <tr><td>代理店ポータル</td><td>代理店が受注・出荷状況を確認できる画面。</td></tr>
-      <tr><td>Ruby_Server</td><td>ロジック処理、VA ID発行、全体制御。</td></tr>
-      <tr><td>GMO_API</td><td>仮想口座（VA）発行および入金確認API。</td></tr>
-      <tr><td>請求管理アプリ</td><td>請求書および入金照合を管理。</td></tr>
-      <tr><td>在庫管理アプリ</td><td>論理在庫（引当管理）を管理。</td></tr>
-      <tr><td>タスク管理アプリ</td><td>出荷・入荷タスク管理。</td></tr>
-      <tr><td>Scan barcode画面</td><td>倉庫担当者向けの実作業画面（バーコード・棚・LOT入力）。</td></tr>
-      <tr><td>実在庫管理アプリ</td><td>実在庫（棚・LOT単位）の管理。</td></tr>
-      <tr><td>Ship&amp;Co</td><td>送り状発行・トラッキング番号取得。</td></tr>
-      <tr><td>Op_Staff</td><td>手動オペレーション・例外対応。</td></tr>
-    </tbody>
-  </table>
-</section>
+      <section id="sec2">
+        <h2>2. システム構成</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>コンポーネント</th>
+              <th>役割</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sales_Staff</td>
+              <td>代理店登録・受注承認を担当。</td>
+            </tr>
+            <tr>
+              <td>パートナーマスタ</td>
+              <td>代理店情報（区分、割引率、口座情報など）の管理。</td>
+            </tr>
+            <tr>
+              <td>注文アプリ</td>
+              <td>受注データの管理。</td>
+            </tr>
+            <tr>
+              <td>Agent（代理店）</td>
+              <td>受発注ポータルで注文を行うユーザー。</td>
+            </tr>
+            <tr>
+              <td>代理店ポータル</td>
+              <td>代理店が受注・出荷状況を確認できる画面。</td>
+            </tr>
+            <tr>
+              <td>Ruby_Server</td>
+              <td>ロジック処理、VA ID発行、全体制御。</td>
+            </tr>
+            <tr>
+              <td>GMO_API</td>
+              <td>仮想口座（VA）発行および入金確認API。</td>
+            </tr>
+            <tr>
+              <td>請求管理アプリ</td>
+              <td>請求書および入金照合を管理。</td>
+            </tr>
+            <tr>
+              <td>在庫管理アプリ</td>
+              <td>論理在庫（引当管理）を管理。</td>
+            </tr>
+            <tr>
+              <td>タスク管理アプリ</td>
+              <td>出荷・入荷タスク管理。</td>
+            </tr>
+            <tr>
+              <td>Scan barcode画面</td>
+              <td>倉庫担当者向けの実作業画面（バーコード・棚・LOT入力）。</td>
+            </tr>
+            <tr>
+              <td>実在庫管理アプリ</td>
+              <td>実在庫（棚・LOT単位）の管理。</td>
+            </tr>
+            <tr>
+              <td>Ship&amp;Co</td>
+              <td>送り状発行・トラッキング番号取得。</td>
+            </tr>
+            <tr>
+              <td>Op_Staff</td>
+              <td>手動オペレーション・例外対応。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-<section id="sec3">
-  <h2>3. 全体プロセス</h2>
+      <section id="sec3">
+        <h2>3. 全体プロセス</h2>
 
-  <h3>3.1 代理店登録・受注作成</h3>
-  <ol>
-    <li>Sales_Staff が <span class="kbd">パートナーマスタ</span> に代理店を登録（区分、割引、口座等）。</li>
-    <li>システムは 代理店ポータル アカウントを自動発行。</li>
-    <li>代理店は 代理店ポータル にログインし、商品選択・割引後価格を確認。</li>
-    <li>注文送信により <span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
-    <li>Sales_Staff が承認するとステータスが <span class="kbd">承認済み</span> になる。</li>
-  </ol>
+        <h3>3.1 代理店登録・受注作成</h3>
+        <ol>
+          <li>Sales_Staff が <span class="kbd">パートナーマスタ</span> に代理店を登録（区分、割引、口座等）。</li>
+          <li>システムは 代理店ポータル アカウントを自動発行。</li>
+          <li>代理店は 代理店ポータル にログインし、商品選択・割引後価格を確認。</li>
+          <li>注文送信により <span class="kbd">注文アプリ</span> に受注レコードを作成。</li>
+          <li>Sales_Staff が承認するとステータスが <span class="kbd">承認済み</span> になる。</li>
+        </ol>
 
-  <h3>3.2 請求書発行・入金確認（Agency → Credie）</h3>
-  <ol>
-    <li>承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出し、仮想口座（VA ID）を発行。</li>
-    <li><span class="kbd">請求管理アプリ</span> に VA ID を保存し、代理店へ請求書を送信。</li>
-    <li>代理店が <strong>Credie 指定口座</strong> へ銀行振込を行う（資金の流れは常に <strong>Agency → Credie</strong>）。</li>
-    <li><span class="kbd">GMO API</span> が Webhook により入金結果を <span class="kbd">Ruby_Server</span> へ通知。</li>
-    <li><span class="kbd">Ruby_Server</span> が取引結果を確認し、該当請求のステータスを自動更新する：
-      <ul>
-        <li>入金マッチ成功時 → ステータス <span class="kbd">支払い済み</span>。</li>
-        <li>入金エラー／マッチング不可 → ステータス <span class="kbd">入金エラー</span>。</li>
-      </ul>
-    </li>
-  </ol>
-  <p>
-    本フローでは、<strong>Credie から Partner への支払い処理は発生しない</strong>。仕入側の支払フローは別フローで定義する。
-  </p>
+        <h3>3.2 請求書発行・入金確認（Agency → Credie）</h3>
+        <ol>
+          <li>承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出し、仮想口座（VA ID）を発行。</li>
+          <li><span class="kbd">請求管理アプリ</span> に VA ID を保存し、代理店へ請求書を送信。</li>
+          <li>代理店が <strong>Credie 指定口座</strong> へ銀行振込を行う（資金の流れは常に <strong>Agency → Credie</strong>）。</li>
+          <li><span class="kbd">GMO API</span> が Webhook により入金結果を <span class="kbd">Ruby_Server</span> へ通知。</li>
+          <li><span class="kbd">Ruby_Server</span> が取引結果を確認し、該当請求のステータスを自動更新する：
+            <ul>
+              <li>入金マッチ成功時 → ステータス <span class="kbd">支払い済み</span>。</li>
+              <li>入金エラー／マッチング不可 → ステータス <span class="kbd">入金エラー</span>。</li>
+            </ul>
+          </li>
+        </ol>
+        <p>
+          本フローでは、<strong>Credie から Partner への支払い処理は発生しない</strong>。仕入側の支払フローは別フローで定義する。
+        </p>
 
-  <h3>3.3 在庫引当（論理在庫）</h3>
-  <ol>
-    <li>支払い完了時、システムが <span class="kbd">引当</span> 処理を起動。</li>
-    <li><span class="kbd">在庫管理アプリ</span> が論理在庫を照会。</li>
-    <li>在庫十分 → 対応数量を論理在庫から減算、ステータスを <span class="kbd">引当済み</span> に更新。</li>
-    <li>在庫不足 → 受注を A（出荷可能分）と B（不足分）に分割。</li>
-    <li>A分は論理在庫引当、B分は入荷待ち状態で保持。</li>
-  </ol>
+        <h3>3.3 在庫引当（論理在庫）</h3>
+        <ol>
+          <li>支払い完了時、システムが <span class="kbd">引当</span> 処理を起動。</li>
+          <li><span class="kbd">在庫管理アプリ</span> が論理在庫を照会。</li>
+          <li>在庫十分 → 対応数量を論理在庫から減算、ステータスを <span class="kbd">引当済み</span> に更新。</li>
+          <li>在庫不足 → 受注を A（出荷可能分）と B（不足分）に分割。</li>
+          <li>A分は論理在庫引当、B分は入荷待ち状態で保持。</li>
+        </ol>
 
-  <h3>3.4 第一次出荷（A分）</h3>
-  <ol>
-    <li><span class="kbd">Ruby_Server</span> が <span class="kbd">タスク管理アプリ</span> に出荷タスクを作成。</li>
-    <li>倉庫担当者が <span class="kbd">Scan barcode画面</span> にて対象商品を確認。</li>
-    <li>各商品についてバーコード・棚コード・LOT番号をスキャン。</li>
-    <li>確認後、<span class="kbd">実在庫管理アプリ</span> に {SKU, Location_ID, LOT_No, 数量} を記録し、実在庫を減算。</li>
-    <li>
-      倉庫担当者が出荷タスクを「完了」にすると、<span class="kbd">タスク管理アプリ</span> が
-      Webhook 経由で <span class="kbd">注文アプリ</span> に完了情報を<strong>自動連携</strong>し、
-      対象受注の出荷ステータスを更新する。
-    </li>
-    <li><span class="kbd">Ship&amp;Co</span> API により送り状を発行し、トラッキング番号を取得。</li>
-    <li>代理店ポータル に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
-  </ol>
+        <h3>3.4 第一次出荷（A分）</h3>
+        <ol>
+          <li><span class="kbd">Ruby_Server</span> が <span class="kbd">タスク管理アプリ</span> に出荷タスクを作成。</li>
+          <li>倉庫担当者が <span class="kbd">Scan barcode画面</span> にて対象商品を確認。</li>
+          <li>各商品についてバーコード・棚コード・LOT番号をスキャン。</li>
+          <li>確認後、<span class="kbd">実在庫管理アプリ</span> に {SKU, Location_ID, LOT_No, 数量} を記録し、実在庫を減算。</li>
+          <li>
+            倉庫担当者が出荷タスクを「完了」にすると、<span class="kbd">タスク管理アプリ</span> が
+            Webhook 経由で <span class="kbd">注文アプリ</span> に完了情報を<strong>自動連携</strong>し、
+            対象受注の出荷ステータスを更新する。
+          </li>
+          <li><span class="kbd">Ship&amp;Co</span> API により送り状を発行し、トラッキング番号を取得。</li>
+          <li>代理店ポータル に配送情報（トラッキング番号、出荷日、棚・LOT情報）を通知。</li>
+        </ol>
 
-  <h3>3.5 残り出荷（B分）</h3>
-  <ol>
-    <li>在庫補充後、運用担当者が <span class="kbd">注文アプリ</span> で <span class="kbd">出荷指示</span> を実行。</li>
-    <li>新しいタスクを <span class="kbd">タスク管理アプリ</span> に生成。</li>
-    <li>倉庫担当者が再度スキャン作業を行い、出荷を確定。</li>
-    <li>
-      <span class="kbd">実在庫管理アプリ</span> で実在庫を減算し、タスク完了時に
-      <span class="kbd">タスク管理アプリ</span> が Webhook 経由で完了情報を
-      <span class="kbd">注文アプリ</span> に<strong>自動反映</strong>する。
-    </li>
-    <li>代理店ポータル にも更新結果を通知。</li>
-  </ol>
+        <h3>3.5 残り出荷（B分）</h3>
+        <ol>
+          <li>在庫補充後、運用担当者が <span class="kbd">注文アプリ</span> で <span class="kbd">出荷指示</span> を実行。</li>
+          <li>新しいタスクを <span class="kbd">タスク管理アプリ</span> に生成。</li>
+          <li>倉庫担当者が再度スキャン作業を行い、出荷を確定。</li>
+          <li>
+            <span class="kbd">実在庫管理アプリ</span> で実在庫を減算し、タスク完了時に
+            <span class="kbd">タスク管理アプリ</span> が Webhook 経由で完了情報を
+            <span class="kbd">注文アプリ</span> に<strong>自動反映</strong>する。
+          </li>
+          <li>代理店ポータル にも更新結果を通知。</li>
+        </ol>
 
-  <h3>3.6 受注完了</h3>
-  <ol>
-    <li>全ての出荷が完了すると、<span class="kbd">注文アプリ</span> はステータスを <span class="kbd">出荷完了</span> に更新。</li>
-    <li>代理店ポータル 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
-  </ol>
-</section>
+        <h3>3.6 受注完了</h3>
+        <ol>
+          <li>全ての出荷が完了すると、<span class="kbd">注文アプリ</span> はステータスを <span class="kbd">出荷完了</span> に更新。</li>
+          <li>代理店ポータル 上で配送履歴・トラッキング・送り状PDFを閲覧可能。</li>
+        </ol>
+      </section>
 
-<section id="sec4">
-  <h2>4. 在庫ロジック</h2>
-  <table>
-    <thead><tr><th>在庫種別</th><th>更新タイミング</th><th>データソース</th><th>目的</th></tr></thead>
-    <tbody>
-      <tr><td>論理在庫</td><td>受注確定・支払完了時</td><td>在庫管理アプリ</td><td>在庫確保・オーバーブッキング防止。</td></tr>
-      <tr><td>実在庫</td><td>倉庫出荷確定時</td><td>実在庫管理アプリ</td><td>棚・LOT単位での実在庫管理。</td></tr>
-    </tbody>
-  </table>
+      <section id="sec4">
+        <h2>4. 在庫ロジック</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>在庫種別</th>
+              <th>更新タイミング</th>
+              <th>データソース</th>
+              <th>目的</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>論理在庫</td>
+              <td>受注確定・支払完了時</td>
+              <td>在庫管理アプリ</td>
+              <td>在庫確保・オーバーブッキング防止。</td>
+            </tr>
+            <tr>
+              <td>実在庫</td>
+              <td>倉庫出荷確定時</td>
+              <td>実在庫管理アプリ</td>
+              <td>棚・LOT単位での実在庫管理。</td>
+            </tr>
+          </tbody>
+        </table>
 
-  <p>実在庫データ構造（例）:</p>
-  <pre style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
+        <p>実在庫データ構造（例）:</p>
+        <pre
+          style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
 {
   "SKU": "RS-500ML",
   "Product_Name": "Rice Silica 500mL",
@@ -350,30 +608,46 @@
   "Task_ID": "TASK-2025-1107-001"
 }
   </pre>
-</section>
+      </section>
 
-<section id="sec5">
-  <h2>5. 例外処理</h2>
-  <table>
-    <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
-    <tbody>
-      <tr><td>キャンセル</td><td>未出荷の場合 → タスク削除と論理在庫戻し。<br>出荷済みの場合 → 返品タスクを作成し、棚・LOT単位で実在庫を増加。</td></tr>
-      <tr><td>在庫差異</td><td>棚別監査（Location Audit）で定期的に確認。</td></tr>
-      <tr><td>入金エラー</td><td>エラーログ管理アプリ にログ記録し、手動で再処理。</td></tr>
-      <tr><td>返品時の在庫・請求・コミッション調整は Flow9 に準拠する。</td></tr>
-    </tbody>
-  </table>
-</section>
+      <section id="sec5">
+        <h2>5. 例外処理</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ケース</th>
+              <th>対応内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>キャンセル</td>
+              <td>未出荷の場合 → タスク削除と論理在庫戻し。<br>出荷済みの場合 → 返品タスクを作成し、棚・LOT単位で実在庫を増加。</td>
+            </tr>
+            <tr>
+              <td>在庫差異</td>
+              <td>棚別監査（Location Audit）で定期的に確認。</td>
+            </tr>
+            <tr>
+              <td>入金エラー</td>
+              <td>エラーログ管理アプリ にログ記録し、手動で再処理。</td>
+            </tr>
+            <tr>
+              <td>返品時の在庫・請求・コミッション調整は Flow9 に準拠する。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-<section id="sec6">
-  <h2>6. 期待される結果</h2>
-  <ul>
-    <li>論理在庫と実在庫を分離して正確に追跡できる。</li>
-    <li>商品ごとに LOT・棚位置までトレーサビリティを確保。</li>
-    <li>出荷・返品・入荷タスクの履歴が監査可能。</li>
-    <li>代理店がリアルタイムで出荷状況・トラッキングを閲覧可能。</li>
-  </ul>
-</section>
+      <section id="sec6">
+        <h2>6. 期待される結果</h2>
+        <ul>
+          <li>論理在庫と実在庫を分離して正確に追跡できる。</li>
+          <li>商品ごとに LOT・棚位置までトレーサビリティを確保。</li>
+          <li>出荷・返品・入荷タスクの履歴が監査可能。</li>
+          <li>代理店がリアルタイムで出荷状況・トラッキングを閲覧可能。</li>
+        </ul>
+      </section>
 
       <section id="flow2-sequence">
         <h2>7. シーケンス図</h2>
@@ -387,196 +661,303 @@
       </section>
     </section>
 
-<div style="page-break-before: always;"></div>
-<section id="flow3">
-  <h1 class="flow-title">Flow3: アフィリエイト報酬管理フロー</h1>
+    <div style="page-break-before: always;"></div>
+    <section id="flow3">
+      <h1 class="flow-title">Flow3: アフィリエイト報酬管理フロー</h1>
 
-  <section id="flow3-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローの目的は、<strong>アフィリエイト報酬（Affiliate Commission）</strong> の全プロセスを自動化し、
-      以下のシステム間連携を通じて正確かつ透明に管理することである。
-    </p>
-    <ul>
-      <li><strong>GoAffPro：</strong> 実際の報酬とアフィリエイトダッシュボード管理。</li>
-      <li><strong>Kintone：</strong> Partner・Rank・Rule・Commission・Payment 管理。</li>
-      <li><strong>Ruby Server：</strong> ロジックバッチ処理のミドルウェア。</li>
-      <li><strong>GMO API：</strong> 銀行振込（バルク送金）処理。</li>
-    </ul>
-    <p>システム全体として、次の要件を満たす必要がある：</p>
-    <ol>
-      <li>GoAffPro 上の報酬は、常に現在の Rank を正確に反映すること。</li>
-      <li>Commission および Payment が月次で透明に集計・承認・送金されること。</li>
-      <li>支払状態が GoAffPro ⇄ Kintone 間で双方向に同期されること。</li>
-      <li>実売実績に基づいて毎月 Rank を自動評価すること。</li>
-    </ol>
-  </section>
-
-  <section id="flow3-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>説明</th></tr></thead>
-      <tbody>
-        <tr><td>GoAffPro</td><td>アフィリエイト報酬・アフィリエイト用の販売URLを管理する外部システム。</td></tr>
-        <tr><td>パートナーマスタ（Kintone）</td><td>アフィリエイト情報・銀行口座・現在のランクを管理。</td></tr>
-        <tr><td>報酬ルールマスタ（Kintone）</td><td>ランク別報酬率ルールを保持。</td></tr>
-        <tr><td>注文アプリ（Kintone）</td><td>注文情報と支払・キャンセル・返品ステータスを保持。</td></tr>
-        <tr><td>報酬取引履歴管理アプリ（Kintone）</td><td>月次コミッション集計・承認を管理。</td></tr>
-        <tr><td>支払管理アプリ（Kintone）</td><td>振込依頼・支払ステータスを管理。</td></tr>
-        <tr><td>Ruby_Server</td><td>バッチロジック実行・GoAffPro/GMO 連携を行うミドルウェア。</td></tr>
-        <tr><td>GMO_API</td><td>アフィリエイトへの一括送金 API。</td></tr>
-        <tr><td>CEO（承認者）</td><td>送金実行前の最終承認者。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow3-3">
-    <h2>3. 詳細プロセス</h2>
-
-    <h3>3.1 アフィリエイト登録とURL発行</h3>
-    <ol>
-      <li>営業担当が <span class="kbd">Partner_App</span> にてアフィリエイトを登録する（Partner ID・Email・初期ランク・銀行口座情報）。</li>
-      <li><span class="kbd">Ruby_Server</span> が GoAffPro API 経由で情報を同期。</li>
-      <li>GoAffPro は自動的に <strong>アフィリエイトURL</strong> を発行：
+      <section id="flow3-1">
+        <h2>1. 目的</h2>
+        <p>
+          本フローの目的は、<strong>アフィリエイト報酬（Affiliate Commission）</strong> の全プロセスを自動化し、
+          以下のシステム間連携を通じて正確かつ透明に管理することである。
+        </p>
         <ul>
-          <li>アカウント専用URL</li>
-          <li>商品別URL</li>
-          <li>コレクションURL</li>
+          <li><strong>GoAffPro：</strong> 実際の報酬とアフィリエイトダッシュボード管理。</li>
+          <li><strong>Kintone：</strong> Partner・Rank・Rule・Commission・Payment 管理。</li>
+          <li><strong>Ruby Server：</strong> ロジックバッチ処理のミドルウェア。</li>
+          <li><strong>GMO API：</strong> 銀行振込（バルク送金）処理。</li>
         </ul>
-      </li>
-      <li>アフィリエイト（Partner）は URL をシェアし、購入者を誘導する。</li>
-    </ol>
+        <p>システム全体として、次の要件を満たす必要がある：</p>
+        <ol>
+          <li>GoAffPro 上の報酬は、常に現在の Rank を正確に反映すること。</li>
+          <li>Commission および Payment が月次で透明に集計・承認・送金されること。</li>
+          <li>支払状態が GoAffPro ⇄ Kintone 間で双方向に同期されること。</li>
+          <li>実売実績に基づいて毎月 Rank を自動評価すること。</li>
+        </ol>
+      </section>
 
-    <h3>3.2 注文・報酬記録</h3>
-    <ol>
-      <li>購入者がアフィリエイトURL経由で Shopify から購入。</li>
-      <li>GoAffPro が注文に <span class="kbd">partner_id</span> を紐付け。</li>
-      <li><span class="kbd">Yoom</span> が Webhook を受信し、<span class="kbd">Ruby_Server</span> 経由で <span class="kbd">注文アプリ</span> に記録。</li>
-      <li>GoAffPro は自動で該当アフィリエイトに報酬（Reward）を付与。</li>
-      <li>注文金額・Partner ID 情報は GoAffPro と Kintone 双方に保存される。</li>
-    </ol>
+      <section id="flow3-2">
+        <h2>2. システム構成</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>コンポーネント</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GoAffPro</td>
+              <td>アフィリエイト報酬・アフィリエイト用の販売URLを管理する外部システム。</td>
+            </tr>
+            <tr>
+              <td>パートナーマスタ（Kintone）</td>
+              <td>アフィリエイト情報・銀行口座・現在のランクを管理。</td>
+            </tr>
+            <tr>
+              <td>報酬ルールマスタ（Kintone）</td>
+              <td>ランク別報酬率ルールを保持。</td>
+            </tr>
+            <tr>
+              <td>注文アプリ（Kintone）</td>
+              <td>注文情報と支払・キャンセル・返品ステータスを保持。</td>
+            </tr>
+            <tr>
+              <td>報酬取引履歴管理アプリ（Kintone）</td>
+              <td>月次コミッション集計・承認を管理。</td>
+            </tr>
+            <tr>
+              <td>支払管理アプリ（Kintone）</td>
+              <td>振込依頼・支払ステータスを管理。</td>
+            </tr>
+            <tr>
+              <td>Ruby_Server</td>
+              <td>バッチロジック実行・GoAffPro/GMO 連携を行うミドルウェア。</td>
+            </tr>
+            <tr>
+              <td>GMO_API</td>
+              <td>アフィリエイトへの一括送金 API。</td>
+            </tr>
+            <tr>
+              <td>CEO（承認者）</td>
+              <td>送金実行前の最終承認者。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <h3>3.3 キャンセル・返品処理</h3>
-    <table>
-      <thead><tr><th>システム</th><th>対応内容</th></tr></thead>
-      <tbody>
-        <tr><td>GoAffPro</td><td>Shopify からの Refund Webhook を受信し、自動で Reward を減算。</td></tr>
-        <tr><td>Kintone</td><td>運用担当者が <span class="kbd">注文アプリ.status</span> を <span class="kbd">キャンセル／返品</span> に更新（手動）。</td></tr>
-        <tr><td>Ruby_Server</td><td>月次集計時に GoAffPro 上の最終報酬を照合し、重複計上を防止。</td></tr>
-        <tr><td>報酬取引履歴管理アプリ は、GoAffPro 連携の報酬と、Credie内部ロジックによる調整（Flow9）をいずれも一元管理する。</td></tr>
-      </tbody>
-    </table>
-    <p class="note">返金は GoAffPro 側の実報酬にのみ影響し、Kintone では監査用に状態を保持する。</p>
+      <section id="flow3-3">
+        <h2>3. 詳細プロセス</h2>
 
-    <h3>3.4 月次ランク同期（毎月初）</h3>
-    <ol>
-      <li><span class="kbd">パートナーマスタ</span> の現在ランクを GoAffPro へ送信。</li>
-      <li>GoAffPro から前月の成果データを受信：
+        <h3>3.1 アフィリエイト登録とURL発行</h3>
+        <ol>
+          <li>営業担当が <span class="kbd">Partner_App</span> にてアフィリエイトを登録する（Partner ID・Email・初期ランク・銀行口座情報）。</li>
+          <li><span class="kbd">Ruby_Server</span> が GoAffPro API 経由で情報を同期。</li>
+          <li>GoAffPro は自動的に <strong>アフィリエイトURL</strong> を発行：
+            <ul>
+              <li>アカウント専用URL</li>
+              <li>商品別URL</li>
+              <li>コレクションURL</li>
+            </ul>
+          </li>
+          <li>アフィリエイト（Partner）は URL をシェアし、購入者を誘導する。</li>
+        </ol>
+
+        <h3>3.2 注文・報酬記録</h3>
+        <ol>
+          <li>購入者がアフィリエイトURL経由で Shopify から購入。</li>
+          <li>GoAffPro が注文に <span class="kbd">partner_id</span> を紐付け。</li>
+          <li><span class="kbd">Yoom</span> が Webhook を受信し、<span class="kbd">Ruby_Server</span> 経由で <span
+              class="kbd">注文アプリ</span> に記録。</li>
+          <li>GoAffPro は自動で該当アフィリエイトに報酬（Reward）を付与。</li>
+          <li>注文金額・Partner ID 情報は GoAffPro と Kintone 双方に保存される。</li>
+        </ol>
+
+        <h3>3.3 キャンセル・返品処理</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>システム</th>
+              <th>対応内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GoAffPro</td>
+              <td>Shopify からの Refund Webhook を受信し、自動で Reward を減算。</td>
+            </tr>
+            <tr>
+              <td>Kintone</td>
+              <td>運用担当者が <span class="kbd">注文アプリ.status</span> を <span class="kbd">キャンセル／返品</span> に更新（手動）。</td>
+            </tr>
+            <tr>
+              <td>Ruby_Server</td>
+              <td>月次集計時に GoAffPro 上の最終報酬を照合し、重複計上を防止。</td>
+            </tr>
+            <tr>
+              <td>報酬取引履歴管理アプリ は、GoAffPro 連携の報酬と、Credie内部ロジックによる調整（Flow9）をいずれも一元管理する。</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">返金は GoAffPro 側の実報酬にのみ影響し、Kintone では監査用に状態を保持する。</p>
+
+        <h3>3.4 月次ランク同期（毎月初）</h3>
+        <ol>
+          <li><span class="kbd">パートナーマスタ</span> の現在ランクを GoAffPro へ送信。</li>
+          <li>GoAffPro から前月の成果データを受信：
+            <ul>
+              <li>総売上</li>
+              <li>総報酬額</li>
+              <li>注文数</li>
+              <li>返品率／パフォーマンス指標</li>
+            </ul>
+          </li>
+          <li><span class="kbd">Ruby_Server</span> が <span class="kbd">報酬ルールマスタ</span> の基準と比較しランクを再評価。</li>
+          <li>新ランクを <span class="kbd">パートナーマスタ</span> に反映し、GoAffPro に再同期。</li>
+        </ol>
+        <div class="callout">
+          例：Partner A の月間売上が ¥2,300,000 の場合、翌月ランクは Gold へ昇格し、報酬率が 7% → 10% に上昇。
+        </div>
+
+        <h3>3.5 月末コミッション集計（毎月末）</h3>
+        <ol>
+          <li><span class="kbd">Ruby_Server</span> が GoAffPro API より Partner ごとの報酬データを取得。</li>
+          <li><span class="kbd">報酬ルールマスタ</span> のランク別報酬率を参照し、正確な比率を適用。</li>
+          <li><span class="kbd">報酬取引履歴管理アプリ</span> に以下の情報でレコードを作成：
+            <ul>
+              <li>Partner ID</li>
+              <li>対象月</li>
+              <li>Rank</li>
+              <li>総報酬額</li>
+              <li>Status = 下書き</li>
+            </ul>
+          </li>
+          <li>営業または経理担当が確認後、<span class="kbd">承認済み</span> に変更。</li>
+          <li>承認後、自動で <span class="kbd">支払管理アプリ</span> に支払レコードを作成（支払期限＝翌月末）。</li>
+        </ol>
+
+        <h3>3.6 CEO 承認と GMO 振込</h3>
+        <ol>
+          <li><span class="kbd">支払管理アプリ</span> が CEO に承認依頼を送信。</li>
+          <li>CEO 承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出して一括振込を実行。</li>
+          <li>GMO から結果（成功／失敗／手数料）を受信。</li>
+          <li>結果を反映：
+            <ul>
+              <li><span class="kbd">支払管理アプリ.status</span> = 支払済み or 失敗</li>
+              <li><span class="kbd">報酬取引履歴管理アプリ.status</span> = 支払済み</li>
+            </ul>
+          </li>
+          <li>支払結果を GoAffPro 側へ同期し、アフィリエイトが報酬状況を確認可能にする。</li>
+        </ol>
+      </section>
+
+      <section id="flow3-4">
+        <h2>4. 報酬計算ロジック</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>売上範囲</th>
+              <th>報酬率</th>
+              <th>備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bronze</td>
+              <td>〜¥500,000</td>
+              <td>5%</td>
+              <td>初期ランク</td>
+            </tr>
+            <tr>
+              <td>Silver</td>
+              <td>¥500,000〜¥2,000,000</td>
+              <td>7%</td>
+              <td>閾値到達で昇格</td>
+            </tr>
+            <tr>
+              <td>Gold</td>
+              <td>¥2,000,000 以上</td>
+              <td>10%</td>
+              <td>2期連続未達時に降格</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <strong>Commission = Sales × Rate</strong>（算出時点の Rank に基づく）。<br>
+          GoAffPro 上の報酬率と Rule_App の設定値に乖離がある場合、<span class="kbd">報酬取引履歴管理アプリ</span> に警告を出す。
+        </p>
+      </section>
+
+      <section id="flow3-5">
+        <h2>5. 例外処理</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ケース</th>
+              <th>対応内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>キャンセル／返品</td>
+              <td>GoAffPro が自動で報酬を減算、Kintone はステータス更新のみ。</td>
+            </tr>
+            <tr>
+              <td>Rank／Reward 差異</td>
+              <td>Ruby_Server が <span class="kbd">差異あり</span> フラグを設定し、経理チェック対象とする。</td>
+            </tr>
+            <tr>
+              <td>振込失敗</td>
+              <td><span class="kbd">支払管理アプリ</span> = 支払失敗、Commission は支払済みに更新しない。</td>
+            </tr>
+            <tr>
+              <td>Rank 手動変更</td>
+              <td>Partner_App で手動更新可能、次回バッチで GoAffPro に再同期。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="flow3-6">
+        <h2>6. 期待される結果</h2>
         <ul>
-          <li>総売上</li>
-          <li>総報酬額</li>
-          <li>注文数</li>
-          <li>返品率／パフォーマンス指標</li>
+          <li>アフィリエイトは GoAffPro ダッシュボード上で最新 Rank と報酬を確認可能。</li>
+          <li>Kintone 上で Partner→Commission→Payment の全履歴を一元管理。</li>
+          <li>Rank は毎月自動的に再評価され、販売実績を正確に反映。</li>
+          <li>CEO は 1クリックで GMO 経由の送金承認が可能。</li>
+          <li>全処理はログ化され、Partner・Rank・期間単位で監査可能。</li>
         </ul>
-      </li>
-      <li><span class="kbd">Ruby_Server</span> が <span class="kbd">報酬ルールマスタ</span> の基準と比較しランクを再評価。</li>
-      <li>新ランクを <span class="kbd">パートナーマスタ</span> に反映し、GoAffPro に再同期。</li>
-    </ol>
-    <div class="callout">
-      例：Partner A の月間売上が ¥2,300,000 の場合、翌月ランクは Gold へ昇格し、報酬率が 7% → 10% に上昇。
-    </div>
+      </section>
 
-    <h3>3.5 月末コミッション集計（毎月末）</h3>
-    <ol>
-      <li><span class="kbd">Ruby_Server</span> が GoAffPro API より Partner ごとの報酬データを取得。</li>
-      <li><span class="kbd">報酬ルールマスタ</span> のランク別報酬率を参照し、正確な比率を適用。</li>
-      <li><span class="kbd">報酬取引履歴管理アプリ</span> に以下の情報でレコードを作成：
-        <ul>
-          <li>Partner ID</li>
-          <li>対象月</li>
-          <li>Rank</li>
-          <li>総報酬額</li>
-          <li>Status = 下書き</li>
-        </ul>
-      </li>
-      <li>営業または経理担当が確認後、<span class="kbd">承認済み</span> に変更。</li>
-      <li>承認後、自動で <span class="kbd">支払管理アプリ</span> に支払レコードを作成（支払期限＝翌月末）。</li>
-    </ol>
+      <section id="flow3-7">
+        <h2>7. バッチ処理スケジュール</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>バッチ種別</th>
+              <th>概要</th>
+              <th>実行タイミング</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Rank Sync（GoAffPro↔Kintone）</td>
+              <td>現在ランク送信および前月実績の受信。</td>
+              <td>毎月1日</td>
+            </tr>
+            <tr>
+              <td>Rewards Import</td>
+              <td>GoAffPro から当月報酬データを取得。</td>
+              <td>毎月末</td>
+            </tr>
+            <tr>
+              <td>GMO Payment</td>
+              <td>CEO 承認後の振込実行。</td>
+              <td>翌月末</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <h3>3.6 CEO 承認と GMO 振込</h3>
-    <ol>
-      <li><span class="kbd">支払管理アプリ</span> が CEO に承認依頼を送信。</li>
-      <li>CEO 承認後、<span class="kbd">Ruby_Server</span> が <span class="kbd">GMO API</span> を呼び出して一括振込を実行。</li>
-      <li>GMO から結果（成功／失敗／手数料）を受信。</li>
-      <li>結果を反映：
-        <ul>
-          <li><span class="kbd">支払管理アプリ.status</span> = 支払済み or 失敗</li>
-          <li><span class="kbd">報酬取引履歴管理アプリ.status</span> = 支払済み</li>
-        </ul>
-      </li>
-      <li>支払結果を GoAffPro 側へ同期し、アフィリエイトが報酬状況を確認可能にする。</li>
-    </ol>
-  </section>
-
-  <section id="flow3-4">
-    <h2>4. 報酬計算ロジック</h2>
-    <table>
-      <thead><tr><th>Rank</th><th>売上範囲</th><th>報酬率</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>Bronze</td><td>〜¥500,000</td><td>5%</td><td>初期ランク</td></tr>
-        <tr><td>Silver</td><td>¥500,000〜¥2,000,000</td><td>7%</td><td>閾値到達で昇格</td></tr>
-        <tr><td>Gold</td><td>¥2,000,000 以上</td><td>10%</td><td>2期連続未達時に降格</td></tr>
-      </tbody>
-    </table>
-    <p>
-      <strong>Commission = Sales × Rate</strong>（算出時点の Rank に基づく）。<br>
-      GoAffPro 上の報酬率と Rule_App の設定値に乖離がある場合、<span class="kbd">報酬取引履歴管理アプリ</span> に警告を出す。
-    </p>
-  </section>
-
-  <section id="flow3-5">
-    <h2>5. 例外処理</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
-      <tbody>
-        <tr><td>キャンセル／返品</td><td>GoAffPro が自動で報酬を減算、Kintone はステータス更新のみ。</td></tr>
-        <tr><td>Rank／Reward 差異</td><td>Ruby_Server が <span class="kbd">差異あり</span> フラグを設定し、経理チェック対象とする。</td></tr>
-        <tr><td>振込失敗</td><td><span class="kbd">支払管理アプリ</span> = 支払失敗、Commission は支払済みに更新しない。</td></tr>
-        <tr><td>Rank 手動変更</td><td>Partner_App で手動更新可能、次回バッチで GoAffPro に再同期。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow3-6">
-    <h2>6. 期待される結果</h2>
-    <ul>
-      <li>アフィリエイトは GoAffPro ダッシュボード上で最新 Rank と報酬を確認可能。</li>
-      <li>Kintone 上で Partner→Commission→Payment の全履歴を一元管理。</li>
-      <li>Rank は毎月自動的に再評価され、販売実績を正確に反映。</li>
-      <li>CEO は 1クリックで GMO 経由の送金承認が可能。</li>
-      <li>全処理はログ化され、Partner・Rank・期間単位で監査可能。</li>
-    </ul>
-  </section>
-
-  <section id="flow3-7">
-    <h2>7. バッチ処理スケジュール</h2>
-    <table>
-      <thead><tr><th>バッチ種別</th><th>概要</th><th>実行タイミング</th></tr></thead>
-      <tbody>
-        <tr><td>Rank Sync（GoAffPro↔Kintone）</td><td>現在ランク送信および前月実績の受信。</td><td>毎月1日</td></tr>
-        <tr><td>Rewards Import</td><td>GoAffPro から当月報酬データを取得。</td><td>毎月末</td></tr>
-        <tr><td>GMO Payment</td><td>CEO 承認後の振込実行。</td><td>翌月末</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow3-8">
-    <h2>8. 全体構成図</h2>
-    <pre style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
+      <section id="flow3-8">
+        <h2>8. 全体構成図</h2>
+        <pre
+          style="background:#f9fafb;border:1px solid #ddd;padding:12px;border-radius:6px;overflow:auto;font-size:13px">
 GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) ⇄ GMO API
     </pre>
-  </section>
-        <section id="flow3-sequence">
+      </section>
+      <section id="flow3-sequence">
         <h2>9. シーケンス図</h2>
         <p>
           以下は本フロー（GoAffPro連携によるアフィリエイト報酬処理）の全体処理を示すシーケンス図です。
@@ -587,1169 +968,1753 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         </figure>
       </section>
 
-<div style="page-break-before: always;"></div>
-<section id="flow4">
-  <h1 class="flow-title">Flow4: 製造・在庫管理フロー（製品・資材・BOM・入出庫）</h1>
-
-  <section id="flow4-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローの目的は、<strong>製品・資材・BOM・製造・入出庫</strong> の全工程を Kintone 上で一元管理し、
-      ReactJS ベースのバーコードスキャン画面と連携させることで、
-      以下の在庫整合性を確保することである。
-    </p>
-    <ul>
-      <li><strong>論理在庫 (Logic Stock)：</strong> システム上の在庫。</li>
-      <li><strong>実在庫 (Physical Stock)：</strong> 棚（Location）および LOT 単位の実際在庫。</li>
-      <li>外部 WMS を使用せず、バーコードは社内で印刷・管理。</li>
-    </ul>
-  </section>
-
-  <section id="flow4-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
-      <tbody>
-        <tr><td>👨‍💻 Master_Admin</td><td>マスター管理・製造記録を行うオペレーター。</td></tr>
-        <tr><td>🗂️ 商品マスタ</td><td>製品情報（SKU、品名、規格、単位、JANコード）管理。</td></tr>
-        <tr><td>📉 資材マスタ</td><td>資材・原料情報の管理（区分：原料／OEM、発注点）。</td></tr>
-        <tr><td>📦 BOMマスタ</td><td>製品ごとの資材使用量（定量）を管理。</td></tr>
-        <tr><td>🧾 製造実績アプリ</td><td>製造記録（数量、LOT、有効期限、担当者）管理。</td></tr>
-        <tr><td>📋 タスク管理アプリ</td><td>自動生成される入庫／出庫タスクの管理。</td></tr>
-        <tr><td>📈 在庫管理アプリ</td><td>論理在庫（Logic Stock）の管理。</td></tr>
-        <tr><td>🏭 実在庫管理アプリ</td><td>棚・LOT単位の実在庫（Physical Stock）の管理DB。</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>タスク生成・在庫更新・データ調整を行うミドルウェア。</td></tr>
-        <tr><td>📱 Scan barcode画面</td><td>ReactJS ベースの倉庫画面。バーコードスキャンで入出庫処理。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow4-3">
-    <h2>3. プロセス概要</h2>
-
-    <h3>3.1 マスタ登録（製品・資材・BOM）</h3>
-    <ul>
-      <li><strong>商品マスタ：</strong> SKU、品名、単位、規格、JANコードを登録。</li>
-      <li><strong>資材マスタ：</strong> 資材コード、区分（原料／OEM）、発注点を登録。</li>
-      <li><strong>BOMマスタ：</strong> 製品 × 資材 × 使用量（定量）を設定。</li>
-    </ul>
-    <p>登録時に SKU・Material の存在チェックおよびアクティブ状態を検証する。</p>
-
-    <h3>3.2 製造記録（製造開始・完了）</h3>
-    <ul>
-      <li>製造開始・完了時に <strong>製造実績アプリ</strong> にレコードを作成。</li>
-      <li>入力項目：
-        <ul>
-          <li>製品（SKU）、数量、担当者、製造日</li>
-          <li>完了時：LOT番号、有効期限（期限日）</li>
-        </ul>
-      </li>
-      <li>LOT番号と期限日は手動入力（自動採番しない）。</li>
-      <li>登録時に <strong>Ruby_Server</strong> がタスク生成ロジックを起動。</li>
-    </ul>
-
-    <h3>3.3 自動タスク生成</h3>
-    <ul>
-      <li>製造開始時（開始）：
-        <ul><li>Ruby_Server が BOM を参照し、対応する資材の <strong>出庫タスク</strong> を作成。</li></ul>
-      </li>
-      <li>製造完了時（完了）：
-        <ul><li>Ruby_Server が製品の <strong>入庫タスク</strong> を作成。</li></ul>
-      </li>
-    </ul>
-    <p>各タスクには種類（入庫／出庫）、SKU、数量、担当者、初期状態＝<span class="kbd">未開始</span> が含まれる。</p>
-
-    <h3>3.4 倉庫タスク実行（Scan barcode画面）</h3>
-    <ol>
-      <li>倉庫担当者は <strong>Scan barcode画面（ReactJS 倉庫UI）</strong> でタスクを選択。</li>
-      <li>バーコードスキャンによる手順：
-        <ul>
-          <li>① 対象タスク選択</li>
-          <li>② 製品／資材バーコードをスキャン</li>
-          <li>③ 棚コード（Location）をスキャン</li>
-          <li>④ LOT番号入力またはスキャン</li>
-          <li>⑤ 実数量を入力し、完了ボタンを押下</li>
-        </ul>
-      </li>
-      <li>完了時の処理：
-        <ul>
-          <li><strong>出庫（資材）</strong>：実在庫管理アプリ（棚・LOT単位）と 在庫管理アプリ を減算。</li>
-          <li><strong>入庫（製品）</strong>：実在庫管理アプリ と 在庫管理アプリ を加算。</li>
-          <li>タスク状態を <span class="kbd">完了済み</span> に更新。</li>
-        </ul>
-      </li>
-    </ol>
-
-    <h3>3.5 LOT・バーコード管理</h3>
-    <ul>
-      <li>LOT番号・期限日は製造完了時に担当者が手動入力。</li>
-      <li>バーコードは Kintone から発行せず、社内テンプレート（Excel／専用プリンタ）で印刷。</li>
-      <li>入庫前に製品へバーコードを手動貼付。</li>
-      <li>バーコードは倉庫操作時の識別用途にのみ使用。</li>
-    </ul>
-
-    <h3>3.6 在庫管理・レポート</h3>
-    <ul>
-      <li><strong>在庫管理アプリ（論理在庫）：</strong> SKU ごとのシステム在庫を管理。</li>
-      <li><strong>実在庫管理アプリ（実在庫）：</strong> SKU＋Location＋LOT 単位の実在庫を保持。</li>
-      <li>Ruby_Server が定期的に Logic／Physical の照合バッチを実行し、差異をレポート。</li>
-    </ul>
-    <p>照合レポート項目：SKU、LOT、在庫差分、差異率（%）。</p>
-    <p>在庫は以下条件でフィルタ可能：</p>
-    <ul>
-      <li>SKU</li>
-      <li>LOT番号</li>
-      <li>棚コード（Location）</li>
-    </ul>
-  </section>
-
-  <section id="flow4-4">
-    <h2>4. 在庫ロジック</h2>
-    <table>
-      <thead><tr><th>在庫種別</th><th>増加条件</th><th>減少条件</th><th>変更元</th></tr></thead>
-      <tbody>
-        <tr><td>論理在庫 (Logic Stock)</td><td>製品入庫時</td><td>資材出庫／製品出荷時</td><td>在庫管理アプリ</td></tr>
-        <tr><td>実在庫 (Physical Stock)</td><td>倉庫担当が実入庫を確定時</td><td>実出庫を確定時</td><td>実在庫管理アプリ</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow4-5">
-    <h2>5. 例外・特別対応</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
-      <tbody>
-        <tr><td>LOT または 棚コード入力ミス</td><td>警告を表示し再入力を促す。</td></tr>
-        <tr><td>同一棚で LOT 重複</td><td>同一製品の場合は警告のみで許可。</td></tr>
-        <tr><td>製造中止</td><td>Ruby_Server がタスクを削除し、論理在庫をロールバック。</td></tr>
-        <tr><td>在庫差異</td><td>入出庫履歴アプリ に Type=ADJUSTMENT でレコード登録し、その結果として 実在庫管理アプリ・在庫管理アプリ を Ruby_Server 経由で調整する。</td></tr>
-        <tr><td>バーコード破損・紛失</td><td>外部システムから再印刷対応。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow4-6">
-    <h2>6. 期待される結果</h2>
-    <ul>
-      <li>製造・在庫の全プロセスを Kintone で一元管理。</li>
-      <li>外部 WMS 不要で、現場運用に即した仕組み。</li>
-      <li>論理在庫と実在庫が常に一致し、LOT・棚単位でトレーサビリティを確保。</li>
-      <li>倉庫担当は ReactJS UI のバーコードスキャンで迅速に処理可能。</li>
-      <li>SKU・LOT・時系列で追跡可能な完全履歴データを保持。</li>
-    </ul>
-  </section>
-
-  <section id="flow4-sequence">
-    <h2>7. シーケンス図</h2>
-    <p>
-      以下は本フロー（製造・在庫管理フロー）の全体処理を示すシーケンス図です。<br>
-      画像ファイルは <code>Flow4.png</code> として同一フォルダに配置してください。
-    </p>
-    <figure>
-      <img src="Flow4.png" alt="製造・在庫管理フロー シーケンス図">
-      <figcaption>図4. 製造・在庫管理フローのシーケンス図</figcaption>
-    </figure>
-  </section>
-</section>
-
-<div style="page-break-before: always;"></div>
-<section id="flow5">
-  <h1 class="flow-title">Flow5: 資材購買・分納・自動振込フロー</h1>
-
-  <section id="flow5-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローは、<strong>資材購買（Meka 取引）</strong> に関する一連の業務を管理する。
-      在庫監視、発注（PO）作成、承認、支払、分納入庫までを自動化し、
-      <strong>仕入ポータル</strong> および <strong>GMO 銀行API</strong> と連携することで効率化を図る。
-    </p>
-    <ul>
-      <li><strong>Scan barcode画面（ReactJS 倉庫UI）</strong> により入庫バーコードスキャンを実現。</li>
-      <li>支払は「前払い一括」だが、納品は「複数回分納（分割納入）」を許可。</li>
-      <li><strong>2段階承認フロー</strong>：
-        <ul>
-          <li>一次承認：Kintone上の PO 承認（購買担当者）</li>
-          <li>最終承認：支払管理アプリ 上の支払承認（代表者）</li>
-        </ul>
-      </li>
-      <li>最終承認後、<strong>GMO API</strong> により自動振込を実施し、支払・納品ステータスを双方向連携。</li>
-    </ul>
-  </section>
-
-  <section id="flow5-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th></tr></thead>
-      <tbody>
-        <tr><td>🗂️ パートナーマスタ</td><td>Meka 仕入先情報（口座・連絡先・代理店ポータル ID）管理。</td></tr>
-        <tr><td>📈 在庫管理アプリ</td><td>資材在庫・発注点（しきい値）の監視。</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>自動PO生成・GMO API呼出・仕入ポータル連携ロジックを担当。</td></tr>
-        <tr><td>🙋‍♀️ Purchasing_Staff</td><td>購買担当（一次承認者）。</td></tr>
-        <tr><td>👑 Representative</td><td>代表者（最終承認者・CEO）。</td></tr>
-        <tr><td>📝 発注アプリ</td><td>発注書（PO）の管理、一次承認、入庫状態の追跡。</td></tr>
-        <tr><td>💸 支払管理アプリ</td><td>支払依頼・支払実績の管理（POとリンク）。</td></tr>
-        <tr><td>🌐 仕入ポータル</td><td>仕入先ポータル（注文確認、請求書発行、分納スケジュール）。</td></tr>
-        <tr><td>🚚 Meka</td><td>資材供給業者。</td></tr>
-        <tr><td>🏦 GMO_API</td><td>自動振込を実行する銀行API。</td></tr>
-        <tr><td>📱 Scan barcode画面</td><td>入庫作業用ReactJS画面（バーコード・棚・LOTスキャン）。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow5-3">
-    <h2>3. 詳細プロセス</h2>
-
-    <h3>3.1 仕入先登録（Meka）</h3>
-    <ul>
-      <li>購買担当が <strong>パートナーマスタ</strong> に仕入先情報（名称・メール・銀行口座）を登録。</li>
-      <li><strong>Ruby_Server</strong> が　仕入ポータル にアカウントを自動発行し、ログイン情報をメール送信。</li>
-    </ul>
-
-    <h3>3.2 在庫監視と自動PO生成</h3>
-    <ol>
-      <li><strong>Ruby_Server</strong> が定期的に <strong>在庫管理アプリ</strong> の在庫をチェック。</li>
-      <li>SKU が <code>発注点</code> 未満の場合：
-        <ul>
-          <li><strong>発注アプリ</strong> に自動的に発注書（PO）を作成。</li>
-          <li><strong>Purchasing_Staff</strong> に一次承認依頼を通知。</li>
-          <li>承認後、<strong>仕入ポータル</strong> に発注データを送信。</li>
-          <li>Meka 側で注文を確認し、納期・分納回数を設定。</li>
-          <li>納品スケジュールが <strong>発注アプリ</strong> に同期される。</li>
-        </ul>
-      </li>
-    </ol>
-
-    <h3>3.3 支払プロセス（一次承認＋最終承認＋自動振込）</h3>
-
-    <h4>🧾 ステップ1：請求書受領・支払依頼レコード作成</h4>
-    <ul>
-      <li><strong>仕入ポータル</strong> から <strong>請求書（Invoice）</strong> データが <strong>Ruby_Server</strong> に送信。</li>
-      <li><strong>Ruby_Server</strong> が <strong>支払管理アプリ</strong> に支払依頼レコードを作成し、PO をリンク。</li>
-    </ul>
-
-    <h4>🧍‍♀️ ステップ2：一次承認（PO）</h4>
-    <ul>
-      <li><strong>Purchasing_Staff</strong> が <strong>発注アプリ</strong> で注文内容を確認し、<code>一次承認</code>。</li>
-    </ul>
-
-    <h4>👑 ステップ3：最終承認（Payout）</h4>
-    <ul>
-      <li><strong>Representative（CEO）</strong> が <strong>支払管理アプリ</strong> にて <code>最終承認</code> を実施。</li>
-      <li>承認時、Kintone から <strong>Ruby_Server</strong> に Webhook 通知。</li>
-    </ul>
-
-    <h4>🤖 ステップ4：自動振込</h4>
-    <ul>
-      <li><strong>Ruby_Server</strong> が <strong>GMO_API /payments</strong> を呼び出し、自動送金を実行。</li>
-      <li>成功時：
-        <ul>
-          <li><code>支払管理アプリ.Status = 完了</code></li>
-          <li><code>発注アプリ.Status = PAID</code></li>
-          <li><strong>仕入ポータル</strong> に「支払い済み」を反映。</li>
-        </ul>
-      </li>
-      <li>失敗時：
-        <ul>
-          <li><strong>Payment Error App</strong> にログ記録。</li>
-          <li>購買担当へエラーメール送信。</li>
-        </ul>
-      </li>
-    </ul>
-
-    <h3>3.4 分納入庫（複数回納品対応）</h3>
-    <ol>
-      <li>Meka 側で支払完了後、分納スケジュールを設定。</li>
-      <li>各納品バッチが 仕入ポータル から Ruby_Server へ通知。</li>
-      <li><strong>Ruby_Server</strong> が以下を実行：
-        <ul>
-          <li><code>発注アプリ.Status = 部分入庫中</code></li>
-          <li><strong>Scan barcode画面</strong> に入庫タスク（入庫タスク）を自動生成。</li>
-        </ul>
-      </li>
-      <li>倉庫担当は <strong>Scan barcode画面</strong> で以下操作を行う：
-        <ul>
-          <li>バーコードスキャン（資材コード）</li>
-          <li>棚コード（Location）スキャン</li>
-          <li>LOT番号入力</li>
-          <li>実数量入力 → 「完了」ボタン押下</li>
-        </ul>
-      </li>
-      <li>完了時：
-        <ul>
-          <li><strong>在庫管理アプリ</strong> の論理在庫を加算。</li>
-          <li><strong>発注アプリ</strong> に入庫バッチを記録。</li>
-          <li>全数量未完 → <code>部分完了</code>、全納完了 → <code>完了</code>。</li>
-          <li><strong>仕入ポータル</strong> に「納品済み」を反映。</li>
-        </ul>
-      </li>
-    </ol>
-  </section>
-
-  <section id="flow5-4">
-    <h2>4. 在庫ロジック</h2>
-    <table>
-      <thead><tr><th>在庫種別</th><th>更新タイミング</th><th>増加条件</th><th>減少条件</th></tr></thead>
-      <tbody>
-        <tr><td>論理在庫 (Logic Stock)</td><td>Scan barcode画面 入庫確定時</td><td>資材分納入庫完了時</td><td>製造出庫時</td></tr>
-        <tr><td>実在庫 (Physical Stock)</td><td>Scan barcode画面 操作時（棚・LOT 単位）</td><td>バーコード入庫時</td><td>資材実出庫時</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow5-5">
-    <h2>5. 例外・エラー処理</h2>
-    <table>
-      <thead><tr><th>ケース</th><th>対応内容</th></tr></thead>
-      <tbody>
-        <tr><td>GMO_API 振込エラー</td><td>Error App に記録し、購買担当へ通知。</td></tr>
-        <tr><td>納品不足</td><td><code>発注アプリ.Status = 部分入庫中</code> のまま維持。</td></tr>
-        <tr><td>支払後の PO キャンセル</td><td>支払管理アプリ に返金レコードを手動登録。</td></tr>
-        <tr><td>LOT／棚コード未入力</td><td>Scan barcode画面 に警告表示、「完了」不可。</td></tr>
-        <tr><td>在庫差異</td><td>入出庫履歴アプリ で手動修正（履歴ログ保持）。</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow5-6">
-    <h2>6. 期待される結果</h2>
-    <ul>
-      <li>購買〜支払〜分納入庫の全工程を自動化。</li>
-      <li>発注アプリ と 支払管理アプリ による 2段階承認を明確に分離。</li>
-      <li>GMO API により自動振込を実施し、手動操作を不要化。</li>
-      <li>支払・納品ステータスを 仕入ポータル ↔ Kintone 間で同期。</li>
-      <li>PO, Payout, Stock, Warehouse の履歴を完全にトレース可能。</li>
-    </ul>
-  </section>
-
-  <section id="flow5-sequence">
-    <h2>7. シーケンス図</h2>
-    <p>
-      以下は本フロー（資材購買・分納・自動振込フロー）の全体処理を示すシーケンス図です。<br>
-      画像ファイルは <code>Flow5.png</code> として同一フォルダに配置してください。
-    </p>
-    <figure>
-      <img src="Flow5.png" alt="資材購買・分納・自動振込フロー シーケンス図">
-      <figcaption>図5. 資材購買・分納・自動振込フローのシーケンス図</figcaption>
-    </figure>
-  </section>
-</section>
-
-<div style="page-break-before: always;"></div>
-<section id="flow6">
-  <h1 class="flow-title">Flow6: 返品・サンプル出荷・棚移動・在庫調整フロー（ReactJS Barcode Scan対応）</h1>
-
-  <section id="flow6-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローは、倉庫内の<strong>社内在庫運用</strong>における以下の全プロセスを統一的に管理することを目的とする：
-    </p>
-    <ul>
-      <li><strong>返品（Return）</strong>：販売後の返品入庫処理</li>
-      <li><strong>サンプル出荷（Sample Out）</strong>：試供品・サンプル出荷処理</li>
-      <li><strong>棚移動（Location Transfer）</strong>：同一倉庫内での棚間移動</li>
-      <li><strong>在庫調整（Adjustment）</strong>：棚卸差異・実在庫修正対応</li>
-    </ul>
-    <p>
-      全ての操作は <strong>ReactJS製 Scan barcode画面</strong>（バーコードスキャン画面）上で実施し、  
-      <strong>Kintone（論理在庫）</strong> と <strong>実在庫管理アプリ（実在庫）</strong> のデータを即時同期させる。
-    </p>
-  </section>
-
-  <section id="flow6-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>🧑‍💼 Sales_Staff／管理者</td><td>移動・返品・サンプル出荷依頼の作成および承認</td><td>Kintone 上で操作</td></tr>
-        <tr><td>📄 入出庫履歴アプリ</td><td>在庫移動／調整／返品履歴を記録する中心アプリ</td><td>SKU・数量・From/To棚・LOT・理由などを保持</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>在庫ロジック処理・実在庫管理アプリ 同期</td><td>Kintone Webhook によりトリガー実行</td></tr>
-        <tr><td>📱 Scan barcode画面（ReactJS 倉庫UI）</td><td>倉庫用バーコードスキャン画面</td><td>SKU・棚・LOT 入力および作業確定を行う</td></tr>
-        <tr><td>🏭 実在庫管理アプリ</td><td>棚・LOT 単位の実在庫データベース</td><td>現場実在庫を保持</td></tr>
-        <tr><td>📈 在庫管理アプリ</td><td>Kintone 上の論理在庫管理</td><td>在庫報告・システム連携用</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow6-3">
-    <h2>3. プロセス概要</h2>
-
-    <h3>1️⃣ 移動・返品依頼の作成</h3>
-    <ul>
-      <li><strong>Sales_Staff</strong> が <strong>入出庫履歴アプリ</strong> に新規レコードを作成。</li>
-      <li>入力項目：
-        <ul>
-          <li>SKU、数量</li>
-          <li>取引種別（<code>Type</code>）：
-            <ul>
-              <li><code>RETURN</code> → 返品入庫</li>
-              <li><code>SAMPLE_OUT</code> → サンプル出荷</li>
-              <li><code>LOCATION_TRANSFER</code> → 棚移動</li>
-              <li><code>ADJUSTMENT</code> → 在庫調整</li>
-              <li><code>OTHER</code> → その他</li>
-            </ul>
-          </li>
-          <li>From／To 棚コード（必要に応じて）</li>
-          <li>LOT番号、理由（任意）</li>
-        </ul>
-      </li>
-      <li>保存時に Kintone → Webhook → <strong>Ruby_Server</strong> を起動。</li>
-    </ul>
-
-    <h3>2️⃣ 倉庫画面へのタスク送信</h3>
-    <ul>
-      <li><strong>Ruby_Server</strong> が以下情報を含むタスクを生成：
-        <ul>
-          <li>SKU、数量、From/To 棚、Type（取引種別）</li>
-        </ul>
-      </li>
-      <li>生成されたタスクは <strong>Scan barcode画面</strong> に一覧表示される。</li>
-      <li>倉庫担当は以下の手順で実行：
-        <ol>
-          <li>対象タスク選択</li>
-          <li>バーコードスキャン（SKU）</li>
-          <li>棚コード（Shelf Code）スキャン</li>
-          <li>LOT番号入力／スキャン</li>
-          <li>実数量を入力し「完了」を押下</li>
-        </ol>
-      </li>
-    </ul>
-
-    <h3>3️⃣ 在庫ロジック（Logic／Physical）処理</h3>
-    <p>取引種別（<code>Type</code>）に応じて <strong>Ruby_Server</strong> が異なる在庫処理を実行する：</p>
-    <table>
-      <thead><tr><th>Type</th><th>物理処理</th><th>論理処理</th><th>ステータス更新</th></tr></thead>
-      <tbody>
-        <tr><td>返品 (Return)</td><td>実在庫管理アプリ の棚・LOT 単位で在庫を増加</td><td>在庫管理アプリ の在庫を増加</td><td>返品完了</td></tr>
-        <tr><td>サンプル出荷 (Sample Out)</td><td>倉庫棚から在庫を減算</td><td>論理在庫も減算（消費扱い）</td><td>出荷完了</td></tr>
-        <tr><td>棚移動 (Location Transfer)</td><td>棚Aから減算 → 棚Bへ加算（同一LOT）</td><td>論理在庫は変化なし</td><td>移動完了</td></tr>
-        <tr><td>在庫調整 (Adjustment)</td><td>入力数量分の増減を実在庫に反映</td><td>論理在庫も同方向に調整（±Qty）</td><td>調整完了</td></tr>
-      </tbody>
-    </table>
-
-    <h3>4️⃣ 履歴保存・通知</h3>
-    <ul>
-      <li><strong>Ruby_Server</strong> が <strong>入出庫履歴アプリ</strong> に以下を記録：
-        <ul>
-          <li>実績情報（LOT・棚・数量・日時・担当者）</li>
-        </ul>
-      </li>
-      <li>完了通知を Slack／メールにて Sales_Staff へ送信。</li>
-      <li>必要に応じてレポートを出力し、定期監査（Inventory Audit）に利用。</li>
-    </ul>
-  </section>
-
-  <section id="flow6-4">
-    <h2>5. 入出庫履歴アプリ データ構造</h2>
-    <table>
-      <thead><tr><th>項目名</th><th>データ型</th><th>説明</th></tr></thead>
-      <tbody>
-        <tr><td>Record ID</td><td>Auto</td><td>レコード自動ID</td></tr>
-        <tr><td>Type</td><td>Enum</td><td>RETURN／SAMPLE_OUT／LOCATION_TRANSFER／ADJUSTMENT</td></tr>
-        <tr><td>SKU</td><td>Text</td><td>製品コード</td></tr>
-        <tr><td>Quantity</td><td>Number</td><td>操作数量</td></tr>
-        <tr><td>From_Location</td><td>Text</td><td>出庫棚コード</td></tr>
-        <tr><td>To_Location</td><td>Text</td><td>入庫棚コード</td></tr>
-        <tr><td>LOT</td><td>Text</td><td>製造または入庫LOT番号</td></tr>
-        <tr><td>Reason</td><td>Text</td><td>操作理由</td></tr>
-        <tr><td>Operator</td><td>User</td><td>倉庫担当者</td></tr>
-        <tr><td>Status</td><td>Enum</td><td>完了／未完了／エラー</td></tr>
-        <tr><td>Executed_At</td><td>DateTime</td><td>完了日時</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow6-5">
-    <h2>6. 運用上の注意点</h2>
-    <ul>
-      <li><code>ADJUSTMENT</code>・<code>RETURN</code> は特例処理として利用可能：
-        <ul>
-          <li>出荷後キャンセル品の再入庫。</li>
-          <li>棚卸差異・不良品対応による修正。</li>
-        </ul>
-      </li>
-      <li><strong>Scan barcode画面</strong> はオフラインキャッシュに対応し、再接続時に同期を実施。</li>
-      <li><strong>実在庫管理アプリ</strong> と <strong>在庫管理アプリ</strong> の整合性は常に保たれ、  
-        月次で「棚卸（Inventory Audit）」報告を実施。</li>
-    </ul>
-  </section>
-
-  <section id="flow6-6">
-    <h2>7. 期待される結果</h2>
-    <ul>
-      <li>社内倉庫業務（返品・棚移動・調整）を単一システムで統合管理。</li>
-      <li><strong>入出庫履歴アプリ</strong> が在庫履歴の中枢データベースとして機能。</li>
-      <li><strong>Ruby_Server</strong> により論理在庫と実在庫を双方向同期。</li>
-      <li><strong>Scan barcode画面</strong> によるバーコード入力でミスを最小化。</li>
-    </ul>
-  </section>
-
-  <section id="flow6-sequence">
-    <h2>8. シーケンス図</h2>
-    <p>
-      以下は本フロー（返品・サンプル出荷・棚移動・在庫調整フロー）の全体処理を示すシーケンス図です。<br>
-      画像ファイルは <code>Flow6.png</code> として同一フォルダに配置してください。
-    </p>
-    <figure>
-      <img src="Flow6.png" alt="返品・サンプル出荷・棚移動・在庫調整フロー シーケンス図">
-      <figcaption>図6. 返品・サンプル出荷・棚移動・在庫調整フローのシーケンス図</figcaption>
-    </figure>
-  </section>
-</section>
-
-<div style="page-break-before: always;"></div>
-<section id="flow7">
-  <h1 class="flow-title">Flow7: 受注請求・支払管理の統合フロー（Kintone × Ruby Server × GMO API）</h1>
-
-  <section id="flow7-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローでは、Credie システムにおける <strong>入金（AR）・出金（AP）</strong> の全体フローを統一し、
-      以下の2つの流れを明確に分離する。
-    </p>
-    <ul>
-      <li><strong>AR（Accounts Receivable）</strong>：顧客・代理店からの入金管理</li>
-      <li><strong>AP（Accounts Payable）</strong>：仕入先・代理店・コミッションへの支払管理</li>
-    </ul>
-    <p>
-      全てのデータは <strong>Ruby Server</strong> を経由して <strong>GMO銀行API</strong> と連携し、
-      二方向の資金フローを自動化・可視化・内部承認付きで運用する。
-    </p>
-  </section>
-
-  <section id="flow7-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>📄 注文アプリ</td><td>受注情報管理（Sales Orders）</td><td>売上発生元</td></tr>
-        <tr><td>🧾 請求管理アプリ（AR Hub）</td><td>請求書・VA ID 管理</td><td>発行・入金照合・支払状態管理</td></tr>
-        <tr><td>🙋‍♂️ Agent／Agency</td><td>代理店・顧客</td><td>VA ID への入金者</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>Kintone と GMO API の中間処理</td><td>API呼び出し・状態更新・照合ロジック</td></tr>
-        <tr><td>👑 Representative（CEO）</td><td>最終承認者</td><td>送金前の最終承認を実施</td></tr>
-        <tr><td>💵 支払管理アプリ（AP Hub）</td><td>支払依頼・送金管理アプリ</td><td>全ての支払依頼を一元管理</td></tr>
-        <tr><td>🏦 GMO_API</td><td>GMO銀行のAPI</td><td>仮想口座（VA）と一括送金API</td></tr>
-        <tr><td>📝 発注アプリ</td><td>仕入・購買管理</td><td>サプライヤー支払依頼を作成</td></tr>
-        <tr><td>💰 報酬取引履歴管理</td><td>代理店報酬・リベート管理</td><td>定期的にAP Hubへ支払指示送信</td></tr>
-        <tr><td>👩‍💼 Accounting_Staff</td><td>経理・購買担当</td><td>一次承認者（社内承認）</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow7-3">
-    <h2>3. 詳細フロー</h2>
-
-    <h3>I. 入金フロー（AR） – 請求発行と入金照合</h3>
-
-    <h4>1️⃣ 請求書発行と仮想口座（VA）生成</h4>
-    <ol>
-      <li><strong>注文アプリ</strong> のステータスが <code>Approved</code> になると、Ruby_Server へトリガー送信。</li>
-      <li><strong>Ruby_Server</strong> が <strong>GMO API</strong> に接続し、<strong>VA ID（仮想口座）</strong> を発行。</li>
-      <li>同時に <strong>請求管理アプリ</strong> に以下を登録：
-        <ul>
-          <li>VA ID</li>
-          <li>請求金額</li>
-          <li>Order連携情報</li>
-          <li>支払期限</li>
-        </ul>
-      </li>
-      <li><strong>請求管理アプリ</strong> から <strong>代理店（Agency）</strong> へ VA ID 通知メールを自動送信。</li>
-    </ol>
-
-    <h4>2️⃣ 入金と自動照合</h4>
-    <ol>
-      <li>代理店が GMO 発行の VA ID に入金。</li>
-      <li><strong>GMO_API</strong> が Webhook／定期ポーリングで Ruby_Server に入金情報を通知。</li>
-      <li><strong>Ruby_Server</strong> が VA ID を照合し、<strong>請求管理アプリ</strong> を更新：
-        <ul>
-          <li><code>Status = PAID</code></li>
-          <li>入金日時・トランザクションIDを記録</li>
-        </ul>
-      </li>
-      <li><strong>請求管理アプリ</strong> は入金結果を <strong>注文アプリ</strong> に反映：
-        <ul>
-          <li><code>Order.Status = PAID</code></li>
-          <li>出荷（Fulfillment）フローを自動開始</li>
-        </ul>
-      </li>
-    </ol>
-
-    <blockquote>
-      💡このARフローにより、CSVアップロードや手動確認が不要となり、入金照合が完全自動化される。
-    </blockquote>
-
-    <h3>💛 II. 出金フロー（AP） – 承認と送金</h3>
-
-    <h4>3️⃣ 支払依頼の集約</h4>
-    <p>購買や代理店報酬などの各業務アプリから支払依頼を <strong>支払管理アプリ</strong> に集約する。</p>
-
-    <table>
-      <thead><tr><th>発生元</th><th>処理段階</th><th>内容</th></tr></thead>
-      <tbody>
-        <tr><td>発注アプリ</td><td>① 社内一次承認（経理）</td><td><code>一次承認</code> 済みデータを 支払管理アプリ へ送信（仕入先・金額・口座情報を含む）</td></tr>
-        <tr><td>報酬取引履歴管理</td><td>① 社内承認済みの報酬バッチ</td><td>代理店・金額・支払サイクルを 支払管理アプリ へ送信</td></tr>
-      </tbody>
-    </table>
-
-    <p>
-      支払管理 はレコード作成時に自動チェック（残高・手数料・重複など）を実行。
-    </p>
-
-    <h4>4️⃣ CEO 承認と送金実行</h4>
-    <ol>
-      <li><strong>支払管理アプリ</strong> から CEO（代表者）に承認依頼。</li>
-      <li>CEO が「承認」を押下すると、Webhook により <strong>Ruby_Server</strong> へ通知。</li>
-      <li><strong>Ruby_Server</strong> は <code>READY FOR PAYMENT</code> のレコードを一括処理し、<strong>GMO_API /payments</strong> を呼び出す。</li>
-      <li>GMO_API から結果（成功／失敗・手数料）が返却。</li>
-      <li><strong>Ruby_Server</strong> は結果を記録：
-        <ul>
-          <li><code>Payment_Request.Status = 完了</code></li>
-          <li>送金手数料・取引ID・実行日時を保存</li>
-        </ul>
-      </li>
-      <li>結果は元アプリにも反映：
-        <ul>
-          <li><strong>発注アプリ</strong> → <code>Status = Paid</code></li>
-          <li><strong>報酬取引履歴管理</strong> → <code>Status = Paid</code></li>
-        </ul>
-      </li>
-    </ol>
-  </section>
-
-  <section id="flow7-4">
-    <h2>4. データフロー構造</h2>
-    <table>
-      <thead><tr><th>アプリ</th><th>保持データ</th><th>トリガー／アクション</th></tr></thead>
-      <tbody>
-        <tr><td>注文アプリ</td><td>OrderID・金額・状態</td><td>請求作成トリガー</td></tr>
-        <tr><td>請求管理アプリ</td><td>VA ID・支払状態・入金日</td><td>GMO→Ruby 経由で更新</td></tr>
-        <tr><td>発注アプリ</td><td>仕入先・金額・期日</td><td>Payment_Request 送信</td></tr>
-        <tr><td>報酬取引履歴管理</td><td>代理店・報酬・期間</td><td>Payment_Request 送信</td></tr>
-        <tr><td>支払管理アプリ</td><td>支払明細・手数料・状態</td><td>CEO 承認・GMO API 呼出</td></tr>
-        <tr><td>Ruby_Server</td><td>API連携ロジック</td><td>GMO 呼出・状態同期</td></tr>
-        <tr><td>GMO_API</td><td>VA／送金データ</td><td>入出金情報を提供</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow7-5">
-    <h2>5. 承認・セキュリティ管理</h2>
-    <table>
-      <thead><tr><th>承認レベル</th><th>対象アプリ</th><th>目的</th></tr></thead>
-      <tbody>
-        <tr><td>一次承認（経理担当）</td><td>発注アプリ／報酬取引履歴管理</td><td>業務内容・妥当性確認</td></tr>
-        <tr><td>二次承認（CEO）</td><td>支払管理</td><td>送金前の最終チェック</td></tr>
-        <tr><td>自動承認（GMO API）</td><td>Ruby_Server</td><td>安全なAPI経由での送金処理</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow7-6">
-    <h2>6. 例外処理</h2>
-    <table>
-      <thead><tr><th>発生状況</th><th>対応アクション</th></tr></thead>
-      <tbody>
-        <tr><td>送金失敗（APIエラー）</td><td>Ruby_Server が <code>Status = Failed</code> に更新し、ログと通知を記録</td></tr>
-        <tr><td>金額不一致／VA ID 不整合</td><td>請求管理アプリ 上で <code>要確認</code> ステータスへ保持し、経理が手動確認</td></tr>
-        <tr><td>銀行手数料発生</td><td>Ruby_Server が自動的に <code>Transfer_Fee</code> を 支払管理アプリ に記録</td></tr>
-        <tr><td>仕入先口座情報変更</td><td>CEO 承認前に確認アラートを表示</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow7-7">
-    <h2>7. 成果・効果</h2>
-    <ul>
-      <li><strong>Kintone – Ruby Server – GMO API</strong> 間で資金の入出金を完全自動化。</li>
-      <li><strong>VA ID</strong> により各入金（AR）の追跡が明確。</li>
-      <li><strong>Batch Payment</strong> で複数支払を一括処理し、二段階承認で安全運用。</li>
-      <li><strong>支払管理アプリ</strong> が支払制御の中枢、<strong>請求管理アプリ</strong> が入金制御の中枢となる。</li>
-    </ul>
-
-    <blockquote>
-      💡Credieシステムは「Two-way Cash Flow Automation」を実現し、  
-      AR（請求・入金）と AP（支払・送金）の責任範囲を明確に分離。  
-      すべての取引はログ・承認・履歴を完全に追跡可能。
-    </blockquote>
-  </section>
-
-  <section id="flow7-sequence">
-    <h2>8. シーケンス図</h2>
-    <p>
-      以下は本フロー（AR/AP統合フロー）の全体処理を示すシーケンス図です。<br>
-    </p>
-    <figure>
-      <img src="Flow7.png" alt="AR/AP統合フロー シーケンス図">
-      <figcaption>図7. 受注請求・支払管理（AR/AP統合）のシーケンス図</figcaption>
-    </figure>
-  </section>
-</section>
-
-<div style="page-break-before: always;"></div>
-<section id="flow8">
-  <h1 class="flow-title">Flow8: 倉庫運用統合フロー（Warehouse Core Flow）</h1>
-
-  <section id="flow8-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローは、倉庫業務（Warehouse Operation）の全体プロセスを標準化することを目的とし、
-      以下の作業を一元管理する。
-    </p>
-    <ul>
-      <li><strong>出庫（Picking）</strong>：販売・生産・社内ムーブメントに伴う出庫処理</li>
-      <li><strong>入庫（Putaway）</strong>：仕入・生産・返品などによる入庫処理</li>
-      <li><strong>在庫調整／棚移動（Adjustment／Transfer）</strong></li>
-      <li><strong>実在庫（Physical）と論理在庫（Logic）の連携監視</strong></li>
-    </ul>
-    <p>
-      すべての倉庫タスクは <strong>タスク管理アプリ</strong> によって制御され、  
-      倉庫担当者は <strong>ReactJS製 Scan UI</strong> でバーコードスキャンを行う。  
-      スキャン完了後、システムは <strong>物理在庫DB</strong> と <strong>論理在庫（在庫管理アプリ）</strong> の両方を自動更新する。
-    </p>
-  </section>
-
-  <section id="flow8-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead><tr><th>コンポーネント</th><th>役割</th><th>備考</th></tr></thead>
-      <tbody>
-        <tr><td>📦 Order／PO／SX／Movement Apps</td><td>各種指示元（販売・購買・生産・移動）</td><td>Ruby Serverへタスク作成トリガーを送信</td></tr>
-        <tr><td>🖥️ Ruby_Server</td><td>タスク生成・在庫ロジック処理・DB同期</td><td>倉庫業務のロジックエンジン</td></tr>
-        <tr><td>🗂️ タスク管理アプリ</td><td>入出庫タスクの作成・進捗管理</td><td>各操作に対して個別レコードを保持</td></tr>
-        <tr><td>👩‍🔧 倉庫担当者（Staff）</td><td>現場オペレーター</td><td>Scan UIを使用して作業実施</td></tr>
-        <tr><td>💻 Scan barcode画面（ReactJS 倉庫UI）</td><td>バーコードスキャン画面</td><td>SKU・棚・数量・LOTを入力／表示</td></tr>
-        <tr><td>🗃️ 実在庫管理アプリ</td><td>棚・LOT・数量ごとの実在庫DB</td><td>現物在庫を保持</td></tr>
-        <tr><td>📈 在庫管理アプリ（Logic Stock）</td><td>Kintone上の論理在庫</td><td>レポート／分析用データ</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow8-3">
-    <h2>3. プロセス詳細</h2>
-
-    <h3>1️⃣ タスク作成と初期ロジック処理</h3>
-    <p>
-      販売・購買・生産・ムーブメント等、すべての倉庫指示は <strong>Ruby_Server</strong> を経由し、  
-      <strong>タスク管理アプリ</strong> にタスクを自動生成する。
-    </p>
-
-    <h4>🧾 主なタスク種別</h4>
-    <table>
-      <thead><tr><th>発生元</th><th>タスク名</th><th>操作種別</th><th>論理在庫への影響</th></tr></thead>
-      <tbody>
-        <tr><td>販売（Order）</td><td>Picking</td><td>出庫</td><td>タスク作成時に論理在庫を減算</td></tr>
-        <tr><td>購買（PO）</td><td>Putaway</td><td>入庫</td><td>実入庫確定後に論理在庫を加算</td></tr>
-        <tr><td>生産（Production）</td><td>X-Out／X-In</td><td>原料出庫／製品入庫</td><td>X-Out減算／X-In加算</td></tr>
-        <tr><td>入出庫履歴（Movement）</td><td>Transfer／Sample／Adjustment</td><td>移動・サンプル出荷・調整</td><td>タイプに応じて±</td></tr>
-      </tbody>
-    </table>
-
-    <p>
-      指示元が承認（Approved）されると、Ruby_Server は次を実施：
-    </p>
-    <ol>
-      <li><strong>在庫管理アプリ</strong> で対象商品の在庫を減算または確保。</li>
-      <li><strong>タスク管理アプリ</strong> にタスクを生成（Type・SKU・数量・棚・LOT含む）。</li>
-      <li><strong>Scan barcode画面</strong> にタスクデータを送信し、現場準備を行う。</li>
-    </ol>
-
-    <h3>2️⃣ Scan UIによる実作業</h3>
-    <p>
-      倉庫担当者は <strong>Scan barcode画面</strong> 上でタスクを確認し、バーコードスキャンで作業を進行する。
-    </p>
-    <ul>
-      <li>表示項目：SKU・品名・棚（From／To）・指示数量・進捗状態</li>
-      <li>操作手順：
-        <ol>
-          <li>棚バーコード（Shelf Barcode）のスキャン</li>
-          <li>商品／LOTコードのスキャン</li>
-          <li>実数量を入力またはスキャン</li>
-        </ol>
-      </li>
-    </ul>
-    <p>結果は <code>Scan_Result</code>（SKU・LOT・Location・Qty_Actual）に記録される。</p>
-
-    <h3>3️⃣ 実在庫更新とタスク完了処理</h3>
-    <ol>
-      <li><strong>Scan barcode画面</strong> は結果を <strong>実在庫アプリ</strong> に送信。
-        <ul>
-          <li>出庫／マイナス調整 → 在庫減少</li>
-          <li>入庫／プラス調整 → 在庫増加</li>
-        </ul>
-      </li>
-      <li>DB が更新を完了すると <strong>タスク管理アプリ</strong> へステータスを返却。</li>
-      <li><strong>タスク管理アプリ</strong> が Webhook 経由で <strong>Ruby_Server</strong> に通知し、<code>Status = 完了</code> とする。</li>
-    </ol>
-    <h4>📘 入出庫履歴アプリへの記録ルール</h4>
-    <p>
-      Ruby_Server は、完了したタスク種別に応じて <strong>入出庫履歴アプリ</strong> に在庫移動の実績レコードを必ず作成する。
-    </p>
-    <ul>
-      <li>Picking（販売出庫）タスク：Type = 出庫（販売）として記録</li>
-      <li>Putaway（購買入庫）タスク：Type = 入庫（購買）として記録</li>
-      <li>X-Out／X-In（製造関連）：Type = 出庫（製造）／入庫（製造）として記録</li>
-      <li>Transfer／Adjustment／Sample など：各タスク種別に応じた Type で記録</li>
-    </ul>
-    <p>
-      これにより、全ての入出庫処理を入出庫履歴アプリで一元的にトレースできる。
-    </p>
-
-    <h4>✅ 論理在庫更新のタイミング</h4>
-    <table>
-      <thead><tr><th>タスク種別</th><th>実施タイミング</th><th>ロジック</th></tr></thead>
-      <tbody>
-        <tr><td>入庫（Putaway／X-In）</td><td>実入庫完了後</td><td>在庫管理アプリ で在庫加算</td></tr>
-        <tr><td>出庫（Picking／X-Out）</td><td>タスク作成時</td><td>事前に在庫減算済み</td></tr>
-        <tr><td>Movement／Adjustment</td><td>実行時</td><td>数量に応じて増減</td></tr>
-      </tbody>
-    </table>
-
-    <h3>4️⃣ 元指示への反映とログ記録</h3>
-    <ol>
-      <li><strong>タスク管理アプリ</strong> が元アプリ（Order／PO／SX／Movement）へ状態を反映：
-        <ul>
-          <li>出庫完了 → <code>Status = Fulfilled／Issued</code></li>
-          <li>入庫完了 → <code>Status = Received</code></li>
-        </ul>
-      </li>
-      <li>操作履歴（担当者・日時・SKU・LOT・棚・実数量）を Audit Log に保存。</li>
-      <li><strong>Ruby_Server</strong> は在庫照合（Reconciliation）用に集計データを保持。</li>
-    </ol>
-  </section>
-
-  <section id="flow8-4">
-    <h2>4. データ構造例</h2>
-
-    <h3>(a) タスク管理アプリ</h3>
-    <table>
-      <thead><tr><th>フィールド</th><th>説明</th></tr></thead>
-      <tbody>
-        <tr><td>Task_ID</td><td>タスク識別ID</td></tr>
-        <tr><td>Type</td><td>Picking／Putaway／X-In／X-Out／Transfer／Adjustment</td></tr>
-        <tr><td>Source_App</td><td>発生元アプリ（Order／PO／SX／Movement）</td></tr>
-        <tr><td>SKU</td><td>商品コード</td></tr>
-        <tr><td>Qty_Target</td><td>指示数量</td></tr>
-        <tr><td>Qty_Actual</td><td>実績数量</td></tr>
-        <tr><td>Shelf_From／Shelf_To</td><td>出庫棚／入庫棚</td></tr>
-        <tr><td>LOT</td><td>ロット番号</td></tr>
-        <tr><td>Status</td><td>Pending／In Progress／Completed</td></tr>
-        <tr><td>Operator</td><td>作業者</td></tr>
-        <tr><td>Timestamp</td><td>作業日時</td></tr>
-      </tbody>
-    </table>
-
-    <h3>(b) 実在庫管理アプリ</h3>
-    <table>
-      <thead><tr><th>カラム</th><th>内容</th></tr></thead>
-      <tbody>
-        <tr><td>SKU</td><td>商品コード</td></tr>
-        <tr><td>Location_ID</td><td>棚コード</td></tr>
-        <tr><td>LOT_No</td><td>製造／入庫ロット番号</td></tr>
-        <tr><td>Quantity</td><td>在庫数量</td></tr>
-        <tr><td>Last_Updated</td><td>最終更新日時</td></tr>
-        <tr><td>Task_ID</td><td>タスク管理アプリ とのリンク</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow8-5">
-    <h2>5. データ同期メカニズム</h2>
-    <table>
-      <thead><tr><th>関係</th><th>同期方向</th><th>同期方法</th></tr></thead>
-      <tbody>
-        <tr><td>在庫管理アプリ ↔ DB</td><td>双方向</td><td>タスク完了時に同期（Step10–11）</td></tr>
-        <tr><td>タスク管理アプリ ↔ Scan barcode画面</td><td>リアルタイム</td><td>WebSocket／API</td></tr>
-        <tr><td>タスク管理アプリ ↔ Source Apps</td><td>単方向</td><td>Webhookによる状態更新</td></tr>
-                <tr>
-          <td>入出庫履歴アプリ ← Ruby_Server</td>
-          <td>単方向（書き込み）</td>
-          <td>タスク完了時に入出庫実績をジャーナルとして自動登録</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow8-6">
-    <h2>6. 特殊ケース</h2>
-    <table>
-      <thead><tr><th>シナリオ</th><th>対応方法</th></tr></thead>
-      <tbody>
-        <tr><td>スキャン不足</td><td><code>Qty_Actual &lt; Qty_Target</code> の場合、Taskは <code>部分完了</code> とする</td></tr>
-        <tr><td>誤ったLOT／棚</td><td>Scan barcode画面上で警告を表示し再確認を要求</td></tr>
-        <tr><td>数量誤入力</td><td>送信前に修正可能</td></tr>
-        <tr><td>未確認でスキップ</td><td>DB未更新のまま <code>未完了</code> 状態を保持</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="flow8-7">
-    <h2>7. 成果・効果</h2>
-    <ul>
-      <li>全ての入出庫・調整作業を <strong>タスク管理アプリ</strong> 経由で完全トレーサブルに管理。</li>
-      <li><strong>実在庫管理アプリ（DB）</strong> と <strong>在庫管理アプリ（Kintone）</strong> をリアルタイム同期。</li>
-      <li><strong>Scan barcode画面</strong> による高速・正確な現場作業とLOT／棚単位の記録。</li>
-      <li>Return／Movement／Production の追加API拡張も容易。</li>
-    </ul>
-
-    <blockquote>
-      💡 本フローは Credie 倉庫管理のコア基盤であり、  
-      全ての業務（受注・購買・生産・社内移動）は タスク管理アプリ を中心に運用。  
-      Ruby_Server がロジック統制の中心としてシステムと現場の一貫性を保証する。
-    </blockquote>
-  </section>
-
-  <section id="flow8-sequence">
-    <h2>8. シーケンス図</h2>
-    <p>
-      以下は本フロー（倉庫運用統合フロー）の全体処理を示すシーケンス図です。<br>
-      画像ファイルは <code>Flow8.png</code> として同一フォルダに配置してください。
-    </p>
-    <figure>
-      <img src="Flow8.png" alt="倉庫運用統合フロー シーケンス図">
-      <figcaption>図8. 倉庫運用統合フロー（Warehouse Core Flow）シーケンス図</figcaption>
-    </figure>
-  </section>
-</section>
-
-<div style="page-break-before: always;"></div>
-  <section id="flow9">
-  <h1 class="flow-title">Flow9: 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</h1>
-
-  <section id="flow9-1">
-    <h2>1. 目的</h2>
-    <p>
-      本フローは、販売注文（Order）および購買注文（PO）における
-      返品・キャンセル（全数／一部）、および在庫調整の処理を統一し、
-      以下の点を目的とします。
-    </p>
-    <ul>
-      <li>入出庫履歴アプリ による論理・物理在庫のGifu倉庫での一元管理</li>
-      <li>受注アプリ／購買アプリの正確なステータス更新と明細レベルの履歴保持</li>
-      <li>報酬取引履歴管理アプリによるコミッション取引・補正履歴の一元管理（返品に伴うマイナス補正は原則自動化）</li>
-      <li>出荷指示後のキャンセル時の論理在庫の確実な解放と、関連タスクの停止</li>
-      <li>返品・キャンセル・廃棄・棚卸差異などの在庫処理を単一の運用フローとして整理し、シンプルに管理</li>
-    </ul>
-    <p>
-      これにより、在庫・注文・コミッションのデータ整合性を常に維持しつつ、
-      Ruby Server による自動処理と Kintone アプリの運用ルールを組み合わせた運用が可能となります。
-    </p>
-  </section>
-
-  <hr>
-
-  <section id="flow9-2">
-    <h2>2. システム構成</h2>
-    <table>
-      <thead>
-        <tr><th>コンポーネント</th><th>役割</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>注文アプリ（受注アプリ）</td>
-          <td>販売注文の管理、サブテーブルで明細を保持し、キャンセル・返品理由・数量などを記録する。</td>
-        </tr>
-        <tr>
-          <td>発注アプリ（購買アプリ）</td>
-          <td>購買注文の入庫状況とキャンセル／返品処理を管理する。</td>
-        </tr>
-        <tr>
-          <td>タスク管理アプリ（Kintone 出荷依頼/Task App）</td>
-          <td>出荷・返品入庫・返品出庫など倉庫作業タスクを管理する。キャンセル時には該当タスクの停止／キャンセルも行う。</td>
-        </tr>
-        <tr>
-          <td>入出庫履歴アプリ</td>
-          <td>返品入庫／返品出庫／サンプル出庫／廃棄／棚卸差異など、販売／購買に紐づく・紐づかないすべての入出庫トランザクションを記録するジャーナルアプリ。</td>
-        </tr>
-        <tr>
-          <td>在庫管理アプリ（在庫アプリ）</td>
-          <td>論理在庫の更新・照合（引当／引当解除）を行う。</td>
-        </tr>
-        <tr>
-          <td>実在庫管理アプリ（実在庫DB）</td>
-          <td>棚・LOT単位の実在庫を保持（Gifu倉庫のみ対象）。</td>
-        </tr>
-        <tr>
-          <td>Ruby Server</td>
-          <td>Kintone 各アプリからの Webhook を受信し、タスク管理アプリのタスク生成、入出庫履歴アプリのレコード作成、在庫管理アプリ／実在庫管理アプリの在庫更新、報酬取引履歴管理アプリへの補正レコード登録を自動で行うミドルウェア。</td>
-        </tr>
-        <tr>
-          <td>報酬取引履歴管理アプリ</td>
-          <td>コミッション取引および補正の履歴を記録・管理する（返品に伴うマイナス補正は Ruby Server から自動登録）。</td>
-        </tr>
-        <tr>
-          <td>Op_Staff（運用担当者）</td>
-          <td>注文／購買のステータス更新や、入出庫履歴アプリでの調整登録などを行う運用担当者。</td>
-        </tr>
-        <tr>
-          <td>EC_Channel／Mekaポータル</td>
-          <td>顧客／仕入先が注文・キャンセル・返品を実行するチャネル。</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <hr>
-
-  <section id="flow9-3">
-    <h2>3. 販売注文（Sales Order）フロー</h2>
-    <table>
-      <thead>
-        <tr><th>ケース</th><th>注文アプリステータス遷移</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>全キャンセル（出荷指示前）</td>
-          <td><code>00: 受注確定</code> → <code>90: キャンセル</code></td>
-          <td>日付と理由を記録し、必要に応じてサブテーブル行を無効化。Ruby Server 経由で引当解除および関連タスクの停止を行う。</td>
-          <td>論理在庫を戻す（引当解除、該当タスクがあればキャンセル）</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>部分キャンセル（出荷指示前）</td>
-          <td><code>00: 受注確定</code> → <code>91: 部分キャンセル</code></td>
-          <td>サブテーブルのキャンセル数量を記録。Ruby Server 経由でキャンセル数量分の引当解除を行う。</td>
-          <td>キャンセル数量分の論理在庫を戻す（引当解除）</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>キャンセル（10 出荷指示済だが未出荷）</td>
-          <td><code>10: 出荷指示済</code> → <code>90: キャンセル</code></td>
-          <td>在庫管理アプリで論理在庫を引当解除し、タスク管理アプリのタスクを停止/キャンセル（いずれも Ruby Server 経由）。</td>
-          <td>論理在庫を戻す（引当解除）</td>
-          <td>*出荷指示後の取り消し対応*</td>
-        </tr>
-        <tr>
-          <td>全返品（出荷完了後）</td>
-          <td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td>
-          <td>返品情報をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> のレコードが自動登録される（Ruby Server）。</td>
-          <td>論理・物理在庫を加算</td>
-          <td>報酬取引履歴管理アプリにマイナス補正レコードが自動登録される。</td>
-        </tr>
-        <tr>
-          <td>部分返品（出荷完了後）</td>
-          <td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td>
-          <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> のレコードが自動登録される（Ruby Server）。</td>
-          <td>該当数量分の論理・物理在庫を加算</td>
-          <td>報酬取引履歴管理アプリに部分分のマイナス補正レコードが自動登録される。</td>
-        </tr>
-        <tr>
-          <td>サンプル出庫／廃棄／社内利用</td>
-          <td>ステータス変更なし</td>
-          <td>入出庫履歴アプリ に <code>Type=廃棄／サンプル出庫</code> を登録。</td>
-          <td>論理・物理在庫を減算</td>
-          <td>コミッション非対象。</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>➕ コミッション（報酬）の補正</h3>
-    <p>販売注文に紐づくコミッションは、返品・キャンセル時に Ruby Server と 報酬取引履歴管理アプリ により自動的に補正されます。</p>
-    <ol>
-      <li>
-        返品が確定し、注文アプリのステータスが
-        <code>92: 返品完了</code>／<code>93: 部分返品</code>
-        になったタイミングで、Ruby Server が 報酬取引履歴管理アプリ にマイナスの調整レコードを自動作成する。
-      </li>
-      <li>
-        例外的なケース（特別対応のプラス補正など）がある場合のみ、
-        運用担当者が追加のプラス／マイナス補正レコードを手動登録できる。
-      </li>
-      <li>これらの補正レコードは次回のコミッション支払サイクルでまとめて反映される。</li>
-    </ol>
-  </section>
-
-  <hr>
-
-  <section id="flow9-4">
-    <h2>4. 購買注文（Purchase Order）フロー</h2>
-    <table>
-      <thead>
-        <tr><th>ケース</th><th>発注アプリステータス遷移</th><th>アクション</th><th>在庫への影響</th><th>備考</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>全キャンセル（未入庫）</td>
-          <td><code>00: 発注済</code> → <code>90: キャンセル</code></td>
-          <td>日付・理由を記録。</td>
-          <td>なし（入庫前のため在庫変動なし）</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>部分キャンセル（未入庫）</td>
-          <td><code>00: 発注済</code> → <code>91: 部分完了</code></td>
-          <td>サブテーブルの数量を減算し、<code>キャンセル数量</code>を更新。</td>
-          <td>なし（入庫前のため在庫変動なし）</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>全返品（入庫後）</td>
-          <td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td>
-          <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-数量</code> のレコードが自動登録される（Ruby Server）。</td>
-          <td>論理・物理在庫を減算</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>部分返品（入庫後）</td>
-          <td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td>
-          <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> のレコードが自動登録される（Ruby Server）。</td>
-          <td>該当数量分の論理・物理在庫を減算</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>棚卸差異・在庫修正</td>
-          <td>ステータス変更なし</td>
-          <td>入出庫履歴アプリ に <code>Type=棚卸差異</code>、<code>Qty=±X</code> を登録。</td>
-          <td>実在庫と論理在庫を調整</td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <hr>
-
-  <section id="flow9-5">
-    <h2>5. 運用補足</h2>
-    <ul>
-      <li>返品や廃棄、在庫修正が発生した場合、入出庫履歴アプリ で処理を統一します。</li>
-      <li>在庫数は常に 在庫管理アプリ（論理） と 実在庫管理アプリ（物理 - Gifu倉庫） 間で一致させます。</li>
-      <li>返品に伴う基本的な報酬補正は Ruby Server から自動登録し、例外ケースのみ 報酬取引履歴管理アプリ で手動調整します。</li>
-      <li>本フローは、Ruby Server の自動処理と Kintone アプリ操作を組み合わせることで、在庫・注文・報酬の整合性を確保できるよう設計されています。</li>
-    </ul>
-  </section>
-
-  <hr>
-
-  <section id="flow9-6">
-    <h2>6. 成果・効果</h2>
-    <ul>
-      <li>販売・購買に関わる返品／キャンセル処理を 報酬取引履歴管理アプリ に集約し、コミッション補正を一貫したルールで管理。</li>
-      <li>タスク管理アプリを組み込むことで、出荷指示後のキャンセル時にも論理在庫を確実に解放。</li>
-      <li>在庫・注文・コミッションの整合性を維持し、運用コストを最小化。</li>
-      <li>入出庫履歴アプリおよび報酬取引履歴管理アプリのログにより、他システムとの自動連携にも拡張しやすいデータ設計を確保。</li>
-    </ul>
-    <blockquote>
-      💡 本フローにより、販売・購買・報酬データの一貫性を維持しながら、Ruby Server による自動処理と最小限の手動オペレーションで正確な返品・キャンセル処理が可能となります。
-    </blockquote>
-  </section>
-</section>
-
-<hr>
-
-<section id="flow9-sequence">
-  <h2>7. シーケンス図</h2>
-  <p>
-    以下は本フロー（返品・キャンセル・調整統合フロー）の全体処理を示すシーケンス図です。
-    
-  </p>
-  <figure>
-     <img src="Flow9.png"
-     alt="返品・キャンセル・調整統合フロー シーケンス図"
-     style="width: 100%; height: auto;">
-    <figcaption>図9. 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</figcaption>
-  </figure>
-</section>
-
-</section>
+      <div style="page-break-before: always;"></div>
+      <section id="flow4">
+        <h1 class="flow-title">Flow4: 製造・在庫管理フロー（製品・資材・BOM・入出庫）</h1>
+
+        <section id="flow4-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローの目的は、<strong>製品・資材・BOM・製造・入出庫</strong> の全工程を Kintone 上で一元管理し、
+            ReactJS ベースのバーコードスキャン画面と連携させることで、
+            以下の在庫整合性を確保することである。
+          </p>
+          <ul>
+            <li><strong>論理在庫 (Logic Stock)：</strong> システム上の在庫。</li>
+            <li><strong>実在庫 (Physical Stock)：</strong> 棚（Location）および LOT 単位の実際在庫。</li>
+            <li>外部 WMS を使用せず、バーコードは社内で印刷・管理。</li>
+          </ul>
+        </section>
+
+        <section id="flow4-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>👨‍💻 Master_Admin</td>
+                <td>マスター管理・製造記録を行うオペレーター。</td>
+              </tr>
+              <tr>
+                <td>🗂️ 商品マスタ</td>
+                <td>製品情報（SKU、品名、規格、単位、JANコード）管理。</td>
+              </tr>
+              <tr>
+                <td>📉 資材マスタ</td>
+                <td>資材・原料情報の管理（区分：原料／OEM、発注点）。</td>
+              </tr>
+              <tr>
+                <td>📦 BOMマスタ</td>
+                <td>製品ごとの資材使用量（定量）を管理。</td>
+              </tr>
+              <tr>
+                <td>🧾 製造実績アプリ</td>
+                <td>製造記録（数量、LOT、有効期限、担当者）管理。</td>
+              </tr>
+              <tr>
+                <td>📋 タスク管理アプリ</td>
+                <td>自動生成される入庫／出庫タスクの管理。</td>
+              </tr>
+              <tr>
+                <td>📈 在庫管理アプリ</td>
+                <td>論理在庫（Logic Stock）の管理。</td>
+              </tr>
+              <tr>
+                <td>🏭 実在庫管理アプリ</td>
+                <td>棚・LOT単位の実在庫（Physical Stock）の管理DB。</td>
+              </tr>
+              <tr>
+                <td>🖥️ Ruby_Server</td>
+                <td>タスク生成・在庫更新・データ調整を行うミドルウェア。</td>
+              </tr>
+              <tr>
+                <td>📱 Scan barcode画面</td>
+                <td>ReactJS ベースの倉庫画面。バーコードスキャンで入出庫処理。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow4-3">
+          <h2>3. プロセス概要</h2>
+
+          <h3>3.1 マスタ登録（製品・資材・BOM）</h3>
+          <ul>
+            <li><strong>商品マスタ：</strong> SKU、品名、単位、規格、JANコードを登録。</li>
+            <li><strong>資材マスタ：</strong> 資材コード、区分（原料／OEM）、発注点を登録。</li>
+            <li><strong>BOMマスタ：</strong> 製品 × 資材 × 使用量（定量）を設定。</li>
+          </ul>
+          <p>登録時に SKU・Material の存在チェックおよびアクティブ状態を検証する。</p>
+
+          <h3>3.2 製造記録（製造開始・完了）</h3>
+          <ul>
+            <li>製造開始・完了時に <strong>製造実績アプリ</strong> にレコードを作成。</li>
+            <li>入力項目：
+              <ul>
+                <li>製品（SKU）、数量、担当者、製造日</li>
+                <li>完了時：LOT番号、有効期限（期限日）</li>
+              </ul>
+            </li>
+            <li>LOT番号と期限日は手動入力（自動採番しない）。</li>
+            <li>登録時に <strong>Ruby_Server</strong> がタスク生成ロジックを起動。</li>
+          </ul>
+
+          <h3>3.3 自動タスク生成</h3>
+          <ul>
+            <li>製造開始時（開始）：
+              <ul>
+                <li>Ruby_Server が BOM を参照し、対応する資材の <strong>出庫タスク</strong> を作成。</li>
+              </ul>
+            </li>
+            <li>製造完了時（完了）：
+              <ul>
+                <li>Ruby_Server が製品の <strong>入庫タスク</strong> を作成。</li>
+              </ul>
+            </li>
+          </ul>
+          <p>各タスクには種類（入庫／出庫）、SKU、数量、担当者、初期状態＝<span class="kbd">未開始</span> が含まれる。</p>
+
+          <h3>3.4 倉庫タスク実行（Scan barcode画面）</h3>
+          <ol>
+            <li>倉庫担当者は <strong>Scan barcode画面（ReactJS 倉庫UI）</strong> でタスクを選択。</li>
+            <li>バーコードスキャンによる手順：
+              <ul>
+                <li>① 対象タスク選択</li>
+                <li>② 製品／資材バーコードをスキャン</li>
+                <li>③ 棚コード（Location）をスキャン</li>
+                <li>④ LOT番号入力またはスキャン</li>
+                <li>⑤ 実数量を入力し、完了ボタンを押下</li>
+              </ul>
+            </li>
+            <li>完了時の処理：
+              <ul>
+                <li><strong>出庫（資材）</strong>：実在庫管理アプリ（棚・LOT単位）と 在庫管理アプリ を減算。</li>
+                <li><strong>入庫（製品）</strong>：実在庫管理アプリ と 在庫管理アプリ を加算。</li>
+                <li>タスク状態を <span class="kbd">完了済み</span> に更新。</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h3>3.5 LOT・バーコード管理</h3>
+          <ul>
+            <li>LOT番号・期限日は製造完了時に担当者が手動入力。</li>
+            <li>バーコードは Kintone から発行せず、社内テンプレート（Excel／専用プリンタ）で印刷。</li>
+            <li>入庫前に製品へバーコードを手動貼付。</li>
+            <li>バーコードは倉庫操作時の識別用途にのみ使用。</li>
+          </ul>
+
+          <h3>3.6 在庫管理・レポート</h3>
+          <ul>
+            <li><strong>在庫管理アプリ（論理在庫）：</strong> SKU ごとのシステム在庫を管理。</li>
+            <li><strong>実在庫管理アプリ（実在庫）：</strong> SKU＋Location＋LOT 単位の実在庫を保持。</li>
+            <li>Ruby_Server が定期的に Logic／Physical の照合バッチを実行し、差異をレポート。</li>
+          </ul>
+          <p>照合レポート項目：SKU、LOT、在庫差分、差異率（%）。</p>
+          <p>在庫は以下条件でフィルタ可能：</p>
+          <ul>
+            <li>SKU</li>
+            <li>LOT番号</li>
+            <li>棚コード（Location）</li>
+          </ul>
+        </section>
+
+        <section id="flow4-4">
+          <h2>4. 在庫ロジック</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>在庫種別</th>
+                <th>増加条件</th>
+                <th>減少条件</th>
+                <th>変更元</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>論理在庫 (Logic Stock)</td>
+                <td>製品入庫時</td>
+                <td>資材出庫／製品出荷時</td>
+                <td>在庫管理アプリ</td>
+              </tr>
+              <tr>
+                <td>実在庫 (Physical Stock)</td>
+                <td>倉庫担当が実入庫を確定時</td>
+                <td>実出庫を確定時</td>
+                <td>実在庫管理アプリ</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow4-5">
+          <h2>5. 例外・特別対応</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ケース</th>
+                <th>対応内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LOT または 棚コード入力ミス</td>
+                <td>警告を表示し再入力を促す。</td>
+              </tr>
+              <tr>
+                <td>同一棚で LOT 重複</td>
+                <td>同一製品の場合は警告のみで許可。</td>
+              </tr>
+              <tr>
+                <td>製造中止</td>
+                <td>Ruby_Server がタスクを削除し、論理在庫をロールバック。</td>
+              </tr>
+              <tr>
+                <td>在庫差異</td>
+                <td>入出庫履歴アプリ に Type=ADJUSTMENT でレコード登録し、その結果として 実在庫管理アプリ・在庫管理アプリ を Ruby_Server 経由で調整する。</td>
+              </tr>
+              <tr>
+                <td>バーコード破損・紛失</td>
+                <td>外部システムから再印刷対応。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow4-6">
+          <h2>6. 期待される結果</h2>
+          <ul>
+            <li>製造・在庫の全プロセスを Kintone で一元管理。</li>
+            <li>外部 WMS 不要で、現場運用に即した仕組み。</li>
+            <li>論理在庫と実在庫が常に一致し、LOT・棚単位でトレーサビリティを確保。</li>
+            <li>倉庫担当は ReactJS UI のバーコードスキャンで迅速に処理可能。</li>
+            <li>SKU・LOT・時系列で追跡可能な完全履歴データを保持。</li>
+          </ul>
+        </section>
+
+        <section id="flow4-sequence">
+          <h2>7. シーケンス図</h2>
+          <p>
+            以下は本フロー（製造・在庫管理フロー）の全体処理を示すシーケンス図です。<br>
+            画像ファイルは <code>Flow4.png</code> として同一フォルダに配置してください。
+          </p>
+          <figure>
+            <img src="Flow4.png" alt="製造・在庫管理フロー シーケンス図">
+            <figcaption>図4. 製造・在庫管理フローのシーケンス図</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <div style="page-break-before: always;"></div>
+      <section id="flow5">
+        <h1 class="flow-title">Flow5: 資材購買・分納・自動振込フロー</h1>
+
+        <section id="flow5-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローは、<strong>資材購買（Meka 取引）</strong> に関する一連の業務を管理する。
+            在庫監視、発注（PO）作成、承認、支払、分納入庫までを自動化し、
+            <strong>仕入ポータル</strong> および <strong>GMO 銀行API</strong> と連携することで効率化を図る。
+          </p>
+          <ul>
+            <li><strong>Scan barcode画面（ReactJS 倉庫UI）</strong> により入庫バーコードスキャンを実現。</li>
+            <li>支払は「前払い一括」だが、納品は「複数回分納（分割納入）」を許可。</li>
+            <li><strong>2段階承認フロー</strong>：
+              <ul>
+                <li>一次承認：Kintone上の PO 承認（購買担当者）</li>
+                <li>最終承認：支払管理アプリ 上の支払承認（代表者）</li>
+              </ul>
+            </li>
+            <li>最終承認後、<strong>GMO API</strong> により自動振込を実施し、支払・納品ステータスを双方向連携。</li>
+          </ul>
+        </section>
+
+        <section id="flow5-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🗂️ パートナーマスタ</td>
+                <td>Meka 仕入先情報（口座・連絡先・代理店ポータル ID）管理。</td>
+              </tr>
+              <tr>
+                <td>📈 在庫管理アプリ</td>
+                <td>資材在庫・発注点（しきい値）の監視。</td>
+              </tr>
+              <tr>
+                <td>🖥️ Ruby_Server</td>
+                <td>自動PO生成・GMO API呼出・仕入ポータル連携ロジックを担当。</td>
+              </tr>
+              <tr>
+                <td>🙋‍♀️ Purchasing_Staff</td>
+                <td>購買担当（一次承認者）。</td>
+              </tr>
+              <tr>
+                <td>👑 Representative</td>
+                <td>代表者（最終承認者・CEO）。</td>
+              </tr>
+              <tr>
+                <td>📝 発注アプリ</td>
+                <td>発注書（PO）の管理、一次承認、入庫状態の追跡。</td>
+              </tr>
+              <tr>
+                <td>💸 支払管理アプリ</td>
+                <td>支払依頼・支払実績の管理（POとリンク）。</td>
+              </tr>
+              <tr>
+                <td>🌐 仕入ポータル</td>
+                <td>仕入先ポータル（注文確認、請求書発行、分納スケジュール）。</td>
+              </tr>
+              <tr>
+                <td>🚚 Meka</td>
+                <td>資材供給業者。</td>
+              </tr>
+              <tr>
+                <td>🏦 GMO_API</td>
+                <td>自動振込を実行する銀行API。</td>
+              </tr>
+              <tr>
+                <td>📱 Scan barcode画面</td>
+                <td>入庫作業用ReactJS画面（バーコード・棚・LOTスキャン）。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow5-3">
+          <h2>3. 詳細プロセス</h2>
+
+          <h3>3.1 仕入先登録（Meka）</h3>
+          <ul>
+            <li>購買担当が <strong>パートナーマスタ</strong> に仕入先情報（名称・メール・銀行口座）を登録。</li>
+            <li><strong>Ruby_Server</strong> が　仕入ポータル にアカウントを自動発行し、ログイン情報をメール送信。</li>
+          </ul>
+
+          <h3>3.2 在庫監視と自動PO生成</h3>
+          <ol>
+            <li><strong>Ruby_Server</strong> が定期的に <strong>在庫管理アプリ</strong> の在庫をチェック。</li>
+            <li>SKU が <code>発注点</code> 未満の場合：
+              <ul>
+                <li><strong>発注アプリ</strong> に自動的に発注書（PO）を作成。</li>
+                <li><strong>Purchasing_Staff</strong> に一次承認依頼を通知。</li>
+                <li>承認後、<strong>仕入ポータル</strong> に発注データを送信。</li>
+                <li>Meka 側で注文を確認し、納期・分納回数を設定。</li>
+                <li>納品スケジュールが <strong>発注アプリ</strong> に同期される。</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h3>3.3 支払プロセス（一次承認＋最終承認＋自動振込）</h3>
+
+          <h4>🧾 ステップ1：請求書受領・支払依頼レコード作成</h4>
+          <ul>
+            <li><strong>仕入ポータル</strong> から <strong>請求書（Invoice）</strong> データが <strong>Ruby_Server</strong> に送信。</li>
+            <li><strong>Ruby_Server</strong> が <strong>支払管理アプリ</strong> に支払依頼レコードを作成し、PO をリンク。</li>
+          </ul>
+
+          <h4>🧍‍♀️ ステップ2：一次承認（PO）</h4>
+          <ul>
+            <li><strong>Purchasing_Staff</strong> が <strong>発注アプリ</strong> で注文内容を確認し、<code>一次承認</code>。</li>
+          </ul>
+
+          <h4>👑 ステップ3：最終承認（Payout）</h4>
+          <ul>
+            <li><strong>Representative（CEO）</strong> が <strong>支払管理アプリ</strong> にて <code>最終承認</code> を実施。</li>
+            <li>承認時、Kintone から <strong>Ruby_Server</strong> に Webhook 通知。</li>
+          </ul>
+
+          <h4>🤖 ステップ4：自動振込</h4>
+          <ul>
+            <li><strong>Ruby_Server</strong> が <strong>GMO_API /payments</strong> を呼び出し、自動送金を実行。</li>
+            <li>成功時：
+              <ul>
+                <li><code>支払管理アプリ.Status = 完了</code></li>
+                <li><code>発注アプリ.Status = PAID</code></li>
+                <li><strong>仕入ポータル</strong> に「支払い済み」を反映。</li>
+              </ul>
+            </li>
+            <li>失敗時：
+              <ul>
+                <li><strong>Payment Error App</strong> にログ記録。</li>
+                <li>購買担当へエラーメール送信。</li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>3.4 分納入庫（複数回納品対応）</h3>
+          <ol>
+            <li>Meka 側で支払完了後、分納スケジュールを設定。</li>
+            <li>各納品バッチが 仕入ポータル から Ruby_Server へ通知。</li>
+            <li><strong>Ruby_Server</strong> が以下を実行：
+              <ul>
+                <li><code>発注アプリ.Status = 部分入庫中</code></li>
+                <li><strong>Scan barcode画面</strong> に入庫タスク（入庫タスク）を自動生成。</li>
+              </ul>
+            </li>
+            <li>倉庫担当は <strong>Scan barcode画面</strong> で以下操作を行う：
+              <ul>
+                <li>バーコードスキャン（資材コード）</li>
+                <li>棚コード（Location）スキャン</li>
+                <li>LOT番号入力</li>
+                <li>実数量入力 → 「完了」ボタン押下</li>
+              </ul>
+            </li>
+            <li>完了時：
+              <ul>
+                <li><strong>在庫管理アプリ</strong> の論理在庫を加算。</li>
+                <li><strong>発注アプリ</strong> に入庫バッチを記録。</li>
+                <li>全数量未完 → <code>部分完了</code>、全納完了 → <code>完了</code>。</li>
+                <li><strong>仕入ポータル</strong> に「納品済み」を反映。</li>
+              </ul>
+            </li>
+          </ol>
+        </section>
+
+        <section id="flow5-4">
+          <h2>4. 在庫ロジック</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>在庫種別</th>
+                <th>更新タイミング</th>
+                <th>増加条件</th>
+                <th>減少条件</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>論理在庫 (Logic Stock)</td>
+                <td>Scan barcode画面 入庫確定時</td>
+                <td>資材分納入庫完了時</td>
+                <td>製造出庫時</td>
+              </tr>
+              <tr>
+                <td>実在庫 (Physical Stock)</td>
+                <td>Scan barcode画面 操作時（棚・LOT 単位）</td>
+                <td>バーコード入庫時</td>
+                <td>資材実出庫時</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow5-5">
+          <h2>5. 例外・エラー処理</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ケース</th>
+                <th>対応内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GMO_API 振込エラー</td>
+                <td>Error App に記録し、購買担当へ通知。</td>
+              </tr>
+              <tr>
+                <td>納品不足</td>
+                <td><code>発注アプリ.Status = 部分入庫中</code> のまま維持。</td>
+              </tr>
+              <tr>
+                <td>支払後の PO キャンセル</td>
+                <td>支払管理アプリ に返金レコードを手動登録。</td>
+              </tr>
+              <tr>
+                <td>LOT／棚コード未入力</td>
+                <td>Scan barcode画面 に警告表示、「完了」不可。</td>
+              </tr>
+              <tr>
+                <td>在庫差異</td>
+                <td>入出庫履歴アプリ で手動修正（履歴ログ保持）。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow5-6">
+          <h2>6. 期待される結果</h2>
+          <ul>
+            <li>購買〜支払〜分納入庫の全工程を自動化。</li>
+            <li>発注アプリ と 支払管理アプリ による 2段階承認を明確に分離。</li>
+            <li>GMO API により自動振込を実施し、手動操作を不要化。</li>
+            <li>支払・納品ステータスを 仕入ポータル ↔ Kintone 間で同期。</li>
+            <li>PO, Payout, Stock, Warehouse の履歴を完全にトレース可能。</li>
+          </ul>
+        </section>
+
+        <section id="flow5-sequence">
+          <h2>7. シーケンス図</h2>
+          <p>
+            以下は本フロー（資材購買・分納・自動振込フロー）の全体処理を示すシーケンス図です。<br>
+            画像ファイルは <code>Flow5.png</code> として同一フォルダに配置してください。
+          </p>
+          <figure>
+            <img src="Flow5.png" alt="資材購買・分納・自動振込フロー シーケンス図">
+            <figcaption>図5. 資材購買・分納・自動振込フローのシーケンス図</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <div style="page-break-before: always;"></div>
+      <section id="flow6">
+        <h1 class="flow-title">Flow6: 返品・サンプル出荷・棚移動・在庫調整フロー（ReactJS Barcode Scan対応）</h1>
+
+        <section id="flow6-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローは、倉庫内の<strong>社内在庫運用</strong>における以下の全プロセスを統一的に管理することを目的とする：
+          </p>
+          <ul>
+            <li><strong>返品（Return）</strong>：販売後の返品入庫処理</li>
+            <li><strong>サンプル出荷（Sample Out）</strong>：試供品・サンプル出荷処理</li>
+            <li><strong>棚移動（Location Transfer）</strong>：同一倉庫内での棚間移動</li>
+            <li><strong>在庫調整（Adjustment）</strong>：棚卸差異・実在庫修正対応</li>
+          </ul>
+          <p>
+            全ての操作は <strong>ReactJS製 Scan barcode画面</strong>（バーコードスキャン画面）上で実施し、
+            <strong>Kintone（論理在庫）</strong> と <strong>実在庫管理アプリ（実在庫）</strong> のデータを即時同期させる。
+          </p>
+        </section>
+
+        <section id="flow6-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🧑‍💼 Sales_Staff／管理者</td>
+                <td>移動・返品・サンプル出荷依頼の作成および承認</td>
+                <td>Kintone 上で操作</td>
+              </tr>
+              <tr>
+                <td>📄 入出庫履歴アプリ</td>
+                <td>在庫移動／調整／返品履歴を記録する中心アプリ</td>
+                <td>SKU・数量・From/To棚・LOT・理由などを保持</td>
+              </tr>
+              <tr>
+                <td>🖥️ Ruby_Server</td>
+                <td>在庫ロジック処理・実在庫管理アプリ 同期</td>
+                <td>Kintone Webhook によりトリガー実行</td>
+              </tr>
+              <tr>
+                <td>📱 Scan barcode画面（ReactJS 倉庫UI）</td>
+                <td>倉庫用バーコードスキャン画面</td>
+                <td>SKU・棚・LOT 入力および作業確定を行う</td>
+              </tr>
+              <tr>
+                <td>🏭 実在庫管理アプリ</td>
+                <td>棚・LOT 単位の実在庫データベース</td>
+                <td>現場実在庫を保持</td>
+              </tr>
+              <tr>
+                <td>📈 在庫管理アプリ</td>
+                <td>Kintone 上の論理在庫管理</td>
+                <td>在庫報告・システム連携用</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow6-3">
+          <h2>3. プロセス概要</h2>
+
+          <h3>1️⃣ 移動・返品依頼の作成</h3>
+          <ul>
+            <li><strong>Sales_Staff</strong> が <strong>入出庫履歴アプリ</strong> に新規レコードを作成。</li>
+            <li>入力項目：
+              <ul>
+                <li>SKU、数量</li>
+                <li>取引種別（<code>Type</code>）：
+                  <ul>
+                    <li><code>RETURN</code> → 返品入庫</li>
+                    <li><code>SAMPLE_OUT</code> → サンプル出荷</li>
+                    <li><code>LOCATION_TRANSFER</code> → 棚移動</li>
+                    <li><code>ADJUSTMENT</code> → 在庫調整</li>
+                    <li><code>OTHER</code> → その他</li>
+                  </ul>
+                </li>
+                <li>From／To 棚コード（必要に応じて）</li>
+                <li>LOT番号、理由（任意）</li>
+              </ul>
+            </li>
+            <li>保存時に Kintone → Webhook → <strong>Ruby_Server</strong> を起動。</li>
+          </ul>
+
+          <h3>2️⃣ 倉庫画面へのタスク送信</h3>
+          <ul>
+            <li><strong>Ruby_Server</strong> が以下情報を含むタスクを生成：
+              <ul>
+                <li>SKU、数量、From/To 棚、Type（取引種別）</li>
+              </ul>
+            </li>
+            <li>生成されたタスクは <strong>Scan barcode画面</strong> に一覧表示される。</li>
+            <li>倉庫担当は以下の手順で実行：
+              <ol>
+                <li>対象タスク選択</li>
+                <li>バーコードスキャン（SKU）</li>
+                <li>棚コード（Shelf Code）スキャン</li>
+                <li>LOT番号入力／スキャン</li>
+                <li>実数量を入力し「完了」を押下</li>
+              </ol>
+            </li>
+          </ul>
+
+          <h3>3️⃣ 在庫ロジック（Logic／Physical）処理</h3>
+          <p>取引種別（<code>Type</code>）に応じて <strong>Ruby_Server</strong> が異なる在庫処理を実行する：</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>物理処理</th>
+                <th>論理処理</th>
+                <th>ステータス更新</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>返品 (Return)</td>
+                <td>実在庫管理アプリ の棚・LOT 単位で在庫を増加</td>
+                <td>在庫管理アプリ の在庫を増加</td>
+                <td>返品完了</td>
+              </tr>
+              <tr>
+                <td>サンプル出荷 (Sample Out)</td>
+                <td>倉庫棚から在庫を減算</td>
+                <td>論理在庫も減算（消費扱い）</td>
+                <td>出荷完了</td>
+              </tr>
+              <tr>
+                <td>棚移動 (Location Transfer)</td>
+                <td>棚Aから減算 → 棚Bへ加算（同一LOT）</td>
+                <td>論理在庫は変化なし</td>
+                <td>移動完了</td>
+              </tr>
+              <tr>
+                <td>在庫調整 (Adjustment)</td>
+                <td>入力数量分の増減を実在庫に反映</td>
+                <td>論理在庫も同方向に調整（±Qty）</td>
+                <td>調整完了</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>4️⃣ 履歴保存・通知</h3>
+          <ul>
+            <li><strong>Ruby_Server</strong> が <strong>入出庫履歴アプリ</strong> に以下を記録：
+              <ul>
+                <li>実績情報（LOT・棚・数量・日時・担当者）</li>
+              </ul>
+            </li>
+            <li>完了通知を Slack／メールにて Sales_Staff へ送信。</li>
+            <li>必要に応じてレポートを出力し、定期監査（Inventory Audit）に利用。</li>
+          </ul>
+        </section>
+
+        <section id="flow6-4">
+          <h2>5. 入出庫履歴アプリ データ構造</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>項目名</th>
+                <th>データ型</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Record ID</td>
+                <td>Auto</td>
+                <td>レコード自動ID</td>
+              </tr>
+              <tr>
+                <td>Type</td>
+                <td>Enum</td>
+                <td>RETURN／SAMPLE_OUT／LOCATION_TRANSFER／ADJUSTMENT</td>
+              </tr>
+              <tr>
+                <td>SKU</td>
+                <td>Text</td>
+                <td>製品コード</td>
+              </tr>
+              <tr>
+                <td>Quantity</td>
+                <td>Number</td>
+                <td>操作数量</td>
+              </tr>
+              <tr>
+                <td>From_Location</td>
+                <td>Text</td>
+                <td>出庫棚コード</td>
+              </tr>
+              <tr>
+                <td>To_Location</td>
+                <td>Text</td>
+                <td>入庫棚コード</td>
+              </tr>
+              <tr>
+                <td>LOT</td>
+                <td>Text</td>
+                <td>製造または入庫LOT番号</td>
+              </tr>
+              <tr>
+                <td>Reason</td>
+                <td>Text</td>
+                <td>操作理由</td>
+              </tr>
+              <tr>
+                <td>Operator</td>
+                <td>User</td>
+                <td>倉庫担当者</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>Enum</td>
+                <td>完了／未完了／エラー</td>
+              </tr>
+              <tr>
+                <td>Executed_At</td>
+                <td>DateTime</td>
+                <td>完了日時</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow6-5">
+          <h2>6. 運用上の注意点</h2>
+          <ul>
+            <li><code>ADJUSTMENT</code>・<code>RETURN</code> は特例処理として利用可能：
+              <ul>
+                <li>出荷後キャンセル品の再入庫。</li>
+                <li>棚卸差異・不良品対応による修正。</li>
+              </ul>
+            </li>
+            <li><strong>Scan barcode画面</strong> はオフラインキャッシュに対応し、再接続時に同期を実施。</li>
+            <li><strong>実在庫管理アプリ</strong> と <strong>在庫管理アプリ</strong> の整合性は常に保たれ、
+              月次で「棚卸（Inventory Audit）」報告を実施。</li>
+          </ul>
+        </section>
+
+        <section id="flow6-6">
+          <h2>7. 期待される結果</h2>
+          <ul>
+            <li>社内倉庫業務（返品・棚移動・調整）を単一システムで統合管理。</li>
+            <li><strong>入出庫履歴アプリ</strong> が在庫履歴の中枢データベースとして機能。</li>
+            <li><strong>Ruby_Server</strong> により論理在庫と実在庫を双方向同期。</li>
+            <li><strong>Scan barcode画面</strong> によるバーコード入力でミスを最小化。</li>
+          </ul>
+        </section>
+
+        <section id="flow6-sequence">
+          <h2>8. シーケンス図</h2>
+          <p>
+            以下は本フロー（返品・サンプル出荷・棚移動・在庫調整フロー）の全体処理を示すシーケンス図です。<br>
+            画像ファイルは <code>Flow6.png</code> として同一フォルダに配置してください。
+          </p>
+          <figure>
+            <img src="Flow6.png" alt="返品・サンプル出荷・棚移動・在庫調整フロー シーケンス図">
+            <figcaption>図6. 返品・サンプル出荷・棚移動・在庫調整フローのシーケンス図</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <div style="page-break-before: always;"></div>
+      <section id="flow7">
+        <h1 class="flow-title">Flow7: 受注請求・支払管理の統合フロー（Kintone × Ruby Server × GMO API）</h1>
+
+        <section id="flow7-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローでは、Credie システムにおける <strong>入金（AR）・出金（AP）</strong> の全体フローを統一し、
+            以下の2つの流れを明確に分離する。
+          </p>
+          <ul>
+            <li><strong>AR（Accounts Receivable）</strong>：顧客・代理店からの入金管理</li>
+            <li><strong>AP（Accounts Payable）</strong>：仕入先・代理店・コミッションへの支払管理</li>
+          </ul>
+          <p>
+            全てのデータは <strong>Ruby Server</strong> を経由して <strong>GMO銀行API</strong> と連携し、
+            二方向の資金フローを自動化・可視化・内部承認付きで運用する。
+          </p>
+        </section>
+
+        <section id="flow7-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>📄 注文アプリ</td>
+                <td>受注情報管理（Sales Orders）</td>
+                <td>売上発生元</td>
+              </tr>
+              <tr>
+                <td>🧾 請求管理アプリ（AR Hub）</td>
+                <td>請求書・VA ID 管理</td>
+                <td>発行・入金照合・支払状態管理</td>
+              </tr>
+              <tr>
+                <td>🙋‍♂️ Agent／Agency</td>
+                <td>代理店・顧客</td>
+                <td>VA ID への入金者</td>
+              </tr>
+              <tr>
+                <td>🖥️ Ruby_Server</td>
+                <td>Kintone と GMO API の中間処理</td>
+                <td>API呼び出し・状態更新・照合ロジック</td>
+              </tr>
+              <tr>
+                <td>👑 Representative（CEO）</td>
+                <td>最終承認者</td>
+                <td>送金前の最終承認を実施</td>
+              </tr>
+              <tr>
+                <td>💵 支払管理アプリ（AP Hub）</td>
+                <td>支払依頼・送金管理アプリ</td>
+                <td>全ての支払依頼を一元管理</td>
+              </tr>
+              <tr>
+                <td>🏦 GMO_API</td>
+                <td>GMO銀行のAPI</td>
+                <td>仮想口座（VA）と一括送金API</td>
+              </tr>
+              <tr>
+                <td>📝 発注アプリ</td>
+                <td>仕入・購買管理</td>
+                <td>サプライヤー支払依頼を作成</td>
+              </tr>
+              <tr>
+                <td>💰 報酬取引履歴管理</td>
+                <td>代理店報酬・リベート管理</td>
+                <td>定期的にAP Hubへ支払指示送信</td>
+              </tr>
+              <tr>
+                <td>👩‍💼 Accounting_Staff</td>
+                <td>経理・購買担当</td>
+                <td>一次承認者（社内承認）</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow7-3">
+          <h2>3. 詳細フロー</h2>
+
+          <h3>I. 入金フロー（AR） – 請求発行と入金照合</h3>
+
+          <h4>1️⃣ 請求書発行と仮想口座（VA）生成</h4>
+          <ol>
+            <li><strong>注文アプリ</strong> のステータスが <code>Approved</code> になると、Ruby_Server へトリガー送信。</li>
+            <li><strong>Ruby_Server</strong> が <strong>GMO API</strong> に接続し、<strong>VA ID（仮想口座）</strong> を発行。</li>
+            <li>同時に <strong>請求管理アプリ</strong> に以下を登録：
+              <ul>
+                <li>VA ID</li>
+                <li>請求金額</li>
+                <li>Order連携情報</li>
+                <li>支払期限</li>
+              </ul>
+            </li>
+            <li><strong>請求管理アプリ</strong> から <strong>代理店（Agency）</strong> へ VA ID 通知メールを自動送信。</li>
+          </ol>
+
+          <h4>2️⃣ 入金と自動照合</h4>
+          <ol>
+            <li>代理店が GMO 発行の VA ID に入金。</li>
+            <li><strong>GMO_API</strong> が Webhook／定期ポーリングで Ruby_Server に入金情報を通知。</li>
+            <li><strong>Ruby_Server</strong> が VA ID を照合し、<strong>請求管理アプリ</strong> を更新：
+              <ul>
+                <li><code>Status = PAID</code></li>
+                <li>入金日時・トランザクションIDを記録</li>
+              </ul>
+            </li>
+            <li><strong>請求管理アプリ</strong> は入金結果を <strong>注文アプリ</strong> に反映：
+              <ul>
+                <li><code>Order.Status = PAID</code></li>
+                <li>出荷（Fulfillment）フローを自動開始</li>
+              </ul>
+            </li>
+          </ol>
+
+          <blockquote>
+            💡このARフローにより、CSVアップロードや手動確認が不要となり、入金照合が完全自動化される。
+          </blockquote>
+
+          <h3>💛 II. 出金フロー（AP） – 承認と送金</h3>
+
+          <h4>3️⃣ 支払依頼の集約</h4>
+          <p>購買や代理店報酬などの各業務アプリから支払依頼を <strong>支払管理アプリ</strong> に集約する。</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>発生元</th>
+                <th>処理段階</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>発注アプリ</td>
+                <td>① 社内一次承認（経理）</td>
+                <td><code>一次承認</code> 済みデータを 支払管理アプリ へ送信（仕入先・金額・口座情報を含む）</td>
+              </tr>
+              <tr>
+                <td>報酬取引履歴管理</td>
+                <td>① 社内承認済みの報酬バッチ</td>
+                <td>代理店・金額・支払サイクルを 支払管理アプリ へ送信</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            支払管理 はレコード作成時に自動チェック（残高・手数料・重複など）を実行。
+          </p>
+
+          <h4>4️⃣ CEO 承認と送金実行</h4>
+          <ol>
+            <li><strong>支払管理アプリ</strong> から CEO（代表者）に承認依頼。</li>
+            <li>CEO が「承認」を押下すると、Webhook により <strong>Ruby_Server</strong> へ通知。</li>
+            <li><strong>Ruby_Server</strong> は <code>READY FOR PAYMENT</code> のレコードを一括処理し、<strong>GMO_API
+                /payments</strong> を呼び出す。</li>
+            <li>GMO_API から結果（成功／失敗・手数料）が返却。</li>
+            <li><strong>Ruby_Server</strong> は結果を記録：
+              <ul>
+                <li><code>Payment_Request.Status = 完了</code></li>
+                <li>送金手数料・取引ID・実行日時を保存</li>
+              </ul>
+            </li>
+            <li>結果は元アプリにも反映：
+              <ul>
+                <li><strong>発注アプリ</strong> → <code>Status = Paid</code></li>
+                <li><strong>報酬取引履歴管理</strong> → <code>Status = Paid</code></li>
+              </ul>
+            </li>
+          </ol>
+        </section>
+
+        <section id="flow7-4">
+          <h2>4. データフロー構造</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>アプリ</th>
+                <th>保持データ</th>
+                <th>トリガー／アクション</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>注文アプリ</td>
+                <td>OrderID・金額・状態</td>
+                <td>請求作成トリガー</td>
+              </tr>
+              <tr>
+                <td>請求管理アプリ</td>
+                <td>VA ID・支払状態・入金日</td>
+                <td>GMO→Ruby 経由で更新</td>
+              </tr>
+              <tr>
+                <td>発注アプリ</td>
+                <td>仕入先・金額・期日</td>
+                <td>Payment_Request 送信</td>
+              </tr>
+              <tr>
+                <td>報酬取引履歴管理</td>
+                <td>代理店・報酬・期間</td>
+                <td>Payment_Request 送信</td>
+              </tr>
+              <tr>
+                <td>支払管理アプリ</td>
+                <td>支払明細・手数料・状態</td>
+                <td>CEO 承認・GMO API 呼出</td>
+              </tr>
+              <tr>
+                <td>Ruby_Server</td>
+                <td>API連携ロジック</td>
+                <td>GMO 呼出・状態同期</td>
+              </tr>
+              <tr>
+                <td>GMO_API</td>
+                <td>VA／送金データ</td>
+                <td>入出金情報を提供</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow7-5">
+          <h2>5. 承認・セキュリティ管理</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>承認レベル</th>
+                <th>対象アプリ</th>
+                <th>目的</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>一次承認（経理担当）</td>
+                <td>発注アプリ／報酬取引履歴管理</td>
+                <td>業務内容・妥当性確認</td>
+              </tr>
+              <tr>
+                <td>二次承認（CEO）</td>
+                <td>支払管理</td>
+                <td>送金前の最終チェック</td>
+              </tr>
+              <tr>
+                <td>自動承認（GMO API）</td>
+                <td>Ruby_Server</td>
+                <td>安全なAPI経由での送金処理</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow7-6">
+          <h2>6. 例外処理</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>発生状況</th>
+                <th>対応アクション</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>送金失敗（APIエラー）</td>
+                <td>Ruby_Server が <code>Status = Failed</code> に更新し、ログと通知を記録</td>
+              </tr>
+              <tr>
+                <td>金額不一致／VA ID 不整合</td>
+                <td>請求管理アプリ 上で <code>要確認</code> ステータスへ保持し、経理が手動確認</td>
+              </tr>
+              <tr>
+                <td>銀行手数料発生</td>
+                <td>Ruby_Server が自動的に <code>Transfer_Fee</code> を 支払管理アプリ に記録</td>
+              </tr>
+              <tr>
+                <td>仕入先口座情報変更</td>
+                <td>CEO 承認前に確認アラートを表示</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow7-7">
+          <h2>7. 成果・効果</h2>
+          <ul>
+            <li><strong>Kintone – Ruby Server – GMO API</strong> 間で資金の入出金を完全自動化。</li>
+            <li><strong>VA ID</strong> により各入金（AR）の追跡が明確。</li>
+            <li><strong>Batch Payment</strong> で複数支払を一括処理し、二段階承認で安全運用。</li>
+            <li><strong>支払管理アプリ</strong> が支払制御の中枢、<strong>請求管理アプリ</strong> が入金制御の中枢となる。</li>
+          </ul>
+
+          <blockquote>
+            💡Credieシステムは「Two-way Cash Flow Automation」を実現し、
+            AR（請求・入金）と AP（支払・送金）の責任範囲を明確に分離。
+            すべての取引はログ・承認・履歴を完全に追跡可能。
+          </blockquote>
+        </section>
+
+        <section id="flow7-sequence">
+          <h2>8. シーケンス図</h2>
+          <p>
+            以下は本フロー（AR/AP統合フロー）の全体処理を示すシーケンス図です。<br>
+          </p>
+          <figure>
+            <img src="Flow7.png" alt="AR/AP統合フロー シーケンス図">
+            <figcaption>図7. 受注請求・支払管理（AR/AP統合）のシーケンス図</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <div style="page-break-before: always;"></div>
+      <section id="flow8">
+        <h1 class="flow-title">Flow8: 倉庫運用統合フロー（Warehouse Core Flow）</h1>
+
+        <section id="flow8-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローは、倉庫業務（Warehouse Operation）の全体プロセスを標準化することを目的とし、
+            以下の作業を一元管理する。
+          </p>
+          <ul>
+            <li><strong>出庫（Picking）</strong>：販売・生産・社内ムーブメントに伴う出庫処理</li>
+            <li><strong>入庫（Putaway）</strong>：仕入・生産・返品などによる入庫処理</li>
+            <li><strong>在庫調整／棚移動（Adjustment／Transfer）</strong></li>
+            <li><strong>実在庫（Physical）と論理在庫（Logic）の連携監視</strong></li>
+          </ul>
+          <p>
+            すべての倉庫タスクは <strong>タスク管理アプリ</strong> によって制御され、
+            倉庫担当者は <strong>ReactJS製 Scan UI</strong> でバーコードスキャンを行う。
+            スキャン完了後、システムは <strong>物理在庫DB</strong> と <strong>論理在庫（在庫管理アプリ）</strong> の両方を自動更新する。
+          </p>
+        </section>
+
+        <section id="flow8-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>📦 Order／PO／SX／Movement Apps</td>
+                <td>各種指示元（販売・購買・生産・移動）</td>
+                <td>Ruby Serverへタスク作成トリガーを送信</td>
+              </tr>
+              <tr>
+                <td>🖥️ Ruby_Server</td>
+                <td>タスク生成・在庫ロジック処理・DB同期</td>
+                <td>倉庫業務のロジックエンジン</td>
+              </tr>
+              <tr>
+                <td>🗂️ タスク管理アプリ</td>
+                <td>入出庫タスクの作成・進捗管理</td>
+                <td>各操作に対して個別レコードを保持</td>
+              </tr>
+              <tr>
+                <td>👩‍🔧 倉庫担当者（Staff）</td>
+                <td>現場オペレーター</td>
+                <td>Scan UIを使用して作業実施</td>
+              </tr>
+              <tr>
+                <td>💻 Scan barcode画面（ReactJS 倉庫UI）</td>
+                <td>バーコードスキャン画面</td>
+                <td>SKU・棚・数量・LOTを入力／表示</td>
+              </tr>
+              <tr>
+                <td>🗃️ 実在庫管理アプリ</td>
+                <td>棚・LOT・数量ごとの実在庫DB</td>
+                <td>現物在庫を保持</td>
+              </tr>
+              <tr>
+                <td>📈 在庫管理アプリ（Logic Stock）</td>
+                <td>Kintone上の論理在庫</td>
+                <td>レポート／分析用データ</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow8-3">
+          <h2>3. プロセス詳細</h2>
+
+          <h3>1️⃣ タスク作成と初期ロジック処理</h3>
+          <p>
+            販売・購買・生産・ムーブメント等、すべての倉庫指示は <strong>Ruby_Server</strong> を経由し、
+            <strong>タスク管理アプリ</strong> にタスクを自動生成する。
+          </p>
+
+          <h4>🧾 主なタスク種別</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>発生元</th>
+                <th>タスク名</th>
+                <th>操作種別</th>
+                <th>論理在庫への影響</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>販売（Order）</td>
+                <td>Picking</td>
+                <td>出庫</td>
+                <td>タスク作成時に論理在庫を減算</td>
+              </tr>
+              <tr>
+                <td>購買（PO）</td>
+                <td>Putaway</td>
+                <td>入庫</td>
+                <td>実入庫確定後に論理在庫を加算</td>
+              </tr>
+              <tr>
+                <td>生産（Production）</td>
+                <td>X-Out／X-In</td>
+                <td>原料出庫／製品入庫</td>
+                <td>X-Out減算／X-In加算</td>
+              </tr>
+              <tr>
+                <td>入出庫履歴（Movement）</td>
+                <td>Transfer／Sample／Adjustment</td>
+                <td>移動・サンプル出荷・調整</td>
+                <td>タイプに応じて±</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            指示元が承認（Approved）されると、Ruby_Server は次を実施：
+          </p>
+          <ol>
+            <li><strong>在庫管理アプリ</strong> で対象商品の在庫を減算または確保。</li>
+            <li><strong>タスク管理アプリ</strong> にタスクを生成（Type・SKU・数量・棚・LOT含む）。</li>
+            <li><strong>Scan barcode画面</strong> にタスクデータを送信し、現場準備を行う。</li>
+          </ol>
+
+          <h3>2️⃣ Scan UIによる実作業</h3>
+          <p>
+            倉庫担当者は <strong>Scan barcode画面</strong> 上でタスクを確認し、バーコードスキャンで作業を進行する。
+          </p>
+          <ul>
+            <li>表示項目：SKU・品名・棚（From／To）・指示数量・進捗状態</li>
+            <li>操作手順：
+              <ol>
+                <li>棚バーコード（Shelf Barcode）のスキャン</li>
+                <li>商品／LOTコードのスキャン</li>
+                <li>実数量を入力またはスキャン</li>
+              </ol>
+            </li>
+          </ul>
+          <p>結果は <code>Scan_Result</code>（SKU・LOT・Location・Qty_Actual）に記録される。</p>
+
+          <h3>3️⃣ 実在庫更新とタスク完了処理</h3>
+          <ol>
+            <li><strong>Scan barcode画面</strong> は結果を <strong>実在庫アプリ</strong> に送信。
+              <ul>
+                <li>出庫／マイナス調整 → 在庫減少</li>
+                <li>入庫／プラス調整 → 在庫増加</li>
+              </ul>
+            </li>
+            <li>DB が更新を完了すると <strong>タスク管理アプリ</strong> へステータスを返却。</li>
+            <li><strong>タスク管理アプリ</strong> が Webhook 経由で <strong>Ruby_Server</strong> に通知し、<code>Status = 完了</code> とする。
+            </li>
+          </ol>
+          <h4>📘 入出庫履歴アプリへの記録ルール</h4>
+          <p>
+            Ruby_Server は、完了したタスク種別に応じて <strong>入出庫履歴アプリ</strong> に在庫移動の実績レコードを必ず作成する。
+          </p>
+          <ul>
+            <li>Picking（販売出庫）タスク：Type = 出庫（販売）として記録</li>
+            <li>Putaway（購買入庫）タスク：Type = 入庫（購買）として記録</li>
+            <li>X-Out／X-In（製造関連）：Type = 出庫（製造）／入庫（製造）として記録</li>
+            <li>Transfer／Adjustment／Sample など：各タスク種別に応じた Type で記録</li>
+          </ul>
+          <p>
+            これにより、全ての入出庫処理を入出庫履歴アプリで一元的にトレースできる。
+          </p>
+
+          <h4>✅ 論理在庫更新のタイミング</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>タスク種別</th>
+                <th>実施タイミング</th>
+                <th>ロジック</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>入庫（Putaway／X-In）</td>
+                <td>実入庫完了後</td>
+                <td>在庫管理アプリ で在庫加算</td>
+              </tr>
+              <tr>
+                <td>出庫（Picking／X-Out）</td>
+                <td>タスク作成時</td>
+                <td>事前に在庫減算済み</td>
+              </tr>
+              <tr>
+                <td>Movement／Adjustment</td>
+                <td>実行時</td>
+                <td>数量に応じて増減</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>4️⃣ 元指示への反映とログ記録</h3>
+          <ol>
+            <li><strong>タスク管理アプリ</strong> が元アプリ（Order／PO／SX／Movement）へ状態を反映：
+              <ul>
+                <li>出庫完了 → <code>Status = Fulfilled／Issued</code></li>
+                <li>入庫完了 → <code>Status = Received</code></li>
+              </ul>
+            </li>
+            <li>操作履歴（担当者・日時・SKU・LOT・棚・実数量）を Audit Log に保存。</li>
+            <li><strong>Ruby_Server</strong> は在庫照合（Reconciliation）用に集計データを保持。</li>
+          </ol>
+        </section>
+
+        <section id="flow8-4">
+          <h2>4. データ構造例</h2>
+
+          <h3>(a) タスク管理アプリ</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>フィールド</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Task_ID</td>
+                <td>タスク識別ID</td>
+              </tr>
+              <tr>
+                <td>Type</td>
+                <td>Picking／Putaway／X-In／X-Out／Transfer／Adjustment</td>
+              </tr>
+              <tr>
+                <td>Source_App</td>
+                <td>発生元アプリ（Order／PO／SX／Movement）</td>
+              </tr>
+              <tr>
+                <td>SKU</td>
+                <td>商品コード</td>
+              </tr>
+              <tr>
+                <td>Qty_Target</td>
+                <td>指示数量</td>
+              </tr>
+              <tr>
+                <td>Qty_Actual</td>
+                <td>実績数量</td>
+              </tr>
+              <tr>
+                <td>Shelf_From／Shelf_To</td>
+                <td>出庫棚／入庫棚</td>
+              </tr>
+              <tr>
+                <td>LOT</td>
+                <td>ロット番号</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>Pending／In Progress／Completed</td>
+              </tr>
+              <tr>
+                <td>Operator</td>
+                <td>作業者</td>
+              </tr>
+              <tr>
+                <td>Timestamp</td>
+                <td>作業日時</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>(b) 実在庫管理アプリ</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>カラム</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SKU</td>
+                <td>商品コード</td>
+              </tr>
+              <tr>
+                <td>Location_ID</td>
+                <td>棚コード</td>
+              </tr>
+              <tr>
+                <td>LOT_No</td>
+                <td>製造／入庫ロット番号</td>
+              </tr>
+              <tr>
+                <td>Quantity</td>
+                <td>在庫数量</td>
+              </tr>
+              <tr>
+                <td>Last_Updated</td>
+                <td>最終更新日時</td>
+              </tr>
+              <tr>
+                <td>Task_ID</td>
+                <td>タスク管理アプリ とのリンク</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow8-5">
+          <h2>5. データ同期メカニズム</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>関係</th>
+                <th>同期方向</th>
+                <th>同期方法</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>在庫管理アプリ ↔ DB</td>
+                <td>双方向</td>
+                <td>タスク完了時に同期（Step10–11）</td>
+              </tr>
+              <tr>
+                <td>タスク管理アプリ ↔ Scan barcode画面</td>
+                <td>リアルタイム</td>
+                <td>WebSocket／API</td>
+              </tr>
+              <tr>
+                <td>タスク管理アプリ ↔ Source Apps</td>
+                <td>単方向</td>
+                <td>Webhookによる状態更新</td>
+              </tr>
+              <tr>
+                <td>入出庫履歴アプリ ← Ruby_Server</td>
+                <td>単方向（書き込み）</td>
+                <td>タスク完了時に入出庫実績をジャーナルとして自動登録</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow8-6">
+          <h2>6. 特殊ケース</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>シナリオ</th>
+                <th>対応方法</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>スキャン不足</td>
+                <td><code>Qty_Actual &lt; Qty_Target</code> の場合、Taskは <code>部分完了</code> とする</td>
+              </tr>
+              <tr>
+                <td>誤ったLOT／棚</td>
+                <td>Scan barcode画面上で警告を表示し再確認を要求</td>
+              </tr>
+              <tr>
+                <td>数量誤入力</td>
+                <td>送信前に修正可能</td>
+              </tr>
+              <tr>
+                <td>未確認でスキップ</td>
+                <td>DB未更新のまま <code>未完了</code> 状態を保持</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="flow8-7">
+          <h2>7. 成果・効果</h2>
+          <ul>
+            <li>全ての入出庫・調整作業を <strong>タスク管理アプリ</strong> 経由で完全トレーサブルに管理。</li>
+            <li><strong>実在庫管理アプリ（DB）</strong> と <strong>在庫管理アプリ（Kintone）</strong> をリアルタイム同期。</li>
+            <li><strong>Scan barcode画面</strong> による高速・正確な現場作業とLOT／棚単位の記録。</li>
+            <li>Return／Movement／Production の追加API拡張も容易。</li>
+          </ul>
+
+          <blockquote>
+            💡 本フローは Credie 倉庫管理のコア基盤であり、
+            全ての業務（受注・購買・生産・社内移動）は タスク管理アプリ を中心に運用。
+            Ruby_Server がロジック統制の中心としてシステムと現場の一貫性を保証する。
+          </blockquote>
+        </section>
+
+        <section id="flow8-sequence">
+          <h2>8. シーケンス図</h2>
+          <p>
+            以下は本フロー（倉庫運用統合フロー）の全体処理を示すシーケンス図です。<br>
+            画像ファイルは <code>Flow8.png</code> として同一フォルダに配置してください。
+          </p>
+          <figure>
+            <img src="Flow8.png" alt="倉庫運用統合フロー シーケンス図">
+            <figcaption>図8. 倉庫運用統合フロー（Warehouse Core Flow）シーケンス図</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <div style="page-break-before: always;"></div>
+      <section id="flow9">
+        <h1 class="flow-title">Flow9: 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</h1>
+
+        <section id="flow9-1">
+          <h2>1. 目的</h2>
+          <p>
+            本フローは、販売注文（Order）および購買注文（PO）における
+            返品・キャンセル（全数／一部）、および在庫調整の処理を統一し、
+            以下の点を目的とします。
+          </p>
+          <ul>
+            <li>入出庫履歴アプリ による論理・物理在庫のGifu倉庫での一元管理</li>
+            <li>受注アプリ／購買アプリの正確なステータス更新と明細レベルの履歴保持</li>
+            <li>報酬取引履歴管理アプリによるコミッション取引・補正履歴の一元管理（返品に伴うマイナス補正は原則自動化）</li>
+            <li>出荷指示後のキャンセル時の論理在庫の確実な解放と、関連タスクの停止</li>
+            <li>返品・キャンセル・廃棄・棚卸差異などの在庫処理を単一の運用フローとして整理し、シンプルに管理</li>
+          </ul>
+          <p>
+            これにより、在庫・注文・コミッションのデータ整合性を常に維持しつつ、
+            Ruby Server による自動処理と Kintone アプリの運用ルールを組み合わせた運用が可能となります。
+          </p>
+        </section>
+
+        <hr>
+
+        <section id="flow9-2">
+          <h2>2. システム構成</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>コンポーネント</th>
+                <th>役割</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>注文アプリ（受注アプリ）</td>
+                <td>販売注文の管理、サブテーブルで明細を保持し、キャンセル・返品理由・数量などを記録する。</td>
+              </tr>
+              <tr>
+                <td>発注アプリ（購買アプリ）</td>
+                <td>購買注文の入庫状況とキャンセル／返品処理を管理する。</td>
+              </tr>
+              <tr>
+                <td>タスク管理アプリ（Kintone 出荷依頼/Task App）</td>
+                <td>出荷・返品入庫・返品出庫など倉庫作業タスクを管理する。キャンセル時には該当タスクの停止／キャンセルも行う。</td>
+              </tr>
+              <tr>
+                <td>入出庫履歴アプリ</td>
+                <td>返品入庫／返品出庫／サンプル出庫／廃棄／棚卸差異など、販売／購買に紐づく・紐づかないすべての入出庫トランザクションを記録するジャーナルアプリ。</td>
+              </tr>
+              <tr>
+                <td>在庫管理アプリ（在庫アプリ）</td>
+                <td>論理在庫の更新・照合（引当／引当解除）を行う。</td>
+              </tr>
+              <tr>
+                <td>実在庫管理アプリ（実在庫DB）</td>
+                <td>棚・LOT単位の実在庫を保持（Gifu倉庫のみ対象）。</td>
+              </tr>
+              <tr>
+                <td>Ruby Server</td>
+                <td>Kintone 各アプリからの Webhook
+                  を受信し、タスク管理アプリのタスク生成、入出庫履歴アプリのレコード作成、在庫管理アプリ／実在庫管理アプリの在庫更新、報酬取引履歴管理アプリへの補正レコード登録を自動で行うミドルウェア。</td>
+              </tr>
+              <tr>
+                <td>報酬取引履歴管理アプリ</td>
+                <td>コミッション取引および補正の履歴を記録・管理する（返品に伴うマイナス補正は Ruby Server から自動登録）。</td>
+              </tr>
+              <tr>
+                <td>Op_Staff（運用担当者）</td>
+                <td>注文／購買のステータス更新や、入出庫履歴アプリでの調整登録などを行う運用担当者。</td>
+              </tr>
+              <tr>
+                <td>EC_Channel／Mekaポータル</td>
+                <td>顧客／仕入先が注文・キャンセル・返品を実行するチャネル。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <hr>
+
+        <section id="flow9-3">
+          <h2>3. 販売注文（Sales Order）フロー</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ケース</th>
+                <th>注文アプリステータス遷移</th>
+                <th>アクション</th>
+                <th>在庫への影響</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>全キャンセル（出荷指示前）</td>
+                <td><code>00: 受注確定</code> → <code>90: キャンセル</code></td>
+                <td>日付と理由を記録し、必要に応じてサブテーブル行を無効化。Ruby Server 経由で引当解除および関連タスクの停止を行う。</td>
+                <td>論理在庫を戻す（引当解除、該当タスクがあればキャンセル）</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>部分キャンセル（出荷指示前）</td>
+                <td><code>00: 受注確定</code> → <code>91: 部分キャンセル</code></td>
+                <td>サブテーブルのキャンセル数量を記録。Ruby Server 経由でキャンセル数量分の引当解除を行う。</td>
+                <td>キャンセル数量分の論理在庫を戻す（引当解除）</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>キャンセル（10 出荷指示済だが未出荷）</td>
+                <td><code>10: 出荷指示済</code> → <code>90: キャンセル</code></td>
+                <td>在庫管理アプリで論理在庫を引当解除し、タスク管理アプリのタスクを停止/キャンセル（いずれも Ruby Server 経由）。</td>
+                <td>論理在庫を戻す（引当解除）</td>
+                <td>*出荷指示後の取り消し対応*</td>
+              </tr>
+              <tr>
+                <td>全返品（出荷完了後）</td>
+                <td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>92: 返品完了</code></td>
+                <td>返品情報をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋数量</code> のレコードが自動登録される（Ruby
+                  Server）。</td>
+                <td>論理・物理在庫を加算</td>
+                <td>報酬取引履歴管理アプリにマイナス補正レコードが自動登録される。</td>
+              </tr>
+              <tr>
+                <td>部分返品（出荷完了後）</td>
+                <td><code>(20 or 30)</code> → <code>94: 返品処理中</code> → <code>93: 部分返品</code></td>
+                <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品入庫</code>、<code>Qty=＋部分数量</code> のレコードが自動登録される（Ruby
+                  Server）。</td>
+                <td>該当数量分の論理・物理在庫を加算</td>
+                <td>報酬取引履歴管理アプリに部分分のマイナス補正レコードが自動登録される。</td>
+              </tr>
+              <tr>
+                <td>サンプル出庫／廃棄／社内利用</td>
+                <td>ステータス変更なし</td>
+                <td>入出庫履歴アプリ に <code>Type=廃棄／サンプル出庫</code> を登録。</td>
+                <td>論理・物理在庫を減算</td>
+                <td>コミッション非対象。</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>➕ コミッション（報酬）の補正</h3>
+          <p>販売注文に紐づくコミッションは、返品・キャンセル時に Ruby Server と 報酬取引履歴管理アプリ により自動的に補正されます。</p>
+          <ol>
+            <li>
+              返品が確定し、注文アプリのステータスが
+              <code>92: 返品完了</code>／<code>93: 部分返品</code>
+              になったタイミングで、Ruby Server が 報酬取引履歴管理アプリ にマイナスの調整レコードを自動作成する。
+            </li>
+            <li>
+              例外的なケース（特別対応のプラス補正など）がある場合のみ、
+              運用担当者が追加のプラス／マイナス補正レコードを手動登録できる。
+            </li>
+            <li>これらの補正レコードは次回のコミッション支払サイクルでまとめて反映される。</li>
+          </ol>
+        </section>
+
+        <hr>
+
+        <section id="flow9-4">
+          <h2>4. 購買注文（Purchase Order）フロー</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ケース</th>
+                <th>発注アプリステータス遷移</th>
+                <th>アクション</th>
+                <th>在庫への影響</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>全キャンセル（未入庫）</td>
+                <td><code>00: 発注済</code> → <code>90: キャンセル</code></td>
+                <td>日付・理由を記録。</td>
+                <td>なし（入庫前のため在庫変動なし）</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>部分キャンセル（未入庫）</td>
+                <td><code>00: 発注済</code> → <code>91: 部分完了</code></td>
+                <td>サブテーブルの数量を減算し、<code>キャンセル数量</code>を更新。</td>
+                <td>なし（入庫前のため在庫変動なし）</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>全返品（入庫後）</td>
+                <td><code>(10, 20, 30)</code> → <code>92: 返品完了</code></td>
+                <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-数量</code> のレコードが自動登録される（Ruby
+                  Server）。</td>
+                <td>論理・物理在庫を減算</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>部分返品（入庫後）</td>
+                <td><code>(10, 20, 30)</code> → <code>93: 部分返品</code></td>
+                <td>返品数量をサブテーブルに記録。倉庫作業完了後、入出庫履歴アプリ に <code>Type=返品出庫</code>、<code>Qty=-部分数量</code> のレコードが自動登録される（Ruby
+                  Server）。</td>
+                <td>該当数量分の論理・物理在庫を減算</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>棚卸差異・在庫修正</td>
+                <td>ステータス変更なし</td>
+                <td>入出庫履歴アプリ に <code>Type=棚卸差異</code>、<code>Qty=±X</code> を登録。</td>
+                <td>実在庫と論理在庫を調整</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <hr>
+
+        <section id="flow9-5">
+          <h2>5. 運用補足</h2>
+          <ul>
+            <li>返品や廃棄、在庫修正が発生した場合、入出庫履歴アプリ で処理を統一します。</li>
+            <li>在庫数は常に 在庫管理アプリ（論理） と 実在庫管理アプリ（物理 - Gifu倉庫） 間で一致させます。</li>
+            <li>返品に伴う基本的な報酬補正は Ruby Server から自動登録し、例外ケースのみ 報酬取引履歴管理アプリ で手動調整します。</li>
+            <li>本フローは、Ruby Server の自動処理と Kintone アプリ操作を組み合わせることで、在庫・注文・報酬の整合性を確保できるよう設計されています。</li>
+          </ul>
+        </section>
+
+        <hr>
+
+        <section id="flow9-6">
+          <h2>6. 成果・効果</h2>
+          <ul>
+            <li>販売・購買に関わる返品／キャンセル処理を 報酬取引履歴管理アプリ に集約し、コミッション補正を一貫したルールで管理。</li>
+            <li>タスク管理アプリを組み込むことで、出荷指示後のキャンセル時にも論理在庫を確実に解放。</li>
+            <li>在庫・注文・コミッションの整合性を維持し、運用コストを最小化。</li>
+            <li>入出庫履歴アプリおよび報酬取引履歴管理アプリのログにより、他システムとの自動連携にも拡張しやすいデータ設計を確保。</li>
+          </ul>
+          <blockquote>
+            💡 本フローにより、販売・購買・報酬データの一貫性を維持しながら、Ruby Server による自動処理と最小限の手動オペレーションで正確な返品・キャンセル処理が可能となります。
+          </blockquote>
+        </section>
+      </section>
+
+      <hr>
+
+      <section id="flow9-sequence">
+        <h2>7. シーケンス図</h2>
+        <p>
+          以下は本フロー（返品・キャンセル・調整統合フロー）の全体処理を示すシーケンス図です。
+
+        </p>
+        <figure>
+          <img src="Flow9.png" alt="返品・キャンセル・調整統合フロー シーケンス図" style="width: 100%; height: auto;">
+          <figcaption>図9. 返品・キャンセル・調整統合フロー（Sales & Purchase Return Process）</figcaption>
+        </figure>
+      </section>
+
+    </section>
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

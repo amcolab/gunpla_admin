@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification - 部品表管理（BOM Master）</title>
@@ -19,10 +20,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
     }
@@ -57,7 +61,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -120,6 +125,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -144,7 +150,7 @@
     <!-- 1 Purpose -->
     <h2>1. 画面の目的（ビジネス上の役割）</h2>
     <p>
-      本画面「部品表管理（BOM Master）」は、<strong>製品を構成する資材・原料・パッケージ情報を管理する中心的な画面</strong>です。  
+      本画面「部品表管理（BOM Master）」は、<strong>製品を構成する資材・原料・パッケージ情報を管理する中心的な画面</strong>です。
       各製品の原価計算、発注点算出、購買計画、在庫引当にも直接関わるため、Credie の生産・ロジスティクス全体に影響します。
     </p>
 
@@ -158,7 +164,7 @@
     </ul>
 
     <div class="spec-callout">
-      👉 BOM は製造業務の「唯一の正しい構成情報（Single Source of Truth）」であり、  
+      👉 BOM は製造業務の「唯一の正しい構成情報（Single Source of Truth）」であり、
       **資材マスタ・製品マスタ・PO・在庫アプリ・原価計算ロジック** に直結します。
     </div>
 
@@ -211,17 +217,50 @@
     <h3>4.1 一覧画面の表示項目</h3>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>BOM ID</td><td>1製品に対する構成情報の管理番号</td></tr>
-      <tr><td>製品名</td><td>対象の製品（製品マスタと連動）</td></tr>
-      <tr><td>構成品</td><td>BOM 展開時に表示。原料・包材の資材名</td></tr>
-      <tr><td>区分</td><td>原料 / 包材 / OEM 資材 など</td></tr>
-      <tr><td>数量</td><td>製品1個あたりに使用する資材量</td></tr>
-      <tr><td>単位</td><td>g/個/袋 等。この数量の単位</td></tr>
-      <tr><td>単価</td><td>Material Master に登録された原価</td></tr>
-      <tr><td>金額</td><td>数量 × 単価</td></tr>
-      <tr><td>合計原価</td><td>構成資材の金額総計</td></tr>
-      <tr><td>操作</td><td>詳細、編集、削除 など</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>BOM ID</td>
+        <td>1製品に対する構成情報の管理番号</td>
+      </tr>
+      <tr>
+        <td>製品名</td>
+        <td>対象の製品（製品マスタと連動）</td>
+      </tr>
+      <tr>
+        <td>構成品</td>
+        <td>BOM 展開時に表示。原料・包材の資材名</td>
+      </tr>
+      <tr>
+        <td>区分</td>
+        <td>原料 / 包材 / OEM 資材 など</td>
+      </tr>
+      <tr>
+        <td>数量</td>
+        <td>製品1個あたりに使用する資材量</td>
+      </tr>
+      <tr>
+        <td>単位</td>
+        <td>g/個/袋 等。この数量の単位</td>
+      </tr>
+      <tr>
+        <td>単価</td>
+        <td>Material Master に登録された原価</td>
+      </tr>
+      <tr>
+        <td>金額</td>
+        <td>数量 × 単価</td>
+      </tr>
+      <tr>
+        <td>合計原価</td>
+        <td>構成資材の金額総計</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>詳細、編集、削除 など</td>
+      </tr>
     </table>
 
     <h3>4.2 画面イメージ（スクリーンショット）</h3>
@@ -268,5 +307,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

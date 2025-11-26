@@ -1,150 +1,230 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>支払依頼画面（Payment Request App）UI画面仕様書 - 最終版</title>
     <style>
-        body { font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif; line-height: 1.6; }
-        h1, h2, h3 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .list-table th:first-child, .list-table td:first-child { width: 10%; }
-        .detail-table th:first-child { width: 30%; }
+        body {
+            font-family: Meiryo, 'Hiragino Kaku Gothic Pro', sans-serif;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .list-table th:first-child,
+        .list-table td:first-child {
+            width: 10%;
+        }
+
+        .detail-table th:first-child {
+            width: 30%;
+        }
     </style>
 </head>
+
 <body>
 
-<h1>支払依頼画面（Payment Request App）UI画面仕様書 - 最終版</h1>
+    <h1>支払依頼画面（Payment Request App）UI画面仕様書 - 最終版</h1>
 
-<hr>
+    <hr>
 
-<h2>画面の目的（ビジネス上の役割）</h2>
-<p>
-    本画面は、**会社から発生する全てのキャッシュアウト（Cash Out）**を一元管理し、支払い実行前の**CEO承認ワークフロー**を適用するためのアプリケーションです。
-</p>
-<ul>
-    <li><strong>統合的なキャッシュアウト管理:</strong> 購買費用（PO）に加え、**月次のコミッションおよび配当金**など、全ての出金源泉を単一のアプリで追跡します。</li>
-    <li><strong>承認の自動化と通知:</strong> 支払い承認時および支払い完了時に**自動メール通知**を行い、関係者の迅速なアクションを促します。</li>
-</ul>
+    <h2>画面の目的（ビジネス上の役割）</h2>
+    <p>
+        本画面は、**会社から発生する全てのキャッシュアウト（Cash Out）**を一元管理し、支払い実行前の**CEO承認ワークフロー**を適用するためのアプリケーションです。
+    </p>
+    <ul>
+        <li><strong>統合的なキャッシュアウト管理:</strong> 購買費用（PO）に加え、**月次のコミッションおよび配当金**など、全ての出金源泉を単一のアプリで追跡します。</li>
+        <li><strong>承認の自動化と通知:</strong> 支払い承認時および支払い完了時に**自動メール通知**を行い、関係者の迅速なアクションを促します。</li>
+    </ul>
 
-<hr>
+    <hr>
 
-<h2>レコード生成ロジック（Hành vi tạo bản ghi）</h2>
-<p>
-    本アプリケーションのレコードは、以下の3つの主要なケースに基づき、全て**自動**で生成されます。
-</p>
+    <h2>レコード生成ロジック（Hành vi tạo bản ghi）</h2>
+    <p>
+        本アプリケーションのレコードは、以下の3つの主要なケースに基づき、全て**自動**で生成されます。
+    </p>
 
-<h3>1. 購買発注（PO/Meka支払い）</h3>
-<ul>
-    <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>購買支払い (PO Payment)</code></li>
-    <li><strong>Thời điểm phát sinh:</strong> PO Appのレコードの<code>ステータス</code>が**「Đã nhận Hóa đơn」**に更新された直後。</li>
-    <li><strong>Trigger/Logic:</strong> **自動（Hệ thống）**。Webhook/BatchによりPOレコードの情報（金額、業者、請求書番号）を連携。</li>
-</ul>
+    <h3>1. 購買発注（PO/Meka支払い）</h3>
+    <ul>
+        <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>購買支払い (PO Payment)</code></li>
+        <li><strong>Thời điểm phát sinh:</strong> PO Appのレコードの<code>ステータス</code>が**「Đã nhận Hóa đơn」**に更新された直後。</li>
+        <li><strong>Trigger/Logic:</strong> **自動（Hệ thống）**。Webhook/BatchによりPOレコードの情報（金額、業者、請求書番号）を連携。</li>
+    </ul>
 
-<h3>2. コミッション/アフィリエイト報酬（Hoa hồng）</h3>
-<ul>
-    <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>報酬 (Commission)</code></li>
-    <li><strong>Thời điểm phát sinh:</strong> **月次**のコミッション計算完了後。</li>
-    <li><strong>Trigger/Logic:</strong> **自動（Hệ thống/Batch）**。<code>Commission_App</code>の月次集計ロジックが実行された後、各対象者ごとにレコードを自動作成。</li>
-</ul>
+    <h3>2. コミッション/アフィリエイト報酬（Hoa hồng）</h3>
+    <ul>
+        <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>報酬 (Commission)</code></li>
+        <li><strong>Thời điểm phát sinh:</strong> **月次**のコミッション計算完了後。</li>
+        <li><strong>Trigger/Logic:</strong> **自動（Hệ
+            thống/Batch）**。<code>Commission_App</code>の月次集計ロジックが実行された後、各対象者ごとにレコードを自動作成。</li>
+    </ul>
 
-<h3>3. 投資家/株主配当金（Cổ tức）</h3>
-<ul>
-    <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>配当金 (Dividend)</code></li>
-    <li><strong>Thời điểm phát sinh:</strong> **月次**の配当金計算が完了した直後。</li>
-    <li><strong>Trigger/Logic:</strong> **自動（Hệ thống/Batch）**。配当金計算ロジックに基づき、各投資家ごとにレコードを自動作成。</li>
-</ul>
+    <h3>3. 投資家/株主配当金（Cổ tức）</h3>
+    <ul>
+        <li><strong>Loại Yêu cầu (請求タイプ):</strong> <code>配当金 (Dividend)</code></li>
+        <li><strong>Thời điểm phát sinh:</strong> **月次**の配当金計算が完了した直後。</li>
+        <li><strong>Trigger/Logic:</strong> **自動（Hệ thống/Batch）**。配当金計算ロジックに基づき、各投資家ごとにレコードを自動作成。</li>
+    </ul>
 
-<hr>
+    <hr>
 
-<h2>利用者ストーリー（User Scenario）</h2>
-<ol>
-    <li>**システム:** 支払依頼レコードが作成されると、<strong>【支払ステータス】</strong>が**「Chờ CEO Phê duyệt」**に設定され、**CEOへ承認依頼のメールが自動送信**されます。（Kèm theoレコードへのリンク）</li>
-    <li>**CEO:** メール通知を受け取り、Kintoneにログイン。該当レコードを開き、内容を確認した後、<strong>【承認 (Phê duyệt)】</strong>ボタンを押します。</li>
-    <li>**システム:** CEOの承認後、経理システム/銀行連携により支払いが実行されます。</li>
-    <li>**システム (Thành công):** 支払い実行が確認されると、システムは**自動で** <strong>【支払ステータス】</strong>を**「Đã Thanh toán」**に更新し、**経理担当者へ支払完了のメールを自動送信**します。</li>
-    <li>**システム (Thất bại):** 支払い実行が銀行/経理システム側で失敗した場合、システムは**自動で** <strong>【支払ステータス】</strong>を**「Thanh toán Thất bại」**に更新し、**経理担当者へ失敗理由を添えたメールを自動送信**します。経理担当者は手動で再処理を行います。</li>
-</ol>
+    <h2>利用者ストーリー（User Scenario）</h2>
+    <ol>
+        <li>**システム:** 支払依頼レコードが作成されると、<strong>【支払ステータス】</strong>が**「Chờ CEO Phê
+            duyệt」**に設定され、**CEOへ承認依頼のメールが自動送信**されます。（Kèm theoレコードへのリンク）</li>
+        <li>**CEO:** メール通知を受け取り、Kintoneにログイン。該当レコードを開き、内容を確認した後、<strong>【承認 (Phê duyệt)】</strong>ボタンを押します。</li>
+        <li>**システム:** CEOの承認後、経理システム/銀行連携により支払いが実行されます。</li>
+        <li>**システム (Thành công):** 支払い実行が確認されると、システムは**自動で** <strong>【支払ステータス】</strong>を**「Đã Thanh
+            toán」**に更新し、**経理担当者へ支払完了のメールを自動送信**します。</li>
+        <li>**システム (Thất bại):** 支払い実行が銀行/経理システム側で失敗した場合、システムは**自動で** <strong>【支払ステータス】</strong>を**「Thanh toán Thất
+            bại」**に更新し、**経理担当者へ失敗理由を添えたメールを自動送信**します。経理担当者は手動で再処理を行います。</li>
+    </ol>
 
-<hr>
+    <hr>
 
-<h2>画面レイアウト</h2>
+    <h2>画面レイアウト</h2>
 
-<h3>4.1 表示項目（List および Detail）</h3>
+    <h3>4.1 表示項目（List および Detail）</h3>
 
-<h4>一覧画面（List View）主要表示項目</h4>
-<table class="list-table">
-    <thead>
-        <tr>
-            <th>項目名</th>
-            <th>説明</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td><strong>レコード番号</strong></td><td>一意の支払依頼レコードID。</td></tr>
-        <tr><td><strong>請求タイプ (Loại Yêu cầu)</strong></td><td>レコードの発生源泉（<code>購買支払い</code>、<code>報酬</code>、<code>配当金</code>）。</td></tr>
-        <tr><td><strong>対象者/業者 (Đối tượng thụ hưởng)</strong></td><td>支払い先の名称。</td></tr>
-        <tr><td><strong>合計請求金額 (Tổng số tiền)</strong></td><td>支払いが必要な総額。</td></tr>
-        <tr><td><strong>支払ステータス (Trạng thái TT)</strong></td><td>支払いプロセスの進捗状況（<code>Chờ Phê duyệt</code>、<code>Đã Phê duyệt</code>、<code>Đã Thanh toán</code>、**<code>Thanh toán Thất bại</code>**）。</td></tr>
-        <tr><td><strong>PO レコード番号/ソースID</strong></td><td>関連する購買発注、または報酬計算レポートのID。</td></tr>
-        <tr><td><strong>支払期間 (Kỳ thanh toán)</strong></td><td>報酬・配当の場合の対象期間。</td></tr>
-    </tbody>
-</table>
+    <h4>一覧画面（List View）主要表示項目</h4>
+    <table class="list-table">
+        <thead>
+            <tr>
+                <th>項目名</th>
+                <th>説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>レコード番号</strong></td>
+                <td>一意の支払依頼レコードID。</td>
+            </tr>
+            <tr>
+                <td><strong>請求タイプ (Loại Yêu cầu)</strong></td>
+                <td>レコードの発生源泉（<code>購買支払い</code>、<code>報酬</code>、<code>配当金</code>）。</td>
+            </tr>
+            <tr>
+                <td><strong>対象者/業者 (Đối tượng thụ hưởng)</strong></td>
+                <td>支払い先の名称。</td>
+            </tr>
+            <tr>
+                <td><strong>合計請求金額 (Tổng số tiền)</strong></td>
+                <td>支払いが必要な総額。</td>
+            </tr>
+            <tr>
+                <td><strong>支払ステータス (Trạng thái TT)</strong></td>
+                <td>支払いプロセスの進捗状況（<code>Chờ Phê duyệt</code>、<code>Đã Phê duyệt</code>、<code>Đã Thanh toán</code>、**<code>Thanh toán Thất bại</code>**）。
+                </td>
+            </tr>
+            <tr>
+                <td><strong>PO レコード番号/ソースID</strong></td>
+                <td>関連する購買発注、または報酬計算レポートのID。</td>
+            </tr>
+            <tr>
+                <td><strong>支払期間 (Kỳ thanh toán)</strong></td>
+                <td>報酬・配当の場合の対象期間。</td>
+            </tr>
+        </tbody>
+    </table>
 
-<h4>詳細画面（Detail View）主要表示項目・アクション</h4>
-<table class="detail-table">
-    <thead>
-        <tr>
-            <th>項目名/セクション</th>
-            <th>説明</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>B. 支払ステータスと承認履歴</strong></td></tr>
-        <tr><td>支払ステータス</td><td>ワークフローの状態。（**失敗ステータスも含む**）</td></tr>
-        <tr><td>承認担当者 (CEO)</td><td>最終承認を行ったCEOの名前/ID。</td></tr>
-        <tr><td>失敗理由 (New)</td><td>支払いが失敗した場合の理由コードやメッセージ。（自動連携）</td></tr>
-        
-        <tr><td colspan="2" style="background-color: #e6f7ff;"><strong>C. 実行情報（自動更新）</strong></td></tr>
-        <tr><td>振込先情報</td><td>銀行口座情報。（Master Appから自動連携）</td></tr>
-        <tr><td>最終支払連携日時</td><td>システムが支払完了を認識した日時（自動）。</td></tr>
-    </tbody>
-</table>
+    <h4>詳細画面（Detail View）主要表示項目・アクション</h4>
+    <table class="detail-table">
+        <thead>
+            <tr>
+                <th>項目名/セクション</th>
+                <th>説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2" style="background-color: #e6f7ff;"><strong>B. 支払ステータスと承認履歴</strong></td>
+            </tr>
+            <tr>
+                <td>支払ステータス</td>
+                <td>ワークフローの状態。（**失敗ステータスも含む**）</td>
+            </tr>
+            <tr>
+                <td>承認担当者 (CEO)</td>
+                <td>最終承認を行ったCEOの名前/ID。</td>
+            </tr>
+            <tr>
+                <td>失敗理由 (New)</td>
+                <td>支払いが失敗した場合の理由コードやメッセージ。（自動連携）</td>
+            </tr>
 
-**アクションボタン (Detail View):**
-| 要素名 | Phân quyền/Vai trò | Vai trò trong Flow | Ghi chú Logic |
-| :--- | :--- | :--- | :--- |
-| **【承認 (Phê duyệt)】** | CEO | Kích hoạt chuyển **支払ステータス** $\rightarrow$ **「Đã Phê duyệt」**。 | **承認時、CEOへ承認完了メールが自動送信されます。** |
-| **【支払完了 (Hoàn tất TT)】** | (非表示/Tự động) | **[Bước 4]** Cập nhật **Tự động** sau khi xác nhận chuyển khoản. | |
-| **【再処理 (Re-process)】** (New) | Kế toán | **失敗時のみ表示。** 手動で修正・再実行を指示する。（システム連携が必要）| |
+            <tr>
+                <td colspan="2" style="background-color: #e6f7ff;"><strong>C. 実行情報（自動更新）</strong></td>
+            </tr>
+            <tr>
+                <td>振込先情報</td>
+                <td>銀行口座情報。（Master Appから自動連携）</td>
+            </tr>
+            <tr>
+                <td>最終支払連携日時</td>
+                <td>システムが支払完了を認識した日時（自動）。</td>
+            </tr>
+        </tbody>
+    </table>
 
-<hr>
+    **アクションボタン (Detail View):**
+    | 要素名 | Phân quyền/Vai trò | Vai trò trong Flow | Ghi chú Logic |
+    | :--- | :--- | :--- | :--- |
+    | **【承認 (Phê duyệt)】** | CEO | Kích hoạt chuyển **支払ステータス** $\rightarrow$ **「Đã Phê duyệt」**。 |
+    **承認時、CEOへ承認完了メールが自動送信されます。** |
+    | **【支払完了 (Hoàn tất TT)】** | (非表示/Tự động) | **[Bước 4]** Cập nhật **Tự động** sau khi xác nhận chuyển khoản. | |
+    | **【再処理 (Re-process)】** (New) | Kế toán | **失敗時のみ表示。** 手動で修正・再実行を指示する。（システム連携が必要）| |
 
-<h2>開発向けメモ（内部用）</h2>
-<ul>
-    <li><strong>自動作成ロジック:</strong> 全ての請求タイプに対し、自動作成されたレコードは<code>支払ステータス</code>を**「Chờ CEO Phê duyệt」**で開始する。</li>
-    <li><strong>CEO承認通知 (Requirement 3):</strong>
-        <ul>
-            <li>**トリガー:** レコード作成完了時。</li>
-            <li>**アクション:** CEOへメール送信。メール本文にはレコードへの直接リンクを含めること。</li>
-        </ul>
-    </li>
-    <li>**支払完了ステータス (Requirement 4):**
-        <ul>
-            <li><strong>トリガー:</strong> 経理システム/銀行連携からの支払い成功通知。</li>
-            <li>**アクション:** <code>支払ステータス</code> $\rightarrow$ **「Đã Thanh toán」**へ自動更新し、経理担当者へ支払完了メールを自動送信。</li>
-        </ul>
-    </li>
-    <li>**支払失敗ケース (Requirement 2):**
-        <ul>
-            <li><strong>トリガー:</strong> 経理システム/銀行連携からの支払い失敗通知。</li>
-            <li>**アクション:** <code>支払ステータス</code> $\rightarrow$ **「Thanh toán Thất bại」**へ自動更新し、失敗理由を記載して経理担当者へメール通知。</li>
-            <li>**処理:** 失敗レコードはCEOの再承認を経ることなく、経理担当者が手動で修正し、**【再処理】**ボタン（または同様のAPIコール）により支払い処理を再実行する。</li>
-        </ul>
-    </li>
-    <li>**配当金頻度:** 報酬と同様、**月次**の頻度で自動生成されること。</li>
-</ul>
+    <hr>
 
+    <h2>開発向けメモ（内部用）</h2>
+    <ul>
+        <li><strong>自動作成ロジック:</strong> 全ての請求タイプに対し、自動作成されたレコードは<code>支払ステータス</code>を**「Chờ CEO Phê duyệt」**で開始する。</li>
+        <li><strong>CEO承認通知 (Requirement 3):</strong>
+            <ul>
+                <li>**トリガー:** レコード作成完了時。</li>
+                <li>**アクション:** CEOへメール送信。メール本文にはレコードへの直接リンクを含めること。</li>
+            </ul>
+        </li>
+        <li>**支払完了ステータス (Requirement 4):**
+            <ul>
+                <li><strong>トリガー:</strong> 経理システム/銀行連携からの支払い成功通知。</li>
+                <li>**アクション:** <code>支払ステータス</code> $\rightarrow$ **「Đã Thanh toán」**へ自動更新し、経理担当者へ支払完了メールを自動送信。</li>
+            </ul>
+        </li>
+        <li>**支払失敗ケース (Requirement 2):**
+            <ul>
+                <li><strong>トリガー:</strong> 経理システム/銀行連携からの支払い失敗通知。</li>
+                <li>**アクション:** <code>支払ステータス</code> $\rightarrow$ **「Thanh toán Thất bại」**へ自動更新し、失敗理由を記載して経理担当者へメール通知。
+                </li>
+                <li>**処理:** 失敗レコードはCEOの再承認を経ることなく、経理担当者が手動で修正し、**【再処理】**ボタン（または同様のAPIコール）により支払い処理を再実行する。</li>
+            </ul>
+        </li>
+        <li>**配当金頻度:** 報酬と同様、**月次**の頻度で自動生成されること。</li>
+    </ul>
+    <script src="auth.js"></script>
 </body>
+
 </html>

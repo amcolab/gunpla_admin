@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>資材マスタ - Kintone</title>
-    
+
     <!-- Kintone Common Stylesheet -->
     <link rel="stylesheet" href="kintone-common-v2.css">
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -37,11 +39,11 @@
             <span class="view-text">全資材一覧</span>
             <span class="dropdown-arrow">▼</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">🔍</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">📊</span>
         </button>
@@ -81,7 +83,7 @@
 
     <!-- Record Count Bottom -->
     <div class="bottom-count" id="bottomCount">1 - 15（15件中）</div>
-
+    <script src="auth.js"></script>
     <script>
         // Sample materials data
         const materials = [
@@ -291,7 +293,7 @@
                 'cap': 'status-pending',
                 'oem': 'status-completed'
             };
-            
+
             return {
                 class: categoryMap[category] || 'status-draft',
                 text: categoryName
@@ -301,15 +303,15 @@
         // Render table
         function renderTable() {
             const tbody = document.getElementById('materialsTableBody');
-            
+
             tbody.innerHTML = materials.map(material => {
                 const categoryInfo = getCategoryBadge(material.category, material.categoryName);
-                
+
                 // Product link - only if not common
-                const productDisplay = material.isCommon 
-                    ? material.product 
+                const productDisplay = material.isCommon
+                    ? material.product
                     : `<a href="#" class="record-link" onclick="viewProduct('${material.product}'); return false;">${material.product}</a>`;
-                
+
                 return `
                     <tr>
                         <td>
@@ -373,15 +375,15 @@
             const material = materials.find(m => m.id === id);
             if (material) {
                 alert(`資材詳細:\n\n` +
-                      `資材ID: ${material.id}\n` +
-                      `資材名: ${material.name}\n` +
-                      `商品名: ${material.product}\n` +
-                      `型番: ${material.modelNo}\n` +
-                      `重量: ${material.weight}\n` +
-                      `サプライヤー: ${material.supplier}\n` +
-                      `発注点: ${material.reorderPoint}\n` +
-                      `購買担当者: ${material.purchaser}\n` +
-                      `資材区分: ${material.categoryName}`);
+                    `資材ID: ${material.id}\n` +
+                    `資材名: ${material.name}\n` +
+                    `商品名: ${material.product}\n` +
+                    `型番: ${material.modelNo}\n` +
+                    `重量: ${material.weight}\n` +
+                    `サプライヤー: ${material.supplier}\n` +
+                    `発注点: ${material.reorderPoint}\n` +
+                    `購買担当者: ${material.purchaser}\n` +
+                    `資材区分: ${material.categoryName}`);
             }
         }
 
@@ -390,36 +392,36 @@
             const material = materials.find(m => m.id === id);
             if (material) {
                 alert(`資材マスタ詳細:\n\n` +
-                      `資材ID: ${material.id}\n` +
-                      `資材名: ${material.name}\n` +
-                      `資材区分: ${material.categoryName}\n\n` +
-                      `※ 資材マスタ詳細画面を開きます`);
+                    `資材ID: ${material.id}\n` +
+                    `資材名: ${material.name}\n` +
+                    `資材区分: ${material.categoryName}\n\n` +
+                    `※ 資材マスタ詳細画面を開きます`);
             }
         }
 
         // View product details
         function viewProduct(productName) {
             alert(`商品詳細:\n\n` +
-                  `商品名: ${productName}\n\n` +
-                  `※ 商品マスタ詳細画面を開きます`);
+                `商品名: ${productName}\n\n` +
+                `※ 商品マスタ詳細画面を開きます`);
         }
 
         // View supplier details
         function viewSupplier(supplierName) {
             const relatedMaterials = materials.filter(m => m.supplier === supplierName);
             alert(`サプライヤー詳細:\n\n` +
-                  `サプライヤー名: ${supplierName}\n` +
-                  `取扱資材数: ${relatedMaterials.length}件\n\n` +
-                  `※ サプライヤーマスタ詳細画面を開きます`);
+                `サプライヤー名: ${supplierName}\n` +
+                `取扱資材数: ${relatedMaterials.length}件\n\n` +
+                `※ サプライヤーマスタ詳細画面を開きます`);
         }
 
         // View purchaser details
         function viewPurchaser(purchaserName) {
             const relatedMaterials = materials.filter(m => m.purchaser === purchaserName);
             alert(`購買担当者詳細:\n\n` +
-                  `担当者名: ${purchaserName}\n` +
-                  `担当資材数: ${relatedMaterials.length}件\n\n` +
-                  `※ 担当者詳細画面を開きます`);
+                `担当者名: ${purchaserName}\n` +
+                `担当資材数: ${relatedMaterials.length}件\n\n` +
+                `※ 担当者詳細画面を開きます`);
         }
 
         // Edit material
@@ -427,9 +429,9 @@
             const material = materials.find(m => m.id === id);
             if (material) {
                 alert(`資材を編集:\n\n` +
-                      `資材ID: ${material.id}\n` +
-                      `資材名: ${material.name}\n\n` +
-                      `※ 実際の編集画面を開きます`);
+                    `資材ID: ${material.id}\n` +
+                    `資材名: ${material.name}\n\n` +
+                    `※ 実際の編集画面を開きます`);
             }
         }
 
@@ -438,8 +440,8 @@
             const material = materials.find(m => m.id === id);
             if (material) {
                 if (confirm(`この資材を削除してもよろしいですか？\n\n` +
-                           `資材ID: ${material.id}\n` +
-                           `資材名: ${material.name}`)) {
+                    `資材ID: ${material.id}\n` +
+                    `資材名: ${material.name}`)) {
                     const index = materials.findIndex(m => m.id === id);
                     if (index > -1) {
                         materials.splice(index, 1);
@@ -453,7 +455,7 @@
         // Add new material
         function addMaterial() {
             alert('新規資材追加画面を開きます。\n\n' +
-                  '※ 実装時は資材登録フォームを表示します。');
+                '※ 実装時は資材登録フォームを表示します。');
         }
 
         // Initial render
@@ -464,4 +466,5 @@
         console.log(`資材数: ${materials.length}件`);
     </script>
 </body>
+
 </html>

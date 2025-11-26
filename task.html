@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon {
@@ -249,6 +250,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -295,11 +297,13 @@
                 <!-- Row 1 - 待機中 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-1001'); return false;">WMS-OUT-1001</a>
+                        <a href="#" class="record-link"
+                            onclick="viewTask('WMS-OUT-1001'); return false;">WMS-OUT-1001</a>
                     </td>
                     <td>出庫 (Picking)</td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewSource('ORD-B2C-1001'); return false;">ORD-B2C-1001</a>
+                        <a href="#" class="record-link"
+                            onclick="viewSource('ORD-B2C-1001'); return false;">ORD-B2C-1001</a>
                     </td>
                     <td>尼崎倉庫</td>
                     <td>3 行</td>
@@ -316,7 +320,8 @@
                     </td>
                     <td>入庫 (Putaway)</td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewSource('PO-Meka-303'); return false;">PO-Meka-303</a>
+                        <a href="#" class="record-link"
+                            onclick="viewSource('PO-Meka-303'); return false;">PO-Meka-303</a>
                     </td>
                     <td>岐阜倉庫</td>
                     <td>5 行</td>
@@ -329,11 +334,13 @@
                 <!-- Row 3 - 待機中 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-1002'); return false;">WMS-OUT-1002</a>
+                        <a href="#" class="record-link"
+                            onclick="viewTask('WMS-OUT-1002'); return false;">WMS-OUT-1002</a>
                     </td>
                     <td>出庫 (Sample)</td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewSource('SM-20251105'); return false;">SM-20251105</a>
+                        <a href="#" class="record-link"
+                            onclick="viewSource('SM-20251105'); return false;">SM-20251105</a>
                     </td>
                     <td>尼崎倉庫</td>
                     <td>2 行</td>
@@ -346,11 +353,13 @@
                 <!-- Row 4 - 完了 -->
                 <tr>
                     <td>
-                        <a href="#" class="record-link" onclick="viewTask('WMS-OUT-0999'); return false;">WMS-OUT-0999</a>
+                        <a href="#" class="record-link"
+                            onclick="viewTask('WMS-OUT-0999'); return false;">WMS-OUT-0999</a>
                     </td>
                     <td>出庫 (Picking)</td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewSource('ORD-B2C-0999'); return false;">ORD-B2C-0999</a>
+                        <a href="#" class="record-link"
+                            onclick="viewSource('ORD-B2C-0999'); return false;">ORD-B2C-0999</a>
                     </td>
                     <td>尼崎倉庫</td>
                     <td>1 行</td>
@@ -363,6 +372,7 @@
         </table>
     </div>
 
+    <script src="auth.js"></script>
     <script>
         // View task detail
         function viewTask(taskId) {
@@ -376,7 +386,7 @@
         }
 
         // Filter functionality
-        document.getElementById('filterTaskType').addEventListener('change', function() {
+        document.getElementById('filterTaskType').addEventListener('change', function () {
             const taskType = this.value;
             const rows = document.querySelectorAll('#tableBody tr');
             let visibleCount = 0;
@@ -392,7 +402,7 @@
                         'sample': '出庫 (Sample)',
                         'return': '返品処理'
                     };
-                    
+
                     if (typeCell !== typeMap[taskType]) {
                         showRow = false;
                     }
@@ -406,4 +416,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification - 社内スタッフ管理（Staff Master）</title>
@@ -19,10 +20,12 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
     }
@@ -41,7 +44,8 @@
       font-size: 16px;
     }
 
-    p, ul {
+    p,
+    ul {
       line-height: 1.6;
       margin: 0.4em 0;
     }
@@ -53,7 +57,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -128,8 +133,8 @@
     <!-- 1 Purpose -->
     <h2>1. 画面の目的（ビジネス上の役割）</h2>
     <p>
-      本画面「社内スタッフ管理」は、Credie 社内スタッフの基本情報・権限・部署情報を管理するためのマスタです。  
-      社内の各種アプリ（受注、購買、在庫、支払、配当等）でスタッフ情報を参照し、  
+      本画面「社内スタッフ管理」は、Credie 社内スタッフの基本情報・権限・部署情報を管理するためのマスタです。
+      社内の各種アプリ（受注、購買、在庫、支払、配当等）でスタッフ情報を参照し、
       <strong>アクセス権限・業務担当者・承認者設定の中心マスタ</strong>となります。
     </p>
 
@@ -143,7 +148,7 @@
     </ul>
 
     <div class="spec-callout">
-      👉 スタッフ情報は各アプリの「担当者選択項目」「権限ロジック」の基盤となるため  
+      👉 スタッフ情報は各アプリの「担当者選択項目」「権限ロジック」の基盤となるため
       **誤登録は、承認フローや在庫作業に影響します。**
     </div>
 
@@ -188,18 +193,54 @@
 
     <h3>4.1 一覧項目</h3>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>スタッフID</td><td>社内スタッフ識別子（STF001等）</td></tr>
-      <tr><td>氏名</td><td>正式な氏名（社内表示名）</td></tr>
-      <tr><td>ふりがな</td><td>検索用の読み仮名</td></tr>
-      <tr><td>メールアドレス</td><td>通知/承認依頼の送付先</td></tr>
-      <tr><td>部署</td><td>営業部/経理部/製造部など</td></tr>
-      <tr><td>役職</td><td>部長/主任/一般など</td></tr>
-      <tr><td>権限</td><td>支払承認権限/一般スタッフ など</td></tr>
-      <tr><td>ステータス</td><td>在職中/退職など</td></tr>
-      <tr><td>入社日</td><td>社内履歴管理に使用</td></tr>
-      <tr><td>最終更新</td><td>更新日時</td></tr>
-      <tr><td>操作</td><td>編集ボタン</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>スタッフID</td>
+        <td>社内スタッフ識別子（STF001等）</td>
+      </tr>
+      <tr>
+        <td>氏名</td>
+        <td>正式な氏名（社内表示名）</td>
+      </tr>
+      <tr>
+        <td>ふりがな</td>
+        <td>検索用の読み仮名</td>
+      </tr>
+      <tr>
+        <td>メールアドレス</td>
+        <td>通知/承認依頼の送付先</td>
+      </tr>
+      <tr>
+        <td>部署</td>
+        <td>営業部/経理部/製造部など</td>
+      </tr>
+      <tr>
+        <td>役職</td>
+        <td>部長/主任/一般など</td>
+      </tr>
+      <tr>
+        <td>権限</td>
+        <td>支払承認権限/一般スタッフ など</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>在職中/退職など</td>
+      </tr>
+      <tr>
+        <td>入社日</td>
+        <td>社内履歴管理に使用</td>
+      </tr>
+      <tr>
+        <td>最終更新</td>
+        <td>更新日時</td>
+      </tr>
+      <tr>
+        <td>操作</td>
+        <td>編集ボタン</td>
+      </tr>
     </table>
 
     <!-- Screenshot -->
@@ -244,5 +285,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

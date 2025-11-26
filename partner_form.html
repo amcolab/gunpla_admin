@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,8 +162,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Info Box */
@@ -231,6 +237,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -240,14 +247,14 @@
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-        <a href="partner_master_list.html">ホーム</a> &gt; 
-        <a href="partner_master_list.html">パートナーマスタアプリ</a> &gt; 
+        <a href="partner_master_list.html">ホーム</a> &gt;
+        <a href="partner_master_list.html">パートナーマスタアプリ</a> &gt;
         パートナー登録
     </div>
 
     <!-- Main Content -->
     <div class="content-area">
-        
+
         <!-- Basic Information -->
         <div class="form-card">
             <div class="card-header">
@@ -411,7 +418,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">パスワードリセット</label>
-                        <button type="button" class="btn" style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;" onclick="resetPassword('agency')">
+                        <button type="button" class="btn"
+                            style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;"
+                            onclick="resetPassword('agency')">
                             🔄 パスワードリセットメール送信
                         </button>
                     </div>
@@ -495,7 +504,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">パスワードリセット</label>
-                        <button type="button" class="btn" style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;" onclick="resetPassword('affiliate')">
+                        <button type="button" class="btn"
+                            style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;"
+                            onclick="resetPassword('affiliate')">
                             🔄 パスワードリセットメール送信
                         </button>
                     </div>
@@ -629,7 +640,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">パスワードリセット</label>
-                        <button type="button" class="btn" style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;" onclick="resetPassword('supplier')">
+                        <button type="button" class="btn"
+                            style="background: #e74c3c; color: white; width: 100%; margin-top: 4px;"
+                            onclick="resetPassword('supplier')">
                             🔄 パスワードリセットメール送信
                         </button>
                     </div>
@@ -650,11 +663,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">法人番号（13桁）</label>
-                        <input type="text" class="form-input" placeholder="例: 1234567890123" maxlength="13" pattern="[0-9]{13}">
+                        <input type="text" class="form-input" placeholder="例: 1234567890123" maxlength="13"
+                            pattern="[0-9]{13}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">インボイス登録番号（T + 13桁）</label>
-                        <input type="text" class="form-input" placeholder="例: T1234567890123" maxlength="14" pattern="T[0-9]{13}">
+                        <input type="text" class="form-input" placeholder="例: T1234567890123" maxlength="14"
+                            pattern="T[0-9]{13}">
                     </div>
                 </div>
 
@@ -786,7 +801,8 @@
                 <div class="form-row">
                     <div class="form-group full-width">
                         <label class="form-label required">ポータルログインメールアドレス</label>
-                        <input type="email" class="form-input" id="portalEmail" placeholder="例: portal-user@example.com" onchange="validateEmail()">
+                        <input type="email" class="form-input" id="portalEmail" placeholder="例: portal-user@example.com"
+                            onchange="validateEmail()">
                         <small style="color: #666; font-size: 12px;">このメールアドレスでポータルにログインします。</small>
                     </div>
                 </div>
@@ -794,14 +810,16 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label required">初期パスワード</label>
-                        <input type="password" class="form-input" id="password1" placeholder="8文字以上、英数字記号を含む" onkeyup="validatePasswords()">
+                        <input type="password" class="form-input" id="password1" placeholder="8文字以上、英数字記号を含む"
+                            onkeyup="validatePasswords()">
                         <small style="color: #666; font-size: 12px;">
                             要件: 最低8文字、英字・数字・記号を含む
                         </small>
                     </div>
                     <div class="form-group">
                         <label class="form-label required">パスワード確認</label>
-                        <input type="password" class="form-input" id="password2" placeholder="もう一度入力してください" onkeyup="validatePasswords()">
+                        <input type="password" class="form-input" id="password2" placeholder="もう一度入力してください"
+                            onkeyup="validatePasswords()">
                         <div id="passwordMatch" style="font-size: 12px; margin-top: 4px;"></div>
                     </div>
                 </div>
@@ -814,13 +832,15 @@
                         </label>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn" onclick="generatePassword()" style="background: #95a5a6; color: white; width: 100%;">
+                        <button type="button" class="btn" onclick="generatePassword()"
+                            style="background: #95a5a6; color: white; width: 100%;">
                             🎲 安全なパスワードを自動生成
                         </button>
                     </div>
                 </div>
 
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 13px;">
+                <div
+                    style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 13px;">
                     <strong>⚠️ 重要：</strong><br>
                     • 登録完了後、このメールアドレスに初回ログイン情報が自動送信されます<br>
                     • パートナーは初回ログイン後、パスワード変更を推奨してください<br>
@@ -839,11 +859,11 @@
             </button>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         function updateFormFields() {
             const partnerType = document.getElementById('partnerType').value;
-            
+
             // Hide all conditional fields
             document.querySelectorAll('.conditional-fields').forEach(field => {
                 field.classList.remove('active');
@@ -898,7 +918,7 @@
         function validateEmail() {
             const email = document.getElementById('portalEmail').value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
+
             if (email && !emailRegex.test(email)) {
                 alert('有効なメールアドレスを入力してください。');
             }
@@ -923,7 +943,7 @@
             };
 
             let password = '';
-            
+
             // Ensure at least one character from each set
             password += charset.upper[Math.floor(Math.random() * charset.upper.length)];
             password += charset.lower[Math.floor(Math.random() * charset.lower.length)];
@@ -942,11 +962,11 @@
             // Set both password fields
             document.getElementById('password1').value = password;
             document.getElementById('password2').value = password;
-            
+
             // Show passwords
             document.getElementById('showPasswords').checked = true;
             togglePasswordVisibility();
-            
+
             // Validate
             validatePasswords();
 
@@ -974,7 +994,7 @@
 
         function savePartner() {
             const partnerType = document.getElementById('partnerType').value;
-            
+
             if (!partnerType) {
                 alert('パートナー種別を選択してください。');
                 return;
@@ -983,7 +1003,7 @@
             // Validate required fields (simplified)
             const inputs = document.querySelectorAll('input[type="text"]:not([readonly]), input[type="tel"], input[type="email"], input[type="number"], select');
             let hasEmpty = false;
-            
+
             inputs.forEach(input => {
                 const label = input.closest('.form-group')?.querySelector('.form-label');
                 if (label?.classList.contains('required') && !input.value) {
@@ -998,7 +1018,7 @@
 
             if (confirm('パートナー情報を保存しますか？')) {
                 alert('✓ パートナー情報を保存しました。');
-                
+
                 // In real app, save to database
                 setTimeout(() => {
                     window.location.href = 'partner_master_list.html';
@@ -1009,4 +1029,5 @@
         console.log('パートナー登録フォーム loaded');
     </script>
 </body>
+
 </html>

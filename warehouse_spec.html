@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>UI Screen Specification – 物理倉庫マスタ（Store / Warehouse Master）</title>
@@ -19,10 +20,13 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 24px 32px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.06);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.06);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin-top: 1.4em;
       margin-bottom: 0.6em;
       color: #222;
@@ -61,7 +65,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 6px 8px;
       vertical-align: top;
@@ -124,6 +129,7 @@
         background: #ffffff;
         padding: 0;
       }
+
       .spec-container {
         box-shadow: none;
         border-radius: 0;
@@ -132,6 +138,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="spec-container">
 
@@ -194,7 +201,10 @@
     </div>
 
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
       <tr>
         <td>倉庫ID（Unique）</td>
         <td>
@@ -271,18 +281,54 @@
       現段階では以下のフィールド構成を想定しています。
     </p>
     <table>
-      <tr><th>項目名</th><th>説明</th></tr>
-      <tr><td>倉庫ID（Unique）</td><td>一覧と同じ。編集不可。</td></tr>
-      <tr><td>倉庫名</td><td>一覧と同じ。</td></tr>
-      <tr><td>倉庫種別</td><td>自社 / 3PL の区分。</td></tr>
-      <tr><td>ステータス</td><td>有効 / 無効。利用停止時は「無効」に変更。</td></tr>
-      <tr><td>所在地（郵便番号）</td><td>郵便番号。</td></tr>
-      <tr><td>所在地（住所）</td><td>住所詳細。</td></tr>
-      <tr><td>担当者名</td><td>一次窓口となる担当者。</td></tr>
-      <tr><td>担当者メール</td><td>担当者のメールアドレス（任意）。</td></tr>
-      <tr><td>電話番号 / FAX</td><td>代表電話・FAX 番号。</td></tr>
-      <tr><td>業者連絡先（自由記述）</td><td>先方業者の代表窓口・緊急連絡先などを自由形式で記載。</td></tr>
-      <tr><td>備考</td><td>利用条件や注意事項、稼働時間帯などのメモ。</td></tr>
+      <tr>
+        <th>項目名</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>倉庫ID（Unique）</td>
+        <td>一覧と同じ。編集不可。</td>
+      </tr>
+      <tr>
+        <td>倉庫名</td>
+        <td>一覧と同じ。</td>
+      </tr>
+      <tr>
+        <td>倉庫種別</td>
+        <td>自社 / 3PL の区分。</td>
+      </tr>
+      <tr>
+        <td>ステータス</td>
+        <td>有効 / 無効。利用停止時は「無効」に変更。</td>
+      </tr>
+      <tr>
+        <td>所在地（郵便番号）</td>
+        <td>郵便番号。</td>
+      </tr>
+      <tr>
+        <td>所在地（住所）</td>
+        <td>住所詳細。</td>
+      </tr>
+      <tr>
+        <td>担当者名</td>
+        <td>一次窓口となる担当者。</td>
+      </tr>
+      <tr>
+        <td>担当者メール</td>
+        <td>担当者のメールアドレス（任意）。</td>
+      </tr>
+      <tr>
+        <td>電話番号 / FAX</td>
+        <td>代表電話・FAX 番号。</td>
+      </tr>
+      <tr>
+        <td>業者連絡先（自由記述）</td>
+        <td>先方業者の代表窓口・緊急連絡先などを自由形式で記載。</td>
+      </tr>
+      <tr>
+        <td>備考</td>
+        <td>利用条件や注意事項、稼働時間帯などのメモ。</td>
+      </tr>
     </table>
 
     <!-- 5. 確認事項 -->
@@ -331,5 +377,7 @@
     </ul>
 
   </div>
+  <script src="auth.js"></script>
 </body>
+
 </html>

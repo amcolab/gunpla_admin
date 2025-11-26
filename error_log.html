@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon {
@@ -315,6 +316,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -382,7 +384,8 @@
                 <tr>
                     <td><input type="checkbox"></td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0003'); return false;">EX-20251107-0003</a>
+                        <a href="#" class="record-link"
+                            onclick="viewError('EX-20251107-0003'); return false;">EX-20251107-0003</a>
                     </td>
                     <td>
                         <span class="status-badge status-fixed">Fixed</span>
@@ -409,7 +412,8 @@
                 <tr>
                     <td><input type="checkbox"></td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0002'); return false;">EX-20251107-0002</a>
+                        <a href="#" class="record-link"
+                            onclick="viewError('EX-20251107-0002'); return false;">EX-20251107-0002</a>
                     </td>
                     <td>
                         <span class="status-badge status-investigating">Investigating</span>
@@ -436,7 +440,8 @@
                 <tr>
                     <td><input type="checkbox"></td>
                     <td>
-                        <a href="#" class="record-link" onclick="viewError('EX-20251107-0001'); return false;">EX-20251107-0001</a>
+                        <a href="#" class="record-link"
+                            onclick="viewError('EX-20251107-0001'); return false;">EX-20251107-0001</a>
                     </td>
                     <td>
                         <span class="status-badge status-new">New</span>
@@ -461,10 +466,10 @@
             </tbody>
         </table>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         // Select all checkbox
-        document.getElementById('selectAll').addEventListener('change', function() {
+        document.getElementById('selectAll').addEventListener('change', function () {
             const checkboxes = document.querySelectorAll('.data-table tbody input[type="checkbox"]');
             checkboxes.forEach(cb => cb.checked = this.checked);
         });
@@ -489,14 +494,14 @@
         }
 
         // Search functionality
-        document.querySelector('.search-input').addEventListener('input', function(e) {
+        document.querySelector('.search-input').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.data-table tbody tr');
-            
+
             let visibleCount = 0;
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                
+
                 if (text.includes(searchTerm)) {
                     row.style.display = '';
                     visibleCount++;
@@ -504,10 +509,11 @@
                     row.style.display = 'none';
                 }
             });
-            
+
             // Update record count
             document.querySelector('.record-count').textContent = `1 - ${visibleCount} (${visibleCount}件中)`;
         });
     </script>
 </body>
+
 </html>

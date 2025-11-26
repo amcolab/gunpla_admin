@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -365,9 +366,17 @@
         }
 
         /* Utility Classes */
-        .hidden { display: none; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
+        .hidden {
+            display: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
 
         /* Form Grid */
         .form-grid {
@@ -472,42 +481,43 @@
                 gap: 8px;
                 align-items: stretch;
             }
-            
+
             .left-controls,
             .right-controls {
                 justify-content: center;
                 flex-wrap: wrap;
             }
-            
+
             .content-area {
                 padding: 12px;
             }
-            
+
             .table-header th,
             .table-cell {
                 padding: 6px 8px;
                 font-size: 12px;
             }
-            
+
             .modal-content {
                 width: 95%;
                 margin: 16px;
             }
-            
+
             .kintone-table {
                 font-size: 12px;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .search-box {
                 width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Top Header -->
     <div class="kintone-header">
@@ -897,7 +907,7 @@
                 <div class="modal-title">在庫情報の編集</div>
                 <button class="modal-close" onclick="closeForm()">×</button>
             </div>
-            
+
             <div class="modal-body">
                 <div class="form-grid">
                     <div class="form-group">
@@ -973,7 +983,7 @@
             </div>
         </div>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         function showForm() {
             const modal = document.getElementById('formModal');
@@ -997,10 +1007,10 @@
         }
 
         // Search functionality
-        document.querySelector('.search-box').addEventListener('input', function(e) {
+        document.querySelector('.search-box').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.table-row');
-            
+
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 if (text.includes(searchTerm)) {
@@ -1013,7 +1023,7 @@
 
         // Handle product and staff link clicks
         document.querySelectorAll('.product-link, .staff-link').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.stopPropagation(); // Prevent row click
                 e.preventDefault();
                 const linkText = this.textContent;
@@ -1032,4 +1042,5 @@
         });
     </script>
 </body>
+
 </html>

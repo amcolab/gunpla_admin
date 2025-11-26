@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .app-icon-circle {
@@ -297,6 +298,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Kintone Header -->
     <div class="kintone-header">
@@ -326,11 +328,11 @@
             <span class="view-text">全商品一覧</span>
             <span class="dropdown-arrow">▼</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">🔍</span>
         </button>
-        
+
         <button class="control-btn">
             <span class="control-btn-icon">📊</span>
         </button>
@@ -376,7 +378,7 @@
 
     <!-- Record Count Bottom -->
     <div class="bottom-count">1 - 9（9件中）</div>
-
+    <script src="auth.js"></script>
     <script>
         // Sample data for demonstration
         const sampleProducts = [
@@ -510,7 +512,7 @@
 
         function renderTable(products) {
             const tbody = document.querySelector('.data-table tbody');
-            
+
             if (products.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="12" class="empty-state">データがありません</td></tr>';
                 updateRecordCount(0);
@@ -532,8 +534,8 @@
                     <td>${product.purchaser}</td>
                     <td>
                         <span class="status-badge status-${product.status}">
-                            ${product.status === 'active' ? '販売中' : 
-                              product.status === 'discontinued' ? '販売終了' : '下書き'}
+                            ${product.status === 'active' ? '販売中' :
+                    product.status === 'discontinued' ? '販売終了' : '下書き'}
                         </span>
                     </td>
                 </tr>
@@ -552,21 +554,22 @@
         renderTable(sampleProducts);
 
         // Add click handlers for controls
-        document.querySelector('.view-button').addEventListener('click', function() {
+        document.querySelector('.view-button').addEventListener('click', function () {
             alert('ビュー選択');
         });
 
-        document.querySelectorAll('.icon-only-btn')[0].addEventListener('click', function() {
+        document.querySelectorAll('.icon-only-btn')[0].addEventListener('click', function () {
             alert('新規商品を追加');
         });
 
-        document.querySelectorAll('.icon-only-btn')[1].addEventListener('click', function() {
+        document.querySelectorAll('.icon-only-btn')[1].addEventListener('click', function () {
             alert('設定');
         });
 
-        document.querySelectorAll('.icon-only-btn')[2].addEventListener('click', function() {
+        document.querySelectorAll('.icon-only-btn')[2].addEventListener('click', function () {
             alert('その他のオプション');
         });
     </script>
 </body>
+
 </html>
