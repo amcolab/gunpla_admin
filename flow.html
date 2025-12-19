@@ -161,6 +161,91 @@
       color: #7c5a00
     }
 
+    .important-note {
+      border-left: 3px solid #ef4444;
+      background: #fef2f2;
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin: 16px 0;
+      color: #991b1b
+    }
+
+    .important-note p {
+      margin: 0 0 8px 0
+    }
+
+    .important-note ul {
+      margin: 8px 0 0 0
+    }
+
+    .old-version {
+      opacity: 0.7;
+      border-left: 3px solid #9ca3af;
+      background: #f9fafb;
+      padding: 20px 14px 12px 14px;
+      border-radius: 6px;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .old-version::before {
+      content: "旧版（削除予定）";
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: #6b7280;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      z-index: 1;
+    }
+
+    .old-version h2,
+    .old-version h3,
+    .old-version h4 {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+
+    .old-version h2 {
+      margin-top: 0;
+    }
+
+    .old-version p,
+    .old-version li {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+
+    .new-version {
+      border-left: 3px solid #10b981;
+      background: #f0fdf4;
+      padding: 20px 14px 12px 14px;
+      border-radius: 6px;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .new-version::before {
+      content: "修正版（最新）";
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: #10b981;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      z-index: 1;
+    }
+
+    .new-version h2 {
+      margin-top: 0;
+    }
+
     @media print {
       a[href]:after {
         content: ""
@@ -1043,84 +1128,259 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
         <section id="flow4-3">
           <h2>3. プロセス概要</h2>
 
-          <h3>3.1 マスタ登録（製品・資材・BOM）</h3>
-          <ul>
-            <li><strong>商品マスタ：</strong> SKU、品名、単位、規格、JANコードを登録。</li>
-            <li><strong>資材マスタ：</strong> 資材コード、区分（原料／OEM）、発注点を登録。</li>
-            <li><strong>BOMマスタ：</strong> 製品 × 資材 × 使用量（定量）を設定。</li>
-          </ul>
-          <p>登録時に SKU・Material の存在チェックおよびアクティブ状態を検証する。</p>
+          <div class="old-version">
+            <h2>3. プロセス概要（旧版）</h2>
 
-          <h3>3.2 製造記録（製造開始・完了）</h3>
+            <h3>3.1 マスタ登録（製品・資材・BOM）</h3>
+            <ul>
+              <li><strong>商品マスタ：</strong> SKU、品名、単位、規格、JANコードを登録。</li>
+              <li><strong>資材マスタ：</strong> 資材コード、区分（原料／OEM）、発注点を登録。</li>
+              <li><strong>BOMマスタ：</strong> 製品 × 資材 × 使用量（定量）を設定。</li>
+            </ul>
+            <p>登録時に SKU・Material の存在チェックおよびアクティブ状態を検証する。</p>
+
+            <h3>3.2 製造記録（製造開始・完了）</h3>
+            <ul>
+              <li>製造開始・完了時に <strong>製造実績アプリ</strong> にレコードを作成。</li>
+              <li>入力項目：
+                <ul>
+                  <li>製品（SKU）、数量、担当者、製造日</li>
+                  <li>完了時：LOT番号、有効期限（期限日）</li>
+                </ul>
+              </li>
+              <li>LOT番号と期限日は手動入力（自動採番しない）。</li>
+              <li>登録時に <strong>Ruby_Server</strong> がタスク生成ロジックを起動。</li>
+            </ul>
+
+            <h3>3.3 自動タスク生成</h3>
+            <ul>
+              <li>製造開始時（開始）：
+                <ul>
+                  <li>Ruby_Server が BOM を参照し、対応する資材の <strong>出庫タスク</strong> を作成。</li>
+                </ul>
+              </li>
+              <li>製造完了時（完了）：
+                <ul>
+                  <li>Ruby_Server が製品の <strong>入庫タスク</strong> を作成。</li>
+                </ul>
+              </li>
+            </ul>
+            <p>各タスクには種類（入庫／出庫）、SKU、数量、担当者、初期状態＝<span class="kbd">未開始</span> が含まれる。</p>
+
+            <h3>3.4 倉庫タスク実行（Scan barcode画面）</h3>
+            <ol>
+              <li>倉庫担当者は <strong>Scan barcode画面（ReactJS 倉庫UI）</strong> でタスクを選択。</li>
+              <li>バーコードスキャンによる手順：
+                <ul>
+                  <li>① 対象タスク選択</li>
+                  <li>② 製品／資材バーコードをスキャン</li>
+                  <li>③ 棚コード（Location）をスキャン</li>
+                  <li>④ LOT番号入力またはスキャン</li>
+                  <li>⑤ 実数量を入力し、完了ボタンを押下</li>
+                </ul>
+              </li>
+              <li>完了時の処理：
+                <ul>
+                  <li><strong>出庫（資材）</strong>：実在庫管理アプリ（棚・LOT単位）と 在庫管理アプリ を減算。</li>
+                  <li><strong>入庫（製品）</strong>：実在庫管理アプリ と 在庫管理アプリ を加算。</li>
+                  <li>タスク状態を <span class="kbd">完了済み</span> に更新。</li>
+                </ul>
+              </li>
+            </ol>
+
+            <h3>3.5 LOT・バーコード管理</h3>
+            <ul>
+              <li>LOT番号・期限日は製造完了時に担当者が手動入力。</li>
+              <li>バーコードは Kintone から発行せず、社内テンプレート（Excel／専用プリンタ）で印刷。</li>
+              <li>入庫前に製品へバーコードを手動貼付。</li>
+              <li>バーコードは倉庫操作時の識別用途にのみ使用。</li>
+            </ul>
+
+            <h3>3.6 在庫管理・レポート</h3>
+            <ul>
+              <li><strong>在庫管理アプリ（論理在庫）：</strong> SKU ごとのシステム在庫を管理。</li>
+              <li><strong>実在庫管理アプリ（実在庫）：</strong> SKU＋Location＋LOT 単位の実在庫を保持。</li>
+              <li>Ruby_Server が定期的に Logic／Physical の照合バッチを実行し、差異をレポート。</li>
+            </ul>
+            <p>照合レポート項目：SKU、LOT、在庫差分、差異率（%）。</p>
+            <p>在庫は以下条件でフィルタ可能：</p>
+            <ul>
+              <li>SKU</li>
+              <li>LOT番号</li>
+              <li>棚コード（Location）</li>
+            </ul>
+          </div>
+
+          <div class="new-version">
+          <h2>3. プロセス概要（修正版）</h2>
+
+          <h3>3.1 マスターデータ設定</h3>
           <ul>
-            <li>製造開始・完了時に <strong>製造実績アプリ</strong> にレコードを作成。</li>
+            <li><strong>製品マスター：</strong> SKU、製品名、仕様、単位、JANコード登録</li>
+            <li><strong>資材マスター：</strong> 資材コード、分類（原料/OEM）、発注点登録</li>
+            <li><strong>BOMマスター：</strong> 生産レシピ設定（製品 × 資材 × 使用数量）</li>
+          </ul>
+          <p>登録時、SKUと資材の存在および有効ステータスをチェック。</p>
+
+          <h3>3.2 生産実績レコード作成</h3>
+          <ul>
+            <li>製造担当者が生産開始・完了時に<strong>製造実績アプリ</strong>でレコード作成</li>
             <li>入力項目：
               <ul>
-                <li>製品（SKU）、数量、担当者、製造日</li>
-                <li>完了時：LOT番号、有効期限（期限日）</li>
+                <li>製品（SKU）、完了数量、担当者、生産日</li>
+                <li>完了時：LOT番号、有効期限（手動入力）</li>
               </ul>
             </li>
-            <li>LOT番号と期限日は手動入力（自動採番しない）。</li>
-            <li>登録時に <strong>Ruby_Server</strong> がタスク生成ロジックを起動。</li>
+            <li>初期ステータス設定：
+              <ul>
+                <li>資材出庫ステータス：<span class="kbd">未処理</span></li>
+                <li>入庫タスクステータス：<span class="kbd">未作成</span></li>
+              </ul>
+            </li>
+            <li>登録後、<strong>Ruby_Server</strong>がBOM展開プロセスをトリガー。</li>
           </ul>
 
-          <h3>3.3 自動タスク生成</h3>
+          <h3>3.3 資材出庫プロセス自動化</h3>
+          <h4>3.3.1 BOM展開と資材計算</h4>
           <ul>
-            <li>製造開始時（開始）：
-              <ul>
-                <li>Ruby_Server が BOM を参照し、対応する資材の <strong>出庫タスク</strong> を作成。</li>
-              </ul>
-            </li>
-            <li>製造完了時（完了）：
-              <ul>
-                <li>Ruby_Server が製品の <strong>入庫タスク</strong> を作成。</li>
-              </ul>
-            </li>
+            <li>Ruby_ServerがBOMマスターを参照し、必要資材を自動計算</li>
+            <li>製造実績アプリで「必要資材」セクションに計算結果を表示</li>
           </ul>
-          <p>各タスクには種類（入庫／出庫）、SKU、数量、担当者、初期状態＝<span class="kbd">未開始</span> が含まれる。</p>
 
-          <h3>3.4 倉庫タスク実行（Scan barcode画面）</h3>
+          <h4>3.3.2 資材出庫判定と実行</h4>
           <ol>
-            <li>倉庫担当者は <strong>Scan barcode画面（ReactJS 倉庫UI）</strong> でタスクを選択。</li>
-            <li>バーコードスキャンによる手順：
+            <li>製造担当者が必要資材を確認</li>
+            <li><strong>「原材料出庫」</strong>ボタンを押下</li>
+            <li>各資材の<strong>論理在庫チェック</strong>実行：
               <ul>
-                <li>① 対象タスク選択</li>
-                <li>② 製品／資材バーコードをスキャン</li>
-                <li>③ 棚コード（Location）をスキャン</li>
-                <li>④ LOT番号入力またはスキャン</li>
-                <li>⑤ 実数量を入力し、完了ボタンを押下</li>
-              </ul>
-            </li>
-            <li>完了時の処理：
-              <ul>
-                <li><strong>出庫（資材）</strong>：実在庫管理アプリ（棚・LOT単位）と 在庫管理アプリ を減算。</li>
-                <li><strong>入庫（製品）</strong>：実在庫管理アプリ と 在庫管理アプリ を加算。</li>
-                <li>タスク状態を <span class="kbd">完了済み</span> に更新。</li>
+                <li>資材十分 → 資材出庫ステータス → <span class="kbd">処理中</span> → 論理在庫減算 → 資材出庫タスク作成 → 資材出庫ステータス → <span class="kbd">処理完了</span></li>
+                <li>資材不足 → 資材出庫ステータス → <span class="kbd">エラー</span>、メッセージ表示「資材XXX不足」</li>
               </ul>
             </li>
           </ol>
 
-          <h3>3.5 LOT・バーコード管理</h3>
+          <h3>3.4 倉庫資材出庫実行</h3>
+          <ol>
+            <li>倉庫担当者が<strong>スキャンバーコード画面</strong>でタスク選択</li>
+            <li>バーコードスキャン手順：
+              <ul>
+                <li>① 資材出庫タスク選択</li>
+                <li>② 資材バーコードスキャン</li>
+                <li>③ 棚コード（Location）スキャン</li>
+                <li>④ LOT番号入力/スキャン</li>
+                <li>⑤ 実際数量入力</li>
+              </ul>
+            </li>
+            <li>バリデーション：
+              <ul>
+                <li>資材バーコード/LOT/数量の整合性チェック</li>
+                <li>エラー時：警告表示、再入力要求</li>
+              </ul>
+            </li>
+            <li><strong>「完了」</strong>ボタン押下で処理実行：
+              <ul>
+                <li><strong>実在庫</strong>：SKU + Location + LOT単位で在庫減算</li>
+                <li><strong>タスクアプリ</strong>：ステータス → <span class="kbd">完了</span></li>
+                <li><strong>在庫移動履歴</strong>：Ruby_Serverが自動記録（種別：製造出庫）</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h3>3.5 製品入庫タスク作成</h3>
           <ul>
-            <li>LOT番号・期限日は製造完了時に担当者が手動入力。</li>
-            <li>バーコードは Kintone から発行せず、社内テンプレート（Excel／専用プリンタ）で印刷。</li>
-            <li>入庫前に製品へバーコードを手動貼付。</li>
-            <li>バーコードは倉庫操作時の識別用途にのみ使用。</li>
+            <li>資材出庫完了後、製造担当者が<strong>「在庫タスク作成」</strong>ボタン押下</li>
+            <li>Ruby_Serverが完成品の<strong>製品入庫タスク</strong>をタスクアプリに作成</li>
+            <li>入庫タスクステータス → <span class="kbd">作成済</span></li>
           </ul>
 
-          <h3>3.6 在庫管理・レポート</h3>
+          <h3>3.6 製品入庫倉庫実行</h3>
+          <ol>
+            <li>倉庫担当者が<strong>スキャンバーコード画面</strong>で製品入庫タスク選択</li>
+            <li>バーコードスキャン手順：
+              <ul>
+                <li>① 製品入庫タスク選択</li>
+                <li>② 製品バーコードスキャン</li>
+                <li>③ 棚コード（Location）スキャン</li>
+                <li>④ LOT番号入力/スキャン</li>
+                <li>⑤ 実際数量入力</li>
+              </ul>
+            </li>
+            <li><strong>「完了」</strong>ボタン押下で処理実行：
+              <ul>
+                <li><strong>実在庫</strong>：SKU + Location + LOT単位で在庫加算</li>
+                <li><strong>論理在庫</strong>：完成品在庫加算（タスク完了後に実行）</li>
+                <li><strong>タスクアプリ</strong>：ステータス → <span class="kbd">完了</span></li>
+                <li><strong>入庫タスクステータス</strong>：<span class="kbd">作成済</span> → <span class="kbd">完了</span></li>
+                <li><strong>在庫移動履歴</strong>：Ruby_Serverが自動記録（種別：製造入庫）</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h3>3.7 ステータス管理・エラー処理</h3>
+          <h4>3.7.1 ステータス遷移</h4>
           <ul>
-            <li><strong>在庫管理アプリ（論理在庫）：</strong> SKU ごとのシステム在庫を管理。</li>
-            <li><strong>実在庫管理アプリ（実在庫）：</strong> SKU＋Location＋LOT 単位の実在庫を保持。</li>
-            <li>Ruby_Server が定期的に Logic／Physical の照合バッチを実行し、差異をレポート。</li>
+            <li><strong>資材出庫ステータス：</strong> 
+              <ul>
+                <li><span class="kbd">未処理</span> → <span class="kbd">処理中</span> → <span class="kbd">処理完了</span></li>
+                <li>資材不足時：<span class="kbd">未処理</span> → <span class="kbd">エラー</span></li>
+              </ul>
+            </li>
+            <li><strong>入庫タスクステータス：</strong> 
+              <ul>
+                <li><span class="kbd">未作成</span> → <span class="kbd">作成済</span> → <span class="kbd">完了</span></li>
+                <li>キャンセル時：<span class="kbd">キャンセル</span></li>
+              </ul>
+            </li>
           </ul>
-          <p>照合レポート項目：SKU、LOT、在庫差分、差異率（%）。</p>
-          <p>在庫は以下条件でフィルタ可能：</p>
+
+          <h4>3.7.2 エラー処理</h4>
+          <ul>
+            <li>LOTまたは棚コード入力エラー：警告表示、再入力促進</li>
+            <li>同一棚でのLOT重複：製品同一であれば警告のみで許可</li>
+            <li>製造中止：
+              <ul>
+                <li>入庫タスクステータス → <span class="kbd">キャンセル</span></li>
+                <li>Ruby_Serverがタスク削除、論理在庫をロールバック</li>
+              </ul>
+            </li>
+            <li>在庫差異：在庫履歴アプリにType=調整でレコード登録、実在庫管理アプリと在庫管理アプリをRuby_Server経由で調整</li>
+          </ul>
+
+          <h3>3.8 LOT・バーコード管理</h3>
+          <ul>
+            <li><strong>LOT管理：</strong> LOT番号・有効期限は完了時に担当者が手動入力</li>
+            <li><strong>バーコード管理：</strong> Kintoneから発行せず、社内テンプレート（Excel/専用プリンタ）で印刷</li>
+            <li>バーコードは製品入庫前に手動貼付</li>
+            <li>倉庫作業時の識別目的のみで使用</li>
+            <li>破損・紛失時：外部システムから再印刷対応</li>
+          </ul>
+
+          <h3>3.9 在庫管理・データ同期</h3>
+          <ul>
+            <li><strong>在庫管理アプリ（論理在庫）：</strong> SKU単位でシステム在庫を管理</li>
+            <li><strong>実在庫管理アプリ（実在庫）：</strong> SKU + Location + LOT単位の実在庫を保持</li>
+            <li><strong>在庫照合：</strong> Ruby_Serverが定期的にLogic/Physical照合バッチを実行、差異をレポート</li>
+          </ul>
+
+          <p><strong>照合レポート項目：</strong> SKU、LOT、在庫差分、差異率（%）</p>
+          
+          <p><strong>在庫フィルタ条件：</strong></p>
           <ul>
             <li>SKU</li>
             <li>LOT番号</li>
             <li>棚コード（Location）</li>
           </ul>
+
+          <h3>3.10 重要な処理タイミング</h3>
+          <div class="important-note">
+            <p><strong>⚠️ 重要：在庫更新タイミング</strong></p>
+            <ul>
+              <li><strong>資材論理在庫：</strong> 「原材料出庫」ボタン押下時に事前減算</li>
+              <li><strong>製品論理在庫：</strong> 製品入庫タスク完了後に事後加算</li>
+              <li>この順序により、製造中の在庫不整合を防止</li>
+            </ul>
+          </div>
+          </div>
         </section>
 
         <section id="flow4-4">
@@ -1173,14 +1433,6 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
                 <td>製造中止</td>
                 <td>Ruby_Server がタスクを削除し、論理在庫をロールバック。</td>
               </tr>
-              <tr>
-                <td>在庫差異</td>
-                <td>入出庫履歴アプリ に Type=ADJUSTMENT でレコード登録し、その結果として 実在庫管理アプリ・在庫管理アプリ を Ruby_Server 経由で調整する。</td>
-              </tr>
-              <tr>
-                <td>バーコード破損・紛失</td>
-                <td>外部システムから再印刷対応。</td>
-              </tr>
             </tbody>
           </table>
         </section>
@@ -1192,7 +1444,6 @@ GoAffPro ⇄ Ruby_Server ⇄ Kintone (Partner / Rule / Commission / Payments) �
             <li>外部 WMS 不要で、現場運用に即した仕組み。</li>
             <li>論理在庫と実在庫が常に一致し、LOT・棚単位でトレーサビリティを確保。</li>
             <li>倉庫担当は ReactJS UI のバーコードスキャンで迅速に処理可能。</li>
-            <li>SKU・LOT・時系列で追跡可能な完全履歴データを保持。</li>
           </ul>
         </section>
 
