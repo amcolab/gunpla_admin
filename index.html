@@ -23,6 +23,48 @@
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 6px 20px rgba(0, 0, 0, 0.05);
     }
 
+    /* Tab Styles */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #e5e5ea;
+      margin-bottom: 24px;
+      gap: 0;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      top: 2px;
+    }
+
+    .tab:hover {
+      color: #4c6ef5;
+      background: #f6f8ff;
+    }
+
+    .tab.active {
+      color: #4c6ef5;
+      border-bottom-color: #4c6ef5;
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     h1 {
       font-size: 22px;
       margin-bottom: 10px;
@@ -84,10 +126,17 @@
 <body>
   <div class="container">
 
-    <h1>Credie – UI Documentation Index</h1>
-    <p style="font-size:13px;color:#555;margin-bottom:22px;">
-      Credie業務システムの各UI画面仕様書へのリンク一覧です。
-    </p>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('ui-doc')">UI Documentation Index</button>
+      <button class="tab" onclick="switchTab('tech-doc')">Technique Documentation Index</button>
+    </div>
+
+    <!-- UI Documentation Tab -->
+    <div id="ui-doc" class="tab-content active">
+      <h1>Credie – UI Documentation Index</h1>
+      <p style="font-size:13px;color:#555;margin-bottom:22px;">
+        Credie業務システムの各UI画面仕様書へのリンク一覧です。
+      </p>
 
     <!-- 0. Business Flow Overview -->
     <h2>🔄 0. システム全体フロー</h2>
@@ -416,7 +465,50 @@
         <a href="statusmaster.html" style="font-size: 14px; font-weight: 600;">→ Appendix: Status Masterを見る</a>
       </div>
     </div>
+    </div>
+
+    <!-- Technique Documentation Tab -->
+    <div id="tech-doc" class="tab-content">
+      <h1>Credie – Technique Documentation Index</h1>
+      <p style="font-size:13px;color:#555;margin-bottom:22px;">
+        技術仕様書・実装ドキュメントへのリンク一覧です。
+      </p>
+
+      <h2>🏗️ System Design</h2>
+
+      <div style="margin-bottom: 32px;">
+        <div class="item" style="border-left: 4px solid #4c6ef5; background: #f6f8ff;">
+          <div class="tag">System Design</div>
+          <div class="item-title">System design</div>
+          <div class="item-desc">
+            システムアーキテクチャとコスト設計に関する技術ドキュメント。
+          </div>
+          <a href="credie_architecture_cost.html" style="font-size: 14px; font-weight: 600;">→ System designを見る</a>
+        </div>
+      </div>
+    </div>
   </div>
+  <script>
+    function switchTab(tabId) {
+      // Ẩn tất cả tab content
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Xóa active class từ tất cả tabs
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Hiển thị tab được chọn
+      document.getElementById(tabId).classList.add('active');
+      
+      // Thêm active class cho tab button
+      event.target.classList.add('active');
+    }
+  </script>
   <script src="auth.js"></script>
 </body>
 
