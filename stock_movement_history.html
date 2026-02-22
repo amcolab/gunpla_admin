@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>入出庫履歴一覧 - Stock Journal List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-yellow: #f7d92d;
+            --kintone-blue: #3498db;
+            --bg-light: #f5f6f7;
+            --surface-light: #ffffff;
+            --border-color: #e3e7e8;
+            --text-dark: #333333;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            color: var(--text-dark);
+        }
+        .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .kintone-header-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table-sticky-header th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .badge-base {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold text-gray-800;
+        }
+        .clean-link {
+            @apply text-[var(--kintone-blue)] hover:text-blue-700 no-underline font-medium;
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg-light)] dark:bg-gray-900 min-h-screen">
+<header class="bg-[var(--primary-yellow)] h-12 flex items-center justify-between px-4 kintone-header-shadow sticky top-0 z-50">
+<div class="flex items-center space-x-4">
+<button class="text-gray-700 hover:bg-black/5 p-1 rounded">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-gray-700">apps</span>
+<span class="font-bold text-gray-800 tracking-tight">kintone</span>
+</div>
+<div class="h-6 w-px bg-black/10 mx-2"></div>
+<h1 class="font-bold text-gray-800 text-sm">入出庫履歴</h1>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input class="bg-white/80 dark:bg-black/20 border-none h-8 w-64 px-8 text-xs rounded focus:ring-2 focus:ring-black/10 placeholder-gray-500" placeholder="アプリ内検索" type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-1.5 text-gray-500 text-sm">search</span>
+</div>
+<span class="material-symbols-outlined text-gray-700">notifications</span>
+<span class="material-symbols-outlined text-gray-700">settings</span>
+<div class="flex items-center space-x-1 cursor-pointer">
+<img alt="User avatar" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw6AXcJTBqGzzCX0U2fnoW8rx4T8WlA4IgmTD-guI34eDaiNp_MH_3gbbIFdyg26smZ9XKVMRy8EurKP1ShB_ezCtzmCZM9u1-HhOkR24hRIMJt-D9XXQd9pVFnVyiT97_EB0NBFsq8fEwd8MnaGGXIbPTh_OzW7-bUJxAtgwODanOhMG02mmSJ8HGsJPon0h5bmlkXvWrMrOftNfOCA8KaE64gkTeOMzcMMlVMOAkB-SMjUB_RsSPIXgYO0qFWicEAzfAPEGQEw"/>
+<span class="text-xs font-bold text-gray-800">Administrator</span>
+<span class="material-symbols-outlined text-gray-700 text-sm">arrow_drop_down</span>
+</div>
+</div>
+</header>
+<div class="bg-white dark:bg-gray-800 border-b border-[var(--border-color)] dark:border-gray-700 px-4 py-3">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-orange-500">description</span>
+<span class="font-bold text-lg dark:text-white">入出庫履歴</span>
+<span class="material-symbols-outlined text-gray-400 text-sm">star</span>
+</div>
+<div class="flex items-center space-x-2">
+<button class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-1 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-600">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-300">settings</span>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 overflow-hidden">
+<div class="px-3 py-1 bg-gray-50 dark:bg-gray-700 border-r border-gray-300 dark:border-gray-600">
+<span class="material-symbols-outlined text-blue-500">list</span>
+</div>
+<select class="border-none text-sm font-medium py-1 px-4 focus:ring-0 dark:bg-gray-800 dark:text-white appearance-none pr-8 bg-no-repeat bg-[right_0.5rem_center]">
+<option selected="">全履歴</option>
+<option>出庫（販売）</option>
+<option>入庫（購買）</option>
+<option>棚移動</option>
+<option>在庫調整</option>
+<option>棚卸実施</option>
+</select>
+<button class="p-1 px-2 border-l border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-500 text-sm">filter_alt</span>
+</button>
+</div>
+<div class="flex-grow"></div>
+<div class="flex items-center space-x-2">
+<button class="p-1 text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+<button class="p-1 text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<main class="p-4">
+<div class="bg-white dark:bg-gray-800 border border-[var(--border-color)] dark:border-gray-700 rounded shadow-sm overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead class="bg-gray-50 dark:bg-gray-900/50 table-sticky-header border-b border-[var(--border-color)] dark:border-gray-700">
+<tr>
+<th class="w-10 p-2 text-center">
+<span class="material-symbols-outlined text-gray-300 text-sm">description</span>
+</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">取引ID</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">
+                        実行日時
+                        <span class="material-symbols-outlined text-[10px] align-middle ml-1">arrow_downward</span>
+</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">タスク種別</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">ステータス</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">タスクID</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">発生元 注文元</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">倉庫</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">処理実行者</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap">資材明細</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 border-r dark:border-gray-700 whitespace-nowrap text-right">合計数量</th>
+<th class="p-2 font-bold text-gray-600 dark:text-gray-400 whitespace-nowrap">棚卸実施日</th>
+<th class="w-10"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 group transition-colors">
+<td class="p-2 text-center">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">description</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TRX-99420</a></td>
+<td class="p-2 whitespace-nowrap">2026-02-22 14:30</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-blue-100">出庫 購買</span>
+</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-green-100">完了</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TASK-142</a></td>
+<td class="p-2"><a class="clean-link" href="#">ORD-5001</a></td>
+<td class="p-2">Gifu</td>
+<td class="p-2">
+<div class="flex items-center space-x-1">
+<img alt="Admin" class="w-4 h-4 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWNA9xOIrBWQG_wNgfoNRdrRtvbs7Fr3iCNv4A1sJhVjcs6khGJb-nM2tVMNLqjP-y841W3O7zgYxEoQ9_FmCE3Frszv41dSRFL5kaOpwjif8C9O7icKHTZDptkepU8XXA6KJbC9xzyRjgiFCGrq-b5WS44jR0VfpSuLxnBISpRjTYZcsLSpouQ0jYTUHHxM4bD9N7s1LywRuoNT6o7f5HHc_sj1FXyBSdjY2DNxmspkcJ-GAYOWudqdalexgqh0-r570Ns_yNDw"/>
+<span>Admin</span>
+</div>
+</td>
+<td class="p-2">SKU-A +他2件</td>
+<td class="p-2 text-right font-medium text-red-600 dark:text-red-400">-120</td>
+<td class="p-2 text-center text-gray-400">-</td>
+<td class="p-2 text-center">
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 group transition-colors">
+<td class="p-2 text-center">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">description</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TRX-99418</a></td>
+<td class="p-2 whitespace-nowrap">2026-02-22 13:45</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-indigo-100">入庫 購買</span>
+</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-green-100">完了</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TASK-140</a></td>
+<td class="p-2"><a class="clean-link" href="#">PUR-2003</a></td>
+<td class="p-2">Gifu</td>
+<td class="p-2">
+<div class="flex items-center space-x-1">
+<img alt="Sato" class="w-4 h-4 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd-pu7DoihIuHIseto4UUpbk8iz1kxJ8-Yv4GR00AL5guISL7o0k9Fpzh4f3NuFW760AXBTOUGE-2rHCoBEDimNz2deSnCb_mObB0xnxE46mbse9bYu1ZCuXphflfJdyeCXTLSVKsTH7QMfAS_AGLkLfiLqR9VKwEcg8Mc-gtAqCrkkae8Z4I8hfCQlDSueiuEE0uoqfl6VdRGYLxqCXhb01pzmHuZ9yc4kSqF3N0lrMblkVS8CclvBYwAQtOK3pESwqgl8CTrdg"/>
+<span>Sato</span>
+</div>
+</td>
+<td class="p-2">SKU-M10</td>
+<td class="p-2 text-right font-medium text-blue-600 dark:text-blue-400">+45</td>
+<td class="p-2 text-center text-gray-400">-</td>
+<td class="p-2 text-center">
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 group transition-colors">
+<td class="p-2 text-center">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">description</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TRX-99380</a></td>
+<td class="p-2 whitespace-nowrap">2026-02-21 18:45</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-orange-100">棚移動</span>
+</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-green-100">完了</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TASK-115</a></td>
+<td class="p-2 text-gray-400">-</td>
+<td class="p-2">Gifu</td>
+<td class="p-2">
+<div class="flex items-center space-x-1">
+<img alt="Admin" class="w-4 h-4 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3ZdBraI4ZDwTlT91X4a63tDCLGf0s89yB0BaDFSWUOMO8ch-HZp5fY7uzBCYY8Dj3fIxI7vhJ4GMl7SYgQDx-qZoqIqqFITkNgCYjxZLUL8OX9Jq5lCQy-lg7mKPZNcM0KaTSy6OzQanQoE_v-VLQ_uAUmwHGMtD8LAR76rHyvLjRDGRSkzhTo68bbjbDtcnQlHlfYvmmyMphPFBg9JL7jQNurIcS_md605Cu_MlO6nLtD62a0x5rZ7yyiGXEDpKLM2GEbmGAQw"/>
+<span>Admin</span>
+</div>
+</td>
+<td class="p-2">SKU-C +他1件</td>
+<td class="p-2 text-right font-medium text-gray-500">0</td>
+<td class="p-2 text-center text-gray-400">-</td>
+<td class="p-2 text-center">
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 group transition-colors">
+<td class="p-2 text-center">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">description</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TRX-99350</a></td>
+<td class="p-2 whitespace-nowrap">2026-02-21 10:15</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-purple-100">棚卸実施</span>
+</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-gray-100">保留</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TASK-108</a></td>
+<td class="p-2 text-gray-400">-</td>
+<td class="p-2">Gifu</td>
+<td class="p-2">
+<div class="flex items-center space-x-1">
+<img alt="Suzuki" class="w-4 h-4 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAftxgf64DV8LrBDqvET_4Yd8TDKQnTUUi32r3VTXIBYm9gufyDQLYLZXXuRXVEFabtEheGrJl7e7JdnsiH36LcSspcRDOytZXO-9_0IZNm2ngIblgJazf0_7n9gkab_Nu037I4EPzKvNHFoX01JfeQkkv0DLhZIxEgh8zuH2TRaHCq5vyvLukW_j2zKUMbkjN9YZXZqD_qLlQbWwBDRUOyioRLrzuU7wU2pvpZXz8VewBnOXJXsTpTxlEkkRJ4TrulyzCLDNwaw"/>
+<span>Suzuki</span>
+</div>
+</td>
+<td class="p-2">SKU-PRD</td>
+<td class="p-2 text-right font-medium">+150</td>
+<td class="p-2 text-center font-medium">2026-02-21</td>
+<td class="p-2 text-center">
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 group transition-colors">
+<td class="p-2 text-center">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">description</span>
+</td>
+<td class="p-2"><a class="clean-link" href="#">TRX-99342</a></td>
+<td class="p-2 whitespace-nowrap">2026-02-20 09:20</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-teal-100">在庫調整</span>
+</td>
+<td class="p-2 whitespace-nowrap">
+<span class="badge-base bg-green-100">完了</span>
+</td>
+<td class="p-2 text-gray-400">-</td>
+<td class="p-2 text-gray-400">-</td>
+<td class="p-2">Gifu</td>
+<td class="p-2">
+<div class="flex items-center space-x-1">
+<img alt="Admin" class="w-4 h-4 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuIP1Zt9UrnGVknre0g2FIHxWnm27Ddcxqp61bpUGbie9z9bNZr8ezA2oBMqHeTS-LaAy1ZVAO9DLSW_fzWnJMY_sOiT0jcvV2MC_FuV7G4fp1Qr62uub1doAYTg6-E6sYCtj55gJb_bwcrMrdWktt5CHzGDJ3e-egYNBNoNcgL0cWSBFaMKX84Iq-iosR12TKa3uFzcyD7DN_2yrykvjNDqsFiEWiYrBAfe4UT7zuRWERT9sQtCK2pzKByjDsl0bIbye1iPG7cA"/>
+<span>Admin</span>
+</div>
+</td>
+<td class="p-2">SKU-X</td>
+<td class="p-2 text-right font-medium text-red-600 dark:text-red-400">-5</td>
+<td class="p-2 text-center text-gray-400">-</td>
+<td class="p-2 text-center">
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 flex items-center justify-center space-x-4">
+<button class="text-gray-400 hover:text-gray-600 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">first_page</span>
+</button>
+<button class="text-gray-400 hover:text-gray-600 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center space-x-2 text-sm">
+<span class="text-gray-500 dark:text-gray-400">1 - 20 件表示</span>
+<span class="text-gray-300">|</span>
+<span class="text-gray-500 dark:text-gray-400">全 84 件</span>
+</div>
+<button class="text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<button class="text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">last_page</span>
+</button>
+</div>
+</main>
+<button class="fixed bottom-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-50 transition-all z-50" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined dark:text-yellow-400">brightness_medium</span>
+</button>
+
+</body></html>
