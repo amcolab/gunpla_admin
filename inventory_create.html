@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>在庫管理アプリ｜レコード追加</title>
+  <style>
+    :root{
+      --k-yellow:#f5d400;
+      --k-gray:#f3f5f7;
+      --k-line:#e6e9ee;
+      --k-text:#222;
+      --k-sub:#667085;
+      --k-btn:#2d7ff9;
+      --k-btn2:#e9eef6;
+      --k-card:#fff;
+      --k-shadow:0 6px 18px rgba(16,24,40,.08);
+      --k-radius:10px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+      color:var(--k-text);
+      background:#fff;
+    }
+
+    .topbar{
+      height:56px;
+      background:var(--k-yellow);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 16px;
+    }
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .hamburger{width:18px;height:12px;position:relative;}
+    .hamburger:before,.hamburger:after,.hamburger div{
+      content:"";position:absolute;left:0;right:0;height:2px;background:#111;border-radius:2px;
+    }
+    .hamburger:before{top:0}
+    .hamburger div{top:5px}
+    .hamburger:after{bottom:0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:#111}
+    .brand .logo{width:22px;height:22px;border-radius:5px;background:#111;position:relative;}
+    .brand .logo:after{content:"";position:absolute;inset:5px;border-radius:3px;background:var(--k-yellow);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .avatar{width:28px;height:28px;border-radius:999px;background:#1111;border:1px solid #0002;}
+    .user{
+      font-size:13px;color:#111;background:#fff6;border-radius:999px;
+      padding:6px 10px;border:1px solid #0001;
+    }
+
+    .apphead{
+      background:#fff;
+      border-bottom:1px solid var(--k-line);
+      padding:16px 18px 12px 18px;
+    }
+    .apphead-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .apptitle{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;}
+    .appicon{
+      width:34px;height:34px;border-radius:8px;background:#ffefe0;border:1px solid #ffd7b3;
+      display:flex;align-items:center;justify-content:center;color:#b45309;font-weight:800;
+    }
+    .crumb{margin-top:8px;font-size:12px;color:var(--k-sub);}
+
+    .wrap{background:var(--k-gray);padding:18px 12px 40px;min-height:calc(100vh - 56px - 78px);}
+    .toolbar{max-width:980px;margin:0 auto 12px auto;display:flex;align-items:center;gap:10px;}
+    .btn{
+      border:1px solid transparent;background:var(--k-btn);color:#fff;
+      padding:9px 14px;border-radius:8px;font-size:13px;cursor:pointer;
+    }
+    .btn.secondary{background:#fff;color:#111;border-color:var(--k-line);}
+    .btn.ghost{background:var(--k-btn2);color:#163a6b;border-color:#d6e3ff;}
+
+    .card{
+      max-width:980px;margin:0 auto;background:var(--k-card);
+      border:1px solid var(--k-line);border-radius:var(--k-radius);
+      box-shadow:var(--k-shadow);padding:18px 18px 8px;
+    }
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;align-items:start;}
+    .field{display:flex;flex-direction:column;gap:6px;}
+    .label{font-size:12px;color:#111;display:flex;align-items:center;gap:6px;}
+    .req{
+      font-size:11px;color:#b42318;background:#fee4e2;border:1px solid #fecdca;
+      padding:1px 6px;border-radius:999px;
+    }
+    .hint{font-size:11px;color:var(--k-sub);}
+    input{
+      width:100%;height:36px;border:1px solid #d0d5dd;border-radius:8px;
+      background:#fff;padding:0 10px;font-size:13px;outline:none;
+    }
+    input[readonly]{background:#f7f8fa;color:#6b7280;}
+    .section{margin-top:16px;border-top:1px dashed var(--k-line);padding-top:16px;}
+    .section-title{
+      font-size:13px;font-weight:700;color:#111;margin:0 0 10px 0;
+      display:flex;align-items:center;gap:8px;
+    }
+    .pill{
+      font-size:11px;color:#475467;background:#f2f4f7;border:1px solid #eaecf0;
+      padding:2px 8px;border-radius:999px;font-weight:600;
+    }
+    .inline{display:flex;gap:8px;align-items:center;}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+      padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;
+    }
+    .tag.ok{border-color:#a6f4c5;background:#ecfdf3;color:#067647}
+    .tag.warn{border-color:#fedf89;background:#fffaeb;color:#b54708}
+    .tag.bad{border-color:#fecdca;background:#fef3f2;color:#b42318}
+    .dot{width:8px;height:8px;border-radius:99px;background:currentColor;display:inline-block;}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="hamburger"><div></div></div>
+      <div class="brand"><div class="logo"></div><div>kintone</div></div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar"></div>
+      <div class="user">Administrator</div>
+    </div>
+  </div>
+
+  <div class="apphead">
+    <div class="apphead-row">
+      <div>
+        <div class="apptitle"><div class="appicon">在</div><div>在庫管理アプリ</div></div>
+        <div class="crumb">アプリ: 在庫管理アプリ　›　レコード追加</div>
+      </div>
+      <div style="font-size:12px;color:var(--k-sub)">2026-02-22 更新</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="btn secondary">キャンセル</button>
+      <button class="btn">保存</button>
+      <button class="btn ghost">一時保存</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">商品情報 <span class="pill">参照のみ</span></div>
+
+      <div class="grid">
+        <div class="field">
+          <div class="label">商品SKU <span class="req">必須</span></div>
+          <input value="PROD-NEW-001" readonly />
+          <div class="hint">Product Master から参照（編集不可）。</div>
+        </div>
+
+        <div class="field">
+          <div class="label">商品名</div>
+          <input value="New Product 1" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">商品区分</div>
+          <input value="完成品" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">カテゴリー</div>
+          <input value="Rice Silica" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">単位</div>
+          <input value="本" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">原価単価（¥）</div>
+          <input value="850" readonly />
+          <div class="hint">商品マスタの原価を参照（編集不可）。</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">在庫情報 <span class="pill">論理在庫（利用可能）</span></div>
+
+        <div class="grid">
+          <div class="field">
+            <div class="label">在庫数量（利用可能）</div>
+            <input value="3000" readonly />
+            <div class="hint">在庫数量は「在庫数量＝利用可能数」として扱う（現仕様）。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">在庫警告しきい値 <span class="req">必須</span></div>
+            <input value="500" />
+            <div class="hint">完成品は PO 発注点ではなく、運用上の警告ラインとして使用。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">総在庫金額（¥）</div>
+            <input value="2550000" readonly />
+            <div class="hint">在庫数量（利用可能）× 原価単価（マスタ）の計算。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">在庫ステータス</div>
+            <div class="inline" style="height:36px">
+              <span class="tag warn"><span class="dot"></span>在庫少ない</span>
+              <span class="hint" style="margin-left:8px">例: 在庫数量 ≤ 在庫警告しきい値</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="label">棚卸実施日</div>
+            <input type="date" value="2026-02-22" />
+            <div class="hint">棚卸を実施した日だけ入力/更新（調整や入出庫では更新しない）。</div>
+          </div>
+
+          <div class="field" style="grid-column:1/-1">
+            <div class="label">備考</div>
+            <input placeholder="任意メモ（運用用）" />
+          </div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+    </div>
+  </div>
+
+  <script>
+    // mock only: calc total value = qty * unit cost
+    (function(){
+      const qty = document.querySelector('input[readonly][value="3000"]');
+      const unit = document.querySelector('input[readonly][value="850"]');
+      const total = document.querySelector('input[readonly][value="2550000"]');
+      if(!qty || !unit || !total) return;
+      const recalc = () => {
+        const q = Number(String(qty.value).replace(/,/g,'')) || 0;
+        const u = Number(String(unit.value).replace(/,/g,'')) || 0;
+        total.value = String(q * u);
+      };
+      recalc();
+    })();
+  </script>
+</body>
+</html>
