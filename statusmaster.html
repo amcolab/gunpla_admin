@@ -504,65 +504,158 @@
     </div>
 
     <!-- 3. Task -->
-    <h2 id="task-status" class="section-title">3. タスク管理アプリ ステータス</h2>
-    <p class="note">
-      Flow4〜Flow8 に登場する倉庫タスク（Picking／Putaway／X-In／X-Out／Transfer など）の共通ステータス。
-    </p>
+<h2 id="task-status" class="section-title">3. タスク管理アプリ ステータス</h2>
+<p class="note">
+  Flow4〜Flow8 に登場する倉庫タスクの共通ステータス。
+</p>
 
-    <div class="status-card">
-      <div class="status-card-header">
-        <div class="status-card-title">タスク状態（<code>task_status</code>）</div>
-        <div class="status-card-tag">対象: タスク管理アプリ</div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>コード</th>
-            <th>ステータス名</th>
-            <th>説明</th>
-            <th>備考</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>PENDING</code></td>
-            <td>未開始</td>
-            <td>タスクが生成されたが、倉庫担当がまだ作業を開始していない状態。</td>
-            <td>新規作成時の初期値。</td>
-          </tr>
-          <tr>
-            <td><code>IN_PROGRESS</code></td>
-            <td>作業中</td>
-            <td>倉庫担当が Scan UI 上でタスクを開き、スキャン作業を進行中。</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td><code>PARTIAL</code></td>
-            <td>部分完了</td>
-            <td>指示数量の一部のみ処理された状態（スキャン不足など）。</td>
-            <td>Flow8 特殊ケース「スキャン不足」に相当。</td>
-          </tr>
-          <tr>
-            <td><code>COMPLETED</code></td>
-            <td>完了</td>
-            <td>指示数量が処理され、実在庫・論理在庫の更新が完了した状態。</td>
-            <td>Ruby_Server が入出庫履歴アプリに実績を記録。</td>
-          </tr>
-          <tr>
-            <td><code>CANCELLED</code></td>
-            <td>キャンセル</td>
-            <td>元の Order／PO／Movement がキャンセルされ、タスクが停止された状態。</td>
-            <td>Flow9 のキャンセル処理時に利用。</td>
-          </tr>
-          <tr>
-            <td><code>ERROR</code></td>
-            <td>エラー</td>
-            <td>スキャン結果と論理在庫の不整合など、システムで処理できなかった状態。</td>
-            <td>運用担当者が確認・再処理を行う。</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="status-card">
+  <div class="status-card-header">
+    <div class="status-card-title">タスク状態（<code>task_status</code>）</div>
+    <div class="status-card-tag">対象: タスク管理アプリ</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>コード</th>
+        <th>ステータス名</th>
+        <th>説明</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>PENDING</code></td>
+        <td>未開始</td>
+        <td>タスクが生成されたが、倉庫担当がまだ作業を開始していない状態。</td>
+        <td>新規作成時の初期値。</td>
+      </tr>
+      <tr>
+        <td><code>IN_PROGRESS</code></td>
+        <td>作業中</td>
+        <td>倉庫担当が Scan UI 上でタスクを開き、スキャン作業を進行中。</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>PARTIAL</code></td>
+        <td>部分完了</td>
+        <td>指示数量の一部のみ処理された状態（スキャン不足など）。</td>
+        <td>Flow8 特殊ケース「スキャン不足」に相当。</td>
+      </tr>
+      <tr>
+        <td><code>COMPLETED</code></td>
+        <td>完了</td>
+        <td>指示数量が処理され、実在庫・論理在庫の更新が完了した状態。</td>
+        <td>Ruby_Server が入出庫履歴アプリに実績を記録。</td>
+      </tr>
+      <tr>
+        <td><code>CANCELLED</code></td>
+        <td>キャンセル</td>
+        <td>元の指示元がキャンセルされ、タスクが停止された状態。</td>
+        <td>Flow9 のキャンセル処理時に利用。</td>
+      </tr>
+      <tr>
+        <td><code>ERROR</code></td>
+        <td>エラー</td>
+        <td>スキャン結果と在庫整合性の不一致など、システムで処理できなかった状態。</td>
+        <td>運用担当者が確認・再処理を行う。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3.1 Task Type -->
+<h3 id="task-type" class="section-subtitle">3.1 タスク管理アプリ 種別</h3>
+      <p style="color:#DC2626; font-weight:600; margin-bottom:8px;">
+  ※ 更新日: 2026/02/22
+</p>
+<p class="note">
+  タスク管理アプリで扱う倉庫作業の種別（<code>task_type</code>）。
+  入出庫履歴アプリの <code>io_type</code> と同じ命名を採用し、タスク完了時に対応する入出庫履歴が作成される前提。
+</p>
+
+<div class="status-card">
+  <div class="status-card-header">
+    <div class="status-card-title">タスク種別（<code>task_type</code>）</div>
+    <div class="status-card-tag">対象: タスク管理アプリ</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>コード</th>
+        <th>種別名</th>
+        <th>説明</th>
+        <th>主な発生元</th>
+        <th>対応 Flow</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>IN_PURCHASE</code></td>
+        <td>入庫（購買）</td>
+        <td>仕入 PO に紐づく入庫タスク。</td>
+        <td>発注アプリ</td>
+        <td>Flow5, Flow8</td>
+      </tr>
+      <tr>
+        <td><code>IN_PRODUCTION</code></td>
+        <td>入庫（製造）</td>
+        <td>製造完了に伴う完成品入庫タスク。</td>
+        <td>製造実績アプリ</td>
+        <td>Flow4, Flow8</td>
+      </tr>
+      <tr>
+        <td><code>IN_RETURN</code></td>
+        <td>返品入庫</td>
+        <td>販売返品に伴う再入庫タスク。</td>
+        <td>入出庫履歴アプリ</td>
+        <td>Flow6, Flow9</td>
+      </tr>
+      <tr>
+        <td><code>OUT_SALES</code></td>
+        <td>出庫（販売）</td>
+        <td>販売出荷に伴う出庫タスク。</td>
+        <td>注文アプリ</td>
+        <td>Flow1, Flow8</td>
+      </tr>
+      <tr>
+        <td><code>OUT_SAMPLE</code></td>
+        <td>サンプル出荷</td>
+        <td>試供品・サンプル出荷タスク。</td>
+        <td>入出庫履歴アプリ</td>
+        <td>Flow6, Flow8, Flow9</td>
+      </tr>
+      <tr>
+        <td><code>OUT_PRODUCTION</code></td>
+        <td>出庫（製造）</td>
+        <td>製造に使用する原材料の出庫タスク。</td>
+        <td>製造実績アプリ</td>
+        <td>Flow4</td>
+      </tr>
+      <tr>
+        <td><code>TRANSFER</code></td>
+        <td>棚移動</td>
+        <td>同一倉庫内で Location 間の移動タスク（同一 LOT 前提）。</td>
+        <td>入出庫履歴アプリ</td>
+        <td>Flow6</td>
+      </tr>
+      <tr>
+        <td><code>ADJUSTMENT</code></td>
+        <td>在庫調整</td>
+        <td>棚卸差異・実在庫修正などの調整タスク（±数量）。</td>
+        <td>入出庫履歴アプリ</td>
+        <td>Flow6, Flow9</td>
+      </tr>
+      <tr>
+        <td><code>DISPOSAL</code></td>
+        <td>廃棄</td>
+        <td>破損・期限切れなどによる廃棄タスク。</td>
+        <td>入出庫履歴アプリ</td>
+        <td>Flow9</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
     <!-- 4. IO History -->
     <h2 id="io-history-status" class="section-title">4. 入出庫履歴アプリ ステータス・種別</h2>
