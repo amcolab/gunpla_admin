@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>在庫実績管理 - 初期在庫登録</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --kintone-yellow: #f7d43f;
+            --kintone-blue: #3498db;
+            --kintone-header-bg: #f5f5f5;
+            --kintone-border: #e3e7e8;
+            --kintone-text-label: #333333;
+            --kintone-input-bg: #ffffff;
+            --kintone-readonly-bg: #f5f5f5;
+            --kintone-error-red: #e74c3c;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .kintone-field-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--kintone-text-label);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .kintone-input {
+            border: 1px solid var(--kintone-border);
+            border-radius: 0;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100%;
+            height: 40px;
+        }
+        .kintone-input:focus {
+            border-color: var(--kintone-blue);
+            outline: none;
+            box-shadow: none;
+        }
+        .kintone-input-readonly {
+            background-color: var(--kintone-readonly-bg);
+            border-color: #e3e7e8;
+            color: #666;
+        }
+        .kintone-lookup-btn {
+            background-color: #f7f9fa;
+            border: 1px solid var(--kintone-border);
+            padding: 0 16px;
+            font-size: 14px;
+            height: 40px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .kintone-lookup-btn:hover {
+            background-color: #ebeef0;
+        }
+        .section-header {
+            border-left: 6px solid var(--kintone-blue);
+            padding-left: 12px;
+            margin-bottom: 24px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--kintone-blue);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .warning-banner {
+            background-color: #fff9db;
+            border: 1px solid #f7d43f;
+            color: #856404;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<header class="bg-[var(--kintone-yellow)] h-12 flex items-center justify-between px-4 border-b border-black/10 shadow-sm relative z-50">
+<div class="flex items-center gap-4">
+<div class="bg-white p-1 rounded shadow-inner">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-xl leading-none">inventory_2</span>
+</div>
+<span class="font-bold text-gray-800 tracking-tight">Kintone</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-700">search</span>
+<span class="material-symbols-outlined text-gray-700">notifications</span>
+<span class="material-symbols-outlined text-gray-700">help_outline</span>
+<div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">JD</div>
+</div>
+</header>
+<nav class="bg-white border-b border-[var(--kintone-border)] px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+<div class="flex items-center gap-2 text-sm">
+<a class="text-[var(--kintone-blue)] hover:underline" href="#">在庫実績管理</a>
+<span class="text-gray-400">/</span>
+<span class="font-bold text-gray-700">初期在庫の登録</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-[#f7f9fa] border border-[var(--kintone-border)] px-6 py-2 text-sm font-medium hover:bg-gray-100 transition-colors">キャンセル</button>
+<button class="bg-[var(--kintone-blue)] text-white px-8 py-2 text-sm font-bold shadow-md hover:bg-blue-600 transition-colors">保存</button>
+</div>
+</nav>
+<main class="max-w-6xl mx-auto p-8">
+<div class="bg-white shadow-sm border border-[var(--kintone-border)] p-8">
+<div class="warning-banner">
+<span class="material-symbols-outlined text-xl">warning</span>
+<span>※本画面は初期在庫の登録のみに使用してください。</span>
+</div>
+<div class="section-header">初期登録情報 (商品・資材モード)</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+<div class="space-y-6">
+<div>
+<label class="kintone-field-label">区分 <span class="text-red-500 font-normal ml-1">★</span></label>
+<select class="kintone-input cursor-pointer">
+<option selected="" value="商品">商品</option>
+<option value="資材">資材</option>
+</select>
+</div>
+<div>
+<label class="kintone-field-label">商品・資材選択 <span class="text-red-500 font-normal ml-1">★</span></label>
+<div class="flex gap-1">
+<input class="kintone-input flex-grow" placeholder="コードを入力" type="text" value="PRD-RS500"/>
+<button class="kintone-lookup-btn">参照</button>
+<button class="kintone-lookup-btn text-gray-400 px-2">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<p class="text-[10px] text-gray-400 mt-1 italic">※区分に基づいたマスタを参照します</p>
+</div>
+<div>
+<label class="kintone-field-label">商品・資材名</label>
+<input class="kintone-input kintone-input-readonly" readonly="" type="text" value="RSシリーズ500mL ボトル-乳白"/>
+</div>
+<div>
+<label class="kintone-field-label">カテゴリー</label>
+<input class="kintone-input kintone-input-readonly" readonly="" type="text" value="容器・ボトル"/>
+</div>
+<div>
+<label class="kintone-field-label">倉庫 <span class="text-red-500 font-normal ml-1">★</span></label>
+<div class="flex gap-1">
+<input class="kintone-input flex-grow" placeholder="倉庫を選択してください" type="text" value="岐阜倉庫"/>
+<button class="kintone-lookup-btn">参照</button>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<label class="kintone-field-label">棚コード <span class="text-red-500 font-normal ml-1">★</span></label>
+<div class="flex gap-1">
+<input class="kintone-input flex-grow" type="text" value="G02-001"/>
+<button class="kintone-lookup-btn">参照</button>
+</div>
+</div>
+<div>
+<label class="kintone-field-label">LOT番号</label>
+<input class="kintone-input" placeholder="例：LOT20231025" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="kintone-field-label">在庫数量 <span class="text-red-500 font-normal ml-1">★</span></label>
+<input class="kintone-input text-right" type="number" value="100"/>
+</div>
+<div>
+<label class="kintone-field-label">単位</label>
+<input class="kintone-input kintone-input-readonly text-center" readonly="" type="text" value="本"/>
+</div>
+</div>
+<div>
+<label class="kintone-field-label">使用期限</label>
+<div class="relative">
+<input class="kintone-input" type="date"/>
+</div>
+</div>
+<div>
+<label class="kintone-field-label">入庫日 <span class="text-red-500 font-normal ml-1">★</span></label>
+<div class="relative">
+<input class="kintone-input" type="date" value="2023-10-31"/>
+</div>
+<p class="text-[10px] text-gray-400 mt-1 italic">※デフォルトは本日日付です</p>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-6 border-t border-dashed border-[var(--kintone-border)] flex justify-end">
+<span class="text-xs text-gray-400">最終更新: 2023-10-31 10:00 (自動設定)</span>
+</div>
+</div>
+</main>
+<div class="h-20"></div>
+
+</body></html>
