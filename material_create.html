@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>資材マスタ | レコード追加</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8E44AD",
+                        kintone: {
+                            blue: "#3498DB",
+                            light: "#F7F9FA",
+                            border: "#E3E7E8",
+                            header: "#7D3C98",
+                            label: "#333333",
+                            input: "#FFFFFF",
+                            section: "#3498DB"
+                        },
+                        "background-light": "#F7F9FA",
+                        "background-dark": "#1A1A1B",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Hiragino Sans", "Meiryo", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', 'Hiragino Sans', 'Meiryo', sans-serif; }
+        .form-label {
+            @apply block text-[13px] font-bold text-gray-700 mb-1;
+        }
+        .form-input {
+            @apply w-full border border-[#E3E7E8] p-2 text-[14px] focus:ring-1 focus:ring-kintone-blue focus:border-kintone-blue outline-none rounded-sm;
+        }
+        .form-input-readonly {
+            @apply w-full border border-[#E3E7E8] p-2 text-[14px] bg-[#F5F5F5] text-gray-500 cursor-not-allowed outline-none rounded-sm;
+        }
+        .required-badge {
+            @apply inline-block bg-red-500 text-white text-[10px] px-1 ml-1 align-middle rounded-sm font-normal;
+        }
+        .section-title {
+            @apply text-kintone-blue font-bold text-[15px] border-b border-gray-200 pb-1 mb-4 flex items-center gap-2;
+        }
+        .kintone-btn-cancel {
+            @apply bg-white border border-gray-300 text-gray-700 px-6 py-2 text-sm font-bold hover:bg-gray-50;
+        }
+        .kintone-btn-save {
+            @apply bg-kintone-blue text-white px-8 py-2 text-sm font-bold hover:bg-[#2980B9];
+        }
+        .lookup-btn {
+            @apply bg-[#F7F9FA] border border-[#E3E7E8] px-3 text-[13px] text-gray-600 hover:bg-gray-100 border-l-0;
+        }
+        .user-selection {
+            @apply flex items-center gap-2 border border-[#E3E7E8] p-1 bg-white rounded-sm;
+        }
+    </style>
+</head>
+<body class="bg-[#F7F9FA] dark:bg-background-dark text-gray-800">
+<header class="bg-primary text-white h-12 flex items-center justify-between px-4 shadow-sm sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="bg-white p-1 rounded-sm">
+<span class="material-symbols-outlined text-primary text-xl leading-none">inventory_2</span>
+</div>
+<div class="flex items-center text-sm font-medium">
+<span class="opacity-80">アプリ: 資材マスタ</span>
+<span class="mx-2 text-xs opacity-60"> &gt; </span>
+<span class="font-bold">レコード追加</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="kintone-btn-cancel">キャンセル</button>
+<button class="kintone-btn-save shadow-sm">保存</button>
+</div>
+</header>
+<main class="max-w-6xl mx-auto p-6 bg-white my-4 shadow-sm border border-gray-200 min-h-[calc(100vh-8rem)]">
+<div class="mb-10">
+<h2 class="section-title">
+<span class="material-symbols-outlined text-lg">info</span>
+            基本情報
+        </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+<div>
+<label class="form-label">資材ID</label>
+<input class="form-input-readonly" readonly="" type="text" value="（自動採番）"/>
+<p class="text-[10px] text-gray-400 mt-1">※保存時に自動で生成されます</p>
+</div>
+<div>
+<label class="form-label">資材コード<span class="required-badge">必須</span></label>
+<input class="form-input" placeholder="例: RM-001" type="text"/>
+</div>
+<div class="md:col-span-1">
+<label class="form-label">資材名<span class="required-badge">必須</span></label>
+<input class="form-input" placeholder="資材の名称を入力" type="text"/>
+</div>
+<div class="md:col-span-1">
+<label class="form-label">資材区分<span class="required-badge">必須</span></label>
+<select class="form-input">
+<option value="">-- 選択してください --</option>
+<option selected="">原料</option>
+<option>パッケージ</option>
+<option>ボトル</option>
+<option>OEM資材</option>
+</select>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<h2 class="section-title">
+<span class="material-symbols-outlined text-lg">settings_suggest</span>
+            仕様情報
+        </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+<div>
+<label class="form-label">型番</label>
+<input class="form-input" type="text"/>
+</div>
+<div>
+<label class="form-label">メーカー</label>
+<div class="flex">
+<input class="form-input" placeholder="メーカーを選択" type="text"/>
+<button class="lookup-btn">取得</button>
+</div>
+</div>
+<div>
+<label class="form-label">基本単位<span class="required-badge">必須</span></label>
+<select class="form-input">
+<option value="">-- 選択してください --</option>
+<option>kg</option>
+<option>g</option>
+<option selected="">個</option>
+<option>枚</option>
+<option>本</option>
+<option>袋</option>
+<option>箱</option>
+<option>セット</option>
+</select>
+</div>
+<div>
+<label class="form-label">重量</label>
+<input class="form-input" placeholder="例: 20kg/袋" type="text"/>
+</div>
+<div>
+<label class="form-label">入数/cs</label>
+<input class="form-input text-right" placeholder="0" type="number"/>
+</div>
+<div class="md:col-span-2">
+<label class="form-label">兼用資材・商品特徴</label>
+<textarea class="form-input min-h-[100px]" placeholder="商品の特徴や用途などを入力してください"></textarea>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<h2 class="section-title">
+<span class="material-symbols-outlined text-lg">shopping_cart</span>
+            購買情報
+        </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+<div>
+<label class="form-label">原価単価（税抜）<span class="required-badge">必須</span></label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-gray-400 text-sm">¥</span>
+<input class="form-input pl-7 text-right" placeholder="0" type="number"/>
+</div>
+</div>
+<div>
+<label class="form-label">発注ロット</label>
+<input class="form-input text-right" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="form-label">発注点</label>
+<input class="form-input text-right" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="form-label">発注担当者<span class="required-badge">必須</span></label>
+<div class="user-selection group cursor-pointer border-red-200 hover:border-kintone-blue">
+<span class="material-symbols-outlined text-gray-400">person_add</span>
+<span class="text-[13px] text-gray-500">ユーザーを選択</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-6">
+<h2 class="section-title">
+<span class="material-symbols-outlined text-lg">inventory</span>
+            運用情報
+        </h2>
+<div>
+<label class="form-label">在庫管理</label>
+<div class="flex items-center gap-6 mt-2">
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="form-radio text-kintone-blue h-4 w-4 border-gray-300 focus:ring-kintone-blue" name="stock_mgmt" type="radio" value="あり"/>
+<span class="ml-2 text-sm">あり</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input class="form-radio text-kintone-blue h-4 w-4 border-gray-300 focus:ring-kintone-blue" name="stock_mgmt" type="radio" value="なし"/>
+<span class="ml-2 text-sm">なし</span>
+</label>
+</div>
+</div>
+</div>
+</main>
+<footer class="h-16 flex items-center justify-center gap-4 bg-[#F7F9FA] border-t border-gray-200 sticky bottom-0 z-50">
+<button class="kintone-btn-cancel">キャンセル</button>
+<button class="kintone-btn-save shadow-sm">保存</button>
+</footer>
+
+</body></html>
