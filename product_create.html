@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>商品データベース - レコード追加</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --kintone-purple: #7030a0;
+            --kintone-yellow: #fbc02d;
+            --kintone-blue: #3498db;
+            --kintone-blue-hover: #2980b9;
+            --kintone-border: #e3e7e8;
+            --kintone-bg-light: #f5f5f5;
+            --kintone-text: #333333;
+            --kintone-required: #e74c3c;
+            --kintone-header-blue: #3498db;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .kintone-input {
+            border: 1px solid #e3e7e8;
+            padding: 6px 8px;
+            font-size: 14px;
+            border-radius: 0;
+            width: 100%;
+            background-color: #fff;
+        }
+        .kintone-input:focus {
+            outline: none;
+            border-color: var(--kintone-blue);
+            box-shadow: none;
+        }
+        .kintone-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+        .required-badge {
+            background-color: var(--kintone-required);
+            color: white;
+            font-size: 10px;
+            padding: 0 4px;
+            margin-left: 4px;
+            border-radius: 2px;
+        }
+        .section-header {
+            background-color: var(--kintone-header-blue);
+            color: white;
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
+        }
+        .file-upload-btn {
+            background-color: #f7f9fa;
+            border: 1px solid #e3e7e8;
+            padding: 4px 12px;
+            font-size: 13px;
+            color: #3498db;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .file-upload-btn:hover {
+            background-color: #eff2f3;
+        }
+    </style>
+</head>
+<body class="text-[var(--kintone-text)]">
+<header class="h-12 bg-[var(--kintone-purple)] flex items-center justify-between px-4 text-white">
+<div class="flex items-center space-x-3">
+<div class="bg-white p-1 rounded">
+<img alt="App Icon" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYiWAWexiAlcSYilrmUXgoIaHnvdzEcfS4brirIuza5YiuFLAU4Ov2SjoHbSKhGCTXWON3JBNiCdDdyhoH4l1i8wL368kpbFxvuSJpshw7klcCcLH2SiY2jo0U9gY8ZsWlhMyc323pJoGnrPh61yGB3A6mu5Oy5eonkvpd0ASobZ49mL2lvQUYaTzdR1cscwYwUjag1Wws9S2T5tsxCugX9c7w0_6XDQurNw2pvShn__WeSE1bpUnJ_neFvx9BLPRBnePkJn_Png"/>
+</div>
+<h1 class="font-bold text-lg">商品データベース</h1>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined cursor-pointer">search</span>
+<span class="material-symbols-outlined cursor-pointer">notifications</span>
+<span class="material-symbols-outlined cursor-pointer">settings</span>
+<div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden border border-white">
+<img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR9r16GnCz_W0qqaS5-8qvDz5SnNtylBMIZ15lQMjV10aWNNI_nZP7VpIm6yqzsu6fFcw2JhYfRvhBc3xxgw48OYdnZMaZkS_-qhsOR3hm0vZW26svdXPXNBapagldl3S-V9Y1vFn4RRv2sy2yKcZCDxKIXaUnQPA0txCmoTRvj_vqqFpMDeIrlJ-lQyDlPtu28kr8W2Ier3Q8hmmBF-w3ajsZa-CbQDyC407ytJrGIaMbfc_V5o2vcW5gOi7YfpzPdz0SurnLTQ"/>
+</div>
+</div>
+</header>
+<div class="h-1 bg-[var(--kintone-yellow)] w-full"></div>
+<nav class="bg-[var(--kintone-bg-light)] border-b border-[var(--kintone-border)] px-4 py-2 flex items-center justify-between">
+<div class="flex items-center text-sm">
+<span class="material-symbols-outlined text-base mr-1">home</span>
+<span class="mx-1 text-gray-400">/</span>
+<span class="text-gray-600">アプリ: 商品データベース</span>
+<span class="mx-1 text-gray-400">&gt;</span>
+<span class="font-bold">レコード追加</span>
+</div>
+<div class="flex items-center space-x-2">
+<button class="px-6 py-1.5 bg-white border border-gray-300 text-sm hover:bg-gray-50">キャンセル</button>
+<button class="px-8 py-1.5 bg-[var(--kintone-blue)] text-white text-sm font-bold hover:bg-[var(--kintone-blue-hover)]">保存</button>
+</div>
+</nav>
+<main class="p-6 max-w-6xl mx-auto pb-24">
+<div class="bg-white border border-[var(--kintone-border)] shadow-sm">
+<div class="section-header">基本情報</div>
+<div class="p-6 grid grid-cols-2 gap-x-12 gap-y-6">
+<div class="space-y-6">
+<div>
+<label class="kintone-label">商品ID</label>
+<input class="kintone-input" placeholder="自動採番または手動入力" type="text"/>
+</div>
+<div>
+<label class="kintone-label">商品名<span class="required-badge">必須</span></label>
+<input class="kintone-input" required="" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="kintone-label">SKU<span class="required-badge">必須</span></label>
+<input class="kintone-input" required="" type="text"/>
+</div>
+<div>
+<label class="kintone-label">JAN/EANコード</label>
+<input class="kintone-input" placeholder="45XXXXXXXXXXX" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="kintone-label">カテゴリー</label>
+<select class="kintone-input">
+<option value="Rice Silica">Rice Silica</option>
+<option value="Rice Silica PREMIUM">Rice Silica PREMIUM</option>
+<option value="Si+">Si+</option>
+<option value="Dr's Power">Dr's Power</option>
+</select>
+</div>
+<div>
+<label class="kintone-label">容量</label>
+<input class="kintone-input" placeholder="500ml" type="text"/>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<label class="kintone-label">販売ステータス</label>
+<select class="kintone-input">
+<option selected="" value="下書き">下書き</option>
+<option value="販売中">販売中</option>
+<option value="販売終了">販売終了</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="kintone-label">販売価格</label>
+<div class="relative">
+<span class="absolute left-3 top-1.5 text-gray-500 text-sm">¥</span>
+<input class="kintone-input pl-7" placeholder="0" type="number"/>
+</div>
+</div>
+<div>
+<label class="kintone-label">単位</label>
+<select class="kintone-input">
+<option value="本">本</option>
+<option value="個">個</option>
+<option value="袋">袋</option>
+<option value="式">式</option>
+</select>
+</div>
+</div>
+<div>
+<label class="kintone-label">発送倉庫</label>
+<input class="kintone-input" type="text" value="岐阜倉庫"/>
+</div>
+<div>
+<label class="kintone-label">添付ファイル</label>
+<div class="flex items-center space-x-2">
+<label class="file-upload-btn">
+<span class="material-symbols-outlined text-[18px] mr-1">attach_file</span>
+                                参照
+                                <input class="hidden" type="file"/>
+</label>
+<span class="text-xs text-gray-500">ファイルを選択してください</span>
+</div>
+</div>
+</div>
+<div class="col-span-2">
+<label class="kintone-label">商品説明</label>
+<textarea class="kintone-input h-32 resize-none"></textarea>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--kintone-border)] p-3 flex justify-center space-x-2 z-10">
+<button class="px-6 py-1.5 bg-white border border-gray-300 text-sm hover:bg-gray-50">キャンセル</button>
+<button class="px-8 py-1.5 bg-[var(--kintone-blue)] text-white text-sm font-bold hover:bg-[var(--kintone-blue-hover)]">保存</button>
+</div>
+
+</body></html>
