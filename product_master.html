@@ -1,575 +1,257 @@
 <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品データベース - Kintone</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>商品データベース - 商品一覧</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --kintone-purple: #7030a0;
+            --kintone-blue: #3498db;
+            --kintone-blue-hover: #2980b9;
+            --kintone-border: #e3e7e8;
+            --kintone-bg-light: #f5f5f5;
+            --kintone-row-even: #fafafa;
+            --kintone-row-hover: #f0f7ff;
+            --kintone-text: #333333;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-            background-color: #e8e8e8;
-            color: #333;
-            font-size: 13px;
+            font-family: 'Noto Sans JP', sans-serif;
         }
-
-        /* Top Purple Header */
-        .kintone-header {
-            background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 100%);
-            height: 48px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .app-icon-circle {
-            width: 32px;
-            height: 32px;
-            background-color: white;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 18px;
-        }
-
-        .app-title-header {
-            color: white;
-            font-size: 16px;
+        .kintone-table th {
             font-weight: 500;
-        }
-
-        /* Secondary Navigation */
-        .secondary-nav {
-            background-color: #e8e8e8;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            border-bottom: 1px solid #d0d0d0;
-        }
-
-        .nav-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 3px;
-            margin-right: 12px;
-            color: #666;
-        }
-
-        .nav-icon:hover {
-            background-color: #d8d8d8;
-        }
-
-        .breadcrumb-text {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .nav-right {
-            margin-left: auto;
-            display: flex;
-            gap: 4px;
-        }
-
-        .nav-right .nav-icon {
-            margin-right: 0;
-        }
-
-        /* App Description Section */
-        .app-description {
-            background-color: #f8f8f8;
-            padding: 16px 20px;
-            border-bottom: 1px solid #d0d0d0;
-            font-size: 13px;
-            color: #666;
-        }
-
-        /* View Controls Bar */
-        .view-controls {
-            background-color: #fff;
-            padding: 12px 16px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .view-button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            min-width: 160px;
-        }
-
-        .view-button:hover {
-            background-color: #2980b9;
-        }
-
-        .view-icon {
-            font-size: 16px;
-        }
-
-        .view-text {
-            flex: 1;
-        }
-
-        .dropdown-arrow {
-            font-size: 10px;
-        }
-
-        .control-btn {
-            background: white;
-            border: 1px solid #d0d0d0;
-            padding: 7px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #666;
-            font-size: 13px;
-        }
-
-        .control-btn:hover {
-            background-color: #f8f8f8;
-        }
-
-        .control-btn-icon {
-            font-size: 16px;
-            color: #888;
-        }
-
-        .controls-right {
-            margin-left: auto;
-            display: flex;
-            gap: 8px;
-        }
-
-        .icon-only-btn {
-            width: 36px;
-            height: 36px;
-            background: white;
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-
-        .icon-only-btn:hover {
-            background-color: #f8f8f8;
-        }
-
-        /* Record Count */
-        .record-count {
-            background-color: #fff;
-            padding: 12px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            text-align: right;
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* Data Table */
-        .table-container {
-            background-color: #fff;
-            margin: 0;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        .data-table thead {
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .data-table th {
-            padding: 12px 16px;
+            background-color: var(--kintone-bg-light);
+            border-right: 1px solid var(--kintone-border);
+            border-bottom: 1px solid var(--kintone-border);
+            padding: 8px 12px;
             text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            color: #333;
-            border-right: 1px solid #e8e8e8;
+            font-size: 13px;
             white-space: nowrap;
         }
-
-        .data-table th:last-child {
-            border-right: none;
-        }
-
-        .data-table tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .data-table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .data-table td {
-            padding: 12px 16px;
+        .kintone-table td {
+            border-right: 1px solid var(--kintone-border);
+            border-bottom: 1px solid var(--kintone-border);
+            padding: 8px 12px;
             font-size: 13px;
-            color: #333;
-            border-right: 1px solid #f8f8f8;
+            vertical-align: middle;
         }
-
-        .data-table td:last-child {
-            border-right: none;
+        .kintone-table tr:hover {
+            background-color: var(--kintone-row-hover) !important;
         }
-
-        /* Link Style */
-        .record-link {
-            color: #3498db;
-            text-decoration: none;
-            cursor: pointer;
+        .kintone-table tr:nth-child(even) {
+            background-color: var(--kintone-row-even);
         }
-
-        .record-link:hover {
-            text-decoration: underline;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
         }
-
-        /* Empty State */
-        .empty-state {
-            padding: 60px 20px;
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-            background-color: white;
+        .no-underline {
+            text-decoration: none !important;
         }
-
-        /* Bottom Record Count */
-        .bottom-count {
-            background-color: #fff;
-            padding: 12px 20px;
-            border-top: 1px solid #e0e0e0;
-            text-align: right;
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* Status Badge */
-        .status-badge {
+        .cat-icon {
             display: inline-block;
-            padding: 3px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-discontinued {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .status-draft {
-            background-color: #fff3cd;
-            color: #856404;
+            width: 12px;
+            height: 12px;
+            margin-right: 6px;
+            border-radius: 2px;
+            vertical-align: middle;
         }
     </style>
 </head>
+<body class="bg-white text-[var(--kintone-text)]">
+<header class="h-12 bg-[var(--kintone-purple)] flex items-center justify-between px-4 text-white">
+<div class="flex items-center space-x-3">
+<div class="bg-white p-1 rounded">
+<img alt="App Icon" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYiWAWexiAlcSYilrmUXgoIaHnvdzEcfS4brirIuza5YiuFLAU4Ov2SjoHbSKhGCTXWON3JBNiCdDdyhoH4l1i8wL368kpbFxvuSJpshw7klcCcLH2SiY2jo0U9gY8ZsWlhMyc323pJoGnrPh61yGB3A6mu5Oy5eonkvpd0ASobZ49mL2lvQUYaTzdR1cscwYwUjag1Wws9S2T5tsxCugX9c7w0_6XDQurNw2pvShn__WeSE1bpUnJ_neFvx9BLPRBnePkJn_Png"/>
+</div>
+<h1 class="font-bold text-lg">商品データベース</h1>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined cursor-pointer">search</span>
+<span class="material-symbols-outlined cursor-pointer">notifications</span>
+<span class="material-symbols-outlined cursor-pointer">settings</span>
+<div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden border border-white">
+<img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR9r16GnCz_W0qqaS5-8qvDz5SnNtylBMIZ15lQMjV10aWNNI_nZP7VpIm6yqzsu6fFcw2JhYfRvhBc3xxgw48OYdnZMaZkS_-qhsOR3hm0vZW26svdXPXNBapagldl3S-V9Y1vFn4RRv2sy2yKcZCDxKIXaUnQPA0txCmoTRvj_vqqFpMDeIrlJ-lQyDlPtu28kr8W2Ier3Q8hmmBF-w3ajsZa-CbQDyC407ytJrGIaMbfc_V5o2vcW5gOi7YfpzPdz0SurnLTQ"/>
+</div>
+</div>
+</header>
+<nav class="bg-[var(--kintone-bg-light)] border-b border-[var(--kintone-border)] px-4 py-2 flex items-center justify-between">
+<div class="flex items-center text-sm">
+<span class="material-symbols-outlined text-base mr-1">home</span>
+<span class="mx-2 text-gray-400">/</span>
+<span class="font-medium">アプリ: 商品データベース</span>
+</div>
+<div class="flex items-center space-x-2 text-gray-500">
+<span class="material-symbols-outlined cursor-pointer">settings</span>
+<span class="material-symbols-outlined cursor-pointer">help</span>
+</div>
+</nav>
+<div class="px-4 py-3 text-sm text-gray-600">
+    商品データベースアプリは、最新の販売状況や価格情報を一元管理するために設計されています。
+</div>
+<div class="px-4 py-2 flex items-center justify-between border-b border-[var(--kintone-border)]">
+<div class="flex items-center space-x-2">
+<div class="flex items-center bg-[var(--kintone-blue)] text-white rounded overflow-hidden">
+<div class="px-3 py-1.5 flex items-center space-x-2 cursor-pointer hover:bg-[var(--kintone-blue-hover)]">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">全商品一覧</span>
+</div>
+<div class="px-1 py-1.5 border-l border-white/20 cursor-pointer hover:bg-[var(--kintone-blue-hover)]">
+<span class="material-symbols-outlined">arrow_drop_down</span>
+</div>
+</div>
+<button class="p-1.5 border border-gray-300 rounded hover:bg-gray-50">
+<span class="material-symbols-outlined text-gray-500">search</span>
+</button>
+<button class="p-1.5 border border-gray-300 rounded hover:bg-gray-50">
+<span class="material-symbols-outlined text-gray-500">bar_chart</span>
+</button>
+</div>
+<div class="flex items-center space-x-2">
+<button class="p-1.5 border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500">add</span>
+</button>
+<button class="p-1.5 border border-gray-300 rounded hover:bg-gray-50">
+<span class="material-symbols-outlined text-gray-500">settings</span>
+</button>
+<button class="p-1.5 border border-gray-300 rounded hover:bg-gray-50">
+<span class="material-symbols-outlined text-gray-500">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="px-4 py-2 flex justify-end">
+<span class="text-xs text-gray-500">1 - 6 (6件中)</span>
+</div>
+<div class="overflow-x-auto px-1">
+<table class="w-full border-collapse kintone-table">
+<thead>
+<tr>
+<th>商品ID</th>
+<th>商品名</th>
+<th>SKU</th>
+<th>カテゴリー</th>
+<th>販売ステータス</th>
+<th class="text-right">販売価格</th>
+<th>単位</th>
+<th>最終更新日</th>
+<th class="w-20">操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0001</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">ライスシリカプレミアム500mL</a></td>
+<td>RS-500ML-PRM</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-blue-500"></span>Rice Silica PREMIUM
+</td>
+<td><span class="bg-[#dcfce7] px-2 py-0.5 rounded-sm text-xs text-gray-800">販売中</span></td>
+<td class="text-right">¥3,850</td>
+<td>本</td>
+<td>2024/05/15</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0002</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">ライスシリカスティック60包</a></td>
+<td>RS-STICK-080</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-orange-500"></span>Rice Silica
+</td>
+<td><span class="bg-[#dcfce7] px-2 py-0.5 rounded-sm text-xs text-gray-800">販売中</span></td>
+<td class="text-right">¥8,640</td>
+<td>個</td>
+<td>2024/05/12</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0003</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">Dr's Power サプリ</a></td>
+<td>DP-SUP-101</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-amber-900"></span>Dr's Power
+</td>
+<td><span class="bg-[#e5e7eb] px-2 py-0.5 rounded-sm text-xs text-gray-800">販売終了</span></td>
+<td class="text-right">¥12,400</td>
+<td>袋</td>
+<td>2023/12/20</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0004</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">Si+ ウォーター</a></td>
+<td>SI-WTR-202</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-purple-500"></span>Si+
+</td>
+<td><span class="bg-[#dbeafe] px-2 py-0.5 rounded-sm text-xs text-gray-800">下書き</span></td>
+<td class="text-right">¥5,500</td>
+<td>個</td>
+<td>2024/05/20</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0007</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">アル超えーる エキス</a></td>
+<td>AL-EX-301</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-green-500"></span>アル超えーる
+</td>
+<td><span class="bg-[#dcfce7] px-2 py-0.5 rounded-sm text-xs text-gray-800">販売中</span></td>
+<td class="text-right">¥4,500</td>
+<td>個</td>
+<td>2024/05/18</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">P-0008</a></td>
+<td><a class="text-[var(--kintone-blue)] no-underline" href="#">次亜シリカスプレー</a></td>
+<td>JS-SPR-505</td>
+<td class="whitespace-nowrap flex items-center">
+<span class="cat-icon bg-red-500"></span>次亜シリカ
+</td>
+<td><span class="bg-[#dbeafe] px-2 py-0.5 rounded-sm text-xs text-gray-800">下書き</span></td>
+<td class="text-right">¥1,980</td>
+<td>本</td>
+<td>2024/05/22</td>
+<td>
+<div class="flex space-x-2 justify-center">
+<span class="material-symbols-outlined text-gray-400 hover:text-[var(--kintone-blue)] cursor-pointer">edit</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-red-500 cursor-pointer">close</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 
-<body>
-    <!-- Kintone Header -->
-    <div class="kintone-header">
-        <div class="app-icon-circle">📦</div>
-        <div class="app-title-header">商品データベース</div>
-    </div>
-
-    <!-- Secondary Navigation -->
-    <div class="secondary-nav">
-        <div class="nav-icon">🏠</div>
-        <span class="breadcrumb-text">アプリ: 商品データベース</span>
-        <div class="nav-right">
-            <div class="nav-icon">⚙️</div>
-            <div class="nav-icon">❓</div>
-        </div>
-    </div>
-
-    <!-- App Description -->
-    <div class="app-description">
-        商品データベースアプリは、商品情報を管理するために設計されています。
-    </div>
-
-    <!-- View Controls -->
-    <div class="view-controls">
-        <button class="view-button">
-            <span class="view-icon">📋</span>
-            <span class="view-text">全商品一覧</span>
-            <span class="dropdown-arrow">▼</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">🔍</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">📊</span>
-        </button>
-
-        <div class="controls-right">
-            <button class="icon-only-btn">➕</button>
-            <button class="icon-only-btn">⚙️</button>
-            <button class="icon-only-btn">⋯</button>
-        </div>
-    </div>
-
-    <!-- Record Count Top -->
-    <div class="record-count">1 - 9（9件中）</div>
-
-    <!-- Data Table -->
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>商品ID</th>
-                    <th>商品名</th>
-                    <th>SKU</th>
-                    <th>カテゴリー</th>
-                    <th>型番</th>
-                    <th>兼用資材・商品特徴</th>
-                    <th>単位</th>
-                    <th>重量</th>
-                    <th>販売価格</th>
-                    <th>メーカー</th>
-                    <th>発注担当者</th>
-                    <th>ステータス</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="12" class="empty-state">
-                        データがありません
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Record Count Bottom -->
-    <div class="bottom-count">1 - 9（9件中）</div>
-    <script src="auth.js"></script>
-    <script>
-        // Sample data for demonstration
-        const sampleProducts = [
-            {
-                id: 'P-0001',
-                name: 'ライスシリカプレミアム500mL ボトル-乳白',
-                sku: 'RS-500ML-PRM',
-                category: 'ドリンク',
-                modelNo: 'MW2509',
-                features: '500mL容量、乳白色ボトル',
-                unit: '本',
-                weight: '550g',
-                price: 3850,
-                maker: '株式会社サプライヤーA',
-                purchaser: '田中太郎',
-                status: 'active'
-            },
-            {
-                id: 'P-0002',
-                name: 'ライスシリカスティック60包',
-                sku: 'RS-STICK-080',
-                category: 'スティック',
-                modelNo: 'STP2505',
-                features: '個包装スティックタイプ',
-                unit: '個',
-                weight: '450g',
-                price: 8640,
-                maker: '株式会社サプライヤーA',
-                purchaser: '田中太郎',
-                status: 'active'
-            },
-            {
-                id: 'P-0003',
-                name: 'アルミボトル300mL',
-                sku: 'AL-300ML-001',
-                category: 'ボトル・容器',
-                modelNo: 'AL2510',
-                features: '軽量アルミニウム製',
-                unit: '本',
-                weight: '180g',
-                price: 1200,
-                maker: '容器メーカーB',
-                purchaser: '佐藤花子',
-                status: 'active'
-            },
-            {
-                id: 'P-0004',
-                name: '計量カップ10mL PPP透明',
-                sku: 'CAP-10ML-PPP',
-                category: '容器・部品',
-                modelNo: 'CAP2502',
-                features: 'ポリプロピレン製、透明',
-                unit: '個',
-                weight: '5g',
-                price: 45,
-                maker: '容器メーカーC',
-                purchaser: '佐藤花子',
-                status: 'active'
-            },
-            {
-                id: 'P-0005',
-                name: 'JAS-100 No1 ボトル(N) 本体',
-                sku: 'JAS-100-N1',
-                category: 'ボトル・容器',
-                modelNo: 'JAS2507',
-                features: 'JAS規格適合品',
-                unit: '本',
-                weight: '120g',
-                price: 280,
-                maker: 'JASメーカー株式会社',
-                purchaser: '鈴木一郎',
-                status: 'active'
-            },
-            {
-                id: 'P-0006',
-                name: '天然保湿成分"G"（原液）',
-                sku: 'RAW-GHY-2514',
-                category: '原材料',
-                modelNo: 'GHY2514',
-                features: '化粧品用原料、保湿効果',
-                unit: 'kg',
-                weight: '1000g',
-                price: 15000,
-                maker: '化学工業株式会社',
-                purchaser: '山田次郎',
-                status: 'active'
-            },
-            {
-                id: 'P-0007',
-                name: 'OEM製品A - 本体（充填済み）',
-                sku: 'OEM-A-2510',
-                category: 'OEM製品',
-                modelNo: 'OEM2510',
-                features: 'OEM受託製造品',
-                unit: '個',
-                weight: '600g',
-                price: 4500,
-                maker: 'OEM工場株式会社',
-                purchaser: '田中太郎',
-                status: 'active'
-            },
-            {
-                id: 'P-0008',
-                name: '旧ボトル在庫品',
-                sku: 'OLD-BTL-001',
-                category: 'ボトル・容器',
-                modelNo: 'OLD2401',
-                features: '旧仕様、販売終了予定',
-                unit: '本',
-                weight: '200g',
-                price: 150,
-                maker: '旧サプライヤー',
-                purchaser: '-',
-                status: 'discontinued'
-            },
-            {
-                id: 'P-0009',
-                name: '新商品サンプル（開発中）',
-                sku: 'DRAFT-001',
-                category: 'サンプル',
-                modelNo: '-',
-                features: '開発中の試作品',
-                unit: '個',
-                weight: '-',
-                price: 0,
-                maker: '開発部',
-                purchaser: '研究開発課',
-                status: 'draft'
-            }
-        ];
-
-        function renderTable(products) {
-            const tbody = document.querySelector('.data-table tbody');
-
-            if (products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="empty-state">データがありません</td></tr>';
-                updateRecordCount(0);
-                return;
-            }
-
-            tbody.innerHTML = products.map(product => `
-                <tr>
-                    <td><a href="#" class="record-link">${product.id}</a></td>
-                    <td>${product.name}</td>
-                    <td>${product.sku}</td>
-                    <td>${product.category}</td>
-                    <td>${product.modelNo}</td>
-                    <td>${product.features}</td>
-                    <td>${product.unit}</td>
-                    <td>${product.weight}</td>
-                    <td>¥${product.price.toLocaleString()}</td>
-                    <td>${product.maker}</td>
-                    <td>${product.purchaser}</td>
-                    <td>
-                        <span class="status-badge status-${product.status}">
-                            ${product.status === 'active' ? '販売中' :
-                    product.status === 'discontinued' ? '販売終了' : '下書き'}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
-
-            updateRecordCount(products.length);
-        }
-
-        function updateRecordCount(count) {
-            const countText = `1 - ${count}（${count}件中）`;
-            document.querySelector('.record-count').textContent = countText;
-            document.querySelector('.bottom-count').textContent = countText;
-        }
-
-        // Load sample data
-        renderTable(sampleProducts);
-
-        // Add click handlers for controls
-        document.querySelector('.view-button').addEventListener('click', function () {
-            alert('ビュー選択');
-        });
-
-        document.querySelectorAll('.icon-only-btn')[0].addEventListener('click', function () {
-            alert('新規商品を追加');
-        });
-
-        document.querySelectorAll('.icon-only-btn')[1].addEventListener('click', function () {
-            alert('設定');
-        });
-
-        document.querySelectorAll('.icon-only-btn')[2].addEventListener('click', function () {
-            alert('その他のオプション');
-        });
-    </script>
-</body>
-
-</html>
+</body></html>
