@@ -2,7 +2,7 @@
 <html lang="ja"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>商品データベース - レコード追加</title>
+<title>商品データベース - 商品登録</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -11,78 +11,58 @@
 <style type="text/tailwindcss">
         :root {
             --kintone-purple: #7030a0;
-            --kintone-yellow: #fbc02d;
+            --kintone-yellow: #fff200;
             --kintone-blue: #3498db;
             --kintone-blue-hover: #2980b9;
             --kintone-border: #e3e7e8;
             --kintone-bg-light: #f5f5f5;
+            --kintone-label-bg: #e2e8f0;
             --kintone-text: #333333;
-            --kintone-required: #e74c3c;
-            --kintone-header-blue: #3498db;
+            --required-red: #e74c3c;
         }
         body {
             font-family: 'Noto Sans JP', sans-serif;
             background-color: #f5f5f5;
         }
-        .kintone-input {
-            border: 1px solid #e3e7e8;
-            padding: 6px 8px;
-            font-size: 14px;
-            border-radius: 0;
-            width: 100%;
-            background-color: #fff;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
         }
-        .kintone-input:focus {
-            outline: none;
-            border-color: var(--kintone-blue);
-            box-shadow: none;
-        }
-        .kintone-label {
-            font-size: 12px;
-            font-weight: bold;
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
             color: #333;
             margin-bottom: 4px;
             display: flex;
             align-items: center;
         }
         .required-badge {
-            background-color: var(--kintone-required);
+            background-color: var(--required-red);
             color: white;
             font-size: 10px;
-            padding: 0 4px;
-            margin-left: 4px;
+            padding: 1px 4px;
             border-radius: 2px;
+            margin-left: 6px;
+            font-weight: normal;
         }
-        .section-header {
-            background-color: var(--kintone-header-blue);
-            color: white;
-            padding: 4px 12px;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 16px;
+        .kintone-input {
+            border: 1px solid var(--kintone-border);
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100%;
+            border-radius: 0;
+            background-color: white;
         }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
-            font-size: 20px;
-        }
-        .file-upload-btn {
-            background-color: #f7f9fa;
-            border: 1px solid #e3e7e8;
-            padding: 4px 12px;
-            font-size: 13px;
-            color: #3498db;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            font-weight: 500;
-        }
-        .file-upload-btn:hover {
-            background-color: #eff2f3;
+        .kintone-input:focus {
+            outline: none;
+            border-color: var(--kintone-blue);
+            box-shadow: none;
         }
     </style>
 </head>
 <body class="text-[var(--kintone-text)]">
-<header class="h-12 bg-[var(--kintone-purple)] flex items-center justify-between px-4 text-white">
+<div class="h-1 bg-[var(--kintone-yellow)] w-full"></div>
+<header class="h-12 bg-[var(--kintone-purple)] flex items-center justify-between px-4 text-white sticky top-0 z-50">
 <div class="flex items-center space-x-3">
 <div class="bg-white p-1 rounded">
 <img alt="App Icon" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYiWAWexiAlcSYilrmUXgoIaHnvdzEcfS4brirIuza5YiuFLAU4Ov2SjoHbSKhGCTXWON3JBNiCdDdyhoH4l1i8wL368kpbFxvuSJpshw7klcCcLH2SiY2jo0U9gY8ZsWlhMyc323pJoGnrPh61yGB3A6mu5Oy5eonkvpd0ASobZ49mL2lvQUYaTzdR1cscwYwUjag1Wws9S2T5tsxCugX9c7w0_6XDQurNw2pvShn__WeSE1bpUnJ_neFvx9BLPRBnePkJn_Png"/>
@@ -98,112 +78,138 @@
 </div>
 </div>
 </header>
-<div class="h-1 bg-[var(--kintone-yellow)] w-full"></div>
-<nav class="bg-[var(--kintone-bg-light)] border-b border-[var(--kintone-border)] px-4 py-2 flex items-center justify-between">
+<nav class="bg-white border-b border-[var(--kintone-border)] px-4 py-2 flex items-center justify-between sticky top-12 z-40">
 <div class="flex items-center text-sm">
 <span class="material-symbols-outlined text-base mr-1">home</span>
-<span class="mx-1 text-gray-400">/</span>
-<span class="text-gray-600">アプリ: 商品データベース</span>
-<span class="mx-1 text-gray-400">&gt;</span>
-<span class="font-bold">レコード追加</span>
-</div>
-<div class="flex items-center space-x-2">
-<button class="px-6 py-1.5 bg-white border border-gray-300 text-sm hover:bg-gray-50">キャンセル</button>
-<button class="px-8 py-1.5 bg-[var(--kintone-blue)] text-white text-sm font-bold hover:bg-[var(--kintone-blue-hover)]">保存</button>
+<span class="mx-2 text-gray-400">/</span>
+<span class="text-[var(--kintone-blue)] cursor-pointer">商品データベース</span>
+<span class="mx-2 text-gray-400">/</span>
+<span class="font-medium">レコードを追加する</span>
 </div>
 </nav>
-<main class="p-6 max-w-6xl mx-auto pb-24">
-<div class="bg-white border border-[var(--kintone-border)] shadow-sm">
-<div class="section-header">基本情報</div>
-<div class="p-6 grid grid-cols-2 gap-x-12 gap-y-6">
-<div class="space-y-6">
+<div class="p-4 max-w-6xl mx-auto">
+<div class="flex space-x-2 mb-6">
+<button class="bg-[#3498db] hover:bg-[#2980b9] text-white px-8 py-2 text-sm font-medium">保存</button>
+<button class="bg-white border border-gray-300 hover:bg-gray-50 px-8 py-2 text-sm font-medium">キャンセル</button>
+</div>
+<div class="bg-white border border-[var(--kintone-border)] p-6 space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="kintone-label">商品ID</label>
-<input class="kintone-input" placeholder="自動採番または手動入力" type="text"/>
+<label class="form-label">商品ID</label>
+<input class="kintone-input bg-gray-50" placeholder="P-XXXX (自動採番)" readonly="" type="text"/>
 </div>
 <div>
-<label class="kintone-label">商品名<span class="required-badge">必須</span></label>
-<input class="kintone-input" required="" type="text"/>
+<label class="form-label">商品名</label>
+<input class="kintone-input" placeholder="商品名を入力してください" type="text"/>
 </div>
-<div class="grid grid-cols-2 gap-4">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="kintone-label">SKU<span class="required-badge">必須</span></label>
-<input class="kintone-input" required="" type="text"/>
+<label class="form-label">SKU<span class="required-badge">必須</span></label>
+<input class="kintone-input border-red-200" placeholder="例: RS-500ML-PRM" type="text"/>
 </div>
 <div>
-<label class="kintone-label">JAN/EANコード</label>
+<label class="form-label">JAN/EANコード</label>
 <input class="kintone-input" placeholder="45XXXXXXXXXXX" type="text"/>
 </div>
 </div>
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="kintone-label">カテゴリー</label>
-<select class="kintone-input">
-<option value="Rice Silica">Rice Silica</option>
-<option value="Rice Silica PREMIUM">Rice Silica PREMIUM</option>
-<option value="Si+">Si+</option>
-<option value="Dr's Power">Dr's Power</option>
-</select>
-</div>
-<div>
-<label class="kintone-label">容量</label>
-<input class="kintone-input" placeholder="500ml" type="text"/>
-</div>
-</div>
-</div>
-<div class="space-y-6">
-<div>
-<label class="kintone-label">販売ステータス</label>
-<select class="kintone-input">
-<option selected="" value="下書き">下書き</option>
-<option value="販売中">販売中</option>
-<option value="販売終了">販売終了</option>
-</select>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="kintone-label">販売価格</label>
+<label class="form-label">カテゴリー</label>
 <div class="relative">
-<span class="absolute left-3 top-1.5 text-gray-500 text-sm">¥</span>
-<input class="kintone-input pl-7" placeholder="0" type="number"/>
+<select class="kintone-input appearance-none pr-10">
+<option value="">選択してください</option>
+<option value="Rice Silica">🟧 Rice Silica</option>
+<option value="Rice Silica PREMIUM">🟦 Rice Silica PREMIUM</option>
+<option value="Si+">🟪 Si+</option>
+<option value="アル超えーる">🟩 アル超えーる</option>
+<option value="次亜シリカ">🟥 次亜シリカ</option>
+<option value="Dr's Power">🟫 Dr's Power</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-gray-400">arrow_drop_down</span>
+</div>
 </div>
 </div>
 <div>
-<label class="kintone-label">単位</label>
-<select class="kintone-input">
+<label class="form-label">発送倉庫</label>
+<div class="relative">
+<select class="kintone-input appearance-none pr-10">
+<option selected="" value="岐阜倉庫">岐阜倉庫</option>
+<option value="東京倉庫">東京倉庫</option>
+<option value="大阪倉庫">大阪倉庫</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-gray-400">arrow_drop_down</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<label class="form-label">単位</label>
+<div class="relative">
+<select class="kintone-input appearance-none pr-10">
+<option value="">選択してください</option>
 <option value="本">本</option>
 <option value="個">個</option>
 <option value="袋">袋</option>
-<option value="式">式</option>
+<option value="枚">枚</option>
+<option value="セット">セット</option>
 </select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-gray-400">arrow_drop_down</span>
+</div>
 </div>
 </div>
 <div>
-<label class="kintone-label">発送倉庫</label>
-<input class="kintone-input" type="text" value="岐阜倉庫"/>
+<label class="form-label">容量</label>
+<input class="kintone-input" placeholder="例: 500ml / 60包" type="text"/>
 </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="kintone-label">添付ファイル</label>
-<div class="flex items-center space-x-2">
-<label class="file-upload-btn">
-<span class="material-symbols-outlined text-[18px] mr-1">attach_file</span>
-                                参照
-                                <input class="hidden" type="file"/>
+<label class="form-label">販売ステータス</label>
+<div class="flex items-center space-x-6 h-[40px]">
+<label class="flex items-center cursor-pointer text-sm text-[var(--kintone-text)]">
+<input checked="" class="w-4 h-4 text-[var(--kintone-blue)] focus:ring-0 border-gray-300" name="status" type="radio"/>
+<span class="ml-2">販売中</span>
 </label>
-<span class="text-xs text-gray-500">ファイルを選択してください</span>
+<label class="flex items-center cursor-pointer text-sm text-[var(--kintone-text)]">
+<input class="w-4 h-4 text-[var(--kintone-blue)] focus:ring-0 border-gray-300" name="status" type="radio"/>
+<span class="ml-2">販売終了</span>
+</label>
+<label class="flex items-center cursor-pointer text-sm text-[var(--kintone-text)]">
+<input class="w-4 h-4 text-[var(--kintone-blue)] focus:ring-0 border-gray-300" name="status" type="radio"/>
+<span class="ml-2">下書き</span>
+</label>
+</div>
+</div>
+<div>
+<label class="form-label">販売価格</label>
+<div class="flex items-center">
+<span class="bg-gray-100 border border-r-0 border-[var(--kintone-border)] px-3 py-2 text-sm text-gray-500">¥</span>
+<input class="kintone-input" placeholder="0" type="number"/>
 </div>
 </div>
 </div>
-<div class="col-span-2">
-<label class="kintone-label">商品説明</label>
-<textarea class="kintone-input h-32 resize-none"></textarea>
+<div>
+<label class="form-label">商品説明</label>
+<textarea class="kintone-input min-h-[120px]" placeholder="商品の詳細情報を入力してください"></textarea>
+</div>
+<div>
+<label class="form-label">添付ファイル</label>
+<div class="border-2 border-dashed border-gray-200 p-8 flex flex-col items-center justify-center text-gray-400 hover:bg-gray-50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
+<span class="text-xs">ファイルをドラッグアンドドロップ、または[参照]をクリックしてください。</span>
+<button class="mt-4 bg-white border border-gray-300 px-4 py-1 text-xs text-gray-700 hover:bg-gray-50">参照</button>
 </div>
 </div>
 </div>
-</main>
-<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--kintone-border)] p-3 flex justify-center space-x-2 z-10">
-<button class="px-6 py-1.5 bg-white border border-gray-300 text-sm hover:bg-gray-50">キャンセル</button>
-<button class="px-8 py-1.5 bg-[var(--kintone-blue)] text-white text-sm font-bold hover:bg-[var(--kintone-blue-hover)]">保存</button>
+<div class="mt-6 flex space-x-2">
+<button class="bg-[#3498db] hover:bg-[#2980b9] text-white px-8 py-2 text-sm font-medium shadow-sm">保存</button>
+<button class="bg-white border border-gray-300 hover:bg-gray-50 px-8 py-2 text-sm font-medium shadow-sm">キャンセル</button>
+</div>
 </div>
 
 </body></html>
