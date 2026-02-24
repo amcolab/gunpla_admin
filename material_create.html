@@ -13,6 +13,7 @@
                     colors: {
                         primary: "#8E44AD",
                         kintone: {
+                            yellow: "#FFF100",
                             blue: "#3498DB",
                             light: "#F7F9FA",
                             border: "#E3E7E8",
@@ -63,10 +64,17 @@
         .user-selection {
             @apply flex items-center gap-2 border border-[#E3E7E8] p-1 bg-white rounded-sm;
         }
+        .file-upload-zone {
+            @apply border-2 border-dashed border-[#E3E7E8] p-4 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors;
+        }
+        .kintone-top-bar {
+            @apply bg-kintone-yellow h-1 w-full;
+        }
     </style>
 </head>
 <body class="bg-[#F7F9FA] dark:bg-background-dark text-gray-800">
-<header class="bg-primary text-white h-12 flex items-center justify-between px-4 shadow-sm sticky top-0 z-50">
+<div class="kintone-top-bar"></div>
+<header class="bg-primary text-white h-12 flex items-center justify-between px-4 shadow-sm sticky top-1 z-50">
 <div class="flex items-center gap-3">
 <div class="bg-white p-1 rounded-sm">
 <span class="material-symbols-outlined text-primary text-xl leading-none">inventory_2</span>
@@ -86,8 +94,8 @@
 <div class="mb-10">
 <h2 class="section-title">
 <span class="material-symbols-outlined text-lg">info</span>
-            基本情報
-        </h2>
+                基本情報
+            </h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 <div>
 <label class="form-label">資材ID</label>
@@ -117,8 +125,8 @@
 <div class="mb-10">
 <h2 class="section-title">
 <span class="material-symbols-outlined text-lg">settings_suggest</span>
-            仕様情報
-        </h2>
+                仕様情報
+            </h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 <div>
 <label class="form-label">型番</label>
@@ -155,15 +163,19 @@
 </div>
 <div class="md:col-span-2">
 <label class="form-label">兼用資材・商品特徴</label>
-<textarea class="form-input min-h-[100px]" placeholder="商品の特徴や用途などを入力してください"></textarea>
+<textarea class="form-input min-h-[80px]" placeholder="商品の特徴や用途などを入力してください"></textarea>
+</div>
+<div class="md:col-span-2">
+<label class="form-label">資材説明</label>
+<textarea class="form-input min-h-[120px]" placeholder="資材に関する詳細なメモや補足事項を入力してください"></textarea>
 </div>
 </div>
 </div>
 <div class="mb-10">
 <h2 class="section-title">
 <span class="material-symbols-outlined text-lg">shopping_cart</span>
-            購買情報
-        </h2>
+                購買情報
+            </h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 <div>
 <label class="form-label">原価単価（税抜）<span class="required-badge">必須</span></label>
@@ -189,11 +201,12 @@
 </div>
 </div>
 </div>
-<div class="mb-6">
+<div class="mb-10">
 <h2 class="section-title">
 <span class="material-symbols-outlined text-lg">inventory</span>
-            運用情報
-        </h2>
+                運用情報
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 <div>
 <label class="form-label">在庫管理</label>
 <div class="flex items-center gap-6 mt-2">
@@ -205,6 +218,15 @@
 <input class="form-radio text-kintone-blue h-4 w-4 border-gray-300 focus:ring-kintone-blue" name="stock_mgmt" type="radio" value="なし"/>
 <span class="ml-2 text-sm">なし</span>
 </label>
+</div>
+</div>
+<div class="md:col-span-2">
+<label class="form-label">添付ファイル</label>
+<div class="file-upload-zone">
+<span class="material-symbols-outlined text-gray-400 text-3xl mb-1">upload_file</span>
+<p class="text-xs text-gray-500">ファイルをドラッグ＆ドロップするか、参照してください</p>
+<button class="mt-2 px-4 py-1 bg-white border border-gray-300 text-[12px] hover:bg-gray-50">参照</button>
+</div>
 </div>
 </div>
 </div>
