@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>資材在庫管理アプリ｜レコード追加（モック）</title>
+  <style>
+    :root{
+      --k-yellow:#f5d400;
+      --k-gray:#f3f5f7;
+      --k-line:#e6e9ee;
+      --k-text:#222;
+      --k-sub:#667085;
+      --k-btn:#2d7ff9;
+      --k-btn2:#e9eef6;
+      --k-card:#fff;
+      --k-shadow:0 6px 18px rgba(16,24,40,.08);
+      --k-radius:10px;
+      --k-danger:#b42318;
+      --k-danger-bg:#fff1f0;
+      --k-danger-line:#ffccc7;
+      --k-warn:#b54708;
+      --k-warn-bg:#fffaeb;
+      --k-warn-line:#fedf89;
+      --k-ok:#067647;
+      --k-ok-bg:#ecfdf3;
+      --k-ok-line:#a6f4c5;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+      color:var(--k-text);
+      background:#fff;
+    }
+    .topbar{
+      height:56px;background:var(--k-yellow);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 16px;
+    }
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .hamburger{width:18px;height:12px;position:relative;}
+    .hamburger:before,.hamburger:after,.hamburger div{
+      content:"";position:absolute;left:0;right:0;height:2px;background:#111;border-radius:2px;
+    }
+    .hamburger:before{top:0}
+    .hamburger div{top:5px}
+    .hamburger:after{bottom:0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:#111}
+    .brand .logo{width:22px;height:22px;border-radius:5px;background:#111;position:relative;}
+    .brand .logo:after{content:"";position:absolute;inset:5px;border-radius:3px;background:var(--k-yellow);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .avatar{width:28px;height:28px;border-radius:999px;background:#1111;border:1px solid #0002;}
+    .user{font-size:13px;color:#111;background:#fff6;border-radius:999px;padding:6px 10px;border:1px solid #0001;}
+
+    .apphead{background:#fff;border-bottom:1px solid var(--k-line);padding:16px 18px 12px;}
+    .apphead-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .apptitle{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;}
+    .appicon{
+      width:34px;height:34px;border-radius:8px;background:#e8f3ff;border:1px solid #cfe6ff;
+      display:flex;align-items:center;justify-content:center;color:#175cd3;font-weight:800;
+    }
+    .crumb{margin-top:8px;font-size:12px;color:var(--k-sub);}
+
+    .wrap{background:var(--k-gray);padding:18px 12px 40px;min-height:calc(100vh - 56px - 78px);}
+    .toolbar{max-width:980px;margin:0 auto 12px auto;display:flex;align-items:center;gap:10px;}
+    .btn{border:1px solid transparent;background:var(--k-btn);color:#fff;padding:9px 14px;border-radius:8px;font-size:13px;cursor:pointer;}
+    .btn.secondary{background:#fff;color:#111;border-color:var(--k-line);}
+    .btn.ghost{background:var(--k-btn2);color:#163a6b;border-color:#d6e3ff;}
+
+    .card{
+      max-width:980px;margin:0 auto;background:var(--k-card);
+      border:1px solid var(--k-line);border-radius:var(--k-radius);
+      box-shadow:var(--k-shadow);padding:18px 18px 10px;
+    }
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;align-items:start;}
+    .field{display:flex;flex-direction:column;gap:6px;}
+    .label{font-size:12px;color:#111;display:flex;align-items:center;gap:6px;}
+    .req{
+      font-size:11px;color:var(--k-danger);
+      background:var(--k-danger-bg);border:1px solid var(--k-danger-line);
+      padding:1px 6px;border-radius:999px;
+    }
+    .hint{font-size:11px;color:var(--k-sub);}
+    input, textarea{
+      width:100%;border:1px solid #d0d5dd;border-radius:8px;background:#fff;
+      padding:0 10px;font-size:13px;outline:none;
+    }
+    input{height:36px;}
+    textarea{min-height:72px;padding:10px;resize:vertical;}
+    input[readonly], textarea[readonly]{background:#f7f8fa;color:#6b7280;}
+    .section{margin-top:16px;border-top:1px dashed var(--k-line);padding-top:16px;}
+    .section-title{font-size:13px;font-weight:700;color:#111;margin:0 0 10px 0;display:flex;align-items:center;gap:8px;}
+    .pill{
+      font-size:11px;color:#475467;background:#f2f4f7;border:1px solid #eaecf0;
+      padding:2px 8px;border-radius:999px;font-weight:600;
+    }
+
+    .banner{
+      max-width:980px;margin:0 auto 12px auto;
+      border-radius:10px;padding:10px 12px;border:1px solid var(--k-warn-line);
+      background:var(--k-warn-bg);color:#7a2e0e;font-size:12px;
+    }
+
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+      padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;
+    }
+    .tag.ok{border-color:var(--k-ok-line);background:var(--k-ok-bg);color:var(--k-ok)}
+    .tag.warn{border-color:var(--k-warn-line);background:var(--k-warn-bg);color:var(--k-warn)}
+    .tag.bad{border-color:var(--k-danger-line);background:var(--k-danger-bg);color:var(--k-danger)}
+    .dot{width:8px;height:8px;border-radius:99px;background:currentColor;display:inline-block;}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="hamburger"><div></div></div>
+      <div class="brand"><div class="logo"></div><div>kintone</div></div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar"></div>
+      <div class="user">Purchasing_Staff</div>
+    </div>
+  </div>
+
+  <div class="apphead">
+    <div class="apphead-row">
+      <div>
+        <div class="apptitle"><div class="appicon">資</div><div>資材在庫管理アプリ</div></div>
+        <div class="crumb">アプリ: 資材在庫管理アプリ　›　レコード追加（登録）</div>
+      </div>
+      <div style="font-size:12px;color:var(--k-sub)">モック</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="banner">
+      本画面の数値（現在庫・発注点・発注残・入庫予定日・入庫予定数・在庫金額）は参照情報です。
+      UI上での直接編集は禁止（ソースアプリ: Logical Stock App / 商品マスタ / PO App）。
+      入力できるのは「棚卸実施日」と「備考」のみ。
+    </div>
+
+    <div class="toolbar">
+      <button class="btn secondary">キャンセル</button>
+      <button class="btn">保存</button>
+      <button class="btn ghost">一時保存</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">資材情報 <span class="pill">商品マスタ参照</span></div>
+
+      <div class="grid">
+        <div class="field">
+          <div class="label">商品ID <span class="req">必須</span></div>
+          <input value="RS001" />
+          <div class="hint">Lookup（商品マスタ）。選択後、下記の資材情報が自動反映される想定。</div>
+        </div>
+
+        <div class="field">
+          <div class="label">商品名</div>
+          <input value="RSシリーズ500mL ボトル-乳白" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">型番</div>
+          <input value="PEPI-500No.1(N) ミーマット並べ" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">メーカー</div>
+          <input value="竹本容器" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">重量</div>
+          <input value="45g/本" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">入数/CS</div>
+          <input value="160" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">単位</div>
+          <input value="本" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">発注担当者</div>
+          <input value="吉村" readonly />
+        </div>
+
+        <div class="field">
+          <div class="label">原価単価（¥）</div>
+          <input value="12" readonly />
+          <div class="hint">商品マスタから参照（編集不可）。</div>
+        </div>
+
+        <div class="field">
+          <div class="label">棚卸実施日</div>
+          <input type="date" value="2026-02-22" />
+          <div class="hint">棚卸を実施した日だけ記録（在庫調整とは別）。</div>
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="label">備考</div>
+          <textarea placeholder="例: 仕入先指定 / 品質注意点 / 置き場所メモ など（任意）"></textarea>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">在庫・購買計画 <span class="pill">Logical Stock / PO 集約</span></div>
+
+        <div class="grid">
+          <div class="field">
+            <div class="label">前月在庫</div>
+            <input value="1830" readonly />
+            <div class="hint">前月末時点の論理在庫（参照）。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">現在庫</div>
+            <input value="131" readonly />
+            <div class="hint">論理在庫（利用可能在庫）を表示。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">発注点</div>
+            <input value="1500" readonly />
+            <div class="hint">商品マスタ または Logical Stock App の設定を参照（編集禁止）。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">発注残</div>
+            <input value="800" readonly />
+            <div class="hint">PO App の未納品分を集約。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">入庫予定日</div>
+            <input type="date" value="2026-03-05" readonly />
+            <div class="hint">未完了POのうち最も近い納品日を自動集約。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">入庫予定数</div>
+            <input value="500" readonly />
+            <div class="hint">入庫予定日に対応する納品数量。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">総在庫価値（¥）</div>
+            <input value="1572" readonly />
+            <div class="hint">現在庫 × 原価単価（参照表示）。</div>
+          </div>
+
+          <div class="field">
+            <div class="label">在庫ステータス</div>
+            <div style="height:36px;display:flex;align-items:center;gap:8px;">
+              <span class="tag warn"><span class="dot"></span>緊急発注要</span>
+              <span class="hint">例: 現在庫 ≤ 発注点</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+    </div>
+  </div>
+</body>
+</html>
