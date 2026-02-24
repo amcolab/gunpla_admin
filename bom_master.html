@@ -1,411 +1,278 @@
 <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>部品表管理 (BOM) - Kintone</title>
-
-    <!-- Kintone Common Stylesheet -->
-    <link rel="stylesheet" href="kintone-common-v2.css">
-
-    <style>
-        /* BOM-specific styles */
-        .expand-btn {
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 8px;
-            padding: 0;
-            transition: transform 0.2s;
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BOM Master List - Simplified View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --kintone-yellow: #f7d43f;
+            --kintone-purple: #7030a0;
+            --kintone-blue: #3498db;
+            --kintone-border: #e3e7e8;
+            --kintone-header-dark: #4b4b4b;
         }
-
-        .expand-btn.expanded {
-            transform: rotate(90deg);
-        }
-
-        .sub-row {
-            background-color: #f9f9f9;
-            padding-left: 40px !important;
-            font-size: 12px;
-        }
-
-        .sub-components {
-            display: none;
-        }
-
-        .sub-components.show {
-            display: table-row;
-        }
-
-        .total-cost {
-            font-weight: 600;
-            color: #e67e22;
-        }
-
-        .cost-value {
-            color: #666;
-        }
-
-        .quantity-value {
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .kintone-table th { 
+            border-right: 1px solid var(--kintone-border); 
             font-weight: 500;
+            color: #333;
+            background-color: #f7f9fa;
         }
-
-        .component-type {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            background-color: #e8f4f8;
-            color: #1769aa;
+        .dark .kintone-table th {
+            border-right: 1px solid #444;
+            color: #ccc;
+            background-color: #2a2a2a;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .dark tr:nth-child(even) {
+            background-color: #262626;
+        }
+        .no-underline a {
+            text-decoration: none !important;
+        }
+        .no-underline a:hover {
+            text-decoration: underline !important;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            vertical-align: middle;
         }
     </style>
 </head>
+<body class="bg-[#f5f5f5] dark:bg-zinc-950 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+<header class="bg-[var(--kintone-yellow)] h-12 flex items-center justify-between px-4 shadow-sm relative z-50">
+<div class="flex items-center space-x-4">
+<div class="flex items-center gap-1 font-bold text-gray-800">
+<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+<path d="M12 2L4 5v11c0 5.25 3.41 10.19 8 11.5 4.59-1.31 8-6.25 8-11.5V5l-8-3z"></path>
+</svg>
+<span class="text-xl tracking-tight">kintone</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-gray-700 hover:bg-black/5 p-1 rounded">
+<span class="material-symbols-outlined">mail</span>
+</button>
+<div class="flex items-center space-x-2 bg-white/20 px-2 py-1 rounded cursor-pointer hover:bg-white/30">
+<span class="material-symbols-outlined text-gray-700">account_circle</span>
+<span class="text-sm font-medium text-gray-800">Administrator</span>
+<span class="material-symbols-outlined text-xs text-gray-700">expand_more</span>
+</div>
+</div>
+</header>
+<nav class="bg-[var(--kintone-header-dark)] h-10 flex items-center justify-between px-2 text-white shadow-md">
+<div class="flex items-center h-full">
+<button class="px-3 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">menu</span></button>
+<button class="px-3 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">home</span></button>
+<button class="px-3 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">notifications</span></button>
+<button class="px-3 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">star</span></button>
+</div>
+<div class="flex items-center space-x-1 h-full">
+<button class="px-2 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">settings</span></button>
+<button class="px-2 h-full hover:bg-white/10 flex items-center"><span class="material-symbols-outlined">help</span></button>
+<div class="flex items-center bg-white ml-2 rounded-sm overflow-hidden h-7">
+<input class="px-2 py-1 text-xs text-gray-800 focus:outline-none w-48 border-none h-full" placeholder="アプリ内検索" type="text"/>
+<button class="bg-gray-100 hover:bg-gray-200 px-2 h-full border-l border-gray-300 flex items-center">
+<span class="material-symbols-outlined text-gray-500 text-sm">search</span>
+</button>
+</div>
+</div>
+</nav>
+<div class="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="bg-[var(--kintone-purple)] p-1.5 rounded">
+<span class="text-white text-xs font-bold leading-none">BOM</span>
+</div>
+<h1 class="text-xl font-bold text-gray-700 dark:text-gray-100">BOMマスタ</h1>
+</div>
+</div>
+<div class="px-4 py-1.5 text-[11px] text-gray-500 flex items-center space-x-1 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800">
+<span class="material-symbols-outlined text-xs">home</span>
+<span>アプリ: BOMマスタ</span>
+<div class="flex-grow"></div>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-gray-800">push_pin</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-gray-800 ml-2">info</span>
+</div>
+<div class="p-4 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center space-x-0.5">
+<div class="flex items-center border border-[var(--kintone-blue)] rounded-sm overflow-hidden bg-white dark:bg-zinc-800 shadow-sm">
+<div class="px-3 py-1.5 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-700">
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">grid_view</span>
+<span class="text-sm font-medium">現在有効BOMのみ</span>
+<span class="material-symbols-outlined text-[var(--kintone-blue)] text-sm">expand_more</span>
+</div>
+<button class="bg-[var(--kintone-blue)] text-white px-2 py-1.5 hover:bg-blue-600 flex items-center border-l border-[var(--kintone-blue)]">
+<span class="material-symbols-outlined text-sm">filter_alt</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+<button class="ml-2 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1.5 hover:bg-gray-50 dark:hover:bg-zinc-700">
+<span class="material-symbols-outlined text-gray-500 text-lg">filter_alt</span>
+</button>
+<button class="border border-gray-300 dark:border-zinc-700 border-l-0 bg-white dark:bg-zinc-800 p-1.5 hover:bg-gray-50 dark:hover:bg-zinc-700">
+<span class="material-symbols-outlined text-gray-500 text-lg">bar_chart</span>
+</button>
+</div>
+<div class="flex items-center space-x-2">
+<button class="bg-[var(--kintone-yellow)] text-gray-800 px-3 py-1.5 rounded-sm shadow-sm flex items-center hover:brightness-95">
+<span class="material-symbols-outlined text-lg mr-1">add</span>
+<span class="text-sm font-bold">作成</span>
+</button>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="px-4 pb-8 overflow-x-auto">
+<div class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded shadow-sm overflow-hidden">
+<table class="w-full text-sm text-left border-collapse kintone-table">
+<thead>
+<tr class="border-b border-gray-200 dark:border-zinc-700">
+<th class="px-4 py-3 text-xs tracking-wider text-center w-20">BOM ID</th>
+<th class="px-4 py-3 text-xs tracking-wider min-w-[200px]">商品名</th>
+<th class="px-4 py-3 text-xs tracking-wider w-24 text-center">バージョン</th>
+<th class="px-4 py-3 text-xs tracking-wider w-32">ステータス</th>
+<th class="px-4 py-3 text-xs tracking-wider w-36">有効開始日</th>
+<th class="px-4 py-3 text-xs tracking-wider w-36">有効終了日</th>
+<th class="px-4 py-3 text-xs tracking-wider text-right w-36">合計原価</th>
+<th class="px-4 py-3 text-xs tracking-wider w-40">更新日時</th>
+<th class="px-4 py-3 text-xs tracking-wider">構成品</th>
+<th class="px-4 py-3 text-xs tracking-wider text-center w-24">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100 dark:divide-zinc-800 no-underline">
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-4 py-3 text-center">
+<a class="text-[var(--kintone-blue)]" href="#">6</a>
+</td>
+<td class="px-4 py-3 font-medium">
+<a class="text-[var(--kintone-blue)]" href="#">New Product 3</a>
+</td>
+<td class="px-4 py-3 text-gray-500 text-center">v1.0</td>
+<td class="px-4 py-3">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-green-600 text-[20px]">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">有効</span>
+</div>
+</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">2023-10-01</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">〜 現在</td>
+<td class="px-4 py-3 text-right font-mono font-medium">¥ 1,500</td>
+<td class="px-4 py-3 text-[11px] text-gray-500">2023-10-05 14:30</td>
+<td class="px-4 py-3">
+<button class="text-[var(--kintone-blue)] hover:underline flex items-center text-xs">表示する <span class="material-symbols-outlined text-[14px] ml-1">play_arrow</span></button>
+</td>
+<td class="px-4 py-3 text-center space-x-2">
+<button class="text-[var(--kintone-blue)] hover:text-blue-700"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-gray-400 hover:text-red-500"><span class="material-symbols-outlined text-lg">close</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-4 py-3 text-center">
+<a class="text-[var(--kintone-blue)]" href="#">5</a>
+</td>
+<td class="px-4 py-3 font-medium">
+<a class="text-[var(--kintone-blue)]" href="#">New Product 2</a>
+</td>
+<td class="px-4 py-3 text-gray-500 text-center">v2.1</td>
+<td class="px-4 py-3">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-green-600 text-[20px]">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">有効</span>
+</div>
+</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">2024-01-01</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">〜 現在</td>
+<td class="px-4 py-3 text-right font-mono font-medium">¥ 1,000</td>
+<td class="px-4 py-3 text-[11px] text-gray-500">2023-11-20 09:15</td>
+<td class="px-4 py-3">
+<button class="text-[var(--kintone-blue)] hover:underline flex items-center text-xs">表示する <span class="material-symbols-outlined text-[14px] ml-1">play_arrow</span></button>
+</td>
+<td class="px-4 py-3 text-center space-x-2">
+<button class="text-[var(--kintone-blue)] hover:text-blue-700"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-gray-400 hover:text-red-500"><span class="material-symbols-outlined text-lg">close</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-4 py-3 text-center">
+<a class="text-[var(--kintone-blue)]" href="#">4</a>
+</td>
+<td class="px-4 py-3 font-medium">
+<a class="text-[var(--kintone-blue)]" href="#">New Product 1</a>
+</td>
+<td class="px-4 py-3 text-gray-500 text-center">v1.0</td>
+<td class="px-4 py-3">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-red-600 text-[20px]">close</span>
+<span class="text-gray-800 dark:text-gray-200">無効</span>
+</div>
+</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">2022-01-01</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">2022-12-31</td>
+<td class="px-4 py-3 text-right font-mono font-medium">¥ 500</td>
+<td class="px-4 py-3 text-[11px] text-gray-500">2022-12-31 23:59</td>
+<td class="px-4 py-3">
+<button class="text-[var(--kintone-blue)] hover:underline flex items-center text-xs">表示する <span class="material-symbols-outlined text-[14px] ml-1">play_arrow</span></button>
+</td>
+<td class="px-4 py-3 text-center space-x-2">
+<button class="text-[var(--kintone-blue)] hover:text-blue-700"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-gray-400 hover:text-red-500"><span class="material-symbols-outlined text-lg">close</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-4 py-3 text-center">
+<a class="text-[var(--kintone-blue)]" href="#">2</a>
+</td>
+<td class="px-4 py-3 font-medium">
+<a class="text-[var(--kintone-blue)]" href="#">SILICOLA</a>
+</td>
+<td class="px-4 py-3 text-gray-500 text-center">v1.2</td>
+<td class="px-4 py-3">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-green-600 text-[20px]">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">有効</span>
+</div>
+</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">2023-05-15</td>
+<td class="px-4 py-3 text-gray-600 dark:text-gray-400">〜 現在</td>
+<td class="px-4 py-3 text-right font-mono font-medium">¥ 31</td>
+<td class="px-4 py-3 text-[11px] text-gray-500">2023-05-15 11:20</td>
+<td class="px-4 py-3">
+<button class="text-[var(--kintone-blue)] hover:underline flex items-center text-xs">表示する <span class="material-symbols-outlined text-[14px] ml-1">play_arrow</span></button>
+</td>
+<td class="px-4 py-3 text-center space-x-2">
+<button class="text-[var(--kintone-blue)] hover:text-blue-700"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-gray-400 hover:text-red-500"><span class="material-symbols-outlined text-lg">close</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 flex items-center justify-center space-x-4">
+<button class="text-gray-400 hover:text-gray-600 disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="text-sm font-medium text-gray-700 dark:text-gray-300">
+<span class="px-2 py-1 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-sm">1</span>
+</div>
+<button class="text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<span class="text-xs text-gray-500">1-4 / 4件中</span>
+</div>
+</div>
+<div class="fixed bottom-4 right-4">
+<button class="bg-white dark:bg-zinc-800 p-2 rounded-full shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-center" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined text-gray-600 dark:text-yellow-400">dark_mode</span>
+</button>
+</div>
 
-<body>
-    <!-- Kintone Header -->
-    <div class="kintone-header">
-        <div class="app-icon-circle">📋</div>
-        <div class="app-title-header">部品表管理 (BOM)</div>
-    </div>
-
-    <!-- Secondary Navigation -->
-    <div class="secondary-nav">
-        <div class="nav-icon">🏠</div>
-        <span class="breadcrumb-text">アプリ: 部品表管理</span>
-        <div class="nav-right">
-            <div class="nav-icon">⚙️</div>
-            <div class="nav-icon">❓</div>
-        </div>
-    </div>
-
-    <!-- App Description -->
-    <div class="app-description">
-        部品表（BOM - Bill of Materials）管理アプリは、製品の構成部品、原料、資材の情報を管理します。
-        各製品の原価計算にも使用されます。
-    </div>
-
-    <!-- View Controls -->
-    <div class="view-controls">
-        <button class="view-button">
-            <span class="view-icon">📋</span>
-            <span class="view-text">全BOM一覧</span>
-            <span class="dropdown-arrow">▼</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">🔍</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">📊</span>
-        </button>
-
-        <div class="controls-right">
-            <button class="icon-only-btn" onclick="addBOM()">➕</button>
-            <button class="icon-only-btn">⚙️</button>
-            <button class="icon-only-btn">⋯</button>
-        </div>
-    </div>
-
-    <!-- Record Count Top -->
-    <div class="record-count" id="topCount">1 - 8（8件中）</div>
-
-    <!-- Data Table -->
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>BOM ID</th>
-                    <th>製品名</th>
-                    <th>構成品</th>
-                    <th>区分</th>
-                    <th>数量</th>
-                    <th>単位</th>
-                    <th>単価</th>
-                    <th>金額</th>
-                    <th>合計原価</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="bomTableBody">
-                <!-- Data will be rendered here -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Record Count Bottom -->
-    <div class="bottom-count" id="bottomCount">1 - 8（8件中）</div>
-    <script src="auth.js"></script>
-    <script>
-        // BOM data structure
-        const bomData = [
-            {
-                id: '00001',
-                product: 'Rice Silica 500mL',
-                totalCost: 95.02,
-                components: [
-                    { name: '田七人参', type: '原料', quantity: 50, unit: 'g', unitCost: 0.80, amount: 40.00 },
-                    { name: 'ボトル PEPI-500', type: '資材', quantity: 1, unit: '本', unitCost: 45.00, amount: 45.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 4.02, amount: 4.02 },
-                    { name: 'キャップ P-27', type: '資材', quantity: 1, unit: '個', unitCost: 6.00, amount: 6.00 }
-                ]
-            },
-            {
-                id: '00002',
-                product: 'Si+ 250mL',
-                totalCost: 78.50,
-                components: [
-                    { name: 'ライスシリカ原料', type: '原料', quantity: 200, unit: 'g', unitCost: 0.20, amount: 40.00 },
-                    { name: 'ボトル PEPI-250', type: '資材', quantity: 1, unit: '本', unitCost: 28.00, amount: 28.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 3.50, amount: 3.50 },
-                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 7.00, amount: 7.00 }
-                ]
-            },
-            {
-                id: '00003',
-                product: 'Rice Silica PREMIUM 500mL',
-                totalCost: 120.00,
-                components: [
-                    { name: '高濃度ライスシリカ', type: '原料', quantity: 400, unit: 'g', unitCost: 0.15, amount: 60.00 },
-                    { name: 'プレミアムボトル', type: '資材', quantity: 1, unit: '本', unitCost: 50.00, amount: 50.00 },
-                    { name: 'プレミアムラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 6.00, amount: 6.00 },
-                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 4.00, amount: 4.00 }
-                ]
-            },
-            {
-                id: '00004',
-                product: 'Rice Silica 200mL',
-                totalCost: 65.30,
-                components: [
-                    { name: 'ライスシリカ原料', type: '原料', quantity: 150, unit: 'g', unitCost: 0.20, amount: 30.00 },
-                    { name: 'ボトル 200mL', type: '資材', quantity: 1, unit: '本', unitCost: 25.00, amount: 25.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 3.30, amount: 3.30 },
-                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 7.00, amount: 7.00 }
-                ]
-            },
-            {
-                id: '00005',
-                product: 'Rice Silica 75mL',
-                totalCost: 42.15,
-                components: [
-                    { name: 'ライスシリカ原料', type: '原料', quantity: 60, unit: 'g', unitCost: 0.20, amount: 12.00 },
-                    { name: 'ボトル 75mL', type: '資材', quantity: 1, unit: '本', unitCost: 20.00, amount: 20.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 2.15, amount: 2.15 },
-                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 8.00, amount: 8.00 }
-                ]
-            },
-            {
-                id: '00006',
-                product: 'Rice Silica 50mL',
-                totalCost: 38.20,
-                components: [
-                    { name: 'ライスシリカ原料', type: '原料', quantity: 40, unit: 'g', unitCost: 0.20, amount: 8.00 },
-                    { name: 'ボトル 50mL', type: '資材', quantity: 1, unit: '本', unitCost: 18.00, amount: 18.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 2.20, amount: 2.20 },
-                    { name: 'キャップ', type: '資材', quantity: 1, unit: '個', unitCost: 10.00, amount: 10.00 }
-                ]
-            },
-            {
-                id: '00007',
-                product: 'SASA-LABO 50mL',
-                totalCost: 85.50,
-                components: [
-                    { name: 'ササヘルス原料', type: '原料', quantity: 45, unit: 'g', unitCost: 1.00, amount: 45.00 },
-                    { name: 'ボトル NCC-180', type: '資材', quantity: 1, unit: '本', unitCost: 22.00, amount: 22.00 },
-                    { name: 'ラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 8.50, amount: 8.50 },
-                    { name: 'キャップ CSキャップ', type: '資材', quantity: 1, unit: '個', unitCost: 10.00, amount: 10.00 }
-                ]
-            },
-            {
-                id: '00008',
-                product: 'Dr\'s Power (OEM)',
-                totalCost: 150.00,
-                components: [
-                    { name: 'OEM原料ミックス', type: '原料', quantity: 300, unit: 'g', unitCost: 0.30, amount: 90.00 },
-                    { name: 'OEMボトル', type: '資材', quantity: 1, unit: '本', unitCost: 40.00, amount: 40.00 },
-                    { name: 'OEMラベル', type: '資材', quantity: 1, unit: '枚', unitCost: 12.00, amount: 12.00 },
-                    { name: 'OEMキャップ', type: '資材', quantity: 1, unit: '個', unitCost: 8.00, amount: 8.00 }
-                ]
-            }
-        ];
-
-        // Track expanded rows
-        const expandedRows = new Set();
-
-        // Render table
-        function renderTable() {
-            const tbody = document.getElementById('bomTableBody');
-            let html = '';
-
-            bomData.forEach(bom => {
-                const isExpanded = expandedRows.has(bom.id);
-
-                // Main BOM row
-                html += `
-                    <tr>
-                        <td>
-                            <button class="expand-btn ${isExpanded ? 'expanded' : ''}" 
-                                    onclick="toggleExpand('${bom.id}')">▶</button>
-                            <a href="#" class="record-link" onclick="viewBOM('${bom.id}'); return false;">
-                                ${bom.id}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="#" class="record-link" onclick="viewProduct('${bom.product}'); return false;">
-                                ${bom.product}
-                            </a>
-                        </td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            <span class="total-cost">¥${bom.totalCost.toFixed(2)}</span>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-icon edit" 
-                                        title="編集" 
-                                        onclick="editBOM('${bom.id}')">
-                                </button>
-                                <button class="action-icon delete" 
-                                        title="削除" 
-                                        onclick="deleteBOM('${bom.id}')">
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-
-                // Component rows
-                bom.components.forEach(comp => {
-                    html += `
-                        <tr class="sub-components ${isExpanded ? 'show' : ''}" data-parent="${bom.id}">
-                            <td class="sub-row"></td>
-                            <td class="sub-row"></td>
-                            <td class="sub-row">
-                                <a href="#" class="record-link" onclick="viewComponent('${comp.name}'); return false;">
-                                    ${comp.name}
-                                </a>
-                            </td>
-                            <td class="sub-row">
-                                <span class="component-type">${comp.type}</span>
-                            </td>
-                            <td class="sub-row">
-                                <span class="quantity-value">${comp.quantity}</span>
-                            </td>
-                            <td class="sub-row">
-                                <span>${comp.unit}</span>
-                            </td>
-                            <td class="sub-row">
-                                <span class="cost-value">¥${comp.unitCost.toFixed(2)}</span>
-                            </td>
-                            <td class="sub-row">
-                                <span class="cost-value">¥${comp.amount.toFixed(2)}</span>
-                            </td>
-                            <td class="sub-row"></td>
-                            <td class="sub-row"></td>
-                        </tr>
-                    `;
-                });
-            });
-
-            tbody.innerHTML = html;
-            updateRecordCount();
-        }
-
-        // Toggle expand/collapse
-        function toggleExpand(bomId) {
-            if (expandedRows.has(bomId)) {
-                expandedRows.delete(bomId);
-            } else {
-                expandedRows.add(bomId);
-            }
-            renderTable();
-        }
-
-        // Update record count
-        function updateRecordCount() {
-            const count = bomData.length;
-            const countText = `1 - ${count}（${count}件中）`;
-            document.getElementById('topCount').textContent = countText;
-            document.getElementById('bottomCount').textContent = countText;
-        }
-
-        // View BOM details
-        function viewBOM(id) {
-            const bom = bomData.find(b => b.id === id);
-            if (bom) {
-                alert(`BOM詳細:\n\n` +
-                    `BOM ID: ${bom.id}\n` +
-                    `製品名: ${bom.product}\n` +
-                    `構成品数: ${bom.components.length}点\n` +
-                    `合計原価: ¥${bom.totalCost.toFixed(2)}\n\n` +
-                    `※ BOM詳細画面を開きます`);
-            }
-        }
-
-        // View product
-        function viewProduct(productName) {
-            alert(`製品詳細:\n\n` +
-                `製品名: ${productName}\n\n` +
-                `※ 製品マスタ詳細画面を開きます`);
-        }
-
-        // View component
-        function viewComponent(componentName) {
-            alert(`構成品詳細:\n\n` +
-                `構成品名: ${componentName}\n\n` +
-                `※ 資材マスタ詳細画面を開きます`);
-        }
-
-        // Edit BOM
-        function editBOM(id) {
-            const bom = bomData.find(b => b.id === id);
-            if (bom) {
-                alert(`BOMを編集:\n\n` +
-                    `BOM ID: ${bom.id}\n` +
-                    `製品名: ${bom.product}\n\n` +
-                    `※ 編集画面を開きます`);
-            }
-        }
-
-        // Delete BOM
-        function deleteBOM(id) {
-            const bom = bomData.find(b => b.id === id);
-            if (bom) {
-                if (confirm(`このBOMを削除してもよろしいですか？\n\n` +
-                    `BOM ID: ${bom.id}\n` +
-                    `製品名: ${bom.product}`)) {
-                    const index = bomData.findIndex(b => b.id === id);
-                    if (index > -1) {
-                        bomData.splice(index, 1);
-                        expandedRows.delete(id);
-                        renderTable();
-                        alert('BOMを削除しました。');
-                    }
-                }
-            }
-        }
-
-        // Add new BOM
-        function addBOM() {
-            alert('新規BOM追加画面を開きます。\n\n' +
-                '※ 実装時はBOM登録フォームを表示します。');
-        }
-
-        // Initial render
-        renderTable();
-
-        // Log info
-        console.log('部品表管理アプリ - ロード完了');
-        console.log(`BOM数: ${bomData.length}件`);
-    </script>
-</body>
-
-</html>
+</body></html>
