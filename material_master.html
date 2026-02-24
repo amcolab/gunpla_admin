@@ -1,470 +1,335 @@
 <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>資材マスタ - Kintone</title>
-
-    <!-- Kintone Common Stylesheet -->
-    <link rel="stylesheet" href="kintone-common-v2.css">
-</head>
-
-<body>
-    <!-- Kintone Header -->
-    <div class="kintone-header">
-        <div class="app-icon-circle">📦</div>
-        <div class="app-title-header">資材マスタ</div>
-    </div>
-
-    <!-- Secondary Navigation -->
-    <div class="secondary-nav">
-        <div class="nav-icon">🏠</div>
-        <span class="breadcrumb-text">アプリ: 資材マスタ</span>
-        <div class="nav-right">
-            <div class="nav-icon">⚙️</div>
-            <div class="nav-icon">❓</div>
-        </div>
-    </div>
-
-    <!-- App Description -->
-    <div class="app-description">
-        資材マスタアプリは、製品製造に使用される原料、パッケージ資材、OEM資材を管理します。
-    </div>
-
-    <!-- View Controls -->
-    <div class="view-controls">
-        <button class="view-button">
-            <span class="view-icon">📋</span>
-            <span class="view-text">全資材一覧</span>
-            <span class="dropdown-arrow">▼</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">🔍</span>
-        </button>
-
-        <button class="control-btn">
-            <span class="control-btn-icon">📊</span>
-        </button>
-
-        <div class="controls-right">
-            <button class="icon-only-btn" onclick="addMaterial()">➕</button>
-            <button class="icon-only-btn">⚙️</button>
-            <button class="icon-only-btn">⋯</button>
-        </div>
-    </div>
-
-    <!-- Record Count Top -->
-    <div class="record-count" id="topCount">1 - 15（15件中）</div>
-
-    <!-- Data Table -->
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>資材ID</th>
-                    <th>資材名</th>
-                    <th>商品名</th>
-                    <th>型番</th>
-                    <th>重量</th>
-                    <th>サプライヤー</th>
-                    <th>発注点</th>
-                    <th>購買担当者</th>
-                    <th>資材区分</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="materialsTableBody">
-                <!-- Data will be rendered here -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Record Count Bottom -->
-    <div class="bottom-count" id="bottomCount">1 - 15（15件中）</div>
-    <script src="auth.js"></script>
-    <script>
-        // Sample materials data
-        const materials = [
-            {
-                id: '00001',
-                name: 'ライスシリカ原料',
-                product: '全製品共通',
-                isCommon: true,
-                modelNo: 'RM-SILI-001',
-                weight: '1,000g/袋',
-                supplier: '山田商事',
-                reorderPoint: '500',
-                purchaser: '山田太郎',
-                category: 'raw',
-                categoryName: '原料'
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>資材マスタ | Material Master List (Refined Inventory Labels)</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8E44AD",
+                        kintone: {
+                            blue: "#3498DB",
+                            light: "#F7F9FA",
+                            border: "#E3E7E8",
+                            header: "#7D3C98",
+                            hover: "#ECF0F1",
+                            text: "#333333"
+                        },
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#1A1A1B",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Hiragino Sans", "Meiryo", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "4px",
+                    },
+                },
             },
-            {
-                id: '00002',
-                name: 'ビタミンC粉末',
-                product: '全製品共通',
-                isCommon: true,
-                modelNo: 'VC-POWDER',
-                weight: '100g/袋',
-                supplier: '佐藤ケミカル',
-                reorderPoint: '300',
-                purchaser: '佐藤花子',
-                category: 'raw',
-                categoryName: '原料'
-            },
-            {
-                id: '00003',
-                name: 'ラベル',
-                product: 'シリックス 500mL',
-                isCommon: false,
-                modelNo: '',
-                weight: '4.02g/枚',
-                supplier: '丸正産業',
-                reorderPoint: '2,500',
-                purchaser: '山田太郎',
-                category: 'packaging',
-                categoryName: 'パッケージ'
-            },
-            {
-                id: '00004',
-                name: 'ラベル',
-                product: 'シリックス 200mL',
-                isCommon: false,
-                modelNo: '',
-                weight: '2.65g/枚',
-                supplier: '丸正産業',
-                reorderPoint: '2,000',
-                purchaser: '佐藤花子',
-                category: 'packaging',
-                categoryName: 'パッケージ'
-            },
-            {
-                id: '00005',
-                name: '化粧箱',
-                product: 'シリックス 200mL',
-                isCommon: false,
-                modelNo: 'BOX-SLX-200',
-                weight: '',
-                supplier: '丸正産業',
-                reorderPoint: '1,500',
-                purchaser: '山田太郎',
-                category: 'packaging',
-                categoryName: 'パッケージ'
-            },
-            {
-                id: '00006',
-                name: 'ボトル',
-                product: 'SASA-LABO 50mL',
-                isCommon: false,
-                modelNo: 'NCC-180(HDPE)',
-                weight: '',
-                supplier: '鈴木ボトル',
-                reorderPoint: '5,000',
-                purchaser: '田中一郎',
-                category: 'bottle',
-                categoryName: 'ボトル'
-            },
-            {
-                id: '00007',
-                name: 'ラベルシール',
-                product: 'Dr\'s Power',
-                isCommon: false,
-                modelNo: '',
-                weight: '',
-                supplier: 'OEM製造',
-                reorderPoint: '10,000',
-                purchaser: '佐藤花子',
-                category: 'oem',
-                categoryName: 'OEM資材'
-            },
-            {
-                id: '00008',
-                name: '中栓',
-                product: 'SASA-LABO 50mL',
-                isCommon: false,
-                modelNo: 'FLキャップ用中栓',
-                weight: '1.22g/個',
-                supplier: '鈴木ボトル',
-                reorderPoint: '5,000',
-                purchaser: '田中一郎',
-                category: 'cap',
-                categoryName: '中栓'
-            },
-            {
-                id: '00009',
-                name: 'キャップ',
-                product: 'SASA-LABO 50mL',
-                isCommon: false,
-                modelNo: 'CSキャップ45S',
-                weight: '',
-                supplier: '鈴木ボトル',
-                reorderPoint: '5,000',
-                purchaser: '山田太郎',
-                category: 'cap',
-                categoryName: 'キャップ'
-            },
-            {
-                id: '00010',
-                name: 'ダンボール',
-                product: 'kelso',
-                isCommon: false,
-                modelNo: '',
-                weight: '',
-                supplier: '山田商事',
-                reorderPoint: '100',
-                purchaser: '佐藤花子',
-                category: 'packaging',
-                categoryName: 'ダンボール'
-            },
-            {
-                id: '00011',
-                name: '底板',
-                product: 'kelso',
-                isCommon: false,
-                modelNo: '',
-                weight: '',
-                supplier: '山田商事',
-                reorderPoint: '100',
-                purchaser: '山田太郎',
-                category: 'packaging',
-                categoryName: '底板'
-            },
-            {
-                id: '00012',
-                name: 'ラベル',
-                product: 'KOYOケイ素',
-                isCommon: false,
-                modelNo: '',
-                weight: '3.42g/枚',
-                supplier: '丸正産業',
-                reorderPoint: '1,500',
-                purchaser: '佐藤花子',
-                category: 'packaging',
-                categoryName: 'ラベル'
-            },
-            {
-                id: '00013',
-                name: 'アルミボトル',
-                product: '全製品共通',
-                isCommon: true,
-                modelNo: 'AL-300ML',
-                weight: '180g/本',
-                supplier: '容器メーカーB',
-                reorderPoint: '1,000',
-                purchaser: '田中一郎',
-                category: 'bottle',
-                categoryName: 'ボトル'
-            },
-            {
-                id: '00014',
-                name: '計量カップ',
-                product: '全製品共通',
-                isCommon: true,
-                modelNo: 'CAP-10ML-PPP',
-                weight: '5g/個',
-                supplier: '容器メーカーC',
-                reorderPoint: '5,000',
-                purchaser: '佐藤花子',
-                category: 'packaging',
-                categoryName: '容器'
-            },
-            {
-                id: '00015',
-                name: '天然保湿成分"G"',
-                product: '全製品共通',
-                isCommon: true,
-                modelNo: 'GHY2514',
-                weight: '1000g/kg',
-                supplier: '化学工業株式会社',
-                reorderPoint: '200',
-                purchaser: '山田次郎',
-                category: 'raw',
-                categoryName: '原料'
-            }
-        ];
-
-        // Get category badge info
-        function getCategoryBadge(category, categoryName) {
-            const categoryMap = {
-                'raw': 'status-active',
-                'packaging': 'status-new',
-                'bottle': 'status-pending',
-                'cap': 'status-pending',
-                'oem': 'status-completed'
-            };
-
-            return {
-                class: categoryMap[category] || 'status-draft',
-                text: categoryName
-            };
-        }
-
-        // Render table
-        function renderTable() {
-            const tbody = document.getElementById('materialsTableBody');
-
-            tbody.innerHTML = materials.map(material => {
-                const categoryInfo = getCategoryBadge(material.category, material.categoryName);
-
-                // Product link - only if not common
-                const productDisplay = material.isCommon
-                    ? material.product
-                    : `<a href="#" class="record-link" onclick="viewProduct('${material.product}'); return false;">${material.product}</a>`;
-
-                return `
-                    <tr>
-                        <td>
-                            <a href="#" class="record-link" onclick="viewMaterial('${material.id}'); return false;">
-                                ${material.id}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="#" class="record-link" onclick="viewMaterialDetail('${material.id}'); return false;">
-                                ${material.name}
-                            </a>
-                        </td>
-                        <td>${productDisplay}</td>
-                        <td>${material.modelNo}</td>
-                        <td>${material.weight}</td>
-                        <td>
-                            <a href="#" class="record-link" onclick="viewSupplier('${material.supplier}'); return false;">
-                                ${material.supplier}
-                            </a>
-                        </td>
-                        <td>${material.reorderPoint}</td>
-                        <td>
-                            <a href="#" class="record-link" onclick="viewPurchaser('${material.purchaser}'); return false;">
-                                ${material.purchaser}
-                            </a>
-                        </td>
-                        <td>
-                            <span class="status-badge ${categoryInfo.class}">
-                                ${categoryInfo.text}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-icon edit" 
-                                        title="編集" 
-                                        onclick="editMaterial('${material.id}')">
-                                </button>
-                                <button class="action-icon delete" 
-                                        title="削除" 
-                                        onclick="deleteMaterial('${material.id}')">
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            updateRecordCount();
-        }
-
-        // Update record count
-        function updateRecordCount() {
-            const count = materials.length;
-            const countText = `1 - ${count}（${count}件中）`;
-            document.getElementById('topCount').textContent = countText;
-            document.getElementById('bottomCount').textContent = countText;
-        }
-
-        // View material details
-        function viewMaterial(id) {
-            const material = materials.find(m => m.id === id);
-            if (material) {
-                alert(`資材詳細:\n\n` +
-                    `資材ID: ${material.id}\n` +
-                    `資材名: ${material.name}\n` +
-                    `商品名: ${material.product}\n` +
-                    `型番: ${material.modelNo}\n` +
-                    `重量: ${material.weight}\n` +
-                    `サプライヤー: ${material.supplier}\n` +
-                    `発注点: ${material.reorderPoint}\n` +
-                    `購買担当者: ${material.purchaser}\n` +
-                    `資材区分: ${material.categoryName}`);
-            }
-        }
-
-        // View material name detail
-        function viewMaterialDetail(id) {
-            const material = materials.find(m => m.id === id);
-            if (material) {
-                alert(`資材マスタ詳細:\n\n` +
-                    `資材ID: ${material.id}\n` +
-                    `資材名: ${material.name}\n` +
-                    `資材区分: ${material.categoryName}\n\n` +
-                    `※ 資材マスタ詳細画面を開きます`);
-            }
-        }
-
-        // View product details
-        function viewProduct(productName) {
-            alert(`商品詳細:\n\n` +
-                `商品名: ${productName}\n\n` +
-                `※ 商品マスタ詳細画面を開きます`);
-        }
-
-        // View supplier details
-        function viewSupplier(supplierName) {
-            const relatedMaterials = materials.filter(m => m.supplier === supplierName);
-            alert(`サプライヤー詳細:\n\n` +
-                `サプライヤー名: ${supplierName}\n` +
-                `取扱資材数: ${relatedMaterials.length}件\n\n` +
-                `※ サプライヤーマスタ詳細画面を開きます`);
-        }
-
-        // View purchaser details
-        function viewPurchaser(purchaserName) {
-            const relatedMaterials = materials.filter(m => m.purchaser === purchaserName);
-            alert(`購買担当者詳細:\n\n` +
-                `担当者名: ${purchaserName}\n` +
-                `担当資材数: ${relatedMaterials.length}件\n\n` +
-                `※ 担当者詳細画面を開きます`);
-        }
-
-        // Edit material
-        function editMaterial(id) {
-            const material = materials.find(m => m.id === id);
-            if (material) {
-                alert(`資材を編集:\n\n` +
-                    `資材ID: ${material.id}\n` +
-                    `資材名: ${material.name}\n\n` +
-                    `※ 実際の編集画面を開きます`);
-            }
-        }
-
-        // Delete material
-        function deleteMaterial(id) {
-            const material = materials.find(m => m.id === id);
-            if (material) {
-                if (confirm(`この資材を削除してもよろしいですか？\n\n` +
-                    `資材ID: ${material.id}\n` +
-                    `資材名: ${material.name}`)) {
-                    const index = materials.findIndex(m => m.id === id);
-                    if (index > -1) {
-                        materials.splice(index, 1);
-                        renderTable();
-                        alert('資材を削除しました。');
-                    }
-                }
-            }
-        }
-
-        // Add new material
-        function addMaterial() {
-            alert('新規資材追加画面を開きます。\n\n' +
-                '※ 実装時は資材登録フォームを表示します。');
-        }
-
-        // Initial render
-        renderTable();
-
-        // Log info
-        console.log('資材マスタアプリ - ロード完了');
-        console.log(`資材数: ${materials.length}件`);
+        };
     </script>
-</body>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', 'Hiragino Sans', 'Meiryo', sans-serif; }
+        .kintone-table th {
+            @apply bg-[#F5F5F5] border-b-2 border-[#E3E7E8] font-semibold text-[#333] text-left p-[12px_10px] text-[13px] whitespace-nowrap;
+        }
+        .dark .kintone-table th {
+            @apply bg-[#2D2D2E] border-b-2 border-[#404041] text-[#E3E7E8];
+        }
+        .kintone-table td {
+            @apply p-2.5 border-b border-[#E3E7E8] text-[13px] align-middle;
+        }
+        .dark .kintone-table td {
+            @apply border-b border-[#404041];
+        }
+        .badge {
+            @apply px-2 py-0.5 rounded-xl text-[11px] font-bold inline-block text-[#333];
+        }
+        .kintone-link {
+            @apply text-[#3498DB] cursor-pointer no-underline hover:opacity-80;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<header class="bg-primary text-white h-12 flex items-center justify-between px-4 shadow-sm">
+<div class="flex items-center gap-2">
+<div class="bg-white p-1 rounded">
+<span class="material-symbols-outlined text-primary text-xl leading-none">inventory_2</span>
+</div>
+<h1 class="font-bold text-lg">資材マスタ</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer">search</span>
+<span class="material-symbols-outlined cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden border border-white">
+<img alt="Admin Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Jip3rteS4at9gxl2NB2-fVKowbzZZzYOXho7VecjnDcQ1uHt4Omyv1fTAMz2DVyhw5sr5Niw902-GhHo9u0Jl19rVMtFJC54ijokXUOFY-8TzcWgQ2Ml9zaUM0y6KNP-yVMAC9YdQ-E-elITb6663Jw38zHKL9_4guQ2rwJ2gK_YFk_nKGUvfWMQ7Ap9dXW8BlvbmUwCX5Gbb187WJb3ehSqhU8567tbuqFEQKOsA-7OidQ6hNumiuklHZZXxXCXRdLGDntOmA"/>
+</div>
+</div>
+</header>
+<div class="bg-[#F7F9FA] dark:bg-[#252526] border-b border-gray-200 dark:border-gray-700 px-4 py-2 flex justify-between items-center text-xs">
+<div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+<span class="material-symbols-outlined text-sm leading-none">home</span>
+<span>アプリ: 資材マスタ</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-500 cursor-pointer text-lg leading-none">settings</span>
+<span class="material-symbols-outlined text-red-500 cursor-pointer text-lg leading-none">help</span>
+</div>
+</div>
+<main class="p-4">
+<p class="text-sm text-gray-600 dark:text-gray-400 mb-6">資材マスタアプリは、製品製造に使用される原料、パッケージ資材、OEM資材、およびその技術仕様を管理します。</p>
+<div class="flex flex-wrap items-center justify-between mb-4 gap-4">
+<div class="flex items-center gap-1">
+<div class="flex items-center bg-[#3498DB] hover:bg-[#2980B9] text-white px-3 py-1.5 rounded-l cursor-pointer shadow-sm">
+<span class="material-symbols-outlined text-sm mr-2 leading-none">description</span>
+<span class="text-sm font-bold">全資材一覧</span>
+<span class="material-symbols-outlined text-sm ml-2 leading-none">arrow_drop_down</span>
+</div>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-500 dark:text-gray-400 text-lg leading-none">search</span>
+</button>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 rounded-r hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-500 dark:text-gray-400 text-lg leading-none">bar_chart</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<div class="text-xs text-gray-500 dark:text-gray-400 mr-2">1 - 6 (6件中)</div>
+<button class="bg-[#3498DB] hover:bg-[#2980B9] text-white p-1.5 rounded shadow-sm">
+<span class="material-symbols-outlined leading-none">add</span>
+</button>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-500 dark:text-gray-400 leading-none text-xl">settings</span>
+</button>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-500 dark:text-gray-400 leading-none text-xl">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded shadow-sm">
+<table class="w-full kintone-table border-collapse min-w-max">
+<thead>
+<tr>
+<th>資材コード</th>
+<th>資材名</th>
+<th>資材区分</th>
+<th>型番</th>
+<th>メーカー</th>
+<th>基本単位</th>
+<th>重量</th>
+<th>兼用資材・商品特徴</th>
+<th class="text-right">原価単価（税抜）</th>
+<th class="text-right">発注ロット</th>
+<th class="text-right">発注点</th>
+<th>発注担当者</th>
+<th class="text-center">在庫管理</th>
+<th class="text-center">操作</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-white dark:bg-[#1E1E1F] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00001</td>
+<td class="kintone-link">ライスシリカ原料</td>
+<td><span class="badge bg-green-100">原料</span></td>
+<td class="text-gray-500">RM-SILI-001</td>
+<td class="kintone-link">山田商事</td>
+<td>kg</td>
+<td class="text-gray-600 dark:text-gray-400">20kg/袋</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">国産米由来、高純度シリカ</td>
+<td class="text-right font-medium">¥12,500</td>
+<td class="text-right">100</td>
+<td class="text-right">500</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Yamada" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx6lp5biCk16twWBl-QbLq-eywTmJeCZFCk6jMrVj7EIQweJLbTJgUh-YdjX8dBQT1QjyJ6EoBtFH70eBm1iK_eu4pRRnDws9N0NzA2s6B518j7J0mWgobkJKVm4gJq4aV9kvXCPMQtWg6EuvfE6_ZglIpoHQW2imOdaq_X8osYs8GDpr6x2pOuhz5QKA7jjK1VM5-dVgSvxcZK0GHp8yjB3bKEi3QLklwnfgB43qL-p1uotR1EkqSv96_keRIQxTjbgf_q86w_w"/>
+<span>山田太郎</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-green-600">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">あり</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+<tr class="bg-[#F9F9F9] dark:bg-[#252526] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00002</td>
+<td class="kintone-link">ビタミンC粉末</td>
+<td><span class="badge bg-green-100">原料</span></td>
+<td class="text-gray-500">VC-POWDER</td>
+<td class="kintone-link">佐藤ケミカル</td>
+<td>g</td>
+<td class="text-gray-600 dark:text-gray-400">1kg/缶</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">高吸収タイプ、全製品共通</td>
+<td class="text-right font-medium">¥4,200</td>
+<td class="text-right">50</td>
+<td class="text-right">300</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Sato" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfrcW9Ct9lkEbcLVOP16ACiJl43X6xsErp1FTz38guy8UfsREAWysIelxZo-XvYXrPQSzTuqYvvziQHt5npAY-q7S1INcM_ud0P24GB3utbSlo-B7lGvLjrW5xfgmJ2l51PBvumzIPIkU3FE-0ocim5uki2RauoIcOobBlZaQruJMqYzlXgsR_nWTbNvC5eYJFtYuOXd0vuTvigbqxf49u7iR4bBRATVl9qLXCbIbVqFkyNkweObV-QQPVTNsyqNfpcEQkVNXhkw"/>
+<span>佐藤花子</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-green-600">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">あり</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+<tr class="bg-white dark:bg-[#1E1E1F] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00003</td>
+<td class="kintone-link">ラベル</td>
+<td><span class="badge bg-blue-100">パッケージ</span></td>
+<td class="text-gray-500">-</td>
+<td class="kintone-link">丸正産業</td>
+<td>枚</td>
+<td class="text-gray-600 dark:text-gray-400">0.5g/枚</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">強粘着、耐水加工</td>
+<td class="text-right font-medium">¥12</td>
+<td class="text-right">2,000</td>
+<td class="text-right">2,500</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Yamada" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC74Prw1tPplbTJPuAhAgpm7eHFzX58mFZmBldF7L1m-fUBoYEQJ-_LZsINKkVOK-YfbiQEoV2VNfwPojys4QO_vJPXisLl_bGnDGDonHNFA2TDOwE4TuuKpC_OY0ZFHGlupqwJlaag2ToG5lh0sJ7Ak9TL0UyNGneqCTmXZ5nJ5RMELPeaseEEjIQzomMTBgHjLY9TFvLw1oAFiVIrhAe43Sm2-imGN7yNhPuRzDeKplvnFYQfcH0T5Ml_YTyEq-ZkMAZQ2VersQ"/>
+<span>山田太郎</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-green-600">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">あり</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+<tr class="bg-[#F9F9F9] dark:bg-[#252526] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00004</td>
+<td class="kintone-link">化粧箱</td>
+<td><span class="badge bg-blue-100">パッケージ</span></td>
+<td class="text-gray-500">BOX-SLX-200</td>
+<td class="kintone-link">丸正産業</td>
+<td>個</td>
+<td class="text-gray-600 dark:text-gray-400">45g/個</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">ギフト対応、光沢PP加工</td>
+<td class="text-right font-medium">¥145</td>
+<td class="text-right">500</td>
+<td class="text-right">1,500</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Yamada" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqgezZgfdZoxrN1SvgOGWOyjEPcaUS0zWorShsCtnD5OyKJtRsmzTZbxgBF9L69b1DKwWDzVoOZFa6AnwjtJ__HkWax7u1LRM7MUHJ7A3Ix4oFJ1b2imo5H9BLATTSTDgPVnTuSk6u1jBZVHpVTHgVybOWcS6AOWPpxswn8D5kTyjbIdb70g2xLpftEABomB66bQJ7M2R-DDGgI68S-R4T5bBnLQBB4Ar8jQFccT5kDu4lcTzhidiAE5CWnAZXqQbQyLSHBIO-dw"/>
+<span>山田太郎</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-green-600">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">あり</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+<tr class="bg-white dark:bg-[#1E1E1F] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00005</td>
+<td class="kintone-link">ボトル</td>
+<td><span class="badge bg-yellow-100">ボトル</span></td>
+<td class="text-gray-500">NCC-180(HDPE)</td>
+<td class="kintone-link">鈴木ボトル</td>
+<td>本</td>
+<td class="text-gray-600 dark:text-gray-400">120g/本</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">サプリメント用標準容器</td>
+<td class="text-right font-medium">¥85</td>
+<td class="text-right">1,000</td>
+<td class="text-right">5,000</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Tanaka" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEg9Myp1doF0XMWge_88WWJOrNMWWSfyHioCtIJ5_Ls7uLT8AY1v97VDwOL31AcFDvFUNi_8PkT9SX3sArwNKhKhC05UGU0jvx994yalPqh4cAzfpF3gUC9NJDCUJUwvPDn0HAfuJdUbT_dv_4rF-zW9gkivrClHXnZgu4ZIMBcEt3D4ig0mieU-Rg1aH7wqIra2sUxBrkE8NzNRo0Ugljv1nfEQbH58af7ixTYc3KD5BOQ8P3clUG-OJqf1H5kDDH-zQCXe3qYA"/>
+<span>田中一郎</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-green-600">check_circle</span>
+<span class="text-gray-800 dark:text-gray-200">あり</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+<tr class="bg-[#F9F9F9] dark:bg-[#252526] hover:bg-kintone-hover dark:hover:bg-gray-800">
+<td class="kintone-link">00006</td>
+<td class="kintone-link">ラベルシール</td>
+<td><span class="badge bg-purple-100">OEM資材</span></td>
+<td class="text-gray-500">-</td>
+<td class="kintone-link">OEM製造</td>
+<td>セット</td>
+<td class="text-gray-600 dark:text-gray-400">300g/セット</td>
+<td class="text-gray-600 dark:text-gray-400 max-w-[200px] truncate">セット梱包資材</td>
+<td class="text-right font-medium">¥2,800</td>
+<td class="text-right">500</td>
+<td class="text-right">10,000</td>
+<td>
+<div class="flex items-center gap-2">
+<img alt="Sato" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcTlBlrCv8iy2EP_gcvw1qAVkeNv9l01cToYmmSoqVTRrqsmniz67gQrAjsViqM0DlivyF2U0Y1HbYBNLJMi0RrmvTzYISKIIirGXK3ZIrJak7pwf1OYTUE3VVBSEpzs_Bb81LWfpelOeSUZ15MIm1E4s2qwVL6SbII78K2vmi0T8-umXMv6uiZGe9aSTWV3EW3tvO9lzAooOTd5EX5XjdkDYSGnSy7BRWY7VF2DGxqXu462oqlzMV8XudbWP9txs5Iv4OEseXpA"/>
+<span>佐藤花子</span>
+</div>
+</td>
+<td class="text-center">
+<div class="flex items-center justify-center gap-1 font-bold">
+<span class="material-symbols-outlined text-lg leading-none text-red-500">cancel</span>
+<span class="text-gray-800 dark:text-gray-200">なし</span>
+</div>
+</td>
+<td>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[#3498DB] cursor-pointer text-lg leading-none">edit</span>
+<span class="material-symbols-outlined text-gray-400 cursor-pointer text-lg leading-none">delete</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-end mt-4">
+<div class="flex border border-gray-300 dark:border-gray-600 rounded overflow-hidden">
+<button class="px-3 py-1 bg-white dark:bg-gray-800 border-r border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-sm leading-none">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-sm leading-none">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
 
-</html>
+</body></html>
