@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>注文詳細 - 出庫登録ポップアップ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3498db",
+                        "background-light": "#f5f5f5",
+                        "kintone-yellow": "#f9d502",
+                        "kintone-blue": "#3498db",
+                        "kintone-gray": "#e3e7e8",
+                        "kintone-field-bg": "#f5f5f5",
+                        "kintone-border": "#e3e7e8"
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans JP", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .kintone-input {
+            border: 1px solid #e3e7e8;
+            padding: 8px 12px;
+            width: 100%;
+            background-color: #fff;
+            @apply text-sm outline-none focus:border-blue-400;
+        }
+        .kintone-label {
+            @apply block text-xs font-bold text-gray-600 mb-1;
+        }
+        .kintone-readonly {
+            @apply bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center text-sm italic;
+        }
+        .required::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+        }
+        .kintone-radio-group {
+            @apply flex space-x-4 py-2;
+        }
+        .kintone-radio-label {
+            @apply flex items-center text-sm text-gray-700 cursor-pointer;
+        }
+        .kintone-radio-input {
+            @apply mr-2 text-blue-600 focus:ring-blue-500 border-gray-300;
+        }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen overflow-hidden">
+<div class="filter blur-[2px] pointer-events-none select-none">
+<header class="bg-kintone-yellow h-12 flex items-center justify-between px-4 shadow-sm">
+<div class="flex items-center space-x-4">
+<div class="bg-white p-1 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-600">description</span>
+</div>
+<h1 class="font-bold text-gray-800">注文アプリ</h1>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-2 mr-4">
+<span class="material-symbols-outlined text-gray-600">settings</span>
+<span class="material-symbols-outlined text-gray-600">help</span>
+<div class="flex items-center space-x-1 ml-2">
+<div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined">person</span>
+</div>
+<span class="text-sm font-bold text-gray-700">Administrator</span>
+</div>
+</div>
+</div>
+</header>
+<main class="p-8 max-w-[1200px] mx-auto bg-white shadow-sm mt-4 border border-gray-200 mb-12">
+<div class="mb-10">
+<div class="flex items-center text-gray-700 font-bold mb-3">
+<span class="material-symbols-outlined text-sm mr-1">expand_more</span>
+<span>基本情報</span>
+</div>
+<div class="grid grid-cols-2 gap-x-10 gap-y-4">
+<div>
+<label class="kintone-label">注文ID</label>
+<div class="bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center text-sm">38</div>
+</div>
+<div>
+<label class="kintone-label">注文日</label>
+<div class="bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center text-sm">2026-02-24</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
+<div class="bg-white w-[540px] shadow-[0_10px_25px_rgba(0,0,0,0.2)] border border-gray-300 flex flex-col">
+<div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+<h2 class="text-gray-800 font-bold text-base flex items-center">
+                    出庫登録
+                </h2>
+<button class="text-gray-400 hover:text-gray-600">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 overflow-y-auto max-h-[85vh]">
+<div class="mb-6 pb-4 border-b border-gray-100">
+<div class="text-lg font-bold text-blue-700 flex items-center">
+                        今回の出庫合計：150個
+                    </div>
+</div>
+<div class="space-y-5">
+<div>
+<label class="kintone-label required">送り状作成方法</label>
+<div class="kintone-radio-group">
+<label class="kintone-radio-label">
+<input checked="" class="kintone-radio-input" name="label_method" type="radio"/>
+<span>Ship&amp;Coで作成</span>
+</label>
+<label class="kintone-radio-label">
+<input class="kintone-radio-input" name="label_method" type="radio"/>
+<span>手入力</span>
+</label>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="kintone-label required">出庫予定日</label>
+<input class="kintone-input" type="date" value="2026-02-24"/>
+</div>
+<div>
+<label class="kintone-label">配送会社</label>
+<select class="kintone-input">
+<option>ヤマト運輸</option>
+<option>佐川急便</option>
+<option>日本郵便</option>
+<option>その他</option>
+</select>
+</div>
+</div>
+<div>
+<label class="kintone-label">追跡番号</label>
+<div class="kintone-readonly">
+                            確定後に自動生成されます
+                        </div>
+</div>
+<div>
+<label class="kintone-label">ラベルURL</label>
+<div class="kintone-readonly">
+                            確定後に自動生成されます
+                        </div>
+</div>
+<div>
+<label class="kintone-label">出庫メモ</label>
+<textarea class="kintone-input h-20 resize-none" placeholder=""></textarea>
+</div>
+</div>
+</div>
+<div class="bg-gray-100 px-4 py-4 border-t border-gray-200 flex justify-start space-x-3">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 text-sm font-bold shadow-sm transition-colors border border-blue-700">
+                    出庫タスク作成
+                </button>
+<button class="bg-white hover:bg-gray-50 text-gray-700 px-8 py-2 text-sm font-bold shadow-sm transition-colors border border-gray-300">
+                    キャンセル
+                </button>
+</div>
+</div>
+</div>
+
+</body></html>
