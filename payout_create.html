@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>支払実行リクエスト登録 (承認者セクション更新)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3498db",
+                        "kintone-yellow": "#ffcc00",
+                        "background-light": "#f4f4f4",
+                        "background-dark": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        display: ["Helvetica Neue", "Arial", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+        .kintone-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .field-label {
+            @apply block text-[11px] font-bold text-gray-600 dark:text-zinc-400 mb-1;
+        }
+        .read-only-field {
+            @apply p-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded text-sm text-gray-700 dark:text-zinc-300 min-h-[34px] flex items-center;
+        }
+        .kintone-btn-secondary {
+            @apply px-4 py-1.5 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-primary dark:text-blue-400 font-medium hover:bg-gray-50 dark:hover:bg-zinc-700 transition kintone-shadow text-sm flex items-center gap-1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-gray-800 dark:text-gray-200">
+<header class="bg-kintone-yellow h-12 flex items-center px-4 justify-between sticky top-0 z-50">
+<div class="flex items-center space-x-4">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-gray-800 text-2xl">cloud</span>
+<span class="ml-2 font-bold text-gray-800 text-lg tracking-tight">kintone</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-gray-700 hover:bg-black/10 p-1 rounded"><span class="material-symbols-outlined">mail</span></button>
+<div class="flex items-center bg-black/10 px-2 py-1 rounded cursor-pointer">
+<span class="material-symbols-outlined text-gray-700 mr-2">person</span>
+<span class="text-sm font-medium text-gray-800 mr-1">Administrator</span>
+<span class="material-symbols-outlined text-sm text-gray-700">arrow_drop_down</span>
+</div>
+</div>
+</header>
+<nav class="bg-[#424242] text-white h-10 flex items-center px-4 justify-between border-b border-gray-600">
+<div class="flex items-center space-x-6">
+<span class="material-symbols-outlined cursor-pointer text-xl">menu</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">home</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">notifications</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">star</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined cursor-pointer text-xl">settings</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">help</span>
+<div class="relative flex items-center">
+<input class="bg-white text-gray-800 text-sm h-7 px-2 pr-8 w-48 rounded" placeholder="アプリ内検索" type="text"/>
+<span class="material-symbols-outlined absolute right-2 text-gray-400 text-lg">search</span>
+</div>
+</div>
+</nav>
+<div class="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 px-4 py-3 flex items-center">
+<div class="w-10 h-10 bg-gray-200 dark:bg-zinc-700 rounded mr-3 flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500">payments</span>
+</div>
+<h1 class="text-xl font-bold text-gray-800 dark:text-zinc-100">支払実行リクエスト管理</h1>
+</div>
+<div class="bg-white dark:bg-zinc-900 px-4 py-2 border-b border-gray-200 dark:border-zinc-800 flex items-center text-xs text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined text-sm mr-1">home</span>
+<span class="mr-2">&gt;</span>
+<span class="hover:underline cursor-pointer">アプリ: 支払実行リクエスト管理</span>
+<div class="ml-auto flex items-center space-x-4 text-gray-400">
+<span class="material-symbols-outlined text-sm cursor-pointer text-[16px]">push_pin</span>
+<span class="material-symbols-outlined text-sm cursor-pointer text-[16px]">info</span>
+</div>
+</div>
+<main class="p-4 max-w-5xl mx-auto">
+<div class="flex space-x-2 mb-4 items-center">
+<button class="kintone-btn-secondary">
+            キャンセル
+        </button>
+<button class="px-8 py-1.5 bg-primary text-white font-medium hover:bg-blue-600 transition kintone-shadow text-sm">
+            保存
+        </button>
+<button class="kintone-btn-secondary border-blue-400 text-blue-500">
+<span class="material-symbols-outlined text-lg">description</span>
+            支払書出力
+        </button>
+</div>
+<div class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-6 rounded shadow-sm">
+<div class="mb-8">
+<h3 class="text-sm font-bold text-primary dark:text-blue-400 border-l-4 border-primary pl-2 mb-4">基本情報</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+<div>
+<label class="field-label">支払ID</label>
+<div class="read-only-field text-gray-400">(自動入力)</div>
+</div>
+<div>
+<label class="field-label">GMOの取引ID</label>
+<div class="read-only-field">GMO-TX-77889900</div>
+</div>
+<div>
+<label class="field-label">ステータス <span class="text-red-500">*</span></label>
+<div class="p-2 bg-gray-100 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded text-sm flex justify-between items-center text-gray-700 dark:text-zinc-300">
+<span>待機中</span>
+<span class="material-symbols-outlined text-sm">arrow_drop_down</span>
+</div>
+</div>
+<div>
+<label class="field-label">支払種別 <span class="text-red-500">*</span></label>
+<select class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm h-[34px] focus:ring-primary focus:border-primary py-1">
+<option selected="" value="commission">コミッション支払（月次）</option>
+<option value="other">その他支払</option>
+</select>
+</div>
+<div>
+<label class="field-label">支払予定日 <span class="text-red-500">*</span></label>
+<input class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm h-[34px] focus:ring-primary focus:border-primary py-1" type="date" value="2026-03-15"/>
+</div>
+<div>
+<label class="field-label">対象月 <span class="text-red-500">*</span></label>
+<input class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm h-[34px] focus:ring-primary focus:border-primary py-1" placeholder="YYYY-MM" type="text" value="2026-02"/>
+</div>
+<div class="md:col-span-3">
+<label class="field-label">依頼元（自社）</label>
+<div class="read-only-field w-full md:w-1/3">CREDIE CO., LTD.</div>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-primary dark:text-blue-400 border-l-4 border-primary pl-2 mb-4">受取人情報</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+<div class="col-span-1">
+<label class="field-label">受取人（Lookup） <span class="text-red-500">*</span></label>
+<div class="flex items-center space-x-2">
+<div class="flex-grow relative">
+<input class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm h-[34px] focus:ring-primary focus:border-primary" placeholder="パートナー名を検索" type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1.5 text-gray-400 text-lg">search</span>
+</div>
+<button class="px-3 py-1.5 bg-gray-100 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 text-xs rounded hover:bg-gray-200 dark:hover:bg-zinc-700 font-medium whitespace-nowrap">取得</button>
+<button class="px-3 py-1.5 bg-gray-100 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 text-xs rounded hover:bg-gray-200 dark:hover:bg-zinc-700 font-medium whitespace-nowrap">クリア</button>
+</div>
+</div>
+<div>
+<label class="field-label">氏名/名称</label>
+<div class="read-only-field">株式会社サンプル・パートナー</div>
+</div>
+<div class="md:col-span-2">
+<label class="field-label">住所</label>
+<div class="read-only-field">東京都渋谷区道玄坂1-2-3 サンプルビル 5F</div>
+</div>
+<div class="md:col-span-2">
+<label class="field-label">振込先情報</label>
+<div class="read-only-field bg-gray-50 dark:bg-zinc-800/50 flex-wrap py-3">
+<div class="flex items-center w-full mb-1">
+<span class="material-symbols-outlined text-gray-400 mr-2 text-base">account_balance</span>
+<span class="font-bold mr-2">銀行名:</span> <span>三菱UFJ銀行 (0005)</span>
+<span class="mx-3 text-gray-300">|</span>
+<span class="font-bold mr-2">支店名:</span> <span>渋谷支店 (123)</span>
+</div>
+<div class="flex items-center w-full">
+<span class="material-symbols-outlined text-gray-400 mr-2 text-base">person</span>
+<span class="font-bold mr-2">口座番号:</span> <span>普通 1234567</span>
+<span class="mx-3 text-gray-300">|</span>
+<span class="font-bold mr-2">口座名義:</span> <span>ｶ) ｻﾝﾌﾟﾙﾊﾟｰﾄﾅｰ</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-primary dark:text-blue-400 border-l-4 border-primary pl-2 mb-4">支払詳細</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+<div class="w-full md:w-3/4">
+<label class="field-label">支払金額 <span class="text-red-500">*</span></label>
+<div class="flex items-center">
+<input class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm text-right h-[34px] focus:ring-primary focus:border-primary" placeholder="0" type="number"/>
+<span class="ml-2 text-xs text-gray-600 dark:text-zinc-400 font-bold">JPY</span>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2">
+<label class="field-label">備考</label>
+<textarea class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded text-sm focus:ring-primary focus:border-primary" placeholder="支払に関する補足事項" rows="2"></textarea>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-primary dark:text-blue-400 border-l-4 border-primary pl-2 mb-4">添付書類</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+<div class="col-span-1">
+<label class="field-label">添付ファイル</label>
+<div class="border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-md p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-800/30 hover:bg-gray-100 dark:hover:bg-zinc-800 transition cursor-pointer">
+<span class="material-symbols-outlined text-gray-400 text-3xl mb-2">upload_file</span>
+<span class="text-xs text-gray-500 dark:text-zinc-400">ファイルをドラッグ＆ドロップ、または 参照...</span>
+<input class="hidden" type="file"/>
+</div>
+<div class="mt-2 text-[10px] text-gray-400">※請求書やエビデンス資料をアップロードしてください（最大20MB）</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-primary dark:text-blue-400 border-l-4 border-primary pl-2 mb-4">承認者</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+<div class="col-span-1">
+<label class="field-label">承認者 <span class="text-red-500">*</span></label>
+<div class="flex items-center space-x-2">
+<div class="flex-grow border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 rounded h-[34px] flex items-center px-2">
+<div class="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[11px] px-2 py-0.5 rounded flex items-center mr-2">
+<span class="material-symbols-outlined text-sm mr-1">person</span>
+<span>上長 太郎</span>
+<span class="material-symbols-outlined text-[12px] ml-1 cursor-pointer">close</span>
+</div>
+</div>
+<button class="bg-primary text-white w-[34px] h-[34px] rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">person_add</span>
+</button>
+<button class="bg-gray-100 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 w-[34px] h-[34px] rounded flex items-center justify-center text-gray-500">
+<span class="material-symbols-outlined text-lg">search</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex space-x-2 border-t border-gray-100 dark:border-zinc-800 pt-6">
+<button class="kintone-btn-secondary">
+                キャンセル
+            </button>
+<button class="px-8 py-1.5 bg-primary text-white font-medium hover:bg-blue-600 transition kintone-shadow text-sm">
+                保存
+            </button>
+</div>
+</div>
+</main>
+<div class="h-10"></div>
+
+</body></html>
