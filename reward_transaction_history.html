@@ -1,279 +1,324 @@
 <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-  <meta charset="UTF-8">
-  <title>報酬取引履歴アプリ - Rewards Transaction History</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Common Kintone-like stylesheet -->
-  <link rel="stylesheet" href="kintone-common-v2.css">
-
-  <style>
-    .amount-negative {
-      color: #d9534f;
-      font-weight: 600;
-    }
-
-    .amount-positive {
-      font-weight: 600;
-    }
-  </style>
+<html class="light" lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>報酬取引履歴一覧 (Reward Transaction List)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#a148ab",
+                        "background-light": "#f5f5f5",
+                        "background-dark": "#1a1a1a",
+                        "kintone-blue": "#3498db",
+                        "kintone-green": "#e2f2e2",
+                        "kintone-yellow": "#fff9e6",
+                        "kintone-border": "#e3e7e8",
+                        "link-blue": "#3498db"
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans JP", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .kintone-table th { border-right: 1px solid #e3e7e8; }
+        .kintone-table td { border-right: 1px solid #e3e7e8; }
+        .kintone-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .dark .kintone-table tr:nth-child(even) { background-color: #2a2a2a; }
+        .dark .kintone-table th, .dark .kintone-table td { border-color: #333; }
+    </style>
 </head>
-
-<body>
-  <!-- App Header -->
-  <div class="kintone-header">
-    <div class="app-icon-circle">💰</div>
-    <div class="app-title-header">報酬取引履歴アプリ</div>
-  </div>
-
-  <!-- Breadcrumb / Secondary Nav -->
-  <div class="secondary-nav">
-    <div class="nav-icon">🏠</div>
-    <span class="breadcrumb-text">ホーム &gt; 報酬取引履歴アプリ</span>
-    <div class="nav-right">
-      <div class="nav-icon">⚙️</div>
-      <div class="nav-icon">❓</div>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 min-h-screen">
+<header class="bg-primary text-white p-3 flex items-center shadow-md">
+<div class="flex items-center gap-2">
+<div class="bg-white/20 p-1 rounded">
+<span class="material-icons text-xl">account_balance_wallet</span>
+</div>
+<h1 class="font-bold text-lg">報酬取引履歴アプリ</h1>
+</div>
+</header>
+<nav class="bg-[#f0f0f0] dark:bg-[#252525] border-b border-gray-300 dark:border-gray-700 px-4 py-2 flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+<span class="material-icons text-base">home</span>
+<span>ホーム</span>
+<span class="material-icons text-xs">chevron_right</span>
+<span class="text-gray-900 dark:text-gray-100 font-medium">報酬取引履歴アプリ</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded"><span class="material-icons text-lg">settings</span></button>
+<button class="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded font-bold text-red-600">?</button>
+</div>
+</nav>
+<div class="bg-white dark:bg-zinc-900 p-4 border-b border-gray-200 dark:border-gray-800">
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            アフィリエイト報酬および投資家配当の元データとなる取引履歴を管理するアプリです。<br/>
+            各注文および返品明細に紐づく取引レコードを1行ずつ保持し、月末に別アプリ（Payment Record）で支払額を集計します。<br/>
+            この画面では月度別の支払総額は表示せず、履歴・トレース用の一覧のみを提供します。
+        </p>
+</div>
+<div class="bg-white dark:bg-zinc-900 px-4 py-3 flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-800">
+<div class="flex flex-wrap items-center gap-2">
+<div class="relative inline-block text-left">
+<button class="inline-flex items-center gap-2 bg-kintone-blue text-white px-4 py-1.5 rounded text-sm font-medium hover:bg-blue-600 transition shadow-sm" type="button">
+<span class="material-icons text-lg">list_alt</span>
+                    すべてのレコード
+                    <span class="material-icons text-lg">arrow_drop_down</span>
+</button>
+</div>
+<button class="border border-gray-300 dark:border-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-icons text-lg">search</span>
+                検索
+            </button>
+<button class="border border-gray-300 dark:border-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-icons text-lg">event</span>
+                月度フィルター
+            </button>
+<button class="border border-gray-300 dark:border-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-icons text-lg">file_download</span>
+                CSVエクスポート
+            </button>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-gray-100 dark:bg-gray-800 p-2 rounded border border-gray-300 dark:border-gray-700 text-kintone-blue hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-icons">add</span>
+</button>
+<button class="bg-gray-100 dark:bg-gray-800 p-2 rounded border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-icons">settings</span>
+</button>
+<button class="bg-gray-100 dark:bg-gray-800 p-2 rounded border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-icons">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="px-4 py-2 text-right text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-zinc-900">
+        1 - 10 (10件中)
     </div>
-  </div>
+<div class="overflow-x-auto bg-white dark:bg-zinc-900 shadow-sm">
+<table class="w-full text-left text-sm kintone-table border-collapse border border-kintone-border dark:border-gray-800">
+<thead class="bg-gray-50 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 border-b border-kintone-border dark:border-gray-800">
+<tr>
+<th class="px-3 py-2 font-medium">取引ID</th>
+<th class="px-3 py-2 font-medium whitespace-nowrap">期間（月度）</th>
+<th class="px-3 py-2 font-medium">注文ID</th>
+<th class="px-3 py-2 font-medium">トランザクション種別</th>
+<th class="px-3 py-2 font-medium">報酬種別</th>
+<th class="px-3 py-2 font-medium">取引先名</th>
+<th class="px-3 py-2 font-medium text-right whitespace-nowrap">計算対象金額 (JPY)</th>
+<th class="px-3 py-2 font-medium text-right whitespace-nowrap">掛け率 (%)</th>
+<th class="px-3 py-2 font-medium text-right whitespace-nowrap">取引金額（報酬金額）</th>
+<th class="px-3 py-2 font-medium">ステータス</th>
+<th class="px-3 py-2 font-medium whitespace-nowrap">支払ID</th>
+<th class="px-3 py-2 font-medium whitespace-nowrap">登録日時</th>
+<th class="px-3 py-2 font-medium text-center">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-kintone-border dark:divide-gray-800">
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202509-0001</td>
+<td class="px-3 py-2">2025年09月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0001</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">アフィリエイト報酬</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">Affiliate X</td>
+<td class="px-3 py-2 text-right">200,000</td>
+<td class="px-3 py-2 text-right">7.5%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 15,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202509-01</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/09/05 10:15</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202509-0002</td>
+<td class="px-3 py-2">2025年09月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0001</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">投資家配当</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">投資家 A</td>
+<td class="px-3 py-2 text-right">150,000</td>
+<td class="px-3 py-2 text-right">5.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 7,500</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202509-02</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/09/05 10:15</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202510-0003</td>
+<td class="px-3 py-2">2025年10月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0010</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">アフィリエイト報酬</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">Affiliate Z</td>
+<td class="px-3 py-2 text-right">40,000</td>
+<td class="px-3 py-2 text-right">10.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 4,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#fff9e6] dark:bg-[#40351a] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-yellow-200 dark:border-yellow-900">一時計上</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">-</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/10/01 09:30</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202510-0004</td>
+<td class="px-3 py-2">2025年10月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0010</td>
+<td class="px-3 py-2">返品調整 (明細行)</td>
+<td class="px-3 py-2">アフィリエイト報酬</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">Affiliate Z</td>
+<td class="px-3 py-2 text-right">-10,000</td>
+<td class="px-3 py-2 text-right">10.0%</td>
+<td class="px-3 py-2 text-right font-medium text-red-600">- ¥ 1,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202510-01</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/10/10 14:20</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202510-0005</td>
+<td class="px-3 py-2">2025年10月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0010</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">投資家配当</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">投資家 B</td>
+<td class="px-3 py-2 text-right">120,000</td>
+<td class="px-3 py-2 text-right">5.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 6,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202510-02</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/10/01 09:30</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202510-0006</td>
+<td class="px-3 py-2">2025年10月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0010</td>
+<td class="px-3 py-2">返品調整 (明細行)</td>
+<td class="px-3 py-2">投資家配当</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">投資家 B</td>
+<td class="px-3 py-2 text-right">-40,000</td>
+<td class="px-3 py-2 text-right">5.0%</td>
+<td class="px-3 py-2 text-right font-medium text-red-600">- ¥ 2,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202510-02</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/10/10 14:20</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202508-0007</td>
+<td class="px-3 py-2">2025年08月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0005</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">アフィリエイト報酬</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">Affiliate Y</td>
+<td class="px-3 py-2 text-right">50,000</td>
+<td class="px-3 py-2 text-right">10.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 5,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202508-01</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/08/05 11:00</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202508-0008</td>
+<td class="px-3 py-2">2025年08月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0005</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">投資家配当</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">投資家 C</td>
+<td class="px-3 py-2 text-right">160,000</td>
+<td class="px-3 py-2 text-right">5.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 8,000</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202508-02</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/08/05 11:00</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202507-0009</td>
+<td class="px-3 py-2">2025年07月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0003</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">アフィリエイト報酬</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">Affiliate Z</td>
+<td class="px-3 py-2 text-right">32,000</td>
+<td class="px-3 py-2 text-right">10.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 3,200</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202507-01</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/07/05 09:00</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
+<td class="px-3 py-2 text-link-blue cursor-pointer">RWD-202507-0010</td>
+<td class="px-3 py-2">2025年07月度</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">ORD-2025-0003</td>
+<td class="px-3 py-2">注文</td>
+<td class="px-3 py-2">投資家配当</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">投資家 A</td>
+<td class="px-3 py-2 text-right">32,000</td>
+<td class="px-3 py-2 text-right">5.0%</td>
+<td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">¥ 1,600</td>
+<td class="px-3 py-2">
+<span class="bg-[#e2f2e2] dark:bg-[#1a4020] text-gray-800 dark:text-gray-200 px-2 py-0.5 text-xs rounded border border-green-200 dark:border-green-900">確定済</span>
+</td>
+<td class="px-3 py-2 text-link-blue cursor-pointer">PYMT-202507-02</td>
+<td class="px-3 py-2 text-xs text-gray-500">2025/07/05 09:00</td>
+<td class="px-3 py-2 text-center">
+<button class="text-kintone-blue hover:opacity-80"><span class="material-icons text-lg">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<footer class="p-8 text-center text-gray-400 text-xs">
+        © 2024 Reward Transaction Management System. All rights reserved.
+    </footer>
 
-  <!-- App Description (JP only) -->
-  <div class="app-description">
-    アフィリエイト報酬および投資家配当の元データとなる取引履歴を管理するアプリです。<br>
-    各注文および返品明細に紐づく取引レコードを1行ずつ保持し、月末に別アプリ（Payment Record）で支払額を集計します。<br>
-    この画面では月度別の支払総額は表示せず、履歴・トレース用の一覧のみを提供します。
-  </div>
-
-  <!-- View Controls -->
-  <div class="view-controls">
-    <!-- View selector -->
-    <button class="view-button">
-      <span class="view-icon">📋</span>
-      <span class="view-text">すべてのレコード</span>
-      <span class="dropdown-arrow">▼</span>
-    </button>
-
-    <!-- Filters / Search -->
-    <button class="control-btn">
-      <span class="control-btn-icon">🔍</span>
-      <span>検索</span>
-    </button>
-
-    <button class="control-btn">
-      <span class="control-btn-icon">📅</span>
-      <span>月度フィルター</span>
-    </button>
-
-    <button class="control-btn">
-      <span class="control-btn-icon">⤵</span>
-      <span>CSVエクスポート</span>
-    </button>
-
-    <!-- Right controls -->
-    <div class="controls-right">
-      <button class="icon-only-btn" title="レコード追加">➕</button>
-      <button class="icon-only-btn" title="設定">⚙️</button>
-      <button class="icon-only-btn" title="その他">⋯</button>
-    </div>
-  </div>
-
-  <!-- Record Count Top -->
-  <div class="record-count">1 - 10（10件中）</div>
-
-  <!-- Transaction History Table -->
-  <div class="table-container">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>期間</th>
-          <th>注文ID</th>
-          <th>トランザクション種別</th>
-          <th>報酬種別</th>
-          <th>取引先名</th>
-          <th>取引金額 (JPY)</th>
-          <th>ステータス</th>
-          <th>登録日時</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Row 1: Affiliate commission (normal order) -->
-        <tr>
-          <td>2025年09月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0001</a></td>
-          <td>注文</td>
-          <td>アフィリエイト報酬</td>
-          <td><a href="#" class="record-link">Affiliate X</a></td>
-          <td class="amount-positive">¥ 15,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/09/05 10:15</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 2: Investor dividend (normal order) -->
-        <tr>
-          <td>2025年09月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0001</a></td>
-          <td>注文</td>
-          <td>投資家配当</td>
-          <td><a href="#" class="record-link">投資家 A</a></td>
-          <td class="amount-positive">¥ 7,500</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/09/05 10:15</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 3: Affiliate commission – another order -->
-        <tr>
-          <td>2025年10月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0010</a></td>
-          <td>注文</td>
-          <td>アフィリエイト報酬</td>
-          <td><a href="#" class="record-link">Affiliate Z</a></td>
-          <td class="amount-positive">¥ 4,000</td>
-          <td><span class="status-badge status-pending">一時計上</span></td>
-          <td>2025/10/01 09:30</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 4: Return adjustment for same order (affiliate) -->
-        <tr>
-          <td>2025年10月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0010</a></td>
-          <td>返品調整（明細行）</td>
-          <td>アフィリエイト報酬</td>
-          <td><a href="#" class="record-link">Affiliate Z</a></td>
-          <td class="amount-negative">- ¥ 1,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/10/10 14:20</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 5: Investor dividend (same order as row 3) -->
-        <tr>
-          <td>2025年10月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0010</a></td>
-          <td>注文</td>
-          <td>投資家配当</td>
-          <td><a href="#" class="record-link">投資家 B</a></td>
-          <td class="amount-positive">¥ 6,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/10/01 09:30</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 6: Return adjustment for investor dividend -->
-        <tr>
-          <td>2025年10月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0010</a></td>
-          <td>返品調整（明細行）</td>
-          <td>投資家配当</td>
-          <td><a href="#" class="record-link">投資家 B</a></td>
-          <td class="amount-negative">- ¥ 2,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/10/10 14:20</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Dummy rows -->
-        <tr>
-          <td>2025年08月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0005</a></td>
-          <td>注文</td>
-          <td>アフィリエイト報酬</td>
-          <td><a href="#" class="record-link">Affiliate Y</a></td>
-          <td class="amount-positive">¥ 5,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/08/05 11:00</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td>2025年08月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0005</a></td>
-          <td>注文</td>
-          <td>投資家配当</td>
-          <td><a href="#" class="record-link">投資家 C</a></td>
-          <td class="amount-positive">¥ 8,000</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/08/05 11:00</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td>2025年07月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0003</a></td>
-          <td>注文</td>
-          <td>アフィリエイト報酬</td>
-          <td><a href="#" class="record-link">Affiliate Z</a></td>
-          <td class="amount-positive">¥ 3,200</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/07/05 09:00</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td>2025年07月度</td>
-          <td><a href="#" class="record-link">ORD-2025-0003</a></td>
-          <td>注文</td>
-          <td>投資家配当</td>
-          <td><a href="#" class="record-link">投資家 A</a></td>
-          <td class="amount-positive">¥ 6,800</td>
-          <td><span class="status-badge status-active">確定済</span></td>
-          <td>2025/07/05 09:00</td>
-          <td>
-            <div class="row-actions">
-              <button class="action-icon view" title="詳細"></button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Record Count Bottom -->
-  <div class="record-count" style="margin-bottom: 24px;">1 - 10（10件中）</div>
-  <script src="auth.js"></script>
-  <script>
-    console.log('Rewards Transaction History UI loaded');
-  </script>
-</body>
-
-</html>
+</body></html>
