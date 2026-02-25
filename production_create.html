@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>製造実績詳細: PRD-2026-001</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3498db",
+                        "background-light": "#f5f5f5",
+                        "kintone-yellow": "#f9d502",
+                        "kintone-blue": "#3498db",
+                        "kintone-green": "#4baf51",
+                        "kintone-gray": "#e3e7e8",
+                        "kintone-field-bg": "#f5f5f5",
+                        "kintone-border": "#e3e7e8"
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans JP", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .kintone-label {
+            @apply block text-sm font-bold text-gray-600 mb-1;
+        }
+        .kintone-readonly {
+            @apply bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center text-sm;
+        }
+        .kintone-link {
+            @apply text-[#3498db] hover:opacity-80 transition-opacity cursor-pointer;
+        }
+        .section-title {
+            @apply flex items-center text-gray-700 font-bold mb-4 border-l-4 border-purple-500 pl-3 bg-gray-50 py-2;
+        }
+        .kpi-box {
+            @apply bg-white border border-gray-200 p-4 text-center shadow-sm rounded;
+        }
+        .kpi-label {
+            @apply text-xs text-gray-500 mb-1 block font-bold;
+        }
+        .kpi-value {
+            @apply text-2xl font-bold text-gray-800;
+        }
+        .required-badge {
+            @apply text-white bg-red-500 text-[10px] px-1 py-0.5 ml-1 rounded align-middle;
+        }
+        .lookup-badge {
+            @apply text-white bg-blue-400 text-[10px] px-1 py-0.5 ml-1 rounded align-middle;
+        }
+        .auto-badge {
+            @apply text-gray-500 bg-gray-200 text-[10px] px-1 py-0.5 ml-1 rounded align-middle;
+        }
+        .op-button {
+            @apply bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 text-[11px] px-3 py-1 rounded shadow-sm flex items-center transition-colors font-bold;
+        }
+        .status-badge {
+            @apply px-3 py-1 rounded text-xs font-bold border;
+        }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen">
+<header class="bg-kintone-yellow h-12 flex items-center justify-between px-4 shadow-sm border-b border-gray-300">
+<div class="flex items-center space-x-4">
+<div class="bg-white p-1 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-600">precision_manufacturing</span>
+</div>
+<h1 class="font-bold text-gray-800">製造実績詳細: PRD-2026-001</h1>
+</div>
+<div class="flex items-center space-x-2">
+</div>
+</header>
+<div class="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center space-x-2 text-xs text-blue-600">
+<span class="material-symbols-outlined text-sm">home</span>
+<span>&gt;</span>
+<span class="hover:underline cursor-pointer">製造実績管理</span>
+<span>&gt;</span>
+<span class="text-gray-500">PRD-2026-001</span>
+</div>
+</div>
+<main class="p-8 max-w-[1400px] mx-auto bg-white shadow-sm mt-4 border border-gray-200 mb-12">
+<div class="mb-10">
+<div class="section-title">
+<span>製造ロット情報</span>
+</div>
+<div class="grid grid-cols-3 gap-x-8 gap-y-4">
+<div>
+<label class="kintone-label">製造実績ID</label>
+<div class="kintone-readonly font-mono">PRD-2026-001</div>
+</div>
+<div>
+<label class="kintone-label">Lot番号<span class="required-badge">必須</span></label>
+<div class="kintone-readonly">LOT-20260220-A</div>
+</div>
+<div>
+<label class="kintone-label">製品SKU<span class="lookup-badge">Lookup</span></label>
+<div class="kintone-readonly font-mono kintone-link">SKU-RS-500-ML</div>
+</div>
+<div>
+<label class="kintone-label">製品名<span class="auto-badge">Auto</span></label>
+<div class="kintone-readonly">ライスシリカ 500ml</div>
+</div>
+<div>
+<label class="kintone-label">製造日</label>
+<div class="kintone-readonly">2026-02-20</div>
+</div>
+<div>
+<label class="kintone-label">完成日</label>
+<div class="kintone-readonly">2026-02-24</div>
+</div>
+<div>
+<label class="kintone-label">担当者</label>
+<div class="kintone-readonly kintone-link">山田 太郎</div>
+</div>
+<div>
+<label class="kintone-label">BOM ID<span class="auto-badge">Auto</span></label>
+<div class="kintone-readonly font-mono kintone-link">BOM-RS-001</div>
+</div>
+<div>
+<label class="kintone-label">BOMバージョン</label>
+<div class="kintone-readonly text-center w-20">v2.1</div>
+</div>
+<div>
+<label class="kintone-label">在庫反映日</label>
+<div class="kintone-readonly text-gray-500">2026-02-24</div>
+</div>
+<div>
+<label class="kintone-label">製造ステータス</label>
+<div class="kintone-readonly">
+<span class="status-badge bg-blue-100 text-blue-700 border-blue-200">製造中</span>
+</div>
+</div>
+<div>
+<label class="kintone-label">在庫処理ステータス</label>
+<div class="kintone-readonly">
+<span class="status-badge bg-yellow-100 text-yellow-700 border-yellow-200">完了待ち（入庫待ち）</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<div class="section-title">
+<span>生産数量サマリー</span>
+</div>
+<div class="grid grid-cols-5 gap-4">
+<div class="kpi-box border-l-4 border-l-blue-500">
+<span class="kpi-label">完成数量</span>
+<span class="kpi-value">980</span>
+</div>
+<div class="kpi-box border-l-4 border-l-red-500">
+<span class="kpi-label">不良数量</span>
+<span class="kpi-value text-red-600">20</span>
+</div>
+<div class="kpi-box border-l-4 border-l-orange-500">
+<span class="kpi-label">不良率 (%)</span>
+<span class="kpi-value text-orange-600">2.04%</span>
+</div>
+<div class="kpi-box border-l-4 border-l-green-500">
+<span class="kpi-label">入庫数量</span>
+<span class="kpi-value text-green-700">980</span>
+</div>
+<div class="kpi-box border-l-4 border-l-yellow-500">
+<span class="kpi-label">在庫反映状況</span>
+<span class="kpi-value text-sm mt-2 text-yellow-700">未反映</span>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<div class="section-title flex justify-between items-center">
+<span>原材料消費明細</span>
+<div class="flex space-x-2">
+<button class="op-button hover:bg-blue-50 hover:text-blue-700 border-blue-200">
+<span class="material-symbols-outlined text-sm mr-1">play_arrow</span>製造開始
+                    </button>
+<button class="op-button hover:bg-green-50 hover:text-green-700 border-green-200">
+<span class="material-symbols-outlined text-sm mr-1">check_circle</span>製造完了
+                    </button>
+<button class="op-button hover:bg-orange-50 hover:text-orange-700 border-orange-200">
+<span class="material-symbols-outlined text-sm mr-1">keyboard_return</span>未完成分の原料を戻す
+                    </button>
+<button class="op-button hover:bg-red-50 hover:text-red-700 border-red-200">
+<span class="material-symbols-outlined text-sm mr-1">cancel</span>出庫キャンセル
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-[13px] border-collapse border border-gray-200">
+<thead class="bg-gray-100 text-gray-600">
+<tr>
+<th class="border border-gray-200 px-3 py-2 text-left w-20">区分</th>
+<th class="border border-gray-200 px-3 py-2 text-left w-32">資材SKU</th>
+<th class="border border-gray-200 px-3 py-2 text-left min-w-[150px]">資材名</th>
+<th class="border border-gray-200 px-3 py-2 text-center w-16">単位</th>
+<th class="border border-gray-200 px-3 py-2 text-right w-20">ロス率(%)</th>
+<th class="border border-gray-200 px-3 py-2 text-right w-24">必要量</th>
+<th class="border border-gray-200 px-3 py-2 text-right w-28">ロス込必要量</th>
+<th class="border border-gray-200 px-3 py-2 text-right w-28 bg-blue-50">使用実績量</th>
+<th class="border border-gray-200 px-3 py-2 text-right w-24 bg-gray-50">現在庫</th>
+<th class="border border-gray-200 px-3 py-2 text-center w-24">出庫可否</th>
+<th class="border border-gray-200 px-3 py-2 text-left">備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="hover:bg-gray-50">
+<td class="border border-gray-200 px-3 py-2">原料</td>
+<td class="border border-gray-200 px-3 py-2 font-mono">RM-SIL-01</td>
+<td class="border border-gray-200 px-3 py-2">シリカ原液 A</td>
+<td class="border border-gray-200 px-3 py-2 text-center">L</td>
+<td class="border border-gray-200 px-3 py-2 text-right">2.0%</td>
+<td class="border border-gray-200 px-3 py-2 text-right">500.00</td>
+<td class="border border-gray-200 px-3 py-2 text-right">510.00</td>
+<td class="border border-gray-200 px-1 py-1 bg-blue-50">
+<input class="w-full text-right border-0 bg-transparent p-1 focus:ring-0 text-[13px] font-medium" type="number" value="512.50"/>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-right bg-gray-50">1,200.00</td>
+<td class="border border-gray-200 px-3 py-2 text-center">
+<span class="text-green-600 font-bold">OK</span>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-gray-500 italic">初期充填ロス含む</td>
+</tr>
+<tr class="hover:bg-gray-50">
+<td class="border border-gray-200 px-3 py-2">資材</td>
+<td class="border border-gray-200 px-3 py-2 font-mono">PKG-BOT-500</td>
+<td class="border border-gray-200 px-3 py-2">専用ボトル 500ml</td>
+<td class="border border-gray-200 px-3 py-2 text-center">本</td>
+<td class="border border-gray-200 px-3 py-2 text-right">1.5%</td>
+<td class="border border-gray-200 px-3 py-2 text-right">1,000</td>
+<td class="border border-gray-200 px-3 py-2 text-right">1,015</td>
+<td class="border border-gray-200 px-1 py-1 bg-blue-50">
+<input class="w-full text-right border-0 bg-transparent p-1 focus:ring-0 text-[13px] font-medium" type="number" value="1010"/>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-right bg-gray-50">3,500</td>
+<td class="border border-gray-200 px-3 py-2 text-center">
+<span class="text-green-600 font-bold">OK</span>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-gray-500 italic">-</td>
+</tr>
+<tr class="hover:bg-gray-50">
+<td class="border border-gray-200 px-3 py-2">資材</td>
+<td class="border border-gray-200 px-3 py-2 font-mono">LBL-RS-500</td>
+<td class="border border-gray-200 px-3 py-2">ライスシリカ商品ラベル</td>
+<td class="border border-gray-200 px-3 py-2 text-center">枚</td>
+<td class="border border-gray-200 px-3 py-2 text-right">3.0%</td>
+<td class="border border-gray-200 px-3 py-2 text-right">1,000</td>
+<td class="border border-gray-200 px-3 py-2 text-right">1,030</td>
+<td class="border border-gray-200 px-1 py-1 bg-blue-50">
+<input class="w-full text-right border-0 bg-transparent p-1 focus:ring-0 text-[13px] font-medium" type="number" value="1050"/>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-right bg-gray-50">25</td>
+<td class="border border-gray-200 px-3 py-2 text-center">
+<span class="text-red-600 font-bold">不足</span>
+</td>
+<td class="border border-gray-200 px-3 py-2 text-gray-500 italic">ラベル貼りミスにより追加消費</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="mb-6">
+<div class="section-title">
+<span>備考 / メモ</span>
+</div>
+<div class="space-y-6">
+<div>
+<div class="kintone-readonly min-h-[100px] items-start p-4 leading-relaxed bg-gray-50 border border-gray-200 text-gray-700">
+                        原料シリカのロット変更に伴い、粘度調整のため攪拌時間を標準より10分延長。
+                        完成品の品質検査（pH、導電率）はすべて基準値内。
+                    </div>
+</div>
+<div>
+<label class="kintone-label">添付ファイル</label>
+<div class="kintone-readonly py-3 bg-gray-50 border border-gray-200">
+<div class="flex flex-wrap gap-4 px-2">
+<div class="flex items-center text-blue-600 cursor-pointer bg-white border border-gray-300 px-3 py-1.5 rounded shadow-sm hover:bg-gray-50">
+<span class="material-symbols-outlined text-sm mr-2 text-gray-500">description</span>
+<span class="text-xs font-bold">quality_report_PRD-2026-001.pdf</span>
+</div>
+<div class="flex items-center text-blue-600 cursor-pointer bg-white border border-gray-300 px-3 py-1.5 rounded shadow-sm hover:bg-gray-50">
+<span class="material-symbols-outlined text-sm mr-2 text-gray-500">photo_camera</span>
+<span class="text-xs font-bold">finished_product_lot_A.jpg</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-6 right-6 flex flex-col space-y-2 items-end">
+<button class="bg-blue-500 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<div class="flex flex-col space-y-2 mt-4">
+<button class="bg-gray-400 text-white p-2 rounded-l-md hover:bg-gray-500 transition-all flex items-center justify-center shadow-md" title="コメント">
+<span class="material-symbols-outlined">chat</span>
+</button>
+<button class="bg-gray-400 text-white p-2 rounded-l-md hover:bg-gray-500 transition-all flex items-center justify-center shadow-md" title="変更履歴">
+<span class="material-symbols-outlined">history</span>
+</button>
+</div>
+</div>
+
+</body></html>

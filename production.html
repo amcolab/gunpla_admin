@@ -1,514 +1,307 @@
 <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>製造実績アプリ</title>
-    <style>
-        /* ====================================
-           KINTONE STYLESHEET
-           ==================================== */
-
-        /* Reset & Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            line-height: 1.4;
-            font-size: 14px;
-        }
-
-        /* Top Header */
-        .kintone-header {
-            background: linear-gradient(to bottom, #4a4a4a 0%, #2d2d2d 100%);
-            height: 50px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .app-icon {
-            width: 24px;
-            height: 24px;
-            background-color: #27ae60;
-            border-radius: 4px;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: white;
-        }
-
-        .app-title {
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        /* Breadcrumb */
-        .breadcrumb {
-            background-color: #e8e8e8;
-            padding: 8px 16px;
-            font-size: 12px;
-            color: #666;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .breadcrumb a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        /* View Controls */
-        .view-controls {
-            background-color: #fff;
-            padding: 12px 16px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .left-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .view-dropdown {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            font-family: inherit;
-        }
-
-        .icon-btn {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 6px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            color: #666;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px;
-            height: 32px;
-        }
-
-        .icon-btn:hover {
-            background-color: #f0f0f0;
-        }
-
-        .right-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .add-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .add-btn:hover {
-            background-color: #229954;
-        }
-
-        /* Content Area */
-        .content-area {
-            padding: 16px;
-        }
-
-        .record-count {
-            text-align: right;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        /* Table Styles */
-        .kintone-table {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table-header {
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table-header th {
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: 500;
-            font-size: 13px;
-            color: #333;
-            border-right: 1px solid #eee;
-            white-space: nowrap;
-        }
-
-        .table-row {
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .table-row:hover {
-            background-color: #f8f9fa;
-        }
-
-        .table-cell {
-            padding: 8px;
-            border-right: 1px solid #f0f0f0;
-            font-size: 13px;
-            vertical-align: middle;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 2px 8px;
-            font-size: 11px;
-            font-weight: 500;
-            display: inline-block;
-            white-space: nowrap;
-        }
-
-        .status-completed {
-            color: #27ae60;
-        }
-
-        .status-pending {
-            color: #e67e22;
-        }
-
-        .status-error {
-            color: #e74c3c;
-        }
-
-        /* Link */
-        .record-link {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .record-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Action Button */
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            background: #95a5a6;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .action-btn:hover {
-            background: #7f8c8d;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .view-controls {
-                flex-direction: column;
-                align-items: stretch;
+<html class="light" lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>製造実績一覧 - 製造実績管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#a8449c",
+                        "background-light": "#f5f5f5",
+                        "background-dark": "#1a1a1a",
+                        "kintone-blue": "#3498db",
+                        "status-yellow": "#ffd7a8",
+                        "status-blue": "#c7e2ff",
+                        "status-green": "#c2e7b9",
+                        "status-grey": "#e3e3e3",
+                        "status-red": "#ffc1c1",
+                        "kintone-text": "#333333",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans JP", "sans-serif"],
+                        sans: ["Inter", "Noto Sans JP", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background-light dark:bg-background-dark text-[#333333] dark:text-gray-200;
+                font-family: 'Inter', 'Noto Sans JP', sans-serif;
             }
-
-            .content-area {
-                padding: 12px;
-            }
-
-            .table-header th,
-            .table-cell {
-                padding: 6px 4px;
-                font-size: 12px;
-            }
+        }
+        .kintone-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table-row:nth-child(even) {
+            background-color: rgba(249, 250, 251, 1);
+        }
+        .dark .table-row:nth-child(even) {
+            background-color: rgba(31, 41, 55, 0.5);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
 </head>
+<body class="min-h-screen">
+<header class="bg-primary text-white h-12 flex items-center px-4 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="bg-white/20 p-1 rounded">
+<span class="material-symbols-outlined text-xl">factory</span>
+</div>
+<h1 class="font-bold text-lg tracking-tight">製造実績管理</h1>
+</div>
+<div class="ml-auto flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer">notifications</span>
+<span class="material-symbols-outlined cursor-pointer">help</span>
+<div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden border border-white/20">
+<img alt="Admin Profile Icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA76jCtaksrMBnNl0B2Q0mw5EGaKvPT0eDlLZ3K_iLNe0-v24Gk3C0cbU3bXev8nlpuxhpcbHM34j0o9sH7YxoDaTL7tefw_C7hOhiQyNH0TEanyNsDRxSU1pi-ZH5k_pyDWxNseL9q9643Es9YmBjfUOeAvFr-Kv5o7Rx4RaBQmGy28Qq3Ztmn0qwOZ_J-cIdRvgzcOvBGi9R_o3dJzTWK-BlOWyK5j43EIhr6q3HZFGnrOPLd8jsE0R_kjfbs5kAXzEwaczVkSw"/>
+</div>
+</div>
+</header>
+<div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2 text-sm">
+<div class="flex items-center gap-2 text-primary font-medium">
+<span>アプリ:</span>
+<a class="hover:text-purple-700" href="#">製造実績管理</a>
+</div>
+</div>
+<div class="p-4 flex flex-wrap items-center gap-3">
+<div class="flex items-center">
+<button class="bg-[#3498db] text-white px-4 py-1.5 flex items-center gap-2 hover:bg-blue-600 transition-colors">
+<span class="material-symbols-outlined text-lg">list</span>
+<span class="font-medium">すべて</span>
+<span class="material-symbols-outlined text-lg">arrow_drop_down</span>
+</button>
+<div class="flex border-y border-r border-gray-300 dark:border-gray-600">
+<button class="px-3 py-1.5 bg-white dark:bg-gray-800 border-l border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-xl text-gray-500">link</span>
+</button>
+<button class="px-3 py-1.5 bg-white dark:bg-gray-800 border-l border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-xl text-gray-500">file_download</span>
+</button>
+<button class="px-3 py-1.5 bg-white dark:bg-gray-800 border-l border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-xl text-gray-500">bar_chart</span>
+</button>
+</div>
+</div>
+<div class="relative flex-grow max-w-sm">
+<input class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm" placeholder="ID、ロット、製品名で検索..." type="text"/>
+</div>
+<div class="ml-auto flex items-center gap-2">
+<button class="bg-[#3498db] text-white p-1.5 hover:bg-blue-600">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-1.5 text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="px-4 py-1 text-xs text-right text-gray-500 dark:text-gray-400">
+    1 - 6 (6件中)
+</div>
+<div class="px-4 pb-10 overflow-x-auto">
+<table class="w-full text-sm border-collapse bg-white dark:bg-gray-800 kintone-shadow">
+<thead>
+<tr class="bg-gray-50 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-[11px] font-medium uppercase tracking-wider">
+<th class="px-3 py-3 text-left">製造実績ID</th>
+<th class="px-3 py-3 text-left">ロット番号</th>
+<th class="px-3 py-3 text-left">SKU</th>
+<th class="px-3 py-3 text-left min-w-[180px]">製品名</th>
+<th class="px-3 py-3 text-left">カテゴリー</th>
+<th class="px-3 py-3 text-right">生産予定</th>
+<th class="px-3 py-3 text-right">完成</th>
+<th class="px-3 py-3 text-right">未完成</th>
+<th class="px-3 py-3 text-right">不良率</th>
+<th class="px-3 py-3 text-left">原料出庫</th>
+<th class="px-3 py-3 text-left">入庫</th>
+<th class="px-3 py-3 text-left">完成日</th>
+<th class="px-3 py-3 text-left">製造ステータス</th>
+<th class="px-3 py-3 text-right w-16">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0001</td>
+<td class="px-3 py-3">LOT-2026-0225</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">RS-500ML-PRM</td>
+<td class="px-3 py-3">ライスシリカプレミアム500mL</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-blue-500 rounded-sm"></span>
+<span>Rice Silica PREMIUM</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">1,000</td>
+<td class="px-3 py-3 text-right font-medium">980</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right">2.0%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">出庫済</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">入庫済</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">2026-02-25</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">完了</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0002</td>
+<td class="px-3 py-3">LOT-2026-0226</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">RS-STICK-080</td>
+<td class="px-3 py-3">ライスシリカ スティック</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-orange-500 rounded-sm"></span>
+<span>Rice Silica</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">1,500</td>
+<td class="px-3 py-3 text-right font-medium">500</td>
+<td class="px-3 py-3 text-right font-medium">1,000</td>
+<td class="px-3 py-3 text-right">0.0%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-yellow text-[#333333]">出庫中</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-yellow text-[#333333]">入庫待ち</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">-</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-yellow text-[#333333]">製造中</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0003</td>
+<td class="px-3 py-3">LOT-2026-0227</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">DP-SUP-101</td>
+<td class="px-3 py-3">ドクターズパワー サプリ</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-amber-900 rounded-sm"></span>
+<span>Dr's Power</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">2,000</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right font-medium">2,000</td>
+<td class="px-3 py-3 text-right">0.0%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">-</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未開始</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0004</td>
+<td class="px-3 py-3">LOT-2026-0228</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">SI-WTR-202</td>
+<td class="px-3 py-3">Si+ シリカウォーター</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-purple-500 rounded-sm"></span>
+<span>Si+</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">1,200</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right">0.0%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">-</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-red text-[#333333]">キャンセル</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0005</td>
+<td class="px-3 py-3">LOT-2026-0229</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">AL-EX-301</td>
+<td class="px-3 py-3">アル超えーる エキス</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-emerald-500 rounded-sm"></span>
+<span>アル超えーる</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">800</td>
+<td class="px-3 py-3 text-right font-medium">800</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right">0.5%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">出庫済</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">入庫済</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">2026-02-28</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-green text-[#333333]">完了</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+<tr class="table-row group">
+<td class="px-3 py-3 font-medium text-[#3498db] dark:text-blue-400 cursor-pointer">0006</td>
+<td class="px-3 py-3">LOT-2026-0230</td>
+<td class="px-3 py-3 text-[#3498db] dark:text-blue-400 cursor-pointer">JS-SPR-505</td>
+<td class="px-3 py-3">次亜シリカ スプレー</td>
+<td class="px-3 py-3 flex items-center gap-2">
+<span class="w-3.5 h-3.5 bg-red-500 rounded-sm"></span>
+<span>次亜シリカ</span>
+</td>
+<td class="px-3 py-3 text-right font-medium">500</td>
+<td class="px-3 py-3 text-right font-medium">0</td>
+<td class="px-3 py-3 text-right font-medium">500</td>
+<td class="px-3 py-3 text-right">0.0%</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未処理</span>
+</td>
+<td class="px-3 py-3 whitespace-nowrap">-</td>
+<td class="px-3 py-3">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-status-grey text-[#333333]">未開始</span>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-lg text-[#3498db] cursor-pointer hover:text-blue-600">edit</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<button class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:scale-110 transition-transform z-50 flex items-center justify-center" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined">brightness_medium</span>
+</button>
 
-<body>
-    <!-- Kintone Header -->
-    <div class="kintone-header">
-        <div class="app-icon">🏭</div>
-        <div class="app-title">製造実績アプリ</div>
-    </div>
-
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <a href="#">ホーム</a> &gt; 製造実績アプリ
-    </div>
-
-    <!-- View Controls -->
-    <div class="view-controls">
-        <div class="left-controls">
-            <select class="view-dropdown">
-                <option>すべてのレコード</option>
-                <option>処理済み</option>
-                <option>未処理</option>
-                <option>エラーあり</option>
-            </select>
-            <button class="icon-btn" title="検索">🔍</button>
-            <button class="icon-btn" title="フィルタ">⚙️</button>
-        </div>
-        <div class="right-controls">
-            <button class="add-btn" onclick="createNewRecord()">+ 製造実績を記録</button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content-area">
-        <div class="record-count">15件のレコード</div>
-
-        <table class="kintone-table">
-            <thead class="table-header">
-                <tr>
-                    <th>製造実績ID</th>
-                    <th>Lot番号</th>
-                    <th>製品SKU</th>
-                    <th>製品名</th>
-                    <th>完成数量</th>
-                    <th>不良数量</th>
-                    <th>不良率</th>
-                    <th>完成日</th>
-                    <th>在庫処理</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Row 1 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251026-001')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251026-001'); return false;">
-                            PRD-20251026-001
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1026</td>
-                    <td class="table-cell">RS-500ML-PRM</td>
-                    <td class="table-cell">ライスシリカプレミアム 500ml</td>
-                    <td class="table-cell">995本</td>
-                    <td class="table-cell">5本</td>
-                    <td class="table-cell">0.5%</td>
-                    <td class="table-cell">2025/10/26</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251026-001')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 2 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251025-002')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251025-002'); return false;">
-                            PRD-20251025-002
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1025</td>
-                    <td class="table-cell">RS-STICK-080</td>
-                    <td class="table-cell">ライスシリカ スティック 60包</td>
-                    <td class="table-cell">1485包</td>
-                    <td class="table-cell">15包</td>
-                    <td class="table-cell">1.0%</td>
-                    <td class="table-cell">2025/10/25</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251025-002')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 3 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251024-003')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251024-003'); return false;">
-                            PRD-20251024-003
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1024</td>
-                    <td class="table-cell">RS-200ML-STD</td>
-                    <td class="table-cell">ライスシリカ 200ml</td>
-                    <td class="table-cell">1980本</td>
-                    <td class="table-cell">20本</td>
-                    <td class="table-cell">1.0%</td>
-                    <td class="table-cell">2025/10/24</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251024-003')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 4 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251023-004')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251023-004'); return false;">
-                            PRD-20251023-004
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1023</td>
-                    <td class="table-cell">SI-250ML-PLUS</td>
-                    <td class="table-cell">Si+ 250ml</td>
-                    <td class="table-cell">1492本</td>
-                    <td class="table-cell">8本</td>
-                    <td class="table-cell">0.5%</td>
-                    <td class="table-cell">2025/10/23</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251023-004')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 5 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251022-005')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251022-005'); return false;">
-                            PRD-20251022-005
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1022</td>
-                    <td class="table-cell">RS-500ML-PRM</td>
-                    <td class="table-cell">ライスシリカプレミアム 500ml</td>
-                    <td class="table-cell">994本</td>
-                    <td class="table-cell">6本</td>
-                    <td class="table-cell">0.6%</td>
-                    <td class="table-cell">2025/10/22</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251022-005')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 6 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251021-006')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251021-006'); return false;">
-                            PRD-20251021-006
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1021</td>
-                    <td class="table-cell">RS-STICK-080</td>
-                    <td class="table-cell">ライスシリカ スティック 60包</td>
-                    <td class="table-cell">1470包</td>
-                    <td class="table-cell">30包</td>
-                    <td class="table-cell">2.0%</td>
-                    <td class="table-cell">2025/10/21</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251021-006')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Row 7 -->
-                <tr class="table-row" onclick="viewDetails('PRD-20251020-007')">
-                    <td class="table-cell">
-                        <a href="#" class="record-link"
-                            onclick="event.stopPropagation(); viewDetails('PRD-20251020-007'); return false;">
-                            PRD-20251020-007
-                        </a>
-                    </td>
-                    <td class="table-cell">LOT-2025-1020</td>
-                    <td class="table-cell">RS-200ML-STD</td>
-                    <td class="table-cell">ライスシリカ 200ml</td>
-                    <td class="table-cell">1990本</td>
-                    <td class="table-cell">10本</td>
-                    <td class="table-cell">0.5%</td>
-                    <td class="table-cell">2025/10/20</td>
-                    <td class="table-cell">
-                        <span class="status-badge status-completed">処理済み</span>
-                    </td>
-                    <td class="table-cell">
-                        <button class="action-btn" onclick="event.stopPropagation(); viewDetails('PRD-20251020-007')">
-                            詳細
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <script src="auth.js"></script>
-    <script>
-        function createNewRecord() {
-            window.location.href = 'production_record_form.html';
-        }
-
-        function viewDetails(id) {
-            alert('詳細画面: ' + id);
-            // In real app, navigate to detail page
-            // window.location.href = 'production_record_detail.html?id=' + id;
-        }
-
-        console.log('製造実績アプリ loaded');
-    </script>
-</body>
-
-</html>
+</body></html>
