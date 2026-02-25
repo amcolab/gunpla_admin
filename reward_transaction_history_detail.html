@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>報酬取引履歴 詳細 - kintone</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3498db",
+                        "kintone-yellow": "#ffcc00",
+                        "kintone-blue-bg": "#e6f2ff",
+                        "background-light": "#f4f4f4",
+                        "kintone-green": "#349845",
+                        "kintone-red": "#e74c3c"
+                    },
+                    fontFamily: {
+                        display: ["Helvetica Neue", "Arial", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+        .kintone-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .field-label {
+            @apply block text-[11px] font-bold text-gray-600 mb-1;
+        }
+        .read-only-field {
+            @apply p-2 bg-gray-100 border border-gray-200 rounded text-sm text-gray-700 min-h-[34px] flex items-center;
+        }
+        .kintone-btn {
+            @apply px-4 py-1.5 border font-medium transition kintone-shadow text-sm flex items-center gap-1;
+        }
+        .section-header {
+            @apply text-sm font-bold text-primary border-l-4 border-primary pl-2 mb-4;
+        }
+        .kintone-table th {
+            @apply bg-gray-50 border border-gray-200 text-[11px] font-bold text-gray-600 p-2 text-left;
+        }
+        .kintone-table td {
+            @apply border border-gray-200 p-1 bg-white;
+        }
+        .table-read-only {
+            @apply p-2 bg-gray-100 border border-transparent rounded text-xs text-gray-700 min-h-[30px] flex items-center;
+        }
+        a.text-primary:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen text-gray-800">
+<header class="bg-kintone-yellow h-12 flex items-center px-4 justify-between sticky top-0 z-50">
+<div class="flex items-center space-x-4">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-gray-800 text-2xl">cloud</span>
+<span class="ml-2 font-bold text-gray-800 text-lg tracking-tight">kintone</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-gray-700 hover:bg-black/10 p-1 rounded"><span class="material-symbols-outlined">mail</span></button>
+<div class="flex items-center bg-black/10 px-2 py-1 rounded cursor-pointer">
+<span class="material-symbols-outlined text-gray-700 mr-2">person</span>
+<span class="text-sm font-medium text-gray-800 mr-1">Administrator</span>
+<span class="material-symbols-outlined text-sm text-gray-700">arrow_drop_down</span>
+</div>
+</div>
+</header>
+<nav class="bg-[#424242] text-white h-10 flex items-center px-4 justify-between">
+<div class="flex items-center space-x-6">
+<span class="material-symbols-outlined cursor-pointer text-xl">menu</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">home</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">notifications</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">star</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined cursor-pointer text-xl">settings</span>
+<span class="material-symbols-outlined cursor-pointer text-xl">help</span>
+<div class="relative flex items-center">
+<input class="bg-white text-gray-800 text-sm h-7 px-2 pr-8 w-48 rounded" placeholder="アプリ内検索" type="text"/>
+<span class="material-symbols-outlined absolute right-2 text-gray-400 text-lg">search</span>
+</div>
+</div>
+</nav>
+<div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary rounded mr-3 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">history_edu</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-lg font-bold text-gray-800">報酬取引履歴｜詳細</h1>
+<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold border border-blue-200">Đồng bộ Order ID</span>
+</div>
+<div class="text-[10px] text-gray-500 flex gap-4 mt-0.5">
+<span>ID: RWD-2025-09-000123</span>
+<span>作成日: 2025-09-15 10:30</span>
+<span>更新日: 2025-09-15 14:20</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<button class="kintone-btn border-gray-300 bg-white text-gray-700 hover:bg-gray-50">戻る</button>
+<button class="kintone-btn border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200">編集</button>
+</div>
+</div>
+<main class="p-4 max-w-7xl mx-auto space-y-6">
+<section class="bg-white border border-gray-200 p-6 rounded shadow-sm">
+<h3 class="section-header">基本情報</h3>
+<div class="flex flex-col gap-6">
+<div class="grid grid-cols-2 gap-x-12 gap-y-4">
+<div class="space-y-4">
+<div>
+<label class="field-label">報酬取引ID</label>
+<div class="read-only-field">RWD-2025-09-000123</div>
+</div>
+<div>
+<label class="field-label">期間</label>
+<div class="read-only-field">2025年09月度</div>
+</div>
+<div>
+<label class="field-label">計上日</label>
+<div class="read-only-field">2025-09-01</div>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="field-label">承認者</label>
+<div class="read-only-field"><a class="text-primary hover:no-underline" href="#">田中 太郎 (Admin)</a></div>
+</div>
+<div>
+<label class="field-label">報酬種別</label>
+<div class="read-only-field">アフィリエイト報酬</div>
+</div>
+<div>
+<label class="field-label">ステータス</label>
+<div class="read-only-field">確定済</div>
+</div>
+<div>
+<label class="field-label">取引先</label>
+<div class="read-only-field"><a class="text-primary hover:no-underline" href="#">Partner名 (PRT-001)</a></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-white border border-gray-200 p-6 rounded shadow-sm">
+<h3 class="section-header">報酬計算</h3>
+<div class="overflow-x-auto">
+<table class="w-full kintone-table border-collapse">
+<thead>
+<tr>
+<th class="w-[10%]">注文ID</th>
+<th class="w-[10%]">注文日</th>
+<th class="w-[12%]">トランザクション種別</th>
+<th class="w-[12%]">対象商品コード</th>
+<th class="w-[18%]">対象商品名</th>
+<th class="w-[6%] text-center">数量</th>
+<th class="w-[10%] text-right">注文金額</th>
+<th class="w-[10%] text-center">掛け率(%)</th>
+<th class="w-[12%] text-right">報酬金額</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="table-read-only"><a class="text-primary hover:no-underline" href="#">ORD-202508-012</a></div></td>
+<td><div class="table-read-only">2025-08-30</div></td>
+<td><div class="table-read-only">注文</div></td>
+<td><div class="table-read-only"><a class="text-primary hover:no-underline" href="#">APP-001</a></div></td>
+<td><div class="table-read-only truncate">プレミアムサービス A</div></td>
+<td><div class="table-read-only justify-center">1</div></td>
+<td><div class="table-read-only justify-end">¥20,000</div></td>
+<td><div class="table-read-only justify-center">7.5%</div></td>
+<td><div class="table-read-only justify-end font-bold text-primary">¥1,500</div></td>
+</tr>
+<tr>
+<td><div class="table-read-only"><a class="text-primary hover:no-underline" href="#">ORD-202508-012</a></div></td>
+<td><div class="table-read-only">2025-08-30</div></td>
+<td><div class="table-read-only">注文</div></td>
+<td><div class="table-read-only"><a class="text-primary hover:no-underline" href="#">ACC-005</a></div></td>
+<td><div class="table-read-only truncate">拡張オプションパッケージ</div></td>
+<td><div class="table-read-only justify-center">2</div></td>
+<td><div class="table-read-only justify-end">¥10,000</div></td>
+<td><div class="table-read-only justify-center">5.0%</div></td>
+<td><div class="table-read-only justify-end font-bold text-primary">¥1,000</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-end items-center mt-4 pt-4 border-t border-gray-100">
+<span class="text-sm font-bold text-gray-600 mr-4">合計金額：</span>
+<span class="text-xl font-bold text-primary">¥2,500</span>
+</div>
+</section>
+<section class="bg-white border border-gray-200 p-6 rounded shadow-sm">
+<h3 class="section-header">支払管理との紐づけ</h3>
+<div class="grid grid-cols-3 gap-6">
+<div>
+<label class="field-label">支払管理ID</label>
+<div class="read-only-field"><a class="text-primary hover:no-underline" href="#">PAY-202509-001</a></div>
+</div>
+<div>
+<label class="field-label">支払ステータス</label>
+<div class="flex items-center h-[34px] px-2 bg-orange-50 border border-orange-200 rounded text-orange-700 text-xs font-bold">承認待ち</div>
+</div>
+<div>
+<label class="field-label">支払予定日</label>
+<div class="read-only-field">2025-10-15</div>
+</div>
+</div>
+</section>
+<div class="mt-8 flex justify-end space-x-2 border-t border-gray-100 pt-6 pb-12">
+<button class="kintone-btn border-gray-300 bg-white text-gray-700 hover:bg-gray-50">キャンセル</button>
+<button class="px-8 py-1.5 bg-primary text-white font-medium hover:bg-blue-600 transition kintone-shadow text-sm">保存</button>
+</div>
+</main>
+<footer class="h-10"></footer>
+
+</body></html>
