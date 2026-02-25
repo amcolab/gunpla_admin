@@ -2,7 +2,7 @@
 <html lang="ja"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>PO Detail (Added Remaining Order Summary)</title>
+<title>注文詳細 (Batch Action Buttons)</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script>
@@ -16,9 +16,7 @@
                         "kintone-yellow": "#f9d502",
                         "kintone-blue": "#3498db",
                         "kintone-gray": "#e3e7e8",
-                        "kintone-field-bg": "#f5f5f5",
-                        "kintone-return-bg": "#e3e7e8",
-                        "kintone-return-text": "#333333"
+                        "kintone-field-bg": "#f5f5f5"
                     },
                     fontFamily: {
                         display: ["Inter", "Noto Sans JP", "sans-serif"],
@@ -34,15 +32,23 @@
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
         .kintone-input {
             border: 1px solid #e3e7e8;
-            padding: 8px;
+            padding: 4px 8px;
             width: 100%;
             background-color: #fff;
+            @apply text-sm;
+        }
+        .kintone-input-compact {
+            border: 1px solid #e3e7e8;
+            padding: 2px 4px;
+            width: 64px;
+            background-color: #fff;
+            @apply text-xs;
         }
         .kintone-label {
             @apply block text-sm font-bold text-gray-600 mb-1;
         }
         .kintone-readonly {
-            @apply bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center;
+            @apply bg-kintone-field-bg p-2 text-gray-700 border border-transparent min-h-[40px] flex items-center text-sm;
         }
         .required::after {
             content: "*";
@@ -56,14 +62,16 @@
         .section-title {
             @apply flex items-center text-gray-700 font-bold mb-3 cursor-pointer;
         }
-        .btn-kintone-primary {
-            @apply bg-[#3498db] hover:bg-[#2980b9] text-white px-3 py-1.5 rounded-sm text-[10px] font-bold shadow-sm transition-colors;
+        .batch-card {
+            @apply border border-gray-200 bg-white p-4 mb-3 rounded-sm shadow-sm;
         }
-        .btn-kintone-neutral {
-            @apply bg-[#f7f9fa] hover:bg-[#e3e7e8] text-[#333] border border-[#e3e7e8] px-3 py-1.5 rounded-sm text-[10px] transition-colors;
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        .btn-kintone-disabled {
-            @apply bg-gray-200 text-gray-400 cursor-not-allowed px-3 py-1.5 rounded-sm text-[10px] border border-transparent;
+        input[type=number] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -73,7 +81,7 @@
 <div class="bg-white p-1 rounded flex items-center justify-center">
 <span class="material-symbols-outlined text-gray-600">description</span>
 </div>
-<h1 class="font-bold text-gray-800">発注管理アプリ</h1>
+<h1 class="font-bold text-gray-800">注文アプリ</h1>
 </div>
 <div class="flex items-center space-x-4">
 <div class="flex items-center space-x-2 mr-4">
@@ -93,7 +101,7 @@
 <div class="flex items-center space-x-2 text-xs text-blue-600">
 <span class="material-symbols-outlined text-sm">home</span>
 <span>&gt;</span>
-<span>アプリ: 発注管理アプリ</span>
+<span>アプリ: 注文アプリ</span>
 <span>&gt;</span>
 <span>一覧: All Records</span>
 <span>&gt;</span>
@@ -117,7 +125,7 @@
 </button>
 </div>
 </div>
-<main class="p-8 max-w-[1200px] mx-auto bg-white shadow-sm mt-4 border border-gray-200">
+<main class="p-8 max-w-[1200px] mx-auto bg-white shadow-sm mt-4 border border-gray-200 mb-12">
 <div class="mb-10">
 <div class="section-title">
 <span class="material-symbols-outlined text-sm mr-1">expand_more</span>
@@ -125,131 +133,207 @@
 </div>
 <div class="grid grid-cols-2 gap-x-10 gap-y-4">
 <div>
-<label class="kintone-label">発注ID</label>
+<label class="kintone-label">注文ID</label>
 <div class="kintone-readonly">38</div>
 </div>
 <div>
-<label class="kintone-label">発注日</label>
+<label class="kintone-label">注文日</label>
 <div class="kintone-readonly">2026-02-24</div>
 </div>
 <div>
-<label class="kintone-label">入荷予定日</label>
+<label class="kintone-label">配送予定日</label>
 <div class="kintone-readonly">2026-02-24</div>
 </div>
 <div>
-<label class="kintone-label">最新入荷日</label>
+<label class="kintone-label">最新出庫日</label>
 <div class="kintone-readonly">2026-02-24</div>
 </div>
 <div>
-<label class="kintone-label">検品日</label>
-<div class="kintone-readonly">2026-02-24</div>
-</div>
-<div>
-<label class="kintone-label">仕入先</label>
+<label class="kintone-label">顧客名</label>
 <div class="kintone-readonly">
-<a class="text-blue-600 hover:opacity-75" href="#">仕入先株式会社</a>
-</div>
-</div>
-<div>
-<label class="kintone-label">検品担当者</label>
-<div class="kintone-readonly">
-<a class="text-blue-600 no-underline" href="#">山田 太郎</a>
+<a class="text-blue-600" href="#">顧客株式会社</a>
 </div>
 </div>
 <div>
 <label class="kintone-label">ステータス</label>
-<div class="kintone-readonly">一部入庫済</div>
+<div class="kintone-readonly">出庫中</div>
 </div>
 <div>
 <label class="kintone-label">支払いステータス</label>
 <div class="kintone-readonly">支払済み</div>
 </div>
+<div>
+<label class="kintone-label">販売チャネル</label>
+<div class="kintone-readonly">Shopify</div>
 </div>
+<div>
+<label class="kintone-label">顧客区分</label>
+<div class="kintone-readonly">BtoC</div>
 </div>
-<div class="mb-10">
-<h3 class="text-sm font-bold text-gray-600 mb-2">発注サマリー</h3>
-<div class="bg-kintone-blue text-white grid grid-cols-6 text-[10px] py-1 text-center divide-x divide-blue-400">
-<div class="px-2 py-1">発注数量合計</div>
-<div class="px-2 py-1">入庫済数量合計</div>
-<div class="px-2 py-1">返品済数量合計</div>
-<div class="px-2 py-1 bg-blue-600 font-bold">発注残</div>
-<div class="px-2 py-1">小計 (税抜)</div>
-<div class="px-2 py-1">発注金額合計</div>
-</div>
-<div class="grid grid-cols-6 text-[10px] py-2 border-x border-b border-gray-200">
-<div class="px-4 text-right">2,100</div>
-<div class="px-4 text-right">1,500</div>
-<div class="px-4 text-right">50</div>
-<div class="px-4 text-right text-orange-600 font-bold">600</div>
-<div class="px-4 text-right">¥2,462,460,000</div>
-<div class="px-4 text-right font-bold">¥2,708,706,000</div>
 </div>
 </div>
 <div class="mb-10">
-<h3 class="text-sm font-bold text-gray-600 mb-2">発注明細</h3>
+<div class="section-title">
+<span class="material-symbols-outlined text-sm mr-1">expand_more</span>
+<span>お届け情報</span>
+</div>
+<div class="grid grid-cols-2 gap-x-10 gap-y-4">
+<div>
+<label class="kintone-label">氏名</label>
+<div class="kintone-readonly">山田 太郎</div>
+</div>
+<div>
+<label class="kintone-label">電話</label>
+<div class="kintone-readonly">03-1234-5678</div>
+</div>
+<div>
+<label class="kintone-label">メール</label>
+<div class="kintone-readonly">yamada@example.com</div>
+</div>
+<div>
+<label class="kintone-label">郵便番号</label>
+<div class="kintone-readonly">100-0001</div>
+</div>
+<div class="col-span-2">
+<label class="kintone-label">住所</label>
+<div class="kintone-readonly">東京都千代田区千代田1-1 〇〇ビル 5F</div>
+</div>
+</div>
+</div>
+<div class="mb-10">
+<h3 class="text-sm font-bold text-gray-600 mb-2">注文サマリー</h3>
+<div class="bg-kintone-blue text-white grid grid-cols-7 text-[10px] py-1 text-center divide-x divide-blue-400">
+<div class="px-1 py-1">注文数量合計</div>
+<div class="px-1 py-1">出庫済数量合計</div>
+<div class="px-1 py-1">未出庫数量合計</div>
+<div class="px-1 py-1">返品済数量合計</div>
+<div class="px-1 py-1">小計 (税抜)</div>
+<div class="px-1 py-1">消費税 (10%)</div>
+<div class="px-1 py-1 font-bold">注文金額合計</div>
+</div>
+<div class="grid grid-cols-7 text-[10px] py-2 text-center border-x border-b border-gray-200 bg-gray-50">
+<div class="px-1">2,100</div>
+<div class="px-1 text-green-600 font-bold">1,500</div>
+<div class="px-1 text-orange-600">600</div>
+<div class="px-1 text-red-600">50</div>
+<div class="px-1">¥2,462,460,000</div>
+<div class="px-1">¥246,246,000</div>
+<div class="px-1 font-bold">¥2,708,706,000</div>
+</div>
+</div>
+<div class="mb-10">
+<div class="flex justify-between items-end mb-2">
+<h3 class="text-sm font-bold text-gray-600">注文明細</h3>
+<div class="flex gap-2">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-1.5 rounded-sm text-sm font-bold shadow-sm transition-colors">一括出庫</button>
+<button class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-1.5 rounded-sm text-sm font-bold shadow-sm transition-colors">一括返品</button>
+</div>
+</div>
 <div class="overflow-x-auto border border-gray-200">
-<table class="w-full text-xs text-left border-collapse">
+<table class="w-full text-[11px] text-left border-collapse">
 <thead class="bg-blue-500 text-white border-b border-gray-200">
 <tr>
 <th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">商品名 (SKU)</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">入庫予定日</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">発注数量</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">入庫済数量</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">未入庫数量</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">返品数（返品済）</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">単価</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">金額</th>
-<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">入庫状況</th>
-<th class="px-2 py-1 font-normal whitespace-nowrap">操作</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap">出庫予定日</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center">注文数量</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center">出庫済</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center">未出庫</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center">返品済</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center bg-blue-600 w-20">今回出庫数</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-center bg-gray-500 w-20">今回返品数</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-right">単価</th>
+<th class="px-2 py-1 border-r border-white font-normal whitespace-nowrap text-right">金額</th>
+<th class="px-2 py-1 font-normal whitespace-nowrap text-center">ステータス</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-gray-200">
 <tr class="align-middle">
-<td class="px-2 py-3 border-r border-gray-200 break-all w-40">
+<td class="px-2 py-2 border-r border-gray-200 break-all w-40">
 <div class="font-bold">TU-MATERIAL-NAME</div>
 <div class="text-[10px] text-gray-500">SKU: TU-MATERIAL-SKU</div>
 </td>
-<td class="px-2 py-3 border-r border-gray-200 text-center">2026-03-05</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">2,000</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right text-green-600 font-bold">1,500</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right text-orange-600">500</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right bg-gray-50 text-red-600">50</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">¥1,231,230</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right font-bold">¥2,462,460,000</td>
-<td class="px-2 py-3 border-r border-gray-200 text-center">
-<span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-[10px]">一部入庫済</span>
+<td class="px-2 py-2 border-r border-gray-200 text-center">2026-03-05</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center font-medium">2,000</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center text-green-600">1,500</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center text-orange-600">500</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center bg-gray-50 text-red-600">50</td>
+<td class="px-1 py-2 border-r border-gray-200 text-center bg-blue-50">
+<input class="kintone-input-compact text-right mx-auto" min="0" type="number" value="0"/>
 </td>
-<td class="px-2 py-3 text-center">
-<div class="flex items-center justify-center space-x-1">
-<button class="btn-kintone-primary" onclick="alert('入庫登録ポップアップを表示します')">入庫</button>
-<button class="btn-kintone-neutral" onclick="alert('返品登録ポップアップを表示します\n・返品数量\n・返品日\n・備考')">返品</button>
-</div>
+<td class="px-1 py-2 border-r border-gray-200 text-center bg-gray-50">
+<input class="kintone-input-compact text-right mx-auto" min="0" type="number" value="0"/>
+</td>
+<td class="px-2 py-2 border-r border-gray-200 text-right">¥1,231,230</td>
+<td class="px-2 py-2 border-r border-gray-200 text-right font-bold">¥2,462,460,000</td>
+<td class="px-2 py-2 text-center">
+<span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-[10px] border border-yellow-200 whitespace-nowrap">一部出庫済</span>
 </td>
 </tr>
 <tr class="align-middle">
-<td class="px-2 py-3 border-r border-gray-200 break-all w-40">
+<td class="px-2 py-2 border-r border-gray-200 break-all w-40">
 <div class="font-bold">TU-MATERIAL-NAME-02</div>
 <div class="text-[10px] text-gray-500">SKU: SKU-002</div>
 </td>
-<td class="px-2 py-3 border-r border-gray-200 text-center">2026-03-10</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">100</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">0</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">100</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right bg-gray-50">0</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right">¥5,000</td>
-<td class="px-2 py-3 border-r border-gray-200 text-right font-bold">¥500,000</td>
-<td class="px-2 py-3 border-r border-gray-200 text-center">
-<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px]">未入庫</span>
+<td class="px-2 py-2 border-r border-gray-200 text-center">2026-03-10</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center font-medium">100</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center">0</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center text-orange-600">100</td>
+<td class="px-2 py-2 border-r border-gray-200 text-center bg-gray-50">0</td>
+<td class="px-1 py-2 border-r border-gray-200 text-center bg-blue-50">
+<input class="kintone-input-compact text-right mx-auto" min="0" type="number" value="100"/>
 </td>
-<td class="px-2 py-3 text-center">
-<div class="flex items-center justify-center space-x-1">
-<button class="btn-kintone-primary" onclick="alert('入庫登録ポップアップを表示します')">入庫</button>
-<button class="btn-kintone-disabled" disabled="">返品</button>
-</div>
+<td class="px-1 py-2 border-r border-gray-200 text-center bg-gray-50">
+<input class="kintone-input-compact text-right mx-auto" min="0" type="number" value="0"/>
+</td>
+<td class="px-2 py-2 border-r border-gray-200 text-right">¥5,000</td>
+<td class="px-2 py-2 border-r border-gray-200 text-right font-bold">¥500,000</td>
+<td class="px-2 py-2 text-center">
+<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] border border-gray-200 whitespace-nowrap">未出庫</span>
 </td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="mb-10">
+<div class="section-title">
+<span class="material-symbols-outlined text-sm mr-1">expand_more</span>
+<span>出庫情報</span>
+</div>
+<div class="space-y-3">
+<div class="batch-card">
+<div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-2">
+<div class="flex items-center">
+<span class="font-bold text-gray-800 mr-2">出庫バッチ #1</span>
+<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded border border-blue-200">配送完了</span>
+</div>
+<button class="text-[10px] border border-gray-300 px-2 py-1 hover:bg-gray-50 text-gray-700">運送情報編集</button>
+</div>
+<div class="grid grid-cols-4 gap-4 text-xs">
+<div>
+<div class="text-gray-500 mb-1">出庫日</div>
+<div class="font-medium">2026-02-24</div>
+</div>
+<div>
+<div class="text-gray-500 mb-1">配送会社</div>
+<div class="font-medium">ヤマト運輸</div>
+</div>
+<div>
+<div class="text-gray-500 mb-1">追跡番号</div>
+<div class="text-blue-600">1234-5678-9012</div>
+</div>
+<div>
+<div class="text-gray-500 mb-1">ステータス</div>
+<div class="font-medium">配達済</div>
+</div>
+</div>
+<div class="mt-4 bg-gray-50 p-2 rounded-sm border border-gray-100">
+<div class="text-[10px] text-gray-500 mb-1">出庫SKU + 数量</div>
+<div class="flex flex-wrap gap-x-6 gap-y-1 text-[11px]">
+<div><span class="font-bold">TU-MATERIAL-SKU:</span> 1,500個</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="mb-10">
@@ -261,7 +345,7 @@
 <div>
 <label class="kintone-label">内部メモ</label>
 <div class="kintone-readonly min-h-[80px] items-start py-2 px-3">
-                    7月上旬の入庫予定。欠品の可能性があるため、事前確認済み。
+                    7月上旬の配送予定。欠品の可能性があるため、事前確認済み。
                 </div>
 </div>
 <div>
@@ -269,7 +353,7 @@
 <div class="kintone-readonly flex items-center space-x-4">
 <div class="flex items-center text-blue-600 cursor-pointer">
 <span class="material-symbols-outlined text-sm mr-1">attachment</span>
-<span class="text-xs underline">PO_estimate_rev2.pdf</span>
+<span class="text-xs">SO_estimate_rev2.pdf</span>
 </div>
 </div>
 </div>
