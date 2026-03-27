@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credie Architecture & Cost v2</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --brand: #2563eb;
+      --stg: #0f766e;
+      --prd: #9333ea;
+      --warn: #b45309;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      color: #111827;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .note {
+      border-left: 4px solid #f59e0b;
+      background: #fffbeb;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      color: var(--warn);
+      font-size: 13px;
+    }
+
+    .env-section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 22px;
+    }
+
+    .env-title {
+      margin: 0 0 10px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .staging { background: var(--stg); }
+    .production { background: var(--prd); }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #f9fafb;
+    }
+
+    .box h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .service-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #374151;
+    }
+
+    .flow {
+      font-size: 13px;
+      color: #374151;
+      margin-top: 6px;
+      padding: 8px 10px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .summary-card {
+      border-radius: 8px;
+      padding: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .summary-card .value {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .summary-card.stg { background: #0f766e; }
+    .summary-card.prd { background: #7e22ce; }
+    .summary-card.neutral { background: #1d4ed8; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f3f4f6;
+      color: #111827;
+      font-weight: 700;
+    }
+
+    td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Diagram (inspired by credie_architecture_cost.html) */
+    .diagram-wrap {
+      background: linear-gradient(135deg, #ffffff, #f8fafc);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      margin: 12px 0 14px;
+      overflow-x: auto;
+    }
+
+    .diagram-layout {
+      min-width: 980px;
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .internet-box {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #fff;
+      padding: 14px 14px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 800;
+      border: 3px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.22);
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .service-box {
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .svc-route53 { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
+    .svc-waf { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+    .svc-acm { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+
+    .vpc-container {
+      border: 4px solid #2563eb;
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(135deg, #eef2ff, #dbeafe);
+      position: relative;
+    }
+
+    .vpc-title {
+      position: absolute;
+      top: -14px;
+      left: 16px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.24);
+    }
+
+    .az-container {
+      border: 3px solid #059669;
+      border-radius: 14px;
+      padding: 14px;
+      background: linear-gradient(135deg, #ecfdf5, #dcfce7);
+    }
+
+    .az-title {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .subnet {
+      border-radius: 14px;
+      padding: 12px;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .subnet-title {
+      position: absolute;
+      top: -11px;
+      left: 12px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    }
+
+    .subnet-public {
+      border: 3px solid #f59e0b;
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    }
+    .subnet-public .subnet-title { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+    .subnet-private {
+      border: 3px solid #8b5cf6;
+      background: linear-gradient(135deg, #faf5ff, #ede9fe);
+      margin-bottom: 0;
+    }
+    .subnet-private .subnet-title { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+    .services-grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .services-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .service-item {
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .svc-alb { background: linear-gradient(135deg, #f97316, #c2410c); }
+    .svc-ec2 { background: linear-gradient(135deg, #fb923c, #ea580c); }
+    .svc-cloudwatch { background: linear-gradient(135deg, #ec4899, #be185d); }
+    .svc-nat { background: linear-gradient(135deg, #0f766e, #115e59); }
+    .svc-nfw { background: linear-gradient(135deg, #111827, #374151); }
+
+    .external-title {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 900;
+      text-align: center;
+      font-size: 12px;
+      box-shadow: 0 10px 22px rgba(34, 197, 94, 0.20);
+      margin-bottom: 10px;
+    }
+
+    .external-service {
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      background: linear-gradient(135deg, #334155, #0f172a);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Credie System Design Architecture & Cost Estimate v2</h1>
+    <p class="subtitle">
+      This document summarizes AWS architecture and cost estimate for two environments based on
+      calculator exports dated 2026-03-26 (Tokyo Region / ap-northeast-1).
+    </p>
+
+    <div class="note">
+      Pricing is estimate-only from AWS Pricing Calculator and can change based on real traffic, data transfer, and runtime usage.
+    </div>
+
+    <section class="env-section">
+      <h2 class="env-title"><span class="badge production">PRODUCTION</span> Architecture Diagram</h2>
+      <div class="diagram-wrap" aria-label="Production architecture diagram">
+        <div class="diagram-layout">
+          <div>
+            <div class="internet-box">
+              <div style="font-size: 22px; margin-bottom: 2px;">🌐</div>
+              INTERNET<br><span style="font-weight: 700; font-size: 12px;">Users</span>
+            </div>
+            <div class="stack">
+              <div class="service-box svc-route53">🗺️ Route 53<br><span style="font-weight: 700; font-size: 11px;">DNS</span></div>
+              <div class="service-box svc-waf">🧱 AWS WAF<br><span style="font-weight: 700; font-size: 11px;">Web ACL</span></div>
+              <div class="service-box svc-acm">🔐 ACM<br><span style="font-weight: 700; font-size: 11px;">TLS Certificate</span></div>
+            </div>
+          </div>
+
+          <div class="vpc-container">
+            <div class="vpc-title">🏠 VPC (Tokyo / Single AZ)</div>
+            <div class="az-container">
+              <div class="az-title">📍 AVAILABILITY ZONE (Single)</div>
+
+              <div class="subnet subnet-public">
+                <div class="subnet-title">🌐 PUBLIC SUBNET</div>
+                <div class="services-grid-2">
+                  <div class="service-item svc-alb">⚖️ ALB<br><span style="font-weight: 700; font-size: 11px;">HTTP(S) entry</span></div>
+                  <div class="service-item svc-ec2">🖥️ EC2 (t3.medium)<br><span style="font-weight: 700; font-size: 11px;">App Server</span></div>
+                </div>
+              </div>
+
+              <div class="subnet subnet-private">
+                <div class="subnet-title">🔒 EGRESS / INSPECTION</div>
+                <div class="services-grid-2">
+                  <div class="service-item svc-nat">🛣️ NAT Gateway<br><span style="font-weight: 700; font-size: 11px;">Controlled outbound</span></div>
+                  <div class="service-item svc-nfw">🛡️ Network Firewall<br><span style="font-weight: 700; font-size: 11px;">Deep inspection</span></div>
+                </div>
+                <div class="services-grid-1" style="margin-top: 10px;">
+                  <div class="service-item svc-cloudwatch">📊 CloudWatch<br><span style="font-weight: 700; font-size: 11px;">Logs / Metrics</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="external-title">⚙️ EXTERNAL SERVICES</div>
+            <div class="external-service">🧩<span style="font-weight: 700; font-size: 11px;">Kintone / Shopify / etc.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="env-section">
+      <h2 class="env-title"><span class="badge staging">STAGING</span> Staging Architecture</h2>
+
+      <div class="arch-grid">
+        <div class="box">
+          <h3>Edge / Entry</h3>
+          <ul class="service-list">
+            <li>Amazon Route 53 (Hosted Zone x1)</li>
+            <li>AWS Certificate Manager (1 FQDN)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>VPC / Networking</h3>
+          <ul class="service-list">
+            <li>Amazon VPC</li>
+            <li>In-use Public IPv4 x1</li>
+            <li>Internet Data Transfer outbound: 10 GB/month</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Application / Observability</h3>
+          <ul class="service-list">
+            <li>EC2 t3.medium (Linux, 30GB EBS) x1</li>
+            <li>Application Load Balancer x1</li>
+            <li>Amazon CloudWatch (metrics + logs)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flow">
+        Flow: Users -> Route 53 -> ALB -> EC2 (t3.medium) inside VPC -> CloudWatch logs/metrics
+      </div>
+
+      <div class="summary" style="margin-top: 12px;">
+        <div class="summary-card stg">
+          Upfront Cost
+          <div class="value">15.00 USD</div>
+        </div>
+        <div class="summary-card stg">
+          Monthly Cost
+          <div class="value">71.89 USD</div>
+        </div>
+        <div class="summary-card neutral">
+          12-Month Total
+          <div class="value">877.68 USD</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Configuration Summary</th>
+            <th>Monthly</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Amazon VPC</td>
+            <td>Public IPv4 in-use x1, outbound internet transfer 10 GB/month</td>
+            <td>4.79 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon EC2</td>
+            <td>1 x t3.medium, Linux, 30 GB EBS, On-Demand 100% utilized</td>
+            <td>42.59 USD</td>
+          </tr>
+          <tr>
+            <td>AWS Certificate Manager</td>
+            <td>1 FQDN, API calls 10,000/month</td>
+            <td>0.00 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon CloudWatch</td>
+            <td>10 metrics, 3 GB standard logs ingested</td>
+            <td>5.29 USD</td>
+          </tr>
+          <tr>
+            <td>Elastic Load Balancing</td>
+            <td>Application Load Balancer x1</td>
+            <td>18.32 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon Route 53</td>
+            <td>Hosted Zones x1</td>
+            <td>0.90 USD</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="env-section">
+      <h2 class="env-title"><span class="badge production">PRODUCTION</span> Production Architecture</h2>
+
+      <div class="arch-grid">
+        <div class="box">
+          <h3>Edge / Security</h3>
+          <ul class="service-list">
+            <li>Amazon Route 53 (Hosted Zone x1)</li>
+            <li>AWS Certificate Manager (1 FQDN)</li>
+            <li>AWS WAF (1 Web ACL + managed rules)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>VPC / Network Protection</h3>
+          <ul class="service-list">
+            <li>Amazon VPC + Public IPv4 x1</li>
+            <li>NAT Gateway x1</li>
+            <li>AWS Network Firewall endpoint x1</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Application / Observability</h3>
+          <ul class="service-list">
+            <li>EC2 t3.medium (Linux, 30GB EBS) x1</li>
+            <li>Application Load Balancer x1</li>
+            <li>Amazon CloudWatch (metrics + logs)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flow">
+        Flow: Users -> Route 53 -> WAF -> ALB -> EC2 in VPC, with NAT + Network Firewall for controlled egress and network inspection
+      </div>
+
+      <div class="summary" style="margin-top: 12px;">
+        <div class="summary-card prd">
+          Upfront Cost
+          <div class="value">15.00 USD</div>
+        </div>
+        <div class="summary-card prd">
+          Monthly Cost
+          <div class="value">368.54 USD</div>
+        </div>
+        <div class="summary-card neutral">
+          12-Month Total
+          <div class="value">4,437.48 USD</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Configuration Summary</th>
+            <th>Monthly</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Amazon VPC</td>
+            <td>Public IPv4 in-use x1, NAT Gateway x1, outbound internet transfer 10 GB/month</td>
+            <td>4.79 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon EC2</td>
+            <td>1 x t3.medium, Linux, 30 GB EBS, On-Demand 100% utilized</td>
+            <td>42.59 USD</td>
+          </tr>
+          <tr>
+            <td>AWS Certificate Manager</td>
+            <td>1 FQDN, API calls 10,000/month</td>
+            <td>0.00 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon CloudWatch</td>
+            <td>10 metrics, 3 GB standard logs ingested</td>
+            <td>5.29 USD</td>
+          </tr>
+          <tr>
+            <td>Elastic Load Balancing</td>
+            <td>Application Load Balancer x1</td>
+            <td>18.32 USD</td>
+          </tr>
+          <tr>
+            <td>Amazon Route 53</td>
+            <td>Hosted Zones x1</td>
+            <td>0.90 USD</td>
+          </tr>
+          <tr>
+            <td>AWS WAF</td>
+            <td>Web ACL x1, 5 custom rules, 1 managed rule group</td>
+            <td>11.60 USD</td>
+          </tr>
+          <tr>
+            <td>AWS Network Firewall</td>
+            <td>Firewall endpoint x1, data processed 10 GB/month</td>
+            <td>285.05 USD</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="small">
+      Source files: staging_estimate_cost.pdf / production_est_cost_have_network_firewall.pdf
+    </p>
+  </div>
+</body>
+</html>
